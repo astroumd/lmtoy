@@ -23,10 +23,14 @@ Is very instrument specific:
   * [dreampy3](https://github.com/lmt-heterodyne/dreampy3)
 - LMT heterodyne (SEQUOIA and OMAyA)
 - TolTEC
+  * TolTecA
+  * CitLali
+  * Dasha
 
 
 
 ## References
 
 * [pycdf](http://pysclint.sourceforge.net/pycdf)
-
+* [dash](https://dash.plotly.com/) or [plotly dash](https://plotly.com/dash/)
+* [sdfits](https://fits.gsfc.nasa.gov/registry/sdfits.html) and https://github.com/timj/aandc-gsdd
