@@ -21,16 +21,16 @@ Is very instrument specific:
 
 * Redshift Search Receiver
   * [dreampy3](https://github.com/lmt-heterodyne/dreampy3)
-- LMT heterodyne (SEQUOIA and OMAyA)
+- LMT heterodyne: SEQUOIA and OMAyA
+  * [LMTSLR](https://github.com/lmt-heterodyne/SpectralLineReduction)
 - TolTEC
   * TolTecA
   * CitLali
   * Dasha
 
-
-
 ## References
 
 * [pycdf](http://pysclint.sourceforge.net/pycdf)
 * [dash](https://dash.plotly.com/) or [plotly dash](https://plotly.com/dash/)
+  *  https://alpha.iodide.io/      Doing datascience in your browser
 * [sdfits](https://fits.gsfc.nasa.gov/registry/sdfits.html) and https://github.com/timj/aandc-gsdd
