@@ -19,7 +19,7 @@ and maybe something like this ?
 Is very instrument specific:
 
 
-* Redshift Search Receiver
+* RSR (Redshift Search Receiver)
   * [dreampy3](https://github.com/lmt-heterodyne/dreampy3)
 - LMT heterodyne: SEQUOIA and OMAyA
   * [LMTSLR](https://github.com/lmt-heterodyne/SpectralLineReduction)   (SpectralLineReduction)  
