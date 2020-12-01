@@ -14,15 +14,16 @@
 #  but this has not been experimented with.
 #
 #  May-2020        os=Linux/MacOSX
+#  Nov-2020        for lmtoy
 
 set url   = https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 set url   = https://repo.anaconda.com/archive/Anaconda3-2020.07-MacOSX-x86_64.sh
 set url   = https://repo.anaconda.com/archive/Anaconda3-2020.07-Linux-x86_64.sh
-set url   = https://repo.anaconda.com/archive/Anaconda3-2020.07-%s-x86_64.sh
+set url   = https://repo.anaconda.com/archive/Anaconda3-2020.11-%s-x86_64.sh
 
 set dir   = `pwd`/anaconda3
-set opt   = 1
-set wget  = wgetc
+set opt   = 0
+set wget  = wget
 set os    = `uname -s`
 
 set amuse = 0
@@ -52,55 +53,6 @@ echo "export PATH=${dir}/bin:"'$PATH'         >> python_start.sh
 
 echo Created python_start files for you
 
-if ($opt == 0) exit 0
-
-
-
-# http://projets.lam.fr/projects/unsio/
-# install a default via pip
-# pip install unsio uns_projects
-pip install python-unsio python-unsiotools
-
-# but then install the developers version if these directories exist
-if ($?NEMO) then
-  foreach dir ($NEMO/usr/jsl/unsio $NEMO/usr/jsl/uns_projects)
-    if (-d $dir) then
-      echo Installing with pip install $dir
-      (cd $dir ; pip install -e .)
-    else
-      echo Skipping pip install -e $dir
-    endif
-  end
-else
-  echo Warning:  no NEMO, skipping those components
-endif
-
-# https://github.com/adrn/gala
-# conda install gala --channel conda-forge
-pip install gala
-
-# https://github.com/jobovy/galpy
-#
-pip install galpy
-
-# https://github.com/pynbody/pynbody
-#
-pip install pynbody
-
-# https://github.com/kyleaoman/martini
-pip install astromartini
-
-#
-pip install yt
-
-# https://amusecode.github.io/getting-started
-#   pip install numpy nose docutils mpi4py h5py
-#   pip install scipy astropy jupyter pandas seaborn
-if ($amuse) then
-  pip install amuse-framework
-  pip install amuse
-endif  
-
 
 # ubuntu packages for amuse:
 #  build-essential gfortran python-dev \
@@ -110,4 +62,3 @@ endif
 #  libhdf5-serial-dev hdf5-tools \
 #  git
 
-echo Reminder: also created python_start files for you
