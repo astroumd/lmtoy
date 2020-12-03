@@ -12,6 +12,15 @@ LMT data are (mostly) in netCDF format (extension:  .nc), which stores data hier
 
 Tools like **ncdump** display structure and contents (as CDL). Careful, hdf5 also contains **ncdump** but it differs in subtle ways.
 
+A simple way to get at the raw data is the following:
+
+      import netCDF4
+      nc = netCDF4.Dataset(filename)
+      rawdata = nc.variables['Data.Integrate.Data'][:]
+      nc.close()
+
+where **rawdata** is now a 2D array, shaped (ntime,nchan) in the python sense (nchan runs fastest).
+
 
 # LMT software
 
