@@ -17,7 +17,7 @@ or
 
 These are needed for the gridder program (written in C) spec_driver_fits
 
-* Ubuntu:  sudo apt install libnetcdf-dev netcdf-bin libnetcdf15
+* Ubuntu:  sudo apt install libnetcdf-dev netcdf-bin libnetcdf15 libcfitsio-dev
 * Centos:  yum install ...
 
 Installing from source ?   Can borrow NEMO's $NEO/src/scripts/mknemo.d scripts
@@ -58,7 +58,26 @@ Alternatively, virtualenv can be used, but needs to be installed (though it's no
      pip install -r requirements.txt     
 
 With the "any" version, stripping the module versions from requirements.txt, install is much faster
+     awk -F= '{print $1}'  requirements.txt > requirements_any.txt
+
 but there is this error
 
      ERROR: jedi 0.17.2 has requirement parso<0.8.0,>=0.7.0, but you'll have parso 0.8.0 which is incompatible.
 
+## runtime
+
+
+in root:
+
+      pip install -e .
+
+
+in bin:
+
+      ln -s ../../../M31_data
+      ln -s ../../examples/M31_J-K_config.txt
+      
+
+benchmark:
+
+      /usr/bin/time ./process_otf_map.py -c M31_J-K_config.txt 
