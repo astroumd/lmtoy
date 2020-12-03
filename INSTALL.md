@@ -6,13 +6,13 @@
 
 # 1. Installing SpectralLineReduction
 
-Grab the source
+Grab the official source
 
      git glone https://github.com/lmt-heterodyne/SpectralLineReduction
      
-or
+or for example another development version
 
-     git glone https://github.com/teuben/SpectralLineReduction
+     git clone --branch teuben1 https://github.com/teuben/SpectralLineReduction
 
 
 ##  Libraries:   cfitsio, netcdf4
