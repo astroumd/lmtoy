@@ -9,7 +9,9 @@
 Grab the source
 
      git glone https://github.com/lmt-heterodyne/SpectralLineReduction
+     
 or
+
      git glone https://github.com/teuben/SpectralLineReduction
 
 
