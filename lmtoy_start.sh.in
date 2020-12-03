@@ -1,0 +1,12 @@
+# @EDIT_MSG@
+# for (ba)sh : source this file
+
+export  LMTOY=@LMTOY@
+
+export PATH=$LMTOY/SpectralLineReduction/bin:$PATH
+
+# if exists
+source $LMTOY/python_start.sh
+
+# if exists
+source SpectralLineReduction/lmtoy_venv/bin/activate
