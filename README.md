@@ -2,23 +2,16 @@
 
 Toy Codes for LMT , not to be confused with https://github.com/teuben/gbtoy
 
+## Installation
+
+This is not finalized yet, there are some notes in [INSTALL.md](INSTALL.md)
+
 ## data
 
 LMT data are (mostly) in netCDF format (extension:  .nc), which stores data hierarchically in a big binary blob. Much like how HDF5 stores data.
-There is a good python interface. To install netCDF4 here is an example on linux/Ubuntu:
 
-      sudo apt install netcdf-bin libnetcdf15
+Tools like **ncdump** display structure and contents (as CDL). Careful, hdf5 also contains **ncdump** but it differs in subtle ways.
 
-Tools like **ncdump** display structure and contents (as CDL). Careful, hdf5 also contains **ncdump** but it differs.
-
-
-For anaconda3 you can simply use
-
-      import netCDF4
-
-and maybe something like this ?
-
-      f = MFDataset("roach0/*nc")
 
 # LMT software
 
