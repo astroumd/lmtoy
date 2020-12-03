@@ -1,0 +1,34 @@
+# lmtslr config file
+#   /media/teuben/P1-2/teuben/LMT/M31_data/
+# mach     /usr/bin/time  output
+# ----     ----------------------------------------------
+# t480     411.08user 23.58system 7:28.93elapsed 96%CPU     process_otf_map.py 
+#          438.12user 19.48system 7:45.49elapsed 98%CPU     process_otf_map2.py  
+#
+# ---
+
+[general]
+
+path      = M31_data
+output    = ./M31_Region_J-K_CO_1.nc
+foobar    = 1        #  it will happily ignore keywords it doesn't know about
+
+
+obsnum    = 85778
+obs_list  = [85778]       # ignored?
+
+[spectra]
+
+bank      = 0
+pix_list  = 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+use_cal   = False
+tsys      = 220.0
+x_axis    = VLSR
+b_order   = 0
+b_regions = "[[-620,-320],[-220,80]]"
+l_regions = "[[-320,-220]]"
+slice     = -620,80
+
+
+# obsnum    = 85778      # -> duplicate key, good!
+
