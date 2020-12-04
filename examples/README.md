@@ -1,10 +1,19 @@
 # Examples of LMT processings
 
-These amend the examples given in SpectralLineReduction
+These amend the examples given in SpectralLineReduction.
 
-## IRC+10216
+                    M51          M31        IRC+10216
 
-These are 2.1 GB
+      obs          7000"        1500"           
+      CPU           300"         200"
+      data size    13.3 GB       2.8 GB      1.6 GB
+      memory       10.5 GB       4.0 GB      1.7 GB
+      I/O speed      40 MB/s      20 MB/s 
+      nspectra      400k         300k         92k
+      nchan        2048         2048        2048
+      #obsnum         1            3           1
+
+## IRC+10216:   IRC_data
 
         284 ./ifproc/ifproc_2018-11-16_079447_00_0001.nc
       27872 ./ifproc/ifproc_2018-11-16_079448_01_0000.nc
@@ -20,9 +29,7 @@ These are 2.1 GB
 The 79447 obsnum refers to the "Cal", and 79448 to an OTF map of the source (IRC+10216).
 
 
-## M31
-
-These are 11.5 GB
+## M31:   M31_data
 
         284 ./ifproc/ifproc_2019-10-31_085775_00_0001.nc
       64324 ./ifproc/ifproc_2019-10-31_085776_00_0001.nc
@@ -56,18 +63,16 @@ These are 11.5 GB
      941468 ./spectrometer/roach3/roach3_85824_0_1_Region_J-K_2019-11-01_070938.nc
 
 
-## M51
-
-These are 13.7 GB
+## M51:   M51_data
 
          304 ./ifproc/ifproc_2020-02-20_091111_00_0001.nc
       247476 ./ifproc/ifproc_2020-02-20_091112_00_0001.nc
-        3732 ./spectraldata/roach0/roach0_91111_0_1_NGC5194_2020-02-20_060329.nc
-     3343900 ./spectraldata/roach0/roach0_91112_0_1_NGC5194_2020-02-20_060348.nc
-        3796 ./spectraldata/roach1/roach1_91111_0_1_NGC5194_2020-02-20_060329.nc
-     3352484 ./spectraldata/roach1/roach1_91112_0_1_NGC5194_2020-02-20_060348.nc
-        3864 ./spectraldata/roach2/roach2_91111_0_1_NGC5194_2020-02-20_060329.nc
-     3363052 ./spectraldata/roach2/roach2_91112_0_1_NGC5194_2020-02-20_060348.nc
-        3928 ./spectraldata/roach3/roach3_91111_0_1_NGC5194_2020-02-20_060330.nc
-     3370720 ./spectraldata/roach3/roach3_91112_0_1_NGC5194_2020-02-20_060348.nc
+        3732 ./spectrometer/roach0/roach0_91111_0_1_NGC5194_2020-02-20_060329.nc
+     3343900 ./spectrometer/roach0/roach0_91112_0_1_NGC5194_2020-02-20_060348.nc
+        3796 ./spectrometer/roach1/roach1_91111_0_1_NGC5194_2020-02-20_060329.nc
+     3352484 ./spectrometer/roach1/roach1_91112_0_1_NGC5194_2020-02-20_060348.nc
+        3864 ./spectrometer/roach2/roach2_91111_0_1_NGC5194_2020-02-20_060329.nc
+     3363052 ./spectrometer/roach2/roach2_91112_0_1_NGC5194_2020-02-20_060348.nc
+        3928 ./spectrometer/roach3/roach3_91111_0_1_NGC5194_2020-02-20_060330.nc
+     3370720 ./spectrometer/roach3/roach3_91112_0_1_NGC5194_2020-02-20_060348.nc
 
