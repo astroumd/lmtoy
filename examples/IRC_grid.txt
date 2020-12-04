@@ -3,10 +3,7 @@
 [general]
 
 program_path = spec_driver_fits
-
-# input NC filename
 input  = IRC_79448.nc
-# output FITS filename
 output = IRC_79448.fits
 
 [cube]
@@ -22,9 +19,9 @@ pix_list = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 # rms cut off to use
 rms_cut = 4.0
 # x extent of cube in arcsec (cube will go to +/- x_extent)
-x_extent = 250.0
+x_extent = 300.0
 # y extent of cube in arcsec (cube will go to +/- y_extent)
-y_extent = 250.0
+y_extent = 300.0
 # filter code for otf gridding, one of (0=box,1=jinc,2=gaussian)
 otf_select = 1
 # maximum radius of convulution (units lambda/D)
