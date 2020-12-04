@@ -4,11 +4,11 @@ These amend the examples given in SpectralLineReduction.
 
                     M51          M31        IRC+10216
 
-      obs          7000"        1500"           
-      CPU           300"         200"
+      obs          7000"        1500"        700"   
+      CPU           300"         200"         70"
       data size    13.3 GB       2.8 GB      1.6 GB
       memory       10.5 GB       4.0 GB      1.7 GB
-      I/O speed      40 MB/s      20 MB/s 
+      I/O speed      40 MB/s      20 MB/s     20 MB/s
       nspectra      400k         300k         92k
       nchan        2048         2048        2048
       #obsnum         1            3           1
