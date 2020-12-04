@@ -1,0 +1,39 @@
+#lmtslr general items
+
+[general]
+
+program_path = spec_driver_fits
+
+# input NC filename
+input  = IRC_79448.nc
+# output FITS filename
+output = IRC_79448.fits
+
+[cube]
+
+# angular resolution to use for gridding (in arcsec)
+resolution = 11.0
+# cell size of output grid (in arcsec)
+cell = 5.5
+# list of pixels to process
+#pix_list = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+pix_list = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+#pix_list = 12,
+# rms cut off to use
+rms_cut = 4.0
+# x extent of cube in arcsec (cube will go to +/- x_extent)
+x_extent = 250.0
+# y extent of cube in arcsec (cube will go to +/- y_extent)
+y_extent = 250.0
+# filter code for otf gridding, one of (0=box,1=jinc,2=gaussian)
+otf_select = 1
+# maximum radius of convulution (units lambda/D)
+rmax = 3.0
+# number of samples in convolution filter
+n_samples = 256
+# otf_a parameter
+otf_a = 1.1
+# otf_b parameter
+otf_b = 4.75
+# otf_c parameter
+otf_c = 2.0

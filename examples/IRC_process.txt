@@ -1,0 +1,34 @@
+# lmtslr config file for M31_data
+#
+# 11.7 GB of input data, uses about 7.5 GB memory,
+#                        produces 229332 SpecFile, 622 MB
+#
+# 
+#
+# mach     CPU output from /usr/bin/time                    task
+# ------   --------------------------------------------------------------------
+# t480     411.08user 23.58system 7:28.93elapsed 96%CPU     process_otf_map.py 
+#          438.12user 19.48system 7:45.49elapsed 98%CPU     process_otf_map2.py  
+# xps13    195.13user  9.09system 3:24.74elapsed 99%CPU     process_otf_map.py float64 [def]
+#          180.20user  3.39system 3:02.26elapsed 100%CPU    process_otf_map.py float32
+# ------   --------------------------------------------------------------------
+
+[general]
+
+path      = IRC_data
+output    = IRC_79448.nc
+obsnum    = 79448
+
+[spectra]
+
+bank      = 0
+pix_list  = 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+use_cal   = False
+tsys      = 220.0
+x_axis    = VLSR
+b_order   = 0
+b_regions = "[[-620,-320],[-220,80]]"
+l_regions = "[[-320,-220]]"
+slice     = -200,200
+
+
