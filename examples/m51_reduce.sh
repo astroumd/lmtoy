@@ -1,14 +1,28 @@
 #! /bin/bash
+#
+#  Example OTF sequoia data reduction path
 
-
+# input parameters
 src=M51
 obsnum=91112
 
+
+
+
+
+#             simple keyword=value command line parser for bash - don't make any changing below
+for arg in $*; do\
+  export $arg
+done
+
+
+# derived parameters
 p_dir=$src_data
 s_nc=$src.nc
 s_fits=$src.fits
 
 
+#  convert RAW to SpecFile
 process_otf_map2.py -p $p_dir -o $s_nc -O $obsnum \
 		    --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
 		    -b 0 \
@@ -18,7 +32,7 @@ process_otf_map2.py -p $p_dir -o $s_nc -O $obsnum \
 		    --slice [200,800] \
 		    --eliminate_list 0
 
-
+#  convert SpecFile to FITS
 grid_data.py --program_path spec_driver_fits \
 	     -i $s_nc -o $s_fits \
 	     --resolution 14.0 \
