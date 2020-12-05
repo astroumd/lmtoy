@@ -1,0 +1,38 @@
+# lmtslr config file for M51
+
+[general]
+
+program_path = spec_driver_fits
+input        = M51_91112.nc
+output       = M51_91112.fits
+
+[cube]
+
+# angular resolution to use for gridding (in arcsec)
+resolution = 14.0
+# cell size of output grid (in arcsec)
+cell = 7.0
+# list of pixels to process
+#pix_list = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+#pix_list = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+pix_list = 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+# pix_list = 12,
+# rms cut off to use
+rms_cut = 10.0
+#                     dies at 350 and 400
+x_extent = 350.0
+y_extent = 350.0
+# filter code for otf gridding, one of (0=box,1=jinc,2=gaussian)
+otf_select = 1
+# maximum radius of convulution (units lambda/D)
+rmax = 3.0
+# number of samples in convolution filter
+n_samples = 256
+# otf_a parameter
+otf_a = 1.1
+# otf_b parameter
+otf_b = 4.75
+# otf_c parameter
+otf_c = 2.0
+#
+noise_sigma = 1
