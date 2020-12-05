@@ -2,6 +2,11 @@
 #
 #  Example OTF sequoia data reduction path
 
+
+/usr/bin/time process_otf_map.py -c M51_process.txt
+/usr/bin/time grid_data.py       -c M51_grid.txt
+exit 0
+
 # input parameters
 src=M51
 obsnum=91112
@@ -17,13 +22,14 @@ done
 
 
 # derived parameters
-p_dir=$src_data
-s_nc=$src.nc
-s_fits=$src.fits
-
+p_dir=${src}_data
+s_nc=${src}_${obsnum}.nc
+s_fits=${src}_${obsnum}.fits
 
 #  convert RAW to SpecFile
-process_otf_map2.py -p $p_dir -o $s_nc -O $obsnum \
+process_otf_map2.py -p $p_dir \
+		    -o $s_nc \
+		    -O $obsnum \
 		    --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
 		    -b 0 \
 		    --stype 2 \
@@ -34,7 +40,8 @@ process_otf_map2.py -p $p_dir -o $s_nc -O $obsnum \
 
 #  convert SpecFile to FITS
 grid_data.py --program_path spec_driver_fits \
-	     -i $s_nc -o $s_fits \
+	     -i $s_nc \
+	     -o $s_fits \
 	     --resolution 14.0 \
 	     --cell  7.0 \
 	     --pix_list 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
