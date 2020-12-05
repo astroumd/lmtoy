@@ -1,6 +1,6 @@
 # lmtslr config file for M51_data
 #
-# 13.7 GB of input data, uses about 10.5 GB memory,
+# 13.7 GB of input data, uses about 10.5 GB memory (0r 13.5 in process_otf_map2)
 #                        produces 388588 SpecFile, 991 MB
 #
 # 
@@ -20,12 +20,17 @@ obsnum    = 91112
 
 bank      = 0
 pix_list  = 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-use_cal   = False
-tsys      = 200.0
-x_axis    = VLSR
+#use_cal   = False
+#tsys      = 200.0
+#x_axis    = VLSR
 stype     = 2
 b_order   = 0
-b_regions = "[[0, 350], [600,900]]"
-l_regions = "[[350,600]]"
-slice     = 100.0,900.0
+#b_regions = "[[0, 350], [600,900]]"
+#l_regions = "[[350,600]]"
+#slice     = 100.0,900.0
+#slice    = -200.0,1200.0
 
+# markH
+b_regions = "[[200,380],[580,800]]"
+l_regions = "[[400,600]]"
+slice     = 200,800
