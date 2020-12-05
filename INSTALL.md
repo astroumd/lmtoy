@@ -21,6 +21,7 @@ These are needed for the gridder program (written in C) spec_driver_fits
 
 * Ubuntu:  sudo apt install libnetcdf-dev netcdf-bin libnetcdf15 libcfitsio-dev
 * Centos:  yum install ...
+* MacBrew: brew install netcdf cfitsio
 
 Installing from source ?   Can borrow NEMO's $NEO/src/scripts/mknemo.d scripts
 
