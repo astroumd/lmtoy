@@ -1,0 +1,19 @@
+#lmtslr general items
+
+[general]
+
+input = IRC_79448.nc
+
+
+[spectra]
+
+# show all pixels?
+show_all_pixels = True
+# list of pixels to process
+pix_list = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+# show a particular pixel
+show_pixel = 10
+# rms cut off to use
+rms_cut = 10.0
+# Y-range for plots
+plot_range = -10, 10
