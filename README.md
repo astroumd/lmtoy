@@ -4,7 +4,7 @@ Toy Codes for LMT , not to be confused with https://github.com/teuben/gbtoy
 
 ## Installation
 
-This is not finalized yet, there are some notes in [INSTALL.md](INSTALL.md)
+This is not finalized yet, there are some notes in [INSTALL.md](INSTALL.md). This is still a toy monorepo.
 
 ## data
 
