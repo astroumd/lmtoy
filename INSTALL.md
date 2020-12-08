@@ -20,7 +20,7 @@ or for example another development version
 These are needed for the gridder program (written in C) spec_driver_fits
 
 * Ubuntu:  sudo apt install libnetcdf-dev netcdf-bin libnetcdf15 libcfitsio-dev
-* Centos:  yum install ...
+* Centos:  yum install netcdf-devel cfitsio
 * MacBrew: brew install netcdf cfitsio
 
 Installing from source ?   Can borrow NEMO's $NEO/src/scripts/mknemo.d scripts
