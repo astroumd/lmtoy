@@ -1,16 +1,14 @@
+# See the INSTALL.md notes on how to use this Makefile
 
-# use wget or wgetc (caching)
-WGET = wgetc
+
+# use wget or (caching) wgetc 
+WGET = wget
 
 help:
 	@echo No help yet
 
-.PHONY:  build dist doc
 
-
-
-install_python:
-	./install_anaconda3 wget=$(WGET)
+git:  SpectralLineReduction dreampy3
 
 SpectralLineReduction:
 	git clone --branch teuben1 https://github.com/teuben/SpectralLineReduction
@@ -18,6 +16,16 @@ SpectralLineReduction:
 dreampy3:
 	git clone https://github.com/lmt-heterodyne/dreampy3
 
+
+.PHONY:  build
+
+
+# step 1 (or skip and use another python)
+#        after this install, the start_python.sh should be sourced in the shell
+install_python:
+	./install_anaconda3 wget=$(WGET)
+
+# step 2
 install_lmtslr: SpectralLineReduction
 	@echo python SLR
 	(cd SpectralLineReduction; \
@@ -29,6 +37,7 @@ install_lmtslr: SpectralLineReduction
 	@echo C
 	(cd SpectralLineReduction/C ; make; cp spec_driver_fits	../bin)
 
+# step 3
 install_dreampy3: dreampy3
 	@echo python dreampy3
 	(cd dreampy3; \
@@ -39,7 +48,8 @@ install_dreampy3: dreampy3
 	pip install -e .)
 
 
-# in top level !!!
+# Optional hack:  once we agree on a common ste of requirements, we can make a common step
+#                 note the current step2 and step3 mean you can only run one of the two
 common:
 	(python -m venv lmtoy_venv; \
 	source lmtoy_venv/bin/activate; \
