@@ -37,3 +37,13 @@ install_dreampy3: dreampy3
 	awk -F= '{print $$1}'  requirements.txt > requirements_lmtoy.txt ; \
 	pip install -r requirements_lmtoy.txt; \
 	pip install -e .)
+
+
+# in top level !!!
+common:
+	(python -m venv lmtoy_venv; \
+	source lmtoy_venv/bin/activate; \
+	pip install -r SpectralLineReduction/requirements_lmtoy.txt; \
+	pip install -r dreampy3/requirements_lmtoy.txt; \
+	pip install -e SpectralLineReduction; \
+	pip install -e dreampy3)
