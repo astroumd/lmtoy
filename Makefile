@@ -1,7 +1,7 @@
 # See the INSTALL.md notes on how to use this Makefile
 
 
-# use wget or (caching) wgetc 
+# use standard wget or Peter's caching wgetc 
 WGET = wget
 
 help:
@@ -18,6 +18,17 @@ dreampy3:
 
 
 .PHONY:  build
+
+install:
+	@echo "The installation has a few manual steps:"
+	@echo "1. python (or skip it if you have it)"
+	@echo "  make install_python"
+	@echo "  source python_start.sh"
+	@echo "2. LMTSLR"
+	@echo "  make install_lmtslr"
+	@echo "3. Configure for others to use it"
+	@echo "  ./configure"
+	@echo "  source lmtoy_start.sh"
 
 
 # step 1 (or skip and use another python)
