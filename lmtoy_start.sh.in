@@ -9,4 +9,4 @@ export PATH=$LMTOY/SpectralLineReduction/bin:$PATH
 source $LMTOY/python_start.sh
 
 # if exists
-source SpectralLineReduction/lmtoy_venv/bin/activate
+source $LMTOY/SpectralLineReduction/lmtoy_venv/bin/activate
