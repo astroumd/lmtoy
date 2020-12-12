@@ -1,11 +1,16 @@
 #! /bin/bash
 #
-#  Example OTF sequoia data reduction path
+#  Example OTF sequoia data reduction path for M31 (3 obsnum available)
+#              pixel 3 bad in some data for some of the time
+#
+#  CPU: 240.51user 7.17system 4:12.49elapsed 98%CPU 
+
 
 # input parameters
 src=M31
 obsnum=85776
-
+viewspec=0
+viewcube=0
 
 
 
@@ -24,36 +29,76 @@ echo Valid obsnum= for M31 are:  85776 85778 85824
 echo will created $s_fits
 sleep 2
 
+# 85776 - pixel 3 is bad in the first 1/3 of the observation
+# 85778 - pixel 3 only bad for a short range
+# 85824 - all data seem ok
 
 #  convert RAW to SpecFile
 process_otf_map2.py -p $p_dir \
 		    -o $s_nc \
 		    -O $obsnum \
 		    --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
-		    -b 0 \
+		    --bank 0 \
+		    --tsys 220.0 \
 		    --stype 2 \
+		    --x_axis VLSR \
+		    --b_order 0 \
 		    --b_regions [[-620,-320],[-220,80]] \
 		    --l_region [[-320,-220]] \
 		    --slice [-620,80] \
 		    --eliminate_list 0
 
+#  -215 200    -190 221   415 x 420
+if [ $viewspec = 1 ]; then
+view_spec_file.py -i $s_nc \
+		  --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
+		  --rms_cut 10.0 \
+		  --plot_range=-1,3
+fi
+
 #  convert SpecFile to FITS
 grid_data.py --program_path spec_driver_fits \
 	     -i $s_nc \
 	     -o $s_fits \
-	     --resolution 11.0 \
-	     --cell  5.5 \
-	     --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
-	     --rms_cut 10 \
-	     --x_extent 300 \
-	     --y_extent 300 \
-	     --otf_select 1 \
-	     --rmax 3 \
-	     --otf_a 1.1 \
-	     --otf_b 4.75 \
-	     --otf_c 2 \
-	     --n_samples 256 \
+	     --resolution  11.0 \
+	     --cell        5.5 \
+	     --pix_list    0,1,2,4,5,6,7,8,9,10,11,12,13,14,15 \
+	     --rms_cut     10 \
+	     --x_extent    250 \
+	     --y_extent    250 \
+	     --otf_select  1 \
+	     --rmax        3 \
+	     --otf_a       1.1 \
+	     --otf_b       4.75 \
+	     --otf_c       2 \
+	     --n_samples   256 \
 	     --noise_sigma 1
+
+# 45,74 is the bright spot in the NE, -70,-120 the one in the SW
+if [ $viewcube = 1 ]; then
+view_cube.py -i $s_fits \
+	     --v_range=-320.0,-220.0 \
+	     --v_scale=1000 \
+	     --location=45,74 \
+	     --scale=0.000278 \
+	     --limits=-240,240,-240,240 \
+	     --tmax_range=-0.5,1.5 \
+	     --tint_range=-1,25 \
+	     --plot_type TINT \
+	     --interpolation bilinear
+fi
+
+if [ ! -z $NEMO ]; then
+    fitsccd $s_fits - | ccdstat - robust=t planes=0 > $s_fits.cubestat
+    fitsccd $s_fits - | ccdstat - robust=t 
+fi
 
 echo Done with $s_fits
 echo Valid obsnum= for M31 are:  85776 85778 85824
+
+# RMS in cubes, all pixel=3 removed
+# fitsccd $s_fits - | ccdstat - robust=t
+#         process_otf_map    process_otf_map2
+# 85776   0.110              0.112  0.060
+# 85778   0.119              0.112  0.062
+# 85824   0.127              0.128  0.068
