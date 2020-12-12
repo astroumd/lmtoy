@@ -8,10 +8,13 @@ help:
 	@echo No help yet
 
 
-git:  SpectralLineReduction dreampy3
+git:  SpectralLineReduction SpectralLineConfigFiles dreampy3
 
 SpectralLineReduction:
 	git clone --branch teuben1 https://github.com/teuben/SpectralLineReduction
+
+SpectralLineConfigFiles:
+	git clone https://github.com/lmt-heterodyne/SpectralLineConfigFiles
 
 dreampy3:
 	git clone https://github.com/lmt-heterodyne/dreampy3
@@ -38,25 +41,25 @@ install_python:
 
 # step 2
 install_lmtslr: SpectralLineReduction
-	@echo python SLR
+	@echo python3 SLR
 	(cd SpectralLineReduction; \
-	python -m venv lmtoy_venv; \
+	python3 -m venv lmtoy_venv; \
 	source lmtoy_venv/bin/activate; \
 	awk -F= '{print $$1}'  requirements.txt > requirements_lmtoy.txt ; \
-	pip install -r requirements_lmtoy.txt; \
-	pip install -e .)
+	pip3 install -r requirements_lmtoy.txt; \
+	pip3 install -e .)
 	@echo C
 	(cd SpectralLineReduction/C ; make; cp spec_driver_fits	../bin)
 
 # step 3
 install_dreampy3: dreampy3
-	@echo python dreampy3
+	@echo python3 dreampy3
 	(cd dreampy3; \
-	python -m venv lmtoy_venv; \
+	python3 -m venv lmtoy_venv; \
 	source lmtoy_venv/bin/activate; \
 	awk -F= '{print $$1}'  requirements.txt > requirements_lmtoy.txt ; \
-	pip install -r requirements_lmtoy.txt; \
-	pip install -e .)
+	pip3 install -r requirements_lmtoy.txt; \
+	pip3 install -e .)
 
 
 # Optional hack:  once we agree on a common ste of requirements, we can make a common step
