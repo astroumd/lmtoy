@@ -23,7 +23,8 @@ These are needed for the gridder program (written in C) spec_driver_fits
 * Centos:  yum install netcdf-devel cfitsio
 * MacBrew: brew install netcdf cfitsio
 
-Installing from source ?   Can borrow NEMO's $NEO/src/scripts/mknemo.d scripts
+If in a bind, e.g. on a system where you don't have admin privilages, you
+can always Install from source. E.g. borrow NEMO's $NEO/src/scripts/mknemo.d scripts
 
      mkdir local
      ./cfitsio wget=wget NEMO=`pwd
@@ -47,40 +48,39 @@ Yuck.
 
 The suggested path is to use a virtual environment. From anaconda3 for example:
 
-     python -m venv lmt1
+     python3 -m venv lmt1
 
      source lmt1/bin/activate
-     pip install -r requirements.txt
+     pip3 install -r requirements.txt
      #   this will cause a few packages to be compiled, which can take a long time (e.g. scipy)
 
-Alternatively, virtualenv can be used, but needs to be installed (though it's now recommended to use the venv module)
+Alternatively, the old (python2) style virtualenv can be used,
+but normally needs to be installed (though it's now recommended to use the venv module)
 
      pip install virtualenv 
      virtualenv lmt2 
      source lmt2/bin/activate
-     pip install -r requirements.txt     
+     pip install -r requirements.txt
 
-With the "any" version, stripping the module versions from requirements.txt, install is much faster
+Currently requirements.txt are frozen (and by now old) versions, and installing them can take forever
+(scipy is notorious).  With you following trick you can strip the version and just grab the latest:
+
      awk -F= '{print $1}'  requirements.txt > requirements_any.txt
 
 but there is this error
 
      ERROR: jedi 0.17.2 has requirement parso<0.8.0,>=0.7.0, but you'll have parso 0.8.0 which is incompatible.
 
-## runtime
+but it doesn't seem to hurt the LMT workflow.
 
-
-in root:
+Finally, when all this is installed, you can install LMTSLR, e.g.
 
       pip install -e .
 
+There is no official runtime environment.   If you use lmtoy, via configure and the suggested method to
+install LMTSLR we have constructed lmtoy_start.sh after you run the configure script. See the Makefile for
+an example.
 
-in bin:
+## Examples
 
-      ln -s ../../../M31_data
-      ln -s ../../examples/M31_J-K_config.txt
-      
-
-benchmark:
-
-      /usr/bin/time ./process_otf_map.py -c M31_J-K_config.txt 
+Some examples how to use LMTSLR are in the examples directory.
