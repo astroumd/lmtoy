@@ -1,6 +1,7 @@
 #! /bin/bash
 #
 #  Example OTF sequoia data reduction path for IRC+10216
+#  all pixels are pretty good, but with trimodal RMS distribution
 #  
 #  CPU: 133.67user 5.61system 2:18.90elapsed 100%CPU
 
