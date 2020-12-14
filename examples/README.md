@@ -1,17 +1,43 @@
-# Examples of LMT processings
+# Examples of LMT data processing
+
+There are several processing paths for Sequoia data:  OTF, MAP, BS and PS.
+
+## A typical OTF run
+
+1. Convert the raw (spectra) data to a calibrated spectrum file.   Some selections, e.g. by pixel,
+  Cannot select by time yet. Although all spectra are read (this costs memory), the output can
+  be trimmed by whatever slice is selected
+
+2. Plot the spectra of all or one pixel. View coverage, etc
+
+3. Grid the spectrum file into a FITS cube. This is where one can select on RMS etc.
+
+4. Plot the cube, by picking a point to view a spectrum, slices, and a TMAX or TINT.  Or take your cube
+to your	favorite fits cube viewer (ds9, casaviewer, carta, qfitsview, ...)
+
+Currently this workflow is in four different python scripts that are executed in succession.
+
+## Overview of three datasets
+
 
 These amend the examples given in SpectralLineReduction.
 
                     M51          M31        IRC+10216
-
-      obs          7000"        1500"        700"   
-      CPU           300"         200"         70"
+		    
+      type          OTF          OTF         OTF
+      
+      obs          7000"        1500"        700"
       data size    13.3 GB       2.8 GB      1.6 GB
+      I/O speed     1.9 MB/s     1.9 MB/s    2.3 MB/s
+      CPU           300"         200"         70"
+      CPUIO speed    40 MB/s      20 MB/s     20 MB/s
       memory       10.5 GB       4.0 GB      1.7 GB
-      I/O speed      40 MB/s      20 MB/s     20 MB/s
       nspectra      400k         300k         92k
       nchan        2048         2048        2048
+      size         8x12'         6x6'        8x8'
+      noise         135mK        120mK       190mK
       #obsnum         1            3           1
+
 
 ## IRC+10216:   IRC_data
 
