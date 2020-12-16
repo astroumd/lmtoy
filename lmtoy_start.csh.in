@@ -9,4 +9,5 @@ setenv PATH  $LMTOY/SpectralLineReduction/bin:$PATH
 source $LMTOY/python_start.csh
 
 # if exists
-source $LMTOY/SpectralLineReduction/lmtoy_venv/bin/activate.csh
+#source $LMTOY/SpectralLineReduction/lmtoy_venv/bin/activate.csh
+source $LMTOY/lmtoy_venv/bin/activate.csh
