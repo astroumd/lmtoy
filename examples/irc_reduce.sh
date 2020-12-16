@@ -78,7 +78,7 @@ grid_data.py --program_path spec_driver_fits \
 	     --rms_cut     $rms_cut \
 	     --x_extent    300 \
 	     --y_extent    300 \
-	     --otf_select  2 \
+	     --otf_select  1 \
 	     --rmax        3 \
 	     --otf_a       1.1 \
 	     --otf_b       4.75 \
