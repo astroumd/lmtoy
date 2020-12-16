@@ -39,12 +39,14 @@ install:
 install_python:
 	./install_anaconda3 wget=$(WGET)
 
+lmtoy_venv:
+	python3 -m venv lmtoy_venv
+
 # step 2
-install_lmtslr: SpectralLineReduction
+install_lmtslr: SpectralLineReduction lmtoy_venv
 	@echo python3 SLR
 	(cd SpectralLineReduction; \
-	python3 -m venv lmtoy_venv; \
-	source lmtoy_venv/bin/activate; \
+	source ../lmtoy_venv/bin/activate; \
 	awk -F= '{print $$1}'  requirements.txt > requirements_lmtoy.txt ; \
 	pip3 install -r requirements_lmtoy.txt; \
 	pip3 install -e .)
@@ -52,11 +54,10 @@ install_lmtslr: SpectralLineReduction
 	(cd SpectralLineReduction/C ; make; cp spec_driver_fits	../bin)
 
 # step 3
-install_dreampy3: dreampy3
+install_dreampy3: dreampy3 lmtoy_venv
 	@echo python3 dreampy3
 	(cd dreampy3; \
-	python3 -m venv lmtoy_venv; \
-	source lmtoy_venv/bin/activate; \
+	source ../lmtoy_venv/bin/activate; \
 	awk -F= '{print $$1}'  requirements.txt > requirements_lmtoy.txt ; \
 	pip3 install -r requirements_lmtoy.txt; \
 	pip3 install -e .)
@@ -64,9 +65,8 @@ install_dreampy3: dreampy3
 
 # Optional hack:  once we agree on a common ste of requirements, we can make a common step
 #                 note the current step2 and step3 mean you can only run one of the two
-common:
-	(python -m venv lmtoy_venv; \
-	source lmtoy_venv/bin/activate; \
+common: lmtoy_venv
+	(source lmtoy_venv/bin/activate; \
 	pip install -r SpectralLineReduction/requirements_lmtoy.txt; \
 	pip install -r dreampy3/requirements_lmtoy.txt; \
 	pip install -e SpectralLineReduction; \
