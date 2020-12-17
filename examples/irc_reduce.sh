@@ -4,14 +4,18 @@
 #  all pixels are pretty good, but with trimodal RMS distributions
 #  
 #  CPU: 133.67user 5.61system 2:18.90elapsed 100%CPU
+#       360.22user 4.12system 1:42.97elapsed 353%CPU (w/ NEMO)
+#        80.97user 1.96system 1:22.99elapsed 99%CPU
 
-#/usr/bin/time process_otf_map2.py -c IRC_process.txt
-#/usr/bin/time grid_data.py -c IRC_grid.txt
-#exit 0
+# 1   72.75user 1.55system 1:14.36elapsed  99%CPU    161.69user 6.08system 2:47.24elapsed 100%CPU 
+# 2  153.72user 2.21system 1:21.68elapsed 190%CPU
+# 4  361.27user 3.95system 1:36.93elapsed 376%CPU
+# 8  360.79user 3.83system 1:36.79elapsed 376%CPU 
 
 # input parameters
 src=IRC
 obsnum=79448
+makespec=1
 viewspec=0
 viewcube=0
 pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
@@ -32,7 +36,8 @@ s_fits=${src}_${obsnum}.fits
 
 # bug? tsys 220 vs. 110 seems to make no pdiff
 #  convert RAW to SpecFile
-process_otf_map2.py -p $p_dir \
+if [ $makespec = 1 ]; then
+rocess_otf_map2.py -p $p_dir \
 		    -o $s_nc \
 		    --obsnum $obsnum \
 		    --pix_list $pix_list \
@@ -45,7 +50,7 @@ process_otf_map2.py -p $p_dir \
 		    --l_region [[-100,100]] \
 		    --slice [-350,350] \
 		    --eliminate_list 0 
-
+fi
 #		    --slice [-1000,1000] \
 #		    --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
 
@@ -114,8 +119,13 @@ else
     echo No NEMO
 fi
 
-# Looks like 2nd line near VLSR=-310 is Acetaldehyde (CH3CHO) at 115.38210620 GHz 
+# Looks like 2nd line near VLSR=-310 is Acetaldehyde (CH3CHO) at 115.38210620 GHz
+# but ADMIT has a hard time getting it right.
+#       115.38240 SiC2
+#       115.3774  U
+#       115.3871  U
 
+# QAC_STATS: IRC_79448.fits.ccd -0.0295232 25.0818 -7545.73 5872.96  0 -0.0455642
 
 echo Done with $s_fits
 
