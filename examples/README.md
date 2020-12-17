@@ -22,21 +22,25 @@ Currently this workflow is in four different python scripts that are executed in
 
 These amend the examples given in SpectralLineReduction.
 
-                    M51          M31        IRC+10216
+                      M51          M31        IRC+10216
 		    
-      type          OTF          OTF         OTF
+      type            OTF          OTF         OTF
       
-      obs          7000"        1500"        700"
-      data size    13.3 GB       2.8 GB      1.6 GB
-      I/O speed     1.9 MB/s     1.9 MB/s    2.3 MB/s
-      CPU           300"         200"         70"
-      CPUIO speed    40 MB/s      20 MB/s     20 MB/s
-      memory       10.5 GB       4.0 GB      1.7 GB
-      nspectra      400k         300k         92k
-      nchan        2048         2048        2048
-      size         8x12'         6x6'        8x8'
-      noise         135mK        120mK       190mK
-      #obsnum         1            3           1
+      obs            7000"        1500"        700"
+      data size      13.3 GB       2.8 GB      1.6 GB
+      data rate       1.9 MB/s     1.9 MB/s    2.3 MB/s
+      CPU             300"         200"         70"
+      processing rate  40 MB/s      20 MB/s     20 MB/s
+      memory         10.5 GB       4.0 GB      1.7 GB
+      ntime           834k         231k       101k
+      nspectra        340k         228k        92k
+      nchan          2048         2048        2048
+      size           8x12'         6x6'        8x8'
+      noise           150mK        115mK       208mK
+      #obsnum           1            3           1
+      #sweeps          1x           1x          1x
+      bad_pixels      0,5            3           -
+
 
 
 ## IRC+10216:   IRC_data
