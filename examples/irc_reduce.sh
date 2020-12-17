@@ -37,7 +37,7 @@ s_fits=${src}_${obsnum}.fits
 # bug? tsys 220 vs. 110 seems to make no pdiff
 #  convert RAW to SpecFile
 if [ $makespec = 1 ]; then
-rocess_otf_map2.py -p $p_dir \
+process_otf_map2.py -p $p_dir \
 		    -o $s_nc \
 		    --obsnum $obsnum \
 		    --pix_list $pix_list \
@@ -121,9 +121,10 @@ fi
 
 # Looks like 2nd line near VLSR=-310 is Acetaldehyde (CH3CHO) at 115.38210620 GHz
 # but ADMIT has a hard time getting it right.
-#       115.38240 SiC2
+#       115.38240 SiC2 (Silicon Carbide)
 #       115.3774  U
 #       115.3871  U
+# The two candidates differ by 0.68 km/s, within the same 1 km/s channel
 
 # QAC_STATS: IRC_79448.fits.ccd -0.0295232 25.0818 -7545.73 5872.96  0 -0.0455642
 
