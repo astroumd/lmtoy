@@ -1,0 +1,14 @@
+# smaller area to avoid the noisy edges
+inbox = [20,20,70,70]
+
+#   PV crashes
+usePV    = False
+
+#   if it's not in the header (header not supported yet)
+vlsr  = -296
+
+#   lower?
+#numsigma=3.0
+
+# smoothing is needed to merge the dual peak
+llsmooth = ['hanning',5]
