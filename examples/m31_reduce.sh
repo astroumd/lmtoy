@@ -3,12 +3,15 @@
 #  Example OTF sequoia data reduction path for M31 (3 obsnum available)
 #              pixel 3 bad in some data for some of the time
 #
-#  CPU: 240.51user 7.17system 4:12.49elapsed 98%CPU 
+#  CPU: 240.51user  7.17system 4:12.49elapsed 98%CPU
+#       985.39user 14.67system 4:37.48elapsed 360%CPU
+#
 
 
 # input parameters
 src=M31
 obsnum=85776
+makespec=1
 viewspec=0
 viewcube=0
 
@@ -34,19 +37,21 @@ sleep 2
 # 85824 - all data seem ok
 
 #  convert RAW to SpecFile
+if [ $makespec = 1 ]; then
 process_otf_map2.py -p $p_dir \
 		    -o $s_nc \
 		    -O $obsnum \
 		    --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
 		    --bank 0 \
-		    --tsys 220.0 \
 		    --stype 2 \
+		    --use_cal \
 		    --x_axis VLSR \
-		    --b_order 0 \
+		    --b_order 1 \
 		    --b_regions [[-620,-320],[-220,80]] \
 		    --l_region [[-320,-220]] \
 		    --slice [-620,80] \
 		    --eliminate_list 0
+fi
 
 #  -215 200    -190 221   415 x 420
 if [ $viewspec = 1 ]; then
@@ -89,8 +94,15 @@ view_cube.py -i $s_fits \
 fi
 
 if [ ! -z $NEMO ]; then
-    fitsccd $s_fits - | ccdstat - robust=t planes=0 > $s_fits.cubestat
-    fitsccd $s_fits - | ccdstat - robust=t 
+    fitsccd $s_fits $s_fits.ccd
+    ccdstat $s_fits.ccd bad=0 robust=t planes=0 > $s_fits.cubestat
+    ccdstat $s_fits.ccd bad=0 robust=t
+    ccdstat $s_fits.ccd bad=0 qac=t
+    rm $s_fits.ccd    
+fi
+
+if [ ! -z $ADMIT ]; then
+    runa1 $s_fits
 fi
 
 echo Done with $s_fits
@@ -102,3 +114,8 @@ echo Valid obsnum= for M31 are:  85776 85778 85824
 # 85776   0.110              0.112  0.060
 # 85778   0.119              0.112  0.062
 # 85824   0.127              0.128  0.068
+
+# new
+# 85776   0.117
+# 85778   0.123
+# 85824   0.132
