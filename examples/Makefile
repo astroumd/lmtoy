@@ -6,11 +6,11 @@
 DATA_DIRS = IRC_data M31_data M51_data
 
 all:   $(DATA_DIRS)
-	/usr/bin/time ./irc_reduce.sh
-	/usr/bin/time ./m31_reduce.sh obsnum=85776
-	/usr/bin/time ./m31_reduce.sh obsnum=85778
-	/usr/bin/time ./m31_reduce.sh obsnum=85824
-	/usr/bin/time ./m51_reduce.sh
+	/usr/bin/time ./irc_reduce.sh              > irc_79488.log 2>&1
+	/usr/bin/time ./m31_reduce.sh obsnum=85776 > m31_85776.log 2>&1
+	/usr/bin/time ./m31_reduce.sh obsnum=85778 > m31_85778.log 2>&1
+	/usr/bin/time ./m31_reduce.sh obsnum=85824 > m31_85824.log 2>&1
+	/usr/bin/time ./m51_reduce.sh              > m51_91112.log 2>&1
 
 bench: IRC_data
 	@echo "Running benchmark"
