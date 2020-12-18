@@ -41,6 +41,9 @@ These amend the examples given in SpectralLineReduction.
       #sweeps          1x           1x          1x
       bad_pixels      0,5            3           -
 
+      Cube size (MP) 12.8          5.7         8.5
+      ADMIT CPU        70"          90"         90"
+
 
 
 ## IRC+10216:   IRC_data
