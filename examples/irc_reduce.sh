@@ -115,8 +115,10 @@ if [ ! -z $NEMO ]; then
     ccdsub  $s_fits.ccd - 30:80 30:80 | ccdstat - robust=t bad=0
     ccdstat $s_fits.ccd bad=0 qac=t
     rm $s_fits.ccd
-else
-    echo No NEMO
+fi
+
+if [ ! -z $ADMIT ]; then
+    runa1 $s_fits
 fi
 
 # Looks like 2nd line near VLSR=-310 is Acetaldehyde (CH3CHO) at 115.38210620 GHz
