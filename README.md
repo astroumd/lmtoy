@@ -4,11 +4,14 @@ Toy Codes for LMT , not to be confused with https://github.com/teuben/gbtoy
 
 ## Installation
 
-This is not finalized yet, there are some notes in [INSTALL.md](INSTALL.md). This is still a toy monorepo.
+This is not finalized yet, there are some notes in [INSTALL.md](INSTALL.md), and also check out the
+Makefile for specific targets that simplify the install. This is still a toy monorepo.
 
 ## data
 
-LMT data are (mostly) in netCDF format (extension:  .nc), which stores data hierarchically in a big binary blob. Much like how HDF5 stores data.
+LMT data are (mostly) in netCDF format (extension: .nc),
+which stores data hierarchically in a big binary blob. Much like how HDF5 stores data. Actually, a typical LMT observation consists
+of a about 10 files in a specific directory hierarchy, all identified via an OBSNUM.
 
 Tools like **ncdump** display structure and contents (as CDL). Careful, hdf5 also contains **ncdump** but it differs in subtle ways.
 
@@ -24,17 +27,17 @@ where **rawdata** is now a 2D array, shaped (ntime,nchan) in the python sense (n
 
 # LMT software
 
-Is very instrument specific:
+LMT software is very instrument specific:
 
 
 * RSR (Redshift Search Receiver)
   * [dreampy3](https://github.com/lmt-heterodyne/dreampy3)
-- LMT heterodyne: SEQUOIA and OMAyA
+- LMT heterodyne: SEQUOIA, MSIP 1mm and OMAyA
   * [LMTSLR](https://github.com/lmt-heterodyne/SpectralLineReduction)   (SpectralLineReduction)  
 - TolTEC
   * TolTecA
   * CitLali
-  * Dasha
+  * Dash
 
 
 ## References
