@@ -29,12 +29,12 @@ Is very instrument specific:
 
 * RSR (Redshift Search Receiver)
   * [dreampy3](https://github.com/lmt-heterodyne/dreampy3)
-- LMT heterodyne: SEQUOIA and OMAyA
+* LMT heterodyne: SEQUOIA and OMAyA
   * [LMTSLR](https://github.com/lmt-heterodyne/SpectralLineReduction)   (SpectralLineReduction)  
-- TolTEC
-  * TolTecA
-  * CitLali
-  * Dasha
+* TolTEC continuum (1.1, 1.4 and 2.0mm)
+  * TolTecA (python)
+  * CitLali (C++)
+  * Dash
 
 
 ## References
