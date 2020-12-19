@@ -6,21 +6,23 @@
 
 # 1. Installing SpectralLineReduction
 
+See also the Makefile, as this has many targets that simplify this, and this is the
+method that I've employed on a few machines (Ubuntu, Centos, and a Mac/brew).
+
 Grab the official source
 
      git glone https://github.com/lmt-heterodyne/SpectralLineReduction
      
-or for example another development version
+or for example another development version (in dec 2020 the better choice)
 
      git clone --branch teuben1 https://github.com/teuben/SpectralLineReduction
 
-
 ##  Libraries:   cfitsio, netcdf4
 
-These are needed for the gridder program (written in C) spec_driver_fits
+These are needed for the gridder program (written in C) **spec_driver_fits**
 
 * Ubuntu:  sudo apt install libnetcdf-dev netcdf-bin libnetcdf15 libcfitsio-dev
-* Centos:  yum install netcdf-devel cfitsio
+* Centos:  sudo yum install netcdf-devel cfitsio
 * MacBrew: brew install netcdf cfitsio
 
 If in a bind, e.g. on a system where you don't have admin privilages, you
@@ -41,10 +43,9 @@ but the Makefile currently also needs
 
       export LD_LIBRARY_PATH=$(readlink -f ../../lmtoy/opt/lib)
 
-Yuck.
+Yuck. Normally you should not need this path.
 
 ## python modules
-
 
 The suggested path is to use a virtual environment. From anaconda3 for example:
 

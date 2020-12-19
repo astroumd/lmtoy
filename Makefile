@@ -4,34 +4,42 @@
 # use standard wget or Peter's caching wgetc 
 WGET = wget
 
-help:
-	@echo No help yet
+URL1  = https://github.com/teuben/SpectralLineReduction
+URL1a = https://github.com/teuben/SpectralLineReduction
+URL2  = https://github.com/lmt-heterodyne/dreampy3
+URL3  = https://github.com/lmt-heterodyne/SpectralLineConfigFiles
+
+.PHONY:  help install build
+
+
+
+help install:
+	@echo "The installation has a few manual steps:"
+	@echo "1. install python (or skip it if you have it)"
+	@echo "  make install_python"
+	@echo "  source python_start.sh"
+	@echo "2. install LMTSLR"
+	@echo "  make install_lmtslr"
+	@echo "3. Configure LMTOY for others to use it"
+	@echo "  ./configure"
+	@echo "  source lmtoy_start.sh"
 
 
 git:  SpectralLineReduction SpectralLineConfigFiles dreampy3
 
 SpectralLineReduction:
-	git clone --branch teuben1 https://github.com/teuben/SpectralLineReduction
+	git clone --branch teuben1 $(URL1a)
+	(cd SpectralLineReduction; git remote add upstream $(URL1) )
+
+SpectralLineReduction_upstream:
+	git clone $(URLI) SpectralLineReduction_upstream
 
 SpectralLineConfigFiles:
-	git clone https://github.com/lmt-heterodyne/SpectralLineConfigFiles
+	git clone $(URL3)
 
 dreampy3:
-	git clone https://github.com/lmt-heterodyne/dreampy3
+	git clone $(URL2)
 
-
-.PHONY:  build
-
-install:
-	@echo "The installation has a few manual steps:"
-	@echo "1. python (or skip it if you have it)"
-	@echo "  make install_python"
-	@echo "  source python_start.sh"
-	@echo "2. LMTSLR"
-	@echo "  make install_lmtslr"
-	@echo "3. Configure for others to use it"
-	@echo "  ./configure"
-	@echo "  source lmtoy_start.sh"
 
 
 # step 1 (or skip and use another python)
