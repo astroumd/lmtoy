@@ -19,6 +19,11 @@ bench: IRC_data
 	@grep QAC_STATS irc_bench.log
 	@echo "Should see:"
 	@echo "QAC_STATS: IRC_79448.fits.ccd -0.0295232 25.0818 -7545.73 5872.96  0 -0.0455642"
+
+bench1: IRC_data
+	@echo "Running quick test for 1 pixel"
+	/usr/bin/time ./irc_reduce.sh pix_list=1 > irc_bench1.log 2>&1
+
 bench4:
 	OMP_NUM_THREADS=1 /usr/bin/time ./irc_reduce.sh > irc1.log 2>&1
 	OMP_NUM_THREADS=2 /usr/bin/time ./irc_reduce.sh > irc2.log 2>&1
