@@ -32,7 +32,7 @@ SpectralLineReduction:
 	(cd SpectralLineReduction; git remote add upstream $(URL1) )
 
 SpectralLineReduction_upstream:
-	git clone $(URLI) SpectralLineReduction_upstream
+	git clone $(URL1a) SpectralLineReduction_upstream
 
 SpectralLineConfigFiles:
 	git clone $(URL3)
