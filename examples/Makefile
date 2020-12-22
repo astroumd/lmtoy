@@ -18,7 +18,7 @@ bench: IRC_data
 	@echo "Result:"
 	@grep QAC_STATS irc_bench.log
 	@echo "Should see:"
-	@echo "QAC_STATS: IRC_79448.fits.ccd -0.0295232 25.0818 -7545.73 5872.96  0 -0.0455642"
+	@echo "QAC_STATS: IRC_79448.fits.ccd -0.00431168 8.59776 -2360.77 2454.97  0 -0.0124982"
 
 bench1: IRC_data
 	@echo "Running quick test for 1 pixel"

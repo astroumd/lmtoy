@@ -77,8 +77,8 @@ fi
 grid_data.py --program_path spec_driver_fits \
 	     -i $s_nc \
 	     -o $s_fits \
-	     --resolution  11.0 \
-	     --cell        5.5 \
+	     --resolution  12.5 \
+	     --cell        6.25 \
              --pix_list    $pix_list \
 	     --rms_cut     $rms_cut \
 	     --x_extent    300 \
@@ -112,7 +112,7 @@ if [ ! -z $NEMO ]; then
     fitsccd $s_fits $s_fits.ccd error=1
     ccdstat $s_fits.ccd bad=0 robust=t planes=0 > $s_fits.cubestat
     ccdstat $s_fits.ccd bad=0 robust=t
-    ccdsub  $s_fits.ccd - 30:80 30:80 | ccdstat - robust=t bad=0
+    ccdsub  $s_fits.ccd - 30:70 30:70 | ccdstat - robust=t bad=0
     ccdstat $s_fits.ccd bad=0 qac=t
     rm $s_fits.ccd
 fi
@@ -133,8 +133,9 @@ fi
 echo Done with $s_fits
 
 #                RMS
-# fitsccd IRC_79448.fits - | ccdsub - - 30:80 30:80 | ccdstat - robust=t bad=0 
-# std rmax=3:  rms=0.208  peak=15.2
+# fitsccd IRC_79448.fits - | ccdsub - - 30:70 30:70 | ccdstat - robust=t bad=0
+#                  0.187       15.2   (12.5" beam)
+# std rmax=3:  rms=0.208  peak=15.2   (11" beam)
 #     rmax=1:  rms=0.175  peak=14.6
 #  rms_cut=1.3 rms=0.211  peak=15.4
 # otf_select=2 rms=0.036  peak=7.6
