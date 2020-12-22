@@ -61,12 +61,12 @@ view_spec_file.py -i $s_nc \
 		  --plot_range=-1,3
 fi
 
-#  convert SpecFile to FITS
+#  convert SpecFile to FITS (use 1.15 lambda/D as the resolution)
 grid_data.py --program_path spec_driver_fits \
 	     -i $s_nc \
 	     -o $s_fits \
-	     --resolution  11.0 \
-	     --cell        5.5 \
+	     --resolution  12.5 \
+	     --cell        6.25 \
 	     --pix_list    0,1,2,4,5,6,7,8,9,10,11,12,13,14,15 \
 	     --rms_cut     10 \
 	     --x_extent    250 \
@@ -96,7 +96,7 @@ fi
 if [ ! -z $NEMO ]; then
     fitsccd $s_fits $s_fits.ccd
     ccdstat $s_fits.ccd bad=0 robust=t planes=0 > $s_fits.cubestat
-    ccdstat $s_fits.ccd bad=0 robust=t
+    ccdsub  $s_fits.ccd - 30:50 30:50 | ccdstat - bad=0 robust=t
     ccdstat $s_fits.ccd bad=0 qac=t
     rm $s_fits.ccd    
 fi
@@ -108,14 +108,9 @@ fi
 echo Done with $s_fits
 echo Valid obsnum= for M31 are:  85776 85778 85824
 
-# RMS in cubes, all pixel=3 removed
-# fitsccd $s_fits - | ccdstat - robust=t
-#         process_otf_map    process_otf_map2
-# 85776   0.110              0.112  0.060
-# 85778   0.119              0.112  0.062
-# 85824   0.127              0.128  0.068
+# RMS/PEAK in cubes, all pixel=3 removed
+# obsnum  process_otf_map2
+# 85776   0.102 1.44
+# 85778   0.107 1.58
+# 85824   0.116 1.38
 
-# new
-# 85776   0.117
-# 85778   0.123
-# 85824   0.132
