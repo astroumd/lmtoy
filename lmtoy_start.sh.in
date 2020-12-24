@@ -4,6 +4,10 @@
 export  LMTOY=@LMTOY@
 
 export PATH=$LMTOY/SpectralLineReduction/bin:$PATH
+if [ -d $LMTOY/Montage/bin ]; then
+    export PATH=$LMTOY/Montage/bin:$PATH
+fi
+
 
 # if exists
 source $LMTOY/python_start.sh
@@ -11,3 +15,4 @@ source $LMTOY/python_start.sh
 # if exists
 #source $LMTOY/SpectralLineReduction/lmtoy_venv/bin/activate
 source $LMTOY/lmtoy_venv/bin/activate
+
