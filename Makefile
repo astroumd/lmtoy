@@ -18,11 +18,12 @@ help install:
 	@echo "1. install python (or skip it if you have it)"
 	@echo "  make install_python"
 	@echo "  source python_start.sh"
-	@echo "2. install LMTSLR"
+	@echo "2. install LMTSLR (in your python virtual environment)" 
 	@echo "  make install_lmtslr"
 	@echo "3. Configure LMTOY for others to use it"
 	@echo "  ./configure"
 	@echo "  source lmtoy_start.sh"
+	@echo "Users will then see an environment variable LMTOY: $(LMTOY)"
 
 
 git:  SpectralLineReduction SpectralLineConfigFiles dreampy3
@@ -40,7 +41,8 @@ SpectralLineConfigFiles:
 dreampy3:
 	git clone $(URL2)
 
-
+Montage:
+	git clone https://github.com/Caltech-IPAC/Montage
 
 # step 1 (or skip and use another python)
 #        after this install, the start_python.sh should be sourced in the shell
@@ -79,3 +81,4 @@ common: lmtoy_venv
 	pip install -r dreampy3/requirements_lmtoy.txt; \
 	pip install -e SpectralLineReduction; \
 	pip install -e dreampy3)
+
