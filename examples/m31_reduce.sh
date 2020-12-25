@@ -14,8 +14,8 @@ obsnum=85776
 makespec=1
 viewspec=0
 viewcube=0
-
-
+otf_select=1
+extent=250
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -69,9 +69,9 @@ grid_data.py --program_path spec_driver_fits \
 	     --cell        6.25 \
 	     --pix_list    0,1,2,4,5,6,7,8,9,10,11,12,13,14,15 \
 	     --rms_cut     10 \
-	     --x_extent    250 \
-	     --y_extent    250 \
-	     --otf_select  1 \
+	     --x_extent    $extent \
+	     --y_extent    $extent \
+	     --otf_select  $otf_select \
 	     --rmax        3 \
 	     --otf_a       1.1 \
 	     --otf_b       4.75 \
@@ -96,7 +96,7 @@ fi
 if [ ! -z $NEMO ]; then
     fitsccd $s_fits $s_fits.ccd
     ccdstat $s_fits.ccd bad=0 robust=t planes=0 > $s_fits.cubestat
-    ccdsub  $s_fits.ccd - 30:50 30:50 | ccdstat - bad=0 robust=t
+    ccdsub  $s_fits.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
     ccdstat $s_fits.ccd bad=0 qac=t
     rm $s_fits.ccd    
 fi
