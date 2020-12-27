@@ -8,6 +8,8 @@ URL1  = https://github.com/teuben/SpectralLineReduction
 URL1a = https://github.com/teuben/SpectralLineReduction
 URL2  = https://github.com/lmt-heterodyne/dreampy3
 URL3  = https://github.com/lmt-heterodyne/SpectralLineConfigFiles
+URL4  = https://github.com/Caltech-IPAC/Montage
+URL5  = https://github.com/teuben/nemo
 
 .PHONY:  help install build
 
@@ -25,11 +27,14 @@ help install:
 	@echo "  source lmtoy_start.sh"
 	@echo "Users will then see an environment variable LMTOY: $(LMTOY)"
 
+config:
+	./configure
+
 
 git:  SpectralLineReduction SpectralLineConfigFiles dreampy3
 
 SpectralLineReduction:
-	git clone --branch teuben1 $(URL1a)
+	git clone --branch teuben1 $(URL1a)$LMTOY/Montage/bin
 	(cd SpectralLineReduction; git remote add upstream $(URL1) )
 
 SpectralLineReduction_upstream:
@@ -42,7 +47,10 @@ dreampy3:
 	git clone $(URL2)
 
 Montage:
-	git clone https://github.com/Caltech-IPAC/Montage
+	git clone $(URL4)
+
+nemo:
+	git clone $(URL5)
 
 # step 1 (or skip and use another python)
 #        after this install, the start_python.sh should be sourced in the shell
@@ -72,6 +80,14 @@ install_dreampy3: dreampy3 lmtoy_venv
 	pip3 install -r requirements_lmtoy.txt; \
 	pip3 install -e .)
 
+# step 4 (optional)
+install_montage:  Montage
+	(cd Montage; make)
+	# @todo: install the (2?) python interfaces
+
+# step 5 (optional)
+install_nemo:  nemo
+	(cd nemo; ./configure; make build)
 
 # Optional hack:  once we agree on a common ste of requirements, we can make a common step
 #                 note the current step2 and step3 mean you can only run one of the two
