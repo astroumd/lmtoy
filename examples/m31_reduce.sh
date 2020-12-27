@@ -15,7 +15,16 @@ makespec=1
 viewspec=0
 viewcube=0
 otf_select=1
+rmax=3
 extent=250
+resolution=12.5
+cell=6.25
+direct=0
+pix_list=0,1,2,4,5,6,7,8,9,10,11,12,13,14,15
+rms_cut=10
+otf_b=4.75
+n_samples=256
+noise_sigma=0
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -27,6 +36,7 @@ done
 p_dir=${src}_data
 s_nc=${src}_${obsnum}.nc
 s_fits=${src}_${obsnum}.fits
+w_fits=${src}_${obsnum}.wt.fits
 
 echo Valid obsnum= for M31 are:  85776 85778 85824
 echo will created $s_fits
@@ -41,7 +51,7 @@ if [ $makespec = 1 ]; then
 process_otf_map2.py -p $p_dir \
 		    -o $s_nc \
 		    -O $obsnum \
-		    --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
+		    --pix_list $pix_list \
 		    --bank 0 \
 		    --stype 2 \
 		    --use_cal \
@@ -56,28 +66,54 @@ fi
 #  -215 200    -190 221   415 x 420
 if [ $viewspec = 1 ]; then
 view_spec_file.py -i $s_nc \
-		  --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
+		  --pix_list $pix_list \
 		  --rms_cut 10.0 \
 		  --plot_range=-1,3
 fi
 
 #  convert SpecFile to FITS (use 1.15 lambda/D as the resolution)
+if [ $direct = 0 ]; then
 grid_data.py --program_path spec_driver_fits \
 	     -i $s_nc \
 	     -o $s_fits \
-	     --resolution  12.5 \
-	     --cell        6.25 \
-	     --pix_list    0,1,2,4,5,6,7,8,9,10,11,12,13,14,15 \
+	     -w $w_fits \
+	     --resolution  $resolution \
+	     --cell        $cell \
+	     --pix_list    $pix_list \
 	     --rms_cut     10 \
 	     --x_extent    $extent \
 	     --y_extent    $extent \
 	     --otf_select  $otf_select \
-	     --rmax        3 \
+	     --rmax        $rmax \
 	     --otf_a       1.1 \
-	     --otf_b       4.75 \
+	     --otf_b       $otf_b \
 	     --otf_c       2 \
-	     --n_samples   256 \
-	     --noise_sigma 1
+	     --n_samples   $n_samples \
+	     --noise_sigma $noise_sigma
+else
+    echo DIRECT call to spec_driver_fits
+    set +x
+    rm -f $s_fits
+    spec_driver_fits \
+	     -i $s_nc \
+	     -o $s_fits \
+	     -w $w_fits \
+	     -l $resolution \
+	     -c $cell \
+             -u [$pix_list] \
+	     -z $rms_cut \
+	     -x $extent \
+	     -y $extent \
+	     -f $otf_select \
+	     -r $rmax \
+	     -0 1.1 \
+	     -1 $otf_b \
+	     -2 2 \
+	     -n $n_samples \
+	     -s $noise_sigma
+fi
+
+echo Done
 
 # 45,74 is the bright spot in the NE, -70,-120 the one in the SW
 if [ $viewcube = 1 ]; then
