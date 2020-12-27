@@ -1,6 +1,9 @@
 # See the INSTALL.md notes on how to use this Makefile
 # what is shown here to install, is just one of many paths
 
+#
+SHELL = /bin/bash
+
 # use standard wget or Peter's caching wgetc 
 WGET = wget
 
