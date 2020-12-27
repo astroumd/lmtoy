@@ -16,3 +16,6 @@ if (-d $LMTOY/Montage/bin) setenv PATH  $LMTOY/Montage/bin:$PATH
 
 if (-e $LMTOY/nemo/nemo_start.csh) source $LMTOY/nemo/nemo_start.csh
 
+if ($?ADMIT) then
+    echo Warning:  ADMIT=$ADMIT present.  LMTOY will not behave nicely with ADMIT yet.
+endif

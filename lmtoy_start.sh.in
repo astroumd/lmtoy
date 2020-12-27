@@ -27,3 +27,6 @@ if [ -e $LMTOY/nemo/nemo_start.sh ]; then
 fi
 
 
+if [ ! -z $ADMIT ]; then
+    echo Warning:  ADMIT=$ADMIT present.  LMTOY will not behave nicely with ADMIT yet.
+fi
