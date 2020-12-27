@@ -34,7 +34,7 @@ config:
 git:  SpectralLineReduction SpectralLineConfigFiles dreampy3
 
 SpectralLineReduction:
-	git clone --branch teuben1 $(URL1a)$LMTOY/Montage/bin
+	git clone --branch teuben1 $(URL1a)
 	(cd SpectralLineReduction; git remote add upstream $(URL1) )
 
 SpectralLineReduction_upstream:
