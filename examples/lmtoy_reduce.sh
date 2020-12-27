@@ -29,6 +29,7 @@ debug=0
 # input parameters (defaults are for the IRC benchmark)
 path=IRC_data
 obsnum=79448
+obsid=""
 newrc=0
 #
 makespec=1
@@ -252,20 +253,20 @@ if [ ! -z $NEMO ]; then
     echo "LMTOY>>   Some NEMO hacking"
 
     # cleanup, just in case
-    rm -f $s_on.ccd $w_on.ccd $w_on.n.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 $s_on.data1 $s_on.n.fits
+    rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 $s_on.data1 $s_on.n.fits
     
-    fitsccd $s_fits $s_on.ccd error=1
-    fitsccd $w_fits $w_on.ccd error=1
+    fitsccd $s_fits $s_on.ccd 
+    fitsccd $w_fits $s_on.wt.ccd 
     
     ccdstat $s_on.ccd bad=0 robust=t planes=0 > $s_on.cubestat
-    ccdsub  $s_on.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
-    ccdsub  $w_on.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
+    ccdsub  $s_on.ccd -    centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
+    ccdsub  $s_on.wt.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
 
     # convert flux flat to noise flat
-    wmax=$(ccdstat $w_on.ccd  | grep ^Min | awk '{print $6}')
+    wmax=$(ccdstat $s_on.wt.ccd  | grep ^Min | awk '{print $6}')
 
-    ccdmath $w_on.ccd $w_on.n.ccd "sqrt(%1/$wmax)"
-    ccdmath $s_on.ccd,$w_on.n.ccd $s_on.n.ccd '%1*%2' replicate=t
+    ccdmath $s_on.wt.ccd $s_on.wtn.ccd "sqrt(%1/$wmax)"
+    ccdmath $s_on.ccd,$s_on.wtn.ccd $s_on.n.ccd '%1*%2' replicate=t
     ccdmom $s_on.n.ccd $s_on.mom2.ccd  mom=-2
 
     scanfits $s_fits $s_on.head1 select=header
@@ -275,7 +276,7 @@ if [ ! -z $NEMO ]; then
     cat $s_on.head1 $s_on.data1 > $s_on.nf.fits
 
     # remove useless files
-    rm -f $s_on.n.fits $s_on.head1 $s_on.data1
+    rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd
     
     echo "LMTOY>> Created $s_on.nf.fits"
 fi
