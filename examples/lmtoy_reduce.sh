@@ -5,7 +5,7 @@
 #
 #  Note:   this will only reduce one OBSNUM.   If you place a file "lmtoy_$obsnum.rc"
 #          in the current directory, parameters will be read from it.
-#          If it does not exist, it will be created upon the first run
+#          If it does not exist, it will be created on the first run
 #
 # There is no good mechanism here to make a new variable depend on re-running a certain task on which it depends
 
@@ -14,6 +14,8 @@ version="lmtoy_reduce: 26-dec-2020"
 if [ -z $1 ]; then
     echo "LMTOY>>  Usage: path=DATADIR obsnum=OBSNUM ..."
     echo "LMTOY>>  $version"
+    echo ""
+    echo "See lmtoy_reduce.md for examples on usage"
     exit 0
 fi
 
@@ -38,7 +40,7 @@ pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 rms_cut=4
 location=0,0
 # 
-extent=300
+extent=400
 #
 dv=100
 dw=250
@@ -52,6 +54,7 @@ otf_b=4.75
 otf_c=2
 noise_sigma=1
 b_order=0
+stype=2
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -172,7 +175,7 @@ if [ $makespec = 1 ]; then
 	--obsnum $obsnum \
 	--pix_list $pix_list \
 	--bank 0 \
-	--stype 2 \
+	--stype $stype \
 	--use_cal \
 	--x_axis VLSR \
 	--b_order $b_order \
@@ -248,7 +251,8 @@ fi
 if [ ! -z $NEMO ]; then
     echo "LMTOY>>   Some NEMO hacking"
 
-    rm -rf $s_on.ccd $w_on.ccd $w_on.n.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 $s_on.data1 $s_on.n.fits
+    # cleanup, just in case
+    rm -f $s_on.ccd $w_on.ccd $w_on.n.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 $s_on.data1 $s_on.n.fits
     
     fitsccd $s_fits $s_on.ccd error=1
     fitsccd $w_fits $w_on.ccd error=1
@@ -269,6 +273,9 @@ if [ ! -z $NEMO ]; then
 
     scanfits $s_on.n.fits $s_on.data1 select=data
     cat $s_on.head1 $s_on.data1 > $s_on.nf.fits
+
+    # remove useless files
+    rm -f $s_on.n.fits $s_on.head1 $s_on.data1
     
     echo "LMTOY>> Created $s_on.nf.fits"
 fi
