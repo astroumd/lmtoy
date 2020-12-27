@@ -33,6 +33,7 @@ done
 p_dir=${src}_data
 s_nc=${src}_${obsnum}.nc
 s_fits=${src}_${obsnum}.fits
+w_fits=${src}_${obsnum}.w.fits
 
 # bug? tsys 220 vs. 110 seems to make no pdiff
 #  convert RAW to SpecFile
@@ -77,6 +78,7 @@ fi
 grid_data.py --program_path spec_driver_fits \
 	     -i $s_nc \
 	     -o $s_fits \
+	     -w $w_fits \
 	     --resolution  12.5 \
 	     --cell        6.25 \
              --pix_list    $pix_list \
