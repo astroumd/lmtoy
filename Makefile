@@ -66,10 +66,11 @@ install_lmtslr: SpectralLineReduction lmtoy_venv
 	(cd SpectralLineReduction; \
 	source ../lmtoy_venv/bin/activate; \
 	awk -F= '{print $$1}'  requirements.txt > requirements_lmtoy.txt ; \
+	pip3 install --upgrade pip ; \
 	pip3 install -r requirements_lmtoy.txt; \
 	pip3 install -e .)
 	@echo C
-	(cd SpectralLineReduction/C ; make; cp spec_driver_fits	../bin)
+	(cd SpectralLineReduction/C ; make install)
 
 # step 3
 install_dreampy3: dreampy3 lmtoy_venv
@@ -87,7 +88,7 @@ install_montage:  Montage
 
 # step 5 (optional)
 install_nemo:  nemo
-	(cd nemo; ./configure; make build)
+	(cd nemo; ./configure; make build MAKELIBS=corelibs)
 
 # Optional hack:  once we agree on a common ste of requirements, we can make a common step
 #                 note the current step2 and step3 mean you can only run one of the two
