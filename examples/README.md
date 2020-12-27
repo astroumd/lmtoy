@@ -22,7 +22,7 @@ Currently this workflow is in four different python scripts that are executed in
 
 These amend the examples given in SpectralLineReduction.
 
-                      M51          M31        IRC+10216
+      src             M51          M31        IRC
 		    
       type            OTF          OTF         OTF
       
@@ -36,10 +36,11 @@ These amend the examples given in SpectralLineReduction.
       nspectra        340k         228k        92k
       nchan          2048         2048        2048
       size           8x12'         6x6'        8x8'
-      noise           150mK        115mK       208mK
+      noise           135mK        108mK       181mK
+
       #obsnum           1            3           1
       #sweeps          1x           1x          1x
-      bad_pixels      0,5            3           -
+      bad_pixels      0,5            3           - (1?)
 
       Cube size (MP) 12.8          5.7         8.5
       ADMIT CPU        70"          90"         90"
