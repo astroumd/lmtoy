@@ -113,10 +113,11 @@ fi
 if [ ! -z $NEMO ]; then
     fitsccd $s_fits $s_fits.ccd error=1
     ccdstat $s_fits.ccd bad=0 robust=t planes=0 > $s_fits.cubestat
-    ccdstat $s_fits.ccd bad=0 robust=t
-    ccdsub  $s_fits.ccd - 30:70 30:70 | ccdstat - robust=t bad=0
+    ccdsub  $s_fits.ccd - centerbox=0.5,0.5 | ccdstat - robust=t bad=0
     ccdstat $s_fits.ccd bad=0 qac=t
     rm $s_fits.ccd
+else
+    echo NEMO not installed, no QAC_STATS for benchmark available.
 fi
 
 if [ ! -z $ADMIT ]; then
