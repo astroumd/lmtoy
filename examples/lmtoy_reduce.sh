@@ -51,7 +51,7 @@ otf_a=1.1
 otf_b=4.75
 otf_c=2
 noise_sigma=1
-
+b_order=0
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -84,7 +84,7 @@ if [ ! -d $p_dir ]; then
 fi
 
 if [ $newrc = 1 ]; then
-    echo "LMTOY>> Hang on, creating a bootstrap $rc"
+    echo "LMTOY>> Hang on, creating a bootstrap $rc from path=$path"
     echo "# $version"                            > $rc
     echo "# DATE: `date +%Y-%m-%dT%H:%M:%S.%N`" >> $rc
     echo "# obsnum=$obsnum" >> $rc
@@ -93,6 +93,8 @@ if [ $newrc = 1 ]; then
     if [ -z $ifproc ]; then
 	rm -f $rc
 	echo No matching obsnum=$obsnum and path=$path
+	echo The following rc files are present:
+	ls lmtoy_*.rc | sed s/lmtoy_// | sed s/.rc//
 	exit 0
     fi
     echo "# Using ifproc=$ifproc" >> $rc
@@ -119,8 +121,7 @@ if [ $newrc = 1 ]; then
     x_extent=$extent
     y_extent=$extent
 
-    echo pix_list=$pix_list         >> $rc
-
+    echo "# based on vlsr, dv=$dv,  dw=$dw" >> $rc
     echo b_regions=$b_regions       >> $rc
     echo l_regions=$l_regions       >> $rc
     echo slice=$slice               >> $rc
@@ -128,7 +129,9 @@ if [ $newrc = 1 ]; then
 
     echo x_extent=$x_extent         >> $rc
     echo y_extent=$y_extent         >> $rc
-
+    
+    echo pix_list=$pix_list         >> $rc
+    
     # should be derived from 1.15 * c / D / skyfreq
     echo resolution=$resolution     >> $rc
     echo cell=$cell                 >> $rc
@@ -148,9 +151,10 @@ fi
 
 #             derived parameters
 p_dir=${path}
-s_nc=${src}_${obsnum}.nc
-s_fits=${src}_${obsnum}.fits
-w_fits=${src}_${obsnum}.wt.fits
+s_on=${src}_${obsnum}
+s_nc=${s_on}.nc
+s_fits=${s_on}.fits
+w_fits=${s_on}.wt.fits
 
 
 
@@ -171,7 +175,7 @@ if [ $makespec = 1 ]; then
 	--stype 2 \
 	--use_cal \
 	--x_axis VLSR \
-	--b_order 0 \
+	--b_order $b_order \
 	--b_regions $b_regions \
 	--l_region $l_regions \
 	--slice $slice \
@@ -242,15 +246,40 @@ if [ $viewcube = 1 ]; then
 fi
 
 if [ ! -z $NEMO ]; then
-    fitsccd $s_fits $s_fits.ccd error=1
-    ccdstat $s_fits.ccd bad=0 robust=t planes=0 > $s_fits.cubestat
-    ccdsub  $s_fits.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
-    fitsccd $w_fits - | ccdsub - - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t    
-    rm $s_fits.ccd
+    echo "LMTOY>>   Some NEMO hacking"
+
+    rm -rf $s_on.ccd $w_on.ccd $w_on.n.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 $s_on.data1 $s_on.n.fits
+    
+    fitsccd $s_fits $s_on.ccd error=1
+    fitsccd $w_fits $w_on.ccd error=1
+    
+    ccdstat $s_on.ccd bad=0 robust=t planes=0 > $s_on.cubestat
+    ccdsub  $s_on.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
+    ccdsub  $w_on.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
+
+    # convert flux flat to noise flat
+    wmax=$(ccdstat $w_on.ccd  | grep ^Min | awk '{print $6}')
+
+    ccdmath $w_on.ccd $w_on.n.ccd "sqrt(%1/$wmax)"
+    ccdmath $s_on.ccd,$w_on.n.ccd $s_on.n.ccd '%1*%2' replicate=t
+    ccdmom $s_on.n.ccd $s_on.mom2.ccd  mom=-2
+
+    scanfits $s_fits $s_on.head1 select=header
+    ccdfits $s_on.n.ccd  $s_on.n.fits
+
+    scanfits $s_on.n.fits $s_on.data1 select=data
+    cat $s_on.head1 $s_on.data1 > $s_on.nf.fits
+    
+    echo "LMTOY>> Created $s_on.nf.fits"
 fi
 
 if [ ! -z $ADMIT ]; then
-    runa1 $s_fits
+    echo "LMTOY>> Trying ADMIT"
+    if [ -e $s_on.nf.fits ]; then
+	runa1 $s_on.nf.fits
+    else
+	runa1 $s_fits
+    fi
 fi
 
 echo "LMTOY>> Created $s_fits and $w_fits"
