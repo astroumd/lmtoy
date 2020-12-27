@@ -26,10 +26,10 @@ bench: IRC_data
 	@echo "Result:"
 	@grep QAC_STATS irc_bench.log
 	@echo "Should see:"
-	# with edge blanking
+	@echo "With edge blanking"
 	@echo "QAC_STATS: IRC_79448.fits.ccd 0.0138192 2.28207 -626.549 469.641  0 0.0580601"
-	# without edge blanking (original)
-	#@echo "QAC_STATS: IRC_79448.fits.ccd -0.00431168 8.59776 -2360.77 2454.97  0 -0.0124982"
+	@echo "Without edge blanking (original)"
+	@echo "QAC_STATS: IRC_79448.fits.ccd -0.00431168 8.59776 -2360.77 2454.97  0 -0.0124982"
 
 # takes about 14"
 bench1: IRC_data
