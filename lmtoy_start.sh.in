@@ -4,15 +4,26 @@
 export  LMTOY=@LMTOY@
 
 export PATH=$LMTOY/SpectralLineReduction/bin:$PATH
+
+# do python first. this is important if a venv is used
+if [ -e $LMTOY/python_start.sh ]; then
+    source $LMTOY/python_start.sh
+fi
+
+if [ -e $LMTOY/lmtoy_venv/bin/activate ]; then
+    source $LMTOY/lmtoy_venv/bin/activate
+fi
+
+# remainder of environment 
+
+
+
 if [ -d $LMTOY/Montage/bin ]; then
     export PATH=$LMTOY/Montage/bin:$PATH
 fi
 
+if [ -e $LMTOY/nemo/nemo_start.sh ]; then
+    source $LMTOY/nemo/nemo_start.sh
+fi
 
-# if exists
-source $LMTOY/python_start.sh
-
-# if exists
-#source $LMTOY/SpectralLineReduction/lmtoy_venv/bin/activate
-source $LMTOY/lmtoy_venv/bin/activate
 

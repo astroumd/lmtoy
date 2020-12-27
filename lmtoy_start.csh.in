@@ -1,13 +1,18 @@
 # @EDIT_MSG@
-# for (ba)sh : source this file
+# for (t)csh : source this file
 
 setenv LMTOY  @LMTOY@
 
+# do python first. this is important if a venv is used
+if (-e $LMTOY/python_start.csh) source $LMTOY/python_start.csh
+
+if (-e $LMTOY/lmtoy_venv/bin/activate.csh) source $LMTOY/lmtoy_venv/bin/activate.csh
+
+# remainder of environment
+
 setenv PATH  $LMTOY/SpectralLineReduction/bin:$PATH
 
-# if exists
-source $LMTOY/python_start.csh
+if (-d $LMTOY/Montage/bin) setenv PATH  $LMTOY/Montage/bin:$PATH
 
-# if exists
-#source $LMTOY/SpectralLineReduction/lmtoy_venv/bin/activate.csh
-source $LMTOY/lmtoy_venv/bin/activate.csh
+if (-e $LMTOY/nemo/nemo_start.csh) source $LMTOY/nemo/nemo_start.csh
+
