@@ -17,8 +17,9 @@ obsnum=91112
 makespec=1
 viewspec=0
 viewcube=0
+pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 pix_list=1,2,3,4,6,7,8,9,10,11,12,13,14,15
-
+noise_sigma=1  
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -30,6 +31,8 @@ done
 p_dir=${src}_data
 s_nc=${src}_${obsnum}.nc
 s_fits=${src}_${obsnum}.fits
+w_fits=${src}_${obsnum}.w.fits
+w_fits=/dev/null
 
 # pixel 0 is bad, 5 is bad part of the time, but we can't select by time yet
 # so we're removing them both
@@ -68,6 +71,7 @@ fi
 grid_data.py --program_path spec_driver_fits \
 	     -i $s_nc \
 	     -o $s_fits \
+	     -w $w_fits \
 	     --resolution 12.5 \
 	     --cell 6.25 \
 	     --pix_list $pix_list \
@@ -80,7 +84,7 @@ grid_data.py --program_path spec_driver_fits \
 	     --otf_b 4.75 \
 	     --otf_c 2 \
 	     --n_samples 256 \
-	     --noise_sigma 1
+	     --noise_sigma $noise_sigma
 
 
 if [ $viewcube = 1 ]; then
@@ -96,14 +100,13 @@ view_cube.py -i $s_fits \
 	     --interpolation bilinear
 fi
 
-# rms = 0.134
 
 if [ ! -z $NEMO ]; then
     fitsccd $s_fits $s_fits.ccd
     ccdstat $s_fits.ccd bad=0 robust=t planes=0 > $s_fits.cubestat
-    ccdstat $s_fits.ccd bad=0 robust=t
-    ccdsub  $s_fits.ccd - 30:100 30:120 | ccdstat - robust=t bad=0
+    ccdsub  $s_fits.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
     ccdstat $s_fits.ccd bad=0 qac=t
+    fitsccd $w_fits - | ccdsub - - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t    
     rm $s_fits.ccd        
 fi
 
