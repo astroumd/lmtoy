@@ -75,6 +75,13 @@ install_lmtslr: SpectralLineReduction lmtoy_venv
 	@echo C
 	(cd SpectralLineReduction/C ; make install)
 
+install_lmtslr2:  SpectralLineReduction
+	(cd SpectralLineReduction; \
+	awk -F= '{print $$1}'  requirements.txt > requirements_lmtoy.txt ; \
+	pip3 install --upgrade pip ; \
+	pip3 install -r requirements_lmtoy.txt; \
+	pip3 install -e .)
+
 # step 3
 install_dreampy3: dreampy3 lmtoy_venv
 	@echo python3 dreampy3
