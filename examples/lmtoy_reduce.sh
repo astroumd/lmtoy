@@ -105,12 +105,14 @@ if [ $newrc = 1 ]; then
     echo "path=$path"             >> $rc
 
     # need a python task for this,  lmtinfo
+
+    lmtinfo.py $path $obsnum | tee -a $rc
     
-    src=$(ncdump $ifproc | grep SourceName | tail -1 | awk '{print $3}'| sed 's/"//')
-    echo src=$src >> $rc
-    
-    vlsr=$(ncdump $ifproc | grep Header.Source.Velocity | tail -1 | awk '{print $3}')
-    echo vlsr=$vlsr >> $rc
+    #src=$(ncdump $ifproc | grep SourceName | tail -1 | awk '{print $3}'| sed 's/"//')
+    #echo src=$src >> $rc
+    #
+    #vlsr=$(ncdump $ifproc | grep Header.Source.Velocity | tail -1 | awk '{print $3}')
+    #echo vlsr=$vlsr >> $rc
 
     #   w0   v0   v1     w1
     v0=$(echo $vlsr - $dv | bc -l)
@@ -250,10 +252,10 @@ if [ $viewcube = 1 ]; then
 fi
 
 if [ ! -z $NEMO ]; then
-    echo "LMTOY>>   Some NEMO hacking"
+    echo "LMTOY>>   Some NEMO post-processing"
 
     # cleanup, just in case
-    rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 $s_on.data1 $s_on.n.fits
+    rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 $s_on.data1 $s_on.n.fits $s_on.nfs.fits
     
     fitsccd $s_fits $s_on.ccd 
     fitsccd $w_fits $s_on.wt.ccd 
@@ -280,7 +282,7 @@ if [ ! -z $NEMO ]; then
     # remove useless files
     rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd
     
-    echo "LMTOY>> Created $s_on.nf.fits"
+    echo "LMTOY>> Created $s_on.nf.fits and $s_on.nfs.fits"
 fi
 
 if [ ! -z $ADMIT ]; then
