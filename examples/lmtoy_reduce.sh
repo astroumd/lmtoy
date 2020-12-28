@@ -275,6 +275,8 @@ if [ ! -z $NEMO ]; then
     scanfits $s_on.n.fits $s_on.data1 select=data
     cat $s_on.head1 $s_on.data1 > $s_on.nf.fits
 
+    ccdsmooth $s_on.n.ccd - dir=xyz nsmooth=5 | ccdfits - $s_on.nfs.fits fitshead=$s_fits
+
     # remove useless files
     rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd
     

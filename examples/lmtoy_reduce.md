@@ -40,13 +40,16 @@ different gridding (see also Appendix C in SLR)
 
      ./lmtoy_reduce.sh makespec=1 obsnum=85776 path=M31_data
       
-     ./lmtoy_reduce.sh makespec=0 obsnum=85776 otf_select=0                  rms -> 0.156  max -> 1.737
+     ./lmtoy_reduce.sh makespec=0 obsnum=85776 otf_select=0                  rms -> 0.156  max -> 1.737 at (28,53,310)
      ./lmtoy_reduce.sh makespec=0 obsnum=85776 otf_select=1                  rms -> 0.108  max -> 1.645
      ./lmtoy_reduce.sh makespec=0 obsnum=85776 otf_select=2 otf_b=1          rms -> 0.061  max -> 1.257
      ./lmtoy_reduce.sh makespec=0 obsnum=85776 otf_select=2 otf_b=0.5        rms -> 0.100  max -> 1.541
      ./lmtoy_reduce.sh makespec=0 obsnum=85776 otf_select=3                  rms -> 0.063  max -> 1.289
      ./lmtoy_reduce.sh makespec=0 obsnum=85776 otf_select=3 resolution=6.25  rms -> 0.103  max -> 1.581
-
+     
+     ./lmtoy_reduce.sh makespec=0 obsnum=85776 otf_select=4 rmax=1                  0.056         1.172
+     ./lmtoy_reduce.sh makespec=0 obsnum=85776 otf_select=4 resolution=6.25 rmax=1  0.088         1.429
+ 
 and comparing two ways to do the same 25" gaussian beam: (with rms -> 0.046029)
 
      ./lmtoy_reduce.sh makespec=0 obsnum=85776 otf_select=2 otf_b=2 rmax=4                
@@ -62,6 +65,7 @@ Here a summary of the files that are created:
      SRC_OBSNUM.fits         (flux flat) fits cube
      SRC_OBSNUM.wt.fits      weights fits map
      SRC_OBSNUM.nf.fits      noise flat fits cube, ready for ADMIT
+     SRC_OBSNUM.nfs.fits     noise flat XYZ smoothed fits cube, ready for ADMIT
      SRC_OBSNUM.cubestats    ascii table of some per plane statistics
 
 
