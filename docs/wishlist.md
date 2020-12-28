@@ -6,17 +6,20 @@
   believe it is)
 
 * more header information passing from RAW to FITS, e.g. for ADMIT to
-  work. more to come (e.g. HISTORY)
+  work. more to come (e.g. HISTORY). Need to confirm if other things
+  in CASA also work correctly.
 
-* write a weight map, needs to be tested if indeed M31 works better
-  now. In the code you can also write out a 0/1 map which cells had a
-  pixel inside.
+* writes a weight map, makes for better results in ADMIT.  In the code
+  you can also write out a 0/1 map which cells had a pixel inside,
+  but this is not a flag. Can be emulated with otf_select=0 and a
+  mask on that.
 
 * add otf_select=3 option to use a triangle convolution filter. In the
   end, normalizing to the same RMS, there are no noticable
-  differences.
+  differences. Need a more detailed analysis like in SLR Appendix C.
 
 * buffer overruns in C gridder program. One solved, more to go it seems.
+  efence didn't help, there is a problem in netcdf as well.
 
 * by default, now only cells will be given a value if there was at
   least one pixel in it. This only works well for convex areas. For
@@ -33,14 +36,31 @@
   wrap up (e.g. resolution, spatial extent).   Script can be re-run and
   learn from new parameters.
 
+* There is a benchmark (IRC+10216) but it's not public yet. Should we? who
+  is the PI.
+
 # A wishlist
 
+* See also the [github issues](https://github.com/astroumd/lmtoy/issues)
+
+* A much better auto-baselining. The current VLSR (from netcdf) and guessed DV and DW
+  only does that much, but it's ok for a first start. The M31 data is already showing
+  the VLSR is not good.
+
 * To encourage making apps, the keywords belonging to the app should be with the code with
-  minimal repetition of the keyword names
+  minimal repetition of the keyword names. Should we look at e.g. click , docopt, clize, 
 
-* Here and there more sensible defaults are needed
+* Here and there more sensible defaults are needed.
 
-* Options to smooth/bin in velocity?   Or leave this to 3rd party tools?
+* The viewing tasks should be able to produce PNG files.
+
+* Options to smooth/bin in velocity?  Or leave this to 3rd party
+  tools?  [NEMO writes an .nfs. cube, which is a NoiseFlatSMoothed
+  version so ADMIT can run on it.]   CASA should be good for this.
+
+* waterfall in a fits image
+
+* RFI blanking
 
 * Masking file with more flexible  filtering:
   - by pixel number
@@ -53,6 +73,7 @@
       sample(100,200)
       pixel(3,4)
       rms(1.5),pixel(5)
+      rfi(10)
       
   have to decide on if you filter down or up, and if we allow a - sign in front of a directive
       
