@@ -1,0 +1,40 @@
+#! /bin/bash
+
+# set -x
+
+lmtoy=lmtoy
+wget=wget
+
+#             simple keyword=value command line parser for bash - don't make any changing below
+for arg in $*; do\
+  export $arg
+done
+
+# this takes about 4-5 minutes to run, including the benchmark, and takes 4.3GB
+
+if [ -z $LMTOY ]; then
+    echo Warning, installing a new LMTOY in $lmtoy, removing the old one, if present
+    sleep 5
+else
+    echo Warning, you have LMTOY=$LMTOY loaded, this could be dangerous.
+    sleep 5
+fi
+
+rm -rf $lmtoy
+
+git clone https://github.com/astroumd/lmtoy $lmtoy
+cd $lmtoy
+make install_python WGET=$wget
+source python_start.sh
+make install_lmtslr
+make install_nemo
+make install_montage
+make config
+
+#  active and run benchmark
+
+source lmtoy_start.sh
+which python
+cd examples
+ln -s ~/LMT/IRC_data
+make bench	
