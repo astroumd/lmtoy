@@ -109,3 +109,10 @@ common: lmtoy_venv
 	pip install -e SpectralLineReduction; \
 	pip install -e dreampy3)
 
+
+# git pull on all repos we use here
+DIRS = SpectralLineReduction nemo Montage
+pull:
+	@echo -n "lmtoy: "; git pull
+	-@for dir in $(DIRS); do\
+	(echo -n "$$dir: " ;cd $$dir; git pull); done
