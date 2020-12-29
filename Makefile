@@ -122,3 +122,8 @@ pull:
 	@echo -n "lmtoy: "; git pull
 	-@for dir in $(DIRS); do\
 	(echo -n "$$dir: " ;cd $$dir; git pull); done
+
+status:
+	@echo -n "lmtoy: "; git status -uno
+	-@for dir in $(DIRS); do\
+	(echo -n "$$dir: " ;cd $$dir; git status -uno); done
