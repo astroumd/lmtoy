@@ -67,7 +67,7 @@ fi
 if [ $viewspec = 1 ]; then
 view_spec_file.py -i $s_nc \
 		  --pix_list $pix_list \
-		  --rms_cut 10.0 \
+		  --rms_cut $rms_cut \
 		  --plot_range=-1,3
 fi
 
@@ -80,7 +80,7 @@ grid_data.py --program_path spec_driver_fits \
 	     --resolution  $resolution \
 	     --cell        $cell \
 	     --pix_list    $pix_list \
-	     --rms_cut     10 \
+	     --rms_cut     $rms_cut \
 	     --x_extent    $extent \
 	     --y_extent    $extent \
 	     --otf_select  $otf_select \
