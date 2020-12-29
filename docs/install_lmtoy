@@ -1,9 +1,12 @@
 #! /bin/bash
+#
+#    this is an example how the LMTOY environment can be installed
+#    28-dec-2020:     LMTSRL installed (more to come)
 
 # set -x
 
-lmtoy=lmtoy
-wget=wget
+lmtoy=lmtoy       # root directory name where to install
+wget=wget         # use wgetc if you have my caching version
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -27,6 +30,7 @@ cd $lmtoy
 make install_python WGET=$wget
 source python_start.sh
 make install_lmtslr
+# make install_lmtslr_venv
 make install_nemo
 make install_montage
 make config
