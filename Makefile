@@ -109,3 +109,10 @@ common: lmtoy_venv
 	pip install -e SpectralLineReduction; \
 	pip install -e dreampy3)
 
+
+# git pull update all we have
+pull:
+	git pull
+	(cd SpectralLineReduction; git pull)
+	(cd nemo; git pull)
+	(cd Montage; git pull)
