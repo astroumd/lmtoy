@@ -1,19 +1,15 @@
 # lmtoy
 
-LMTOY is your toy box for installing and running codes related to LMT data reduction. LMT is a 50m
-single dish radio telescope located in Mexico (18:59:09N 97:18:53W)
+LMTOY is your toy box for installing and running codes related to LMT data reduction. LMT is a large
+50m single dish radio telescope located in Mexico (18:59:09N 97:18:53W) operating at mm wavelenghts.
 
-## Installation
-
-This is not finalized yet, there are some notes in [INSTALL.md](INSTALL.md), and also check out the
-Makefile for specific targets that simplify the install. This is still a toy monorepo.
 
 ## data
 
 LMT telescope data are (mostly) in netCDF format (extension: .nc), which stores
-data hierarchically in a big binary blob. Much like how HDF5 stores
-data. Actually, a typical LMT observation consists of a about 10 files
-in a specific directory hierarchy, all identified via an OBSNUM.
+data hierarchically in a big binary blob, much like HDF5.
+Actually, a typical LMT observation consists of a about 10 files
+in a specific directory hierarchy, all identified via an OBSNUM. 
 
 Tools like **ncdump** display structure and contents (as
 CDL). Careful, hdf5 also contains **ncdump** but it differs in subtle
@@ -47,6 +43,32 @@ LMT software is very instrument specific:
 
 * MUSCAT: 1mm camera (Mexico-UK)
   *  4' FOV with 5.5" resolution
+
+## Installation
+
+There are some expanded notes in [INSTALL.md](INSTALL.md), and also check out the
+Makefile for specific targets that simplify the install. Probably the most automated/simple
+way to install (if you have all the preconditions) is:
+
+      wget https://astroumd.github.io/lmtoy/install_lmtoy
+      bash install_lmtoy
+
+if this worked, activate it in your shell
+
+      source lmtoy/lmtoy_start.sh
+
+and to run an example, try something like (in any directory)
+
+      $LMTOY/examples/lmtoy_reduce.sh path=/lmt_data  obsnum=79448
+
+this particular example is also the OTF benchmark. If you want to run this to check
+if the numbers agree:
+
+      cd $LMTOY/examples
+      ln -s /lmt_data IRC_data
+      make bench
+
+and it will print two lines starting with QAC_STATS that should agree!
 
 
 ## References
