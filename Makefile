@@ -23,10 +23,10 @@ help install:
 	@echo "1. install python (or skip it if you have it)"
 	@echo "  make install_python"
 	@echo "  source python_start.sh"
-	@echo "2. install LMTSLR (in your python virtual environment)" 
+	@echo "2. install LMTSLR"
 	@echo "  make install_lmtslr"
 	@echo "3. Configure LMTOY for others to use it"
-	@echo "  ./configure"
+	@echo "  make config"
 	@echo "  source lmtoy_start.sh"
 	@echo "Users will then see an environment variable LMTOY: $(LMTOY)"
 
@@ -63,8 +63,11 @@ install_python:
 lmtoy_venv:
 	python3 -m venv lmtoy_venv
 
-# step 2
-install_lmtslr: SpectralLineReduction lmtoy_venv
+
+# I find venv not working for me during development.
+
+# step 2a
+install_lmtslr_venv: SpectralLineReduction lmtoy_venv
 	@echo python3 SLR
 	(cd SpectralLineReduction; \
 	source ../lmtoy_venv/bin/activate; \
@@ -75,12 +78,15 @@ install_lmtslr: SpectralLineReduction lmtoy_venv
 	@echo C
 	(cd SpectralLineReduction/C ; make install)
 
-install_lmtslr2:  SpectralLineReduction
+# step 2b
+install_lmtslr:  SpectralLineReduction
 	(cd SpectralLineReduction; \
 	awk -F= '{print $$1}'  requirements.txt > requirements_lmtoy.txt ; \
 	pip3 install --upgrade pip ; \
 	pip3 install -r requirements_lmtoy.txt; \
 	pip3 install -e .)
+	@echo C
+	(cd SpectralLineReduction/C ; make install)
 
 # step 3
 install_dreampy3: dreampy3 lmtoy_venv
