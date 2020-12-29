@@ -5,6 +5,12 @@
   in memory. This depends if the data is doppler tracked or not (I
   believe it is)
 
+* buffer overruns in C gridder program. One was the convolution running
+  over the edge (big maps would prevent this).
+  Also needed to fix Cube and Plane access for non-square maps
+  (using square maps would solve that). Both are now fixed (I think).
+  Segfaults show up as Error 11 in the gridder.
+
 * more header information passing from RAW to FITS, e.g. for ADMIT to
   work. more to come (e.g. HISTORY). Need to confirm if other things
   in CASA also work correctly.
@@ -17,9 +23,6 @@
 * add otf_select=3 option to use a triangle convolution filter. In the
   end, normalizing to the same RMS, there are no noticable
   differences. Need a more detailed analysis like in SLR Appendix C.
-
-* buffer overruns in C gridder program. One solved, more to go it seems.
-  efence didn't help, there is a problem in netcdf as well.
 
 * by default, now only cells will be given a value if there was at
   least one pixel in it. This only works well for convex areas. For
@@ -37,7 +40,10 @@
   learn from new parameters.
 
 * There is a benchmark (IRC+10216) but it's not public yet. Should we? who
-  is the PI.
+  is the PI?
+
+* A new script "lmtinfo.py" that spits out some useful variables in "rc"
+  format. Used by the lmtoy_reduce.sh script.
 
 # A wishlist
 
@@ -77,7 +83,16 @@
       
   have to decide on if you filter down or up, and if we allow a - sign in front of a directive
       
-  
+* Additional parameters from the Hedwig proposal system should go in the workflow, so they
+  can be used in the pipeline, and eventually go into FITS
+
+       vlsr (e.g. M31 has issues) for small fields of a big object ?
+       width - expected width of the line in the field - for baselining 
+       extent (in X and Y different ?)
+       observer (the PI name ?)
+       instrument (for FITS)
+
+  Experience with ADMIT and CASA could expose a few more.
 
 # parameter file vs. command line options
 
