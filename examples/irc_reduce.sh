@@ -2,15 +2,13 @@
 #
 #  Example OTF sequoia data reduction path for IRC+10216
 #  all pixels are pretty good, but with trimodal RMS distributions
-#  
-#  CPU: 133.67user 5.61system 2:18.90elapsed 100%CPU
-#       360.22user 4.12system 1:42.97elapsed 353%CPU (w/ NEMO)
-#        80.97user 1.96system 1:22.99elapsed 99%CPU
+#
+#  This data is also the benchmark we always run. Even though these
+#  were Sequoia commisioning data and have some header issues, for
+#  the purpose of testing the workflow this is fine.
+#
+#  The benchmark runs in about 80" on a decent 2020 laptop.
 
-# 1   72.75user 1.55system 1:14.36elapsed  99%CPU    161.69user 6.08system 2:47.24elapsed 100%CPU 
-# 2  153.72user 2.21system 1:21.68elapsed 190%CPU
-# 4  361.27user 3.95system 1:36.93elapsed 376%CPU
-# 8  360.79user 3.83system 1:36.79elapsed 376%CPU 
 
 # input parameters
 src=IRC
