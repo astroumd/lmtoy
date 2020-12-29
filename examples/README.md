@@ -2,6 +2,10 @@
 
 There are several processing paths for Sequoia data:  OTF, MAP, BS and PS.
 
+## lmtoy_reduce.sh
+
+See [lmtoy_reduce.md](lmtoy_reduce.md) on using the new experimental pipeline
+
 ## A typical OTF run
 
 1. Convert the raw (spectra) data to a calibrated spectrum file.   Some selections, e.g. by pixel,
