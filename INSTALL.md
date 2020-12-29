@@ -82,6 +82,35 @@ There is no official runtime environment.   If you use lmtoy, via configure and 
 install LMTSLR we have constructed lmtoy_start.sh after you run the configure script. See the Makefile for
 an example.
 
+## Virtual Environment?
+
+I had some strange experiences with a python venv.  For one, any bins that are not in setup.py (e.g. a new one)
+could not be executed. Made no sense, since it's in my path, and /usr/bin/env python  even pointed to the venv.
+I gave up.
+
+### Updates
+
+Since we run from a set of github repos, each with their own update procedures, here some reminders.
+
+To update all repos:
+
+      make pull
+
+lmtoy needs no extra work, if you see updates.
+
+lmtslr needs no extra work, since we installed using the -e flag in pip.
+
+NEMO, depending on what you see, may need to have a new
+executable installed, e.g.
+
+      mknemo ccdstat ccdfits fitsccd ccdhist
+
+For montage, I would use
+
+      make install_montage
+
+That should keep your environment up to date.
+      
 ## Examples
 
 Some examples how to use LMTSLR are in the examples directory.
