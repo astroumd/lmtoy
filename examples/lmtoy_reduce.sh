@@ -9,7 +9,7 @@
 #
 # There is no good mechanism here to make a new variable depend on re-running a certain task on which it depends
 
-version="lmtoy_reduce: 26-dec-2020"
+version="lmtoy_reduce: 29-dec-2020"
 
 if [ -z $1 ]; then
     echo "LMTOY>>  Usage: path=DATADIR obsnum=OBSNUM ..."
@@ -20,8 +20,6 @@ if [ -z $1 ]; then
 fi
 
 
-
-
 # debug
 # set -x
 debug=0
@@ -29,7 +27,6 @@ debug=0
 # input parameters (defaults are for the IRC benchmark)
 path=IRC_data
 obsnum=79448
-obsid=""
 newrc=0
 #
 makespec=1
@@ -62,17 +59,18 @@ for arg in $*; do\
   export $arg
 done
 
+#             put in bash debug mode
 if [ $debug = 1 ]; then
     set -x
 fi
 
-#             process the parameter file
+#             process the parameter file (or force new one with newrc=1)
 rc=lmtoy_${obsnum}.rc
 if [ -e $rc ] && [ $newrc = 0 ]; then
     echo "LMTOY>> reading $rc"
     source $rc
     newrc=0
-    # read cmdline again to override the rc values
+    # read cmdline again to override the old rc values
     for arg in $*; do\
        export $arg
     done
@@ -80,12 +78,6 @@ else
     newrc=1
 fi
 
-
-#             sanity checks
-if [ ! -d $p_dir ]; then
-    echo "LMTOY>> directory $p_dir does not exist"
-    exit 1
-fi
 
 if [ $newrc = 1 ]; then
     echo "LMTOY>> Hang on, creating a bootstrap $rc from path=$path"
@@ -107,13 +99,8 @@ if [ $newrc = 1 ]; then
     # need a python task for this,  lmtinfo
 
     lmtinfo.py $path $obsnum | tee -a $rc
+    source $rc
     
-    #src=$(ncdump $ifproc | grep SourceName | tail -1 | awk '{print $3}'| sed 's/"//')
-    #echo src=$src >> $rc
-    #
-    #vlsr=$(ncdump $ifproc | grep Header.Source.Velocity | tail -1 | awk '{print $3}')
-    #echo vlsr=$vlsr >> $rc
-
     #   w0   v0   v1     w1
     v0=$(echo $vlsr - $dv | bc -l)
     v1=$(echo $vlsr + $dv | bc -l)
@@ -127,7 +114,7 @@ if [ $newrc = 1 ]; then
     x_extent=$extent
     y_extent=$extent
 
-    echo "# based on vlsr, dv=$dv,  dw=$dw" >> $rc
+    echo "# based on vlsr=$vlsr, dv=$dv,  dw=$dw" >> $rc
     echo b_regions=$b_regions       >> $rc
     echo l_regions=$l_regions       >> $rc
     echo slice=$slice               >> $rc
@@ -138,10 +125,6 @@ if [ $newrc = 1 ]; then
     
     echo pix_list=$pix_list         >> $rc
     
-    # should be derived from 1.15 * c / D / skyfreq
-    echo resolution=$resolution     >> $rc
-    echo cell=$cell                 >> $rc
-
     echo rmax=$rmax                 >> $rc
     echo otf_a=$otf_a               >> $rc
     echo otf_b=$otf_b               >> $rc
@@ -162,6 +145,12 @@ s_nc=${s_on}.nc
 s_fits=${s_on}.fits
 w_fits=${s_on}.wt.fits
 
+
+#             sanity checks
+if [ ! -d $p_dir ]; then
+    echo "LMTOY>> directory $p_dir does not exist"
+    exit 1
+fi
 
 
 # -----------------------------------------------------------------------------------------------------------------
@@ -286,7 +275,7 @@ if [ ! -z $NEMO ]; then
 fi
 
 if [ ! -z $ADMIT ]; then
-    echo "LMTOY>> Trying ADMIT"
+    echo "LMTOY>> Some ADMIT post-processing"
     if [ -e $s_on.nf.fits ]; then
 	runa1 $s_on.nf.fits
     else
