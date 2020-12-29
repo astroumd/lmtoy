@@ -98,7 +98,10 @@ To update all repos:
 
 lmtoy needs no extra work, if you see updates.
 
-lmtslr needs no extra work, since we installed using the -e flag in pip.
+lmtslr needs no extra work, since we installed using the -e flag in pip. But if the C program was
+updated, it's safe to do this:
+
+      make install_lmtslr
 
 NEMO, depending on what you see, may need to have a new
 executable installed, e.g.
