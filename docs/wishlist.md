@@ -1,9 +1,10 @@
 # Overview of changes to LMTSLR
 
-* process spectra as float, saving half the memory. Potentially more
-  memory could be saved if slices, not the full spectra, are retrieved
-  in memory. This depends if the data is doppler tracked or not (I
-  believe it is)
+* process spectra as float, the RAW data are double. In fact, the RAW
+  data are integers, some compression schemes could be used to shrink
+  that. Potentially more memory could be saved if the selected
+  *slice*, not the full spectral band, are retrieved in memory. This depends
+  if the data is doppler tracked or not (I believe it is)
 
 * buffer overruns in C gridder program. One was the convolution running
   over the edge (big maps would prevent this).
@@ -47,18 +48,27 @@
 
 # A wishlist
 
-* See also the [github issues](https://github.com/astroumd/lmtoy/issues)
+In no particular order, there are some remaining things on the wish list, the
+important ones are tracked in our [github issues](https://github.com/astroumd/lmtoy/issues) list.
 
 * A much better auto-baselining. The current VLSR (from netcdf) and guessed DV and DW
   only does that much, but it's ok for a first start. The M31 data is already showing
-  the VLSR is not good.
+  the VLSR is no good, as the VLSR of the galaxy is not appropriate for the small patches
+  in the M31 survey the LMT undertook.
 
 * To encourage making apps, the keywords belonging to the app should be with the code with
   minimal repetition of the keyword names. Should we look at e.g. click , docopt, clize, 
 
-* Here and there more sensible defaults are needed.
+* Here and there more sensible defaults are needed for keywords.
 
-* The viewing tasks should be able to produce PNG files.
+* Using the -c flag and the other options are confusing.  Would be nice if the other options
+  can override the configuration file. Honestly, I believe the configuration is overrated
+  and I would like to see it gone (would simplify this exploding parameter problem). This
+  parameter file also seems to place different - possibly conflicting - defaults in different
+  places.
+
+* The viewing tasks should be able to produce PNG files. Currently
+  matplotlib splashes them over the screen.
 
 * Options to smooth/bin in velocity?  Or leave this to 3rd party
   tools?  [NEMO writes an .nfs. cube, which is a NoiseFlatSMoothed
@@ -94,11 +104,6 @@
 
   Experience with ADMIT and CASA could expose a few more.
 
-# parameter file vs. command line options
-
-- defaults in more than one place
-- parameter file seems to preclude overriding it with a command line option
-
 
 # workflow
 
@@ -106,17 +111,17 @@ Remove some old things from the workflow:   e.g. tsys is not used
 
 ## process_otf_map2.py
 
-- use float, not double, for spectra when read as RAW [ok]
-- can spectra use the slice?  this would save more memory
-- --elimianteb isn't useful
 - there is an stype=3 in the code
-- write_line_data_header_variables() is not used,
 - where does the cpu go?
 
 ## grid_map.py
 
+- there is some new otf_select=3,4 that I played with, but it doesn't seem to really
+effect/improve maps. Setting the parameter to get a certain RMS gives pretty identical
+looking maps. Not quantified. Probably plenty papers written on this.
 
-# adding an occasional variable from RAW -> FITS
+
+# Adding a variable from RAW -> SPECFILE ->  FITS
 
 string handling in particular is just out of this world, even in python.
 is that a netcdf oddity? It's nuts.
@@ -130,10 +135,10 @@ is that a netcdf oddity? It's nuts.
 
 
 
-# adding another parameter to the gridding program
+# Adding another parameter to the gridding program
 
 
-grid_map is probably the worst, it requires 7 times a modification to 4 files
+grid_map is probably the worst, it requires 7 times a modification to 4 files to add a keyword
 
 Here are the different orderings, the first one being the one we adopt to adjust the others:
 
@@ -147,24 +152,29 @@ Here are the different orderings, the first one being the one we adopt to adjust
       7. C/OTFParameters.c                  switch(coption) to set the values
 
       i:o:l:c:u:z:s:x:y:f:r:n:0:1:2:m:p:q:
+         ^
+         b:
 
-I added the weight (-w) flag.  Having so much work to do for a little does not encourage app hacking.
-I wanted an option to enable/disable edge blanking.... it's now #if hardcoded.
+I decided to jot this down as I added the weight (-w) flag.
+Having so much work to do for a little does not encourage app hacking.
+I wanted an option to enable/disable edge blanking.... it's now #if hardcoded. There
+should be a better way to pass parameters and provide help.
 
 
 # Gridding
 
-There are a few parameters to the gridding program (**grid_data.py**) that are worth a few comments. The
+There are a few parameters to the gridding program (**grid_data.py**) that are worth a few comments. The parallels to
+how CASA's **tclean** program controls the gridding are not too different. The
 following parameters are all related and pertain to the gridding/convolution function:
 
-      --resolution
-      --cell
-      --otf_select
-      --otf_a
-      --otf_b
-      --otf_c
-      --sigma_noise
-      --rmax
+      --resolution          # should be 1.15 * lambda/ D
+      --cell                # should be 1/2 of resolution
+      --otf_select          # SLR recommends 1
+      --otf_a               # SLR recommends 1.1
+      --otf_b               # SLR recommends 4.75, but this is also the gaussian beam factor, where it should be 1
+      --otf_c               # SLR recommands 2.0
+      --sigma_noise         # should be 1
+      --rmax                # should be 3
 
 and a few filters what spectra to be added to the gridding
 
@@ -190,7 +200,7 @@ Up to three parameters are used to control the shape of the filter (otf_a, otf_b
 * 1 = jinc : this uses otf_a, otf_b and otf_c as parameters. Discussed in Appendix C
 * 2 = gauss: this uses otf_b as the factor by with resolution is multiplied.
 * 3 = triangle: this uses resolution as parameter
-* 4 = box:   bus using the resolution as parameter
+* 4 = box:   but using the resolution as parameter
 
 ## rmax: convolution size
 
@@ -198,4 +208,9 @@ This is the dimensionless factor how many resolutions the convolution filter sho
 parameter how many samples are taken, which defaults to 256. These is little reasons to change this parameter,
 in fact, there may be some program array overruns lurking here if set wrong.
 
+## edge: expand the edge?
 
+This is not a parameter, but could be. It's currently hardcoded and easy to switch. I didn't like the fake expanded edges,
+in paritcual a gaussian (--otf_select=2) woulc cause these straight features perpendicular to the real edge. I decide
+to set a mask on cells where a pixel has never been seen.   I could add one cycle if N neighbors are present. N=3 could
+be a good value, with N=2 this will fill in the odd NaN bands with otf_select=1.
