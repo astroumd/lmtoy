@@ -12,6 +12,16 @@ all:   $(DATA_DIRS)
 	/usr/bin/time ./m31_reduce.sh obsnum=85824 > m31_85824.log 2>&1
 	/usr/bin/time ./m51_reduce.sh              > m51_91112.log 2>&1
 
+IRC_data:
+	@echo For the IRC benchmark:  The directory IRC_data does not exist yet
+	@echo and needs to manually created or symlinked to where the IRC_data are, e.g.
+	@echo ""
+	@echo "     ln -s /your_big_disk/lmt_data  IRC_data"
+	@echo ""
+	@echo "If @UMD: tar zxf /n/chara/teuben/LMT/IRC_data.tar.gz"
+	@echo "Else:    contact us"
+	@exit 1
+
 new:   $(DATA_DIRS)
 	/usr/bin/time ./lmtoy_reduce.sh path=IRC_data obsnum=79448 > lmtoy_79448.log 2>&1
 	/usr/bin/time ./lmtoy_reduce.sh path=M31_data obsnum=85776 > lmtoy_85776.log 2>&1
