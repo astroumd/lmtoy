@@ -1,5 +1,8 @@
 # Overview of changes to LMTSLR
 
+A number of changes made, and wish list can also be foudn on Mark Heyer's
+list of comments he sent around some moons ago.
+
 * process spectra as float, the RAW data are double. In fact, the RAW
   data are integers, some compression schemes could be used to shrink
   that. Potentially more memory could be saved if the selected
@@ -9,17 +12,24 @@
 * buffer overruns in C gridder program. One was the convolution running
   over the edge (big maps would prevent this).
   Also needed to fix Cube and Plane access for non-square maps
-  (using square maps would solve that). Both are now fixed (I think).
+  (using square maps would solve that). 
   Segfaults show up as Error 11 in the gridder.
+  [Mark Hayer]
+
+  Note added: I've still seen a segfault, but harder to reproduce.
 
 * more header information passing from RAW to FITS, e.g. for ADMIT to
   work. more to come (e.g. HISTORY). Need to confirm if other things
   in CASA also work correctly.
 
+* the pipeline now outputs a lot more useful info (map extent, noise
+  stats per pixel), but we are open to more. Some of the current info
+  is not well labeled , and hard to understand for newcomers.
+
 * writes a weight map, makes for better results in ADMIT.  In the code
   you can also write out a 0/1 map which cells had a pixel inside,
   but this is not a flag. Can be emulated with otf_select=0 and a
-  mask on that.
+  mask on that..
 
 * add otf_select=3 option to use a triangle convolution filter. In the
   end, normalizing to the same RMS, there are no noticable
@@ -37,19 +47,22 @@
 * there is a toy script **lmtoy_reduce.sh** that doesn't need user
   input, other then the obsnum. See
   [lmtoy_reduce.md](../examples/lmtoy_reduce.md).  Still a few thing to
-  wrap up (e.g. resolution, spatial extent).   Script can be re-run and
+  wrap up (e.g. spatial extent).   Script can be re-run and
   learn from new parameters.
 
 * There is a benchmark (IRC+10216) but it's not public yet. Should we? who
-  is the PI?
+  is the PI? This is commissionigng data with some bad header info, so
+  it's scientifically not correct. 
 
 * A new script "lmtinfo.py" that spits out some useful variables in "rc"
-  format. Used by the lmtoy_reduce.sh script.
+  format. Used by the lmtoy_reduce.sh script. This could be expanded to
+  provide better guesses on baselining for example.
 
 # A wishlist
 
 In no particular order, there are some remaining things on the wish list, the
 important ones are tracked in our [github issues](https://github.com/astroumd/lmtoy/issues) list.
+I've also added a few that Mark Heyer listed in his report.
 
 * A much better auto-baselining. The current VLSR (from netcdf) and guessed DV and DW
   only does that much, but it's ok for a first start. The M31 data is already showing
@@ -66,6 +79,9 @@ important ones are tracked in our [github issues](https://github.com/astroumd/lm
   and I would like to see it gone (would simplify this exploding parameter problem). This
   parameter file also seems to place different - possibly conflicting - defaults in different
   places.
+
+* There are still a few places in the C code that don't exit, where they should,
+  for example of malloc() fails.
 
 * The viewing tasks should be able to produce PNG files. Currently
   matplotlib splashes them over the screen.
@@ -103,6 +119,28 @@ important ones are tracked in our [github issues](https://github.com/astroumd/lm
        instrument (for FITS)
 
   Experience with ADMIT and CASA could expose a few more.
+
+* An algorithm to fix the doppler update problem (data < Feb 18, 2020), which causes the RMS values
+  to have double or triple histograms. They are now also listed in the output of the
+  **process_otf_map2.py**:
+
+      Pix Nspec  Mean Std MAD_std  Min    Max      <RMS> RMS_max  Warnings
+
+      0 5739    0.024 1.251 1.217  -6.629 16.754   1.201 1.785      *M 2.2
+      1 5739    0.100 1.260 1.031  -8.395 19.176   1.075 3.185      *P 1.2 *M 9.1
+      2 5739   -0.071 1.480 1.296 -11.787 41.735   1.314 3.442      *M 6.0
+      3 5739   -0.008 1.003 0.956  -5.934 16.254   0.958 1.989      *M 4.2
+      ...
+
+   If either a **P** or **M** is warned about, the ratio of Std/Mad_Std is deemed to
+   high and there are probably reason to not use this pixel or inspect it for perhaps
+   more detailed flagging. Compare this to the M51 data where the doppler issue was
+   fixed:
+
+
+
+*  A number of fancy options (e.g. allow different projection systems, galactic included)
+   can probably solved much easier by using the *Montage* package after our pipeline.
 
 
 # workflow
