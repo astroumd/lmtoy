@@ -65,6 +65,10 @@ list of comments he sent around some moons ago.
 
 * New script "view_spec_point.py" to overplot spectra in development.
 
+* A new Plots() interface with  a --plots= command line interface allows
+  users to easily switch between interactive and batch png (or pdf) files.
+  The first example is in "view_spec_point.py"
+
 
 # A wishlist
 
@@ -91,9 +95,6 @@ I've also added a few that Mark Heyer listed in his report.
 
 * There are still a few places in the C code that don't exit, where they should,
   for example of malloc() fails.
-
-* The viewing tasks should be able to produce PNG files. Currently
-  matplotlib splashes them over the screen.
 
 * Options to smooth/bin in velocity?  Or leave this to 3rd party
   tools?  [NEMO writes an .nfs. cube, which is a NoiseFlatSMoothed
