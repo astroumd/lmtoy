@@ -63,6 +63,8 @@ list of comments he sent around some moons ago.
   mean + |rms_cut|*std.  So a value of -3 or -4 should be sufficient
   to get rid of the doppler tuning problems of the data prior to Feb 18, 2020.
 
+* New script "view_spec_point.py" to overplot spectra in development.
+
 
 # A wishlist
 
@@ -76,9 +78,10 @@ I've also added a few that Mark Heyer listed in his report.
   in the M31 survey the LMT undertook.
 
 * To encourage making apps, the keywords belonging to the app should be with the code with
-  minimal repetition of the keyword names. Should we look at e.g. click , docopt, clize, 
+  minimal repetition of the keyword names. Should we look at e.g. click , docopt, clize.
+  The new view_spec_point.py script uses docopt to see how we like this.
 
-* Here and there more sensible defaults are needed for keywords.
+* Here and there more sensible defaults are needed for keywords. [docopt could solve this too]
 
 * Using the -c flag and the other options are confusing.  Would be nice if the other options
   can override the configuration file. Honestly, I believe the configuration is overrated
@@ -142,8 +145,8 @@ I've also added a few that Mark Heyer listed in his report.
    high and there are probably reason to not use this pixel or inspect it for perhaps
    more detailed flagging. Compare this to the M51 data where the doppler issue was
    fixed:
-
-
+   [this is now implemented in the gridder, and the view_spec_point.py script is
+   visualizing it's implications]
 
 *  A number of fancy options (e.g. allow different projection systems, galactic included)
    can probably solved much easier by using the *Montage* package after our pipeline.
