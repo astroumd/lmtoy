@@ -58,6 +58,12 @@ list of comments he sent around some moons ago.
   format. Used by the lmtoy_reduce.sh script. This could be expanded to
   provide better guesses on baselining for example.
 
+* rms_cut is now allowed to be negative.  This will cause it to compute
+  a robust mean and std, and use (now per pixel!) a cuttof of
+  mean + |rms_cut|*std.  So a value of -3 or -4 should be sufficient
+  to get rid of the doppler tuning problems of the data prior to Feb 18, 2020.
+
+
 # A wishlist
 
 In no particular order, there are some remaining things on the wish list, the
