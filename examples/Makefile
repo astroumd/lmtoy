@@ -20,6 +20,8 @@ IRC_data:
 	@echo ""
 	@echo "If @UMD: tar zxf /n/chara/teuben/LMT/IRC_data.tar.gz"
 	@echo "Else:    contact us"
+	@echo ""
+	@echo "The same holds for the other test data, M31_data and M51_data"
 	@exit 1
 
 new:   $(DATA_DIRS)
@@ -41,10 +43,18 @@ bench: IRC_data
 	@echo "Without edge blanking (original)"
 	@echo "QAC_STATS: IRC_79448.fits.ccd -0.00431168 8.59776 -2360.77 2454.97  0 -0.0124982"
 
+
+
 # takes about 14"
 bench1: IRC_data
 	@echo "Running quick test for 1 pixel"
 	/usr/bin/time ./irc_reduce.sh pix_list=1 > irc_bench1.log 2>&1
+
+# a plot bench for
+bench2: IRC_data IRC_79448.nc
+	view_spec_point.py -i IRC_79448.nc --pix_list 0,5,10,15 --plots test1
+	view_spec_point.py -i IRC_79448.nc --pix_list 0,5,10,15 --plots test2 -z -3
+
 
 bench4:
 	OMP_NUM_THREADS=1 /usr/bin/time ./irc_reduce.sh > irc1.log 2>&1
