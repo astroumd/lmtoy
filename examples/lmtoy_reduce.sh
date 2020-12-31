@@ -192,11 +192,27 @@ if [ $viewspec = 1 ]; then
     view_spec_file.py \
 	-i $s_nc \
         --pix_list $pix_list \
-	--rms_cut 10.0 \
+	--rms_cut $rms_cut \
 	--plot_range=-1,3
 fi
 # --show_all_pixels \
-# --show_pixel 10 \
+    # --show_pixel 10 \
+
+view_spec_point.py \
+    -i $s_nc \
+    --pix_list $pix_list \
+    --rms_cut $rms_cut \
+    --location $location \
+    --plots ${src}_view,png,1
+
+view_spec_point.py \
+    -i $s_nc \
+    --pix_list $pix_list \
+    --rms_cut $rms_cut \
+    --location $location \
+    --radius 20 \
+    --plots ${src}_view,png,2
+
 
 
 
