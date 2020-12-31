@@ -6,12 +6,9 @@
 #
 #
 
-#/usr/bin/time process_otf_map.py -c M51_process.txt
-#/usr/bin/time grid_data.py       -c M51_grid.txt
-#exit 0
 
-
-# input parameters
+# input parameters (not everything has been put in a parameter here)
+path=/lmt_data
 src=M51
 obsnum=91112
 makespec=1
@@ -28,11 +25,15 @@ done
 
 
 # derived parameters
-p_dir=${src}_data
+if [ -d $path ]; then
+    p_dir=$path
+else
+    p_dir=${src}_data
+    echo "Warning: assuming you have $p_dir (or a symlink) where the M51 data are"
+fi    
 s_nc=${src}_${obsnum}.nc
 s_fits=${src}_${obsnum}.fits
-w_fits=${src}_${obsnum}.w.fits
-w_fits=/dev/null
+w_fits=${src}_${obsnum}.wt.fits
 
 # pixel 0 is bad, 5 is bad part of the time, but we can't select by time yet
 # so we're removing them both
@@ -55,7 +56,6 @@ process_otf_map2.py -p $p_dir \
 fi
 
 #  bug?    --eliminate_list 0 didn't remove it if 0 was in pix_list
-# desetecting pixel 0:   364314 specrtra  12.8G memory
 
 if [ $viewspec = 1 ]; then
 view_spec_file.py -i $s_nc \
@@ -102,12 +102,14 @@ fi
 
 
 if [ ! -z $NEMO ]; then
-    fitsccd $s_fits $s_fits.ccd
-    ccdstat $s_fits.ccd bad=0 robust=t planes=0 > $s_fits.cubestat
-    ccdsub  $s_fits.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
-    ccdstat $s_fits.ccd bad=0 qac=t
-    fitsccd $w_fits - | ccdsub - - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t    
-    rm $s_fits.ccd        
+    if [ -e $s_fits ]; then
+	fitsccd $s_fits $s_fits.ccd
+	ccdstat $s_fits.ccd bad=0 robust=t planes=0 > $s_fits.cubestat
+	ccdsub  $s_fits.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
+	ccdstat $s_fits.ccd bad=0 qac=t
+	fitsccd $w_fits - | ccdsub - - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t    
+	rm $s_fits.ccd
+    fi
 fi
 
 if [ ! -z $ADMIT ]; then
@@ -115,6 +117,3 @@ if [ ! -z $ADMIT ]; then
 fi
 
 echo Done with $s_fits
-
-#
-# fitsccd M51_91112.fits - | ccdsub - - 20:90 20:90 | ccdstat - robust=t bad=0 
