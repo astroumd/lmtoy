@@ -52,8 +52,10 @@ bench1: IRC_data
 
 # a plot bench for
 bench2: IRC_data IRC_79448.nc
-	view_spec_point.py -i IRC_79448.nc --pix_list 0,5,10,15 --plots test1
-	view_spec_point.py -i IRC_79448.nc --pix_list 0,5,10,15 --plots test2 -z -3
+	view_spec_point.py -i IRC_79448.nc --pix_list 0,5,10,15 --plots bench2a
+	view_spec_point.py -i IRC_79448.nc --pix_list 0,5,10,15 --plots bench2b -z -3
+	@echo xdg-open bench2a.1.png 
+	@echo xdg-open bench2b.1.png 
 
 
 bench4:
