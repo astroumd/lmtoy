@@ -9,6 +9,7 @@
 
 
 # input parameters
+path=/lmt_data
 src=M31
 obsnum=85776
 makespec=1
@@ -33,7 +34,12 @@ done
 
 
 # derived parameters
-p_dir=${src}_data
+if [ -d $path ]; then
+    p_dir=$path
+else
+    p_dir=${src}_data
+    echo "Warning: assuming you have $p_dir (or a symlink) where the M31 data are"
+fi
 s_nc=${src}_${obsnum}.nc
 s_fits=${src}_${obsnum}.fits
 w_fits=${src}_${obsnum}.wt.fits
@@ -130,11 +136,14 @@ view_cube.py -i $s_fits \
 fi
 
 if [ ! -z $NEMO ]; then
-    fitsccd $s_fits $s_fits.ccd
-    ccdstat $s_fits.ccd bad=0 robust=t planes=0 > $s_fits.cubestat
-    ccdsub  $s_fits.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
-    ccdstat $s_fits.ccd bad=0 qac=t
-    rm $s_fits.ccd    
+    if [ -e $s_fits ]; then
+	fitsccd $s_fits $s_fits.ccd
+	ccdstat $s_fits.ccd bad=0 robust=t planes=0 > $s_fits.cubestat
+	ccdsub  $s_fits.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
+	ccdstat $s_fits.ccd bad=0 qac=t
+	fitsccd $w_fits - | ccdsub - - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t    
+	rm $s_fits.ccd
+    fi
 fi
 
 if [ ! -z $ADMIT ]; then
