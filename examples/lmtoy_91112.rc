@@ -1,0 +1,22 @@
+# lmtoy_reduce: 26-dec-2020
+# DATE: 2020-12-26T17:01:14.334253578
+# obsnum=91112
+# Using ifproc=M51_data/ifproc/ifproc_2020-02-20_091112_00_0001.nc
+path=M51_data
+src=NGC5194
+vlsr=463
+pix_list=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+b_regions=[[113,363],[563,813]]
+l_regions=[[363,563]]
+slice=[113,813]
+v_range=363,563
+x_extent=450
+y_extent=450
+resolution=12.5
+cell=6.25
+rmax=3
+otf_a=1.1
+otf_b=4.75
+otf_c=2
+rms_cut=-4
+

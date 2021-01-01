@@ -1,0 +1,22 @@
+# lmtoy_reduce: 26-dec-2020
+# DATE: 2020-12-26T18:29:35.887074840
+# obsnum=79448
+# Using ifproc=IRC_data/ifproc/ifproc_2018-11-16_079448_01_0000.nc
+path=IRC_data
+src=IRC+10216
+vlsr=-20
+# based on vlsr, dv=100,  dw=250
+b_regions=[[-370,-120],[80,330]]
+l_regions=[[-120,80]]
+slice=[-370,330]
+v_range=-120,80
+x_extent=300
+y_extent=300
+pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+resolution=12.5
+cell=6.25
+rmax=3
+otf_a=1.1
+otf_b=4.75
+otf_c=2
+rms_cut=-4
