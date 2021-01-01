@@ -261,33 +261,39 @@ if [ ! -z $NEMO ]; then
 
     # cleanup, just in case
     rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 $s_on.data1 $s_on.n.fits $s_on.nfs.fits
+
+    if [ -e $s_fits ]; then
+	fitsccd $s_fits $s_on.ccd 
+	fitsccd $w_fits $s_on.wt.ccd 
     
-    fitsccd $s_fits $s_on.ccd 
-    fitsccd $w_fits $s_on.wt.ccd 
+	ccdstat $s_on.ccd bad=0 robust=t planes=0 > $s_on.cubestat
+	ccdsub  $s_on.ccd -    centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
+	ccdsub  $s_on.wt.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
+
+	# convert flux flat to noise flat
+	wmax=$(ccdstat $s_on.wt.ccd  | grep ^Min | awk '{print $6}')
+
+	ccdmath $s_on.wt.ccd $s_on.wtn.ccd "sqrt(%1/$wmax)"
+	ccdmath $s_on.ccd,$s_on.wtn.ccd $s_on.n.ccd '%1*%2' replicate=t
+	ccdmom $s_on.n.ccd $s_on.mom2.ccd  mom=-2
+
+	scanfits $s_fits $s_on.head1 select=header
+	ccdfits $s_on.n.ccd  $s_on.n.fits
+
+	scanfits $s_on.n.fits $s_on.data1 select=data
+	cat $s_on.head1 $s_on.data1 > $s_on.nf.fits
+
+	ccdsmooth $s_on.n.ccd - dir=xyz nsmooth=5 | ccdfits - $s_on.nfs.fits fitshead=$s_fits
+
+	# remove useless files
+	rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd
+
+	echo "LMTOY>> Created $s_on.nf.fits and $s_on.nfs.fits"
+
+    else
+	echo "LMTOY>> Problems finding $s_fits. Skipping NEMO work."
+    fi
     
-    ccdstat $s_on.ccd bad=0 robust=t planes=0 > $s_on.cubestat
-    ccdsub  $s_on.ccd -    centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
-    ccdsub  $s_on.wt.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
-
-    # convert flux flat to noise flat
-    wmax=$(ccdstat $s_on.wt.ccd  | grep ^Min | awk '{print $6}')
-
-    ccdmath $s_on.wt.ccd $s_on.wtn.ccd "sqrt(%1/$wmax)"
-    ccdmath $s_on.ccd,$s_on.wtn.ccd $s_on.n.ccd '%1*%2' replicate=t
-    ccdmom $s_on.n.ccd $s_on.mom2.ccd  mom=-2
-
-    scanfits $s_fits $s_on.head1 select=header
-    ccdfits $s_on.n.ccd  $s_on.n.fits
-
-    scanfits $s_on.n.fits $s_on.data1 select=data
-    cat $s_on.head1 $s_on.data1 > $s_on.nf.fits
-
-    ccdsmooth $s_on.n.ccd - dir=xyz nsmooth=5 | ccdfits - $s_on.nfs.fits fitshead=$s_fits
-
-    # remove useless files
-    rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd
-    
-    echo "LMTOY>> Created $s_on.nf.fits and $s_on.nfs.fits"
 fi
 
 if [ ! -z $ADMIT ]; then
