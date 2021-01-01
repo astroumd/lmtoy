@@ -1,6 +1,6 @@
 # Overview of changes to LMTSLR
 
-A number of changes made, and wish list can also be foudn on Mark Heyer's
+A number of changes made, and wish list can also be found on Mark Heyer's
 list of comments he sent around some moons ago.
 
 * process spectra as float, the RAW data are double. In fact, the RAW
@@ -8,6 +8,7 @@ list of comments he sent around some moons ago.
   that. Potentially more memory could be saved if the selected
   *slice*, not the full spectral band, are retrieved in memory. This depends
   if the data is doppler tracked or not (I believe it is)
+  [todo: it needs to report what the VLSR range in the RAW data is]
 
 * buffer overruns in C gridder program. One was the convolution running
   over the edge (big maps would prevent this).
@@ -25,15 +26,16 @@ list of comments he sent around some moons ago.
 * the pipeline now outputs a lot more useful info (map extent, noise
   stats per pixel), but we are open to more. Some of the current info
   is not well labeled , and hard to understand for newcomers.
+  Missing at least is what the VLSR range in RAW data is.
 
-* writes a weight map, makes for better results in ADMIT.  In the code
-  you can also write out a 0/1 map which cells had a pixel inside,
-  but this is not a flag. Can be emulated with otf_select=0 and a
-  mask on that..
+* writes a weight map, when used makes for better results in ADMIT.
+  In the code you can also write out a 0/1 map which cells had a pixel
+  inside, but this is not a flag. Can be emulated with otf_select=0
+  and a mask on that..
 
 * add otf_select=3 option to use a triangle convolution filter. In the
   end, normalizing to the same RMS, there are no noticable
-  differences. Need a more detailed analysis like in SLR Appendix C.
+  differences. Need a more detailed analysis like in SLR Appendix C?
 
 * by default, now only cells will be given a value if there was at
   least one pixel in it. This only works well for convex areas. For
@@ -41,16 +43,17 @@ list of comments he sent around some moons ago.
   cells. In these circumstances it would be useful to turn this option
   to the old default, based on weight from the convolution.
 
-* a number of NEMO based tools were slapped together that might need a
-  python (astropy) equivalent if deemed useful
+* a number of NEMO based tools were added that might need a python
+  (astropy) equivalent if deemed useful. The $NEMO comments in the
+  scripts.
 
-* there is a toy script **lmtoy_reduce.sh** that doesn't need user
-  input, other then the obsnum. See
-  [lmtoy_reduce.md](../examples/lmtoy_reduce.md).  Still a few thing to
-  wrap up (e.g. spatial extent).   Script can be re-run and
-  learn from new parameters.
+* The script **lmtoy_reduce.sh** is like a pipeline, intended not to
+  need user input, other then the obsnum. See
+  [lmtoy_reduce.md](../examples/lmtoy_reduce.md).  Still a few things
+  to wrap up (e.g. spatial extent).  Script can also be re-run and learn
+  from new parameters.
 
-* There is a benchmark (IRC+10216) but it's not public yet. Should we? who
+* There is a benchmark (IRC+10216) but it's not public data yet. Should we? who
   is the PI? This is commissionigng data with some bad header info, so
   it's scientifically not correct. 
 
@@ -63,7 +66,8 @@ list of comments he sent around some moons ago.
   mean + |rms_cut|*std.  So a value of -3 or -4 should be sufficient
   to get rid of the doppler tuning problems of the data prior to Feb 18, 2020.
 
-* New script "view_spec_point.py" to overplot spectra in development.
+* New script "view_spec_point.py" to overplot spectra. Also uses the new
+  docopt based user interface.
 
 * A new Plots() interface with  a --plots= command line interface allows
   users to easily switch between interactive and batch png (or pdf) files.
@@ -72,41 +76,49 @@ list of comments he sent around some moons ago.
 
 # A wishlist
 
-In no particular order, there are some remaining things on the wish list, the
-important ones are tracked in our [github issues](https://github.com/astroumd/lmtoy/issues) list.
-I've also added a few that Mark Heyer listed in his report.
+In no particular order, there are some remaining things on the wish
+list, the important ones are tracked in our [github
+issues](https://github.com/astroumd/lmtoy/issues) list.  I've also
+added a few that Mark Heyer listed in his report.
 
-* A much better auto-baselining. The current VLSR (from netcdf) and guessed DV and DW
-  only does that much, but it's ok for a first start. The M31 data is already showing
-  the VLSR is no good, as the VLSR of the galaxy is not appropriate for the small patches
-  in the M31 survey the LMT undertook.
+* A much better auto-baselining. The current VLSR (from netcdf) and
+  guessed DV and DW only does that much, but it's ok for a first
+  start. The M31 data is already showing the VLSR is no good, as the
+  VLSR of the galaxy is not appropriate for the small patches in the
+  M31 survey the LMT undertook.
 
-* To encourage making apps, the keywords belonging to the app should be with the code with
-  minimal repetition of the keyword names. Should we look at e.g. click , docopt, clize.
-  The new view_spec_point.py script uses docopt to see how we like this.
+* To encourage making apps, the keywords belonging to the app should
+  be with the code with minimal repetition of the keyword
+  names. Should we look at e.g. click , docopt, clize.  The new
+  view_spec_point.py script uses docopt to see how we like this.
 
-* Here and there more sensible defaults are needed for keywords. [docopt could solve this too]
+* Here and there more sensible defaults are needed for
+  keywords. [docopt could solve this too, as can be seen in the new
+  "view_spec_point.py"
 
-* Using the -c flag and the other options are confusing.  Would be nice if the other options
-  can override the configuration file. Honestly, I believe the configuration is overrated
-  and I would like to see it gone (would simplify this exploding parameter problem). This
-  parameter file also seems to place different - possibly conflicting - defaults in different
-  places.
+* Using the -c flag and the other options are confusing.  Would be
+  nice if the other options can override the configuration
+  file. Honestly, I believe the configuration is overrated and I would
+  like to see it gone (would simplify this exploding parameter
+  problem). This parameter file also seems to place different -
+  possibly conflicting - defaults in different places.
 
 * There are still a few places in the C code that don't exit, where they should,
   for example of malloc() fails.
 
 * Options to smooth/bin in velocity?  Or leave this to 3rd party
   tools?  [NEMO writes an .nfs. cube, which is a NoiseFlatSMoothed
-  version so ADMIT can run on it.]   CASA should be good for this.
+  version so ADMIT can run on it.]   CASA should be good test for this.
 
-* waterfall in a fits image
+* waterfall in the form of a fits image/cube
 
 * RFI blanking
 
-* Masking file with more flexible  filtering:
+* Add a time column to the SpecFile
+
+* Masking file with more flexible filtering:
   - by pixel number
-  - by rms (absolute, or fractional)
+  - by rms (absolute, or fractional [rms_cut < 0 can do that now])
   - by time
   - by sequence
   Inspired by miriad, the format could look at follows:
@@ -117,10 +129,12 @@ I've also added a few that Mark Heyer listed in his report.
       rms(1.5),pixel(5)
       rfi(10)
       
-  have to decide on if you filter down or up, and if we allow a - sign in front of a directive
+  have to decide on if you filter down or up, and if we allow a - sign
+  in front of a directive
       
-* Additional parameters from the Hedwig proposal system should go in the workflow, so they
-  can be used in the pipeline, and eventually go into FITS
+* Additional parameters from the Hedwig proposal system should go in
+  the workflow, so they can be used in the pipeline, and eventually go
+  into FITS
 
        vlsr (e.g. M31 has issues) for small fields of a big object ?
        width - expected width of the line in the field - for baselining 
@@ -128,7 +142,8 @@ I've also added a few that Mark Heyer listed in his report.
        observer (the PI name ?)
        instrument (for FITS)
 
-  Experience with ADMIT and CASA could expose a few more.
+  Additional experience with ADMIT and CASA could expose a few more
+  things that are useful to have
 
 * An algorithm to fix the doppler update problem (data < Feb 18, 2020), which causes the RMS values
   to have double or triple histograms. They are now also listed in the output of the
@@ -146,6 +161,7 @@ I've also added a few that Mark Heyer listed in his report.
    high and there are probably reason to not use this pixel or inspect it for perhaps
    more detailed flagging. Compare this to the M51 data where the doppler issue was
    fixed:
+   
    [this is now implemented in the gridder, and the view_spec_point.py script is
    visualizing it's implications]
 
