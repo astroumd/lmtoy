@@ -30,3 +30,7 @@ fi
 if [ ! -z $ADMIT ]; then
     echo Warning:  ADMIT=$ADMIT present.  LMTOY will not behave nicely with ADMIT yet.
 fi
+
+if [ -e $LMTOY/lmtoy_local.sh ]; then
+    source $LMTOY/lmtoy_local.sh
+fi
