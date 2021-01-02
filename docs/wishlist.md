@@ -165,6 +165,22 @@ added a few that Mark Heyer listed in his report.
    [this is now implemented in the gridder, and the view_spec_point.py script is
    visualizing it's implications]
 
+   Here's the stats for
+
+         rms_cut=-4               rms_cut=-3
+
+   IRC   84992/91816    0.926     84750  0.923
+   M31a 223169/227660   0.980    222667  0.978
+   M31b 210587/214998   0.979    210067  0.977
+   M31c 225352/229960   0.980    224875  0.978
+   M51  363812/364314   0.999    363075  0.997   [taken after 2020-02-18]
+
+
+   So generally there are about 2-7% of the spectra that are doppler related outliers.
+
+
+
+
 *  A number of fancy options (e.g. allow different projection systems, galactic included)
    can probably solved much easier by using the *Montage* package after our pipeline.
 
