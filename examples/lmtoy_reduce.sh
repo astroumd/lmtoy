@@ -9,7 +9,7 @@
 #
 # There is no good mechanism here to make a new variable depend on re-running a certain task on which it depends
 
-version="lmtoy_reduce: 29-dec-2020"
+version="lmtoy_reduce: 3-jan-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>>  Usage: path=DATADIR obsnum=OBSNUM ..."
@@ -84,6 +84,23 @@ if [ $newrc = 1 ]; then
     echo "# $version"                            > $rc
     echo "# DATE: `date +%Y-%m-%dT%H:%M:%S.%N`" >> $rc
     echo "# obsnum=$obsnum" >> $rc
+
+    if [ ! -d ${path}/ifproc ]; then
+	echo There is no ifproc directory in ${path}
+	rm $rc
+	exit 1
+    fi
+    if [ ! -d ${path}/spectrometer ]; then
+	echo There is no spectrometer directory in ${path}
+	rm $rc	
+	exit 1
+    fi
+    if [ ! -d ${path}/spectrometer/roach0 ]; then
+	echo There is no spectrometer/roach0 directory in ${path}
+	rm $rc	
+	exit 1
+    fi
+
     
     ifproc=$(ls ${path}/ifproc/*${obsnum}*.nc)
     if [ -z $ifproc ]; then
@@ -96,8 +113,7 @@ if [ $newrc = 1 ]; then
     echo "# Using ifproc=$ifproc" >> $rc
     echo "path=$path"             >> $rc
 
-    # need a python task for this,  lmtinfo
-
+    # lmtinfo grabs some useful parameters from the ifproc file
     lmtinfo.py $path $obsnum | tee -a $rc
     source $rc
     
@@ -137,8 +153,7 @@ if [ $newrc = 1 ]; then
     sleep 5
 fi
 
-
-#             derived parameters
+#             derived parameters (you should not have to edit this)
 p_dir=${path}
 s_on=${src}_${obsnum}
 s_nc=${s_on}.nc
@@ -213,8 +228,20 @@ view_spec_point.py \
     --radius 20 \
     --plots ${src}_view,png,2
 
+rm -rf ${s_on}.wf.fits 
+make_spec_fits.py \
+    -i $s_nc \
+    -o ${s_on}.wf.fits \
+       --pix_list $pix_list
 
-
+    
+rm -rf ${s_on}.wf10.fits 
+make_spec_fits.py \
+    -i $s_nc \
+    -o ${s_on}.wf10.fits \
+    --pix_list $pix_list \
+    --binning 10,1
+    
 
 #  convert SpecFile to FITScube
 if [ $makecube = 1 ]; then
