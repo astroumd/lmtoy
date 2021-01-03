@@ -12,7 +12,7 @@ script uses. This parameter file can be edited and you can re-run the
 script.   The first time you run it, you will probably need to
 pass the path= variable, e.g.:
 
-      $LMTOY/examples/lmt_reduce.sh path=/lmt_data  obsnum=91112
+      $LMTOY/examples/lmt_reduce.sh path=/data/LMT/lmt_data obsnum=91112
 
 This will create a FITS cube **SRC_OBSNUM.fits**, as well as a
 FITS weight map **SRC_OBSNUM.wt.fits**.  The current version of the script
@@ -70,6 +70,8 @@ future [wishlist](../docs/wishlist.md).
 Here a summary of the files that are created:
 
      SRC_OBSNUM.nc           SpecFile  (netcdf format)
+     SRC_OBSNUM.wf.nc        Waterfall version of SpecFile
+     SRC_OBSNUM.wf10.nc      Waterfall version of SpecFile with 10 times binning in time
      SRC_OBSNUM.fits         (flux flat) fits cube
      SRC_OBSNUM.wt.fits      weights fits map
      SRC_OBSNUM.nf.fits      noise flat fits cube, ready for ADMIT
