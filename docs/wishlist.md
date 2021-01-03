@@ -73,6 +73,8 @@ list of comments he sent around some moons ago.
   users to easily switch between interactive and batch png (or pdf) files.
   The first example is in "view_spec_point.py"
 
+* New script "make_spec_fits.pu" that makes a waterfall fits cube 
+
 
 # A wishlist
 
@@ -109,8 +111,6 @@ added a few that Mark Heyer listed in his report.
 * Options to smooth/bin in velocity?  Or leave this to 3rd party
   tools?  [NEMO writes an .nfs. cube, which is a NoiseFlatSMoothed
   version so ADMIT can run on it.]   CASA should be good test for this.
-
-* waterfall in the form of a fits image/cube
 
 * RFI blanking
 
@@ -178,11 +178,10 @@ added a few that Mark Heyer listed in his report.
 
    So generally there are about 2-7% of the spectra that are doppler related outliers.
 
-
-
-
 *  A number of fancy options (e.g. allow different projection systems, galactic included)
    can probably solved much easier by using the *Montage* package after our pipeline.
+
+* visualizing the OFF positions?  The SpecFile has lost them.  There is no view_raw_file
 
 
 # workflow
