@@ -2,6 +2,7 @@
 #
 #    this is an example how the LMTOY environment can be installed
 #    28-dec-2020:     LMTSRL installed (more to come)
+#     4-jan-2021:     try to be smart on finding LMT data; disable montage for now
 
 # set -x
 
@@ -31,14 +32,27 @@ make install_python WGET=$wget
 source python_start.sh
 make install_lmtslr
 # make install_lmtslr_venv
+# make install_dreampy3
 make install_nemo
-make install_montage
+# make install_montage
 make config
 
-#  active and run benchmark
+#  activate LMTOY and run benchmark, but unless you made preparations
+#  on finding the data, the benchmark will not run here.
 
 source lmtoy_start.sh
 which python
 cd examples
-ln -s ~/LMT/IRC_data
-make bench	
+
+if [ -d ~/LMT/IRC_data ]; then
+    ln -s ~/LMT/IRC_data
+elif [ -d /data/LMT/lmt_data ]; then
+    ln -s /data/LMT/lmt_data IRC_data
+elif [ -e /n/chara/teuben/LMT/IRC_data.tar.gz ]; then
+    tar zxf /n/chara/teuben/LMT/IRC_data.tar.gz
+else
+    echo Could not find the IRC_data or lmt_data, skipping benchmark
+    exit 0
+fi
+
+make bench
