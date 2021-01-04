@@ -35,8 +35,11 @@ s_nc=${src}_${obsnum}.nc
 s_fits=${src}_${obsnum}.fits
 w_fits=${src}_${obsnum}.wt.fits
 
-# pixel 0 is bad, 5 is bad part of the time, but we can't select by time yet
-# so we're removing them both
+# pixel 0 is all bad, 1 has issues, but it's below channel 820 or so
+# 5 is bad hte first 11,000 samples (out of 24,000 or so), causing stripes.
+# but until we can select by time, wew need to remove as well
+# with view_spec_point you can see pixel 2 might not be good, as at -80,-70 it's not going along
+# the spectral feature at 500 km/s, but nothing odd shows up in the waterfall plot
 
 #  convert RAW to SpecFile
 if [ $makespec = 1 ]; then
