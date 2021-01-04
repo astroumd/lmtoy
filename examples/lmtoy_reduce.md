@@ -70,8 +70,8 @@ future [wishlist](../docs/wishlist.md).
 Here a summary of the files that are created:
 
      SRC_OBSNUM.nc           SpecFile  (netcdf format)
-     SRC_OBSNUM.wf.nc        Waterfall version of SpecFile
-     SRC_OBSNUM.wf10.nc      Waterfall version of SpecFile with 10 times binning in time
+     SRC_OBSNUM.wf.fits      Waterfall version of SpecFile
+     SRC_OBSNUM.wf10.fits    Waterfall version of SpecFile with 10 times binning in time
      SRC_OBSNUM.fits         (flux flat) fits cube
      SRC_OBSNUM.wt.fits      weights fits map
      SRC_OBSNUM.nf.fits      noise flat fits cube, ready for ADMIT
