@@ -1,14 +1,14 @@
 # lmtoy
 
 LMTOY is your toy box for installing and running codes related to LMT data reduction. LMT is a large
-50m single dish radio telescope located in Mexico (18:59:09N 97:18:53W) operating at mm wavelenghts.
+50m single dish radio telescope located in Mexico (18:59:09N 97:18:53W) operating at mm wavelengths.
 
 
-## data
+## DATA
 
-LMT telescope data are (mostly) in netCDF format (extension: .nc), which stores
+LMT raw telescope data are (mostly) in netCDF format (extension: .nc), which stores
 data hierarchically in a big binary blob, much like HDF5.
-Actually, a typical LMT observation consists of a about 10 files
+A typical LMT observation consists of a about 10 files
 in a specific directory hierarchy, all identified via an OBSNUM. 
 
 Tools like **ncdump** display structure and contents (as
@@ -23,6 +23,7 @@ A simple way to get at the raw data is the following:
       nc.close()
 
 where **rawdata** is now a 2D array, shaped (ntime,nchan) in the python sense (nchan runs fastest).
+The LMT software will typically calibrate and convert these data to the more common FITS format.
 
 
 # LMT software
@@ -48,7 +49,7 @@ LMT software is very instrument specific:
 
 There are some expanded notes in [INSTALL.md](INSTALL.md), and also check out the
 Makefile for specific targets that simplify the install. Probably the most automated/simple
-way to install (if you have all the preconditions) is:
+way to install (if you have all the preconditions, most importedly the **cfitsio** and **netcdf** library) is:
 
       wget https://astroumd.github.io/lmtoy/install_lmtoy
       bash install_lmtoy
@@ -57,18 +58,34 @@ if this worked, activate it in your shell
 
       source lmtoy/lmtoy_start.sh
 
-and to run an example, try something like (in any directory)
-
-      $LMTOY/examples/lmtoy_reduce.sh path=/lmt_data  obsnum=79448
-
-this particular example is also the OTF benchmark. If you want to run this to check
-if the numbers agree:
+Now you can place the benchmark data in for example ~/LMT/IRC_data, or in UMass you
+can make a symlink to the big data disk
 
       cd $LMTOY/examples
-      ln -s /lmt_data IRC_data
+
+pick the appropriate one for you:
+
+      ln -s /data/LMT/lmt_data  IRC_data
+      ln -s ~/LMT/IRC_data
+      tar zxf /n/chara/teuben/LMT/IRC_data.tar.gz
+
+after which you can run a benchmark to verify if LMTSLR is working
+
       make bench
 
-and it will print two lines starting with QAC_STATS that should agree!
+and it will print two lines starting with QAC_STATS that should agree! Another useful
+test is plotting:
+
+      make bench2
+
+This should produce three plots.
+
+In your own directory you can use the more general **lmtoy_reduce.sh** script
+
+      $LMTOY/examples/lmtoy_reduce.sh path=/data/LMT/lmt_data  obsnum=79448
+
+(again with the appropriate **path=**) to analyse any dataset. It will produce
+a file **lmtoy_79448.rc** which you can edit and re-run the script to finetune.
 
 
 ## References
