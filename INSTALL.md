@@ -47,7 +47,13 @@ Yuck. Normally you should not need this path.
 
 ## python modules
 
-The suggested path is to use a virtual environment. From anaconda3 for example:
+Warning up front: this can be confusing. There are several ways
+how to install it in "your" python, but we also have a built-in way
+to do this It requires some deeper knowledge how python works, but the
+current default is a completely self-contained python via anaconda3.
+
+The suggested path is to use a virtual environment. This allows you to
+piggy back on top of your system version of python. From anaconda3 for example:
 
      python3 -m venv lmt1
 
