@@ -1,21 +1,19 @@
 # Overview of changes to LMTSLR
 
-A number of changes made, and wish list can also be found on Mark Heyer's
-list of comments he sent around some moons ago.
+This list also contains the ones Mark Heyer sent around earlier.
 
-* process spectra as float, the RAW data are double. In fact, the RAW
-  data are integers, some compression schemes could be used to shrink
-  that. Potentially more memory could be saved if the selected
-  *slice*, not the full spectral band, are retrieved in memory. This depends
-  if the data is doppler tracked or not (I believe it is)
-  [todo: it needs to report what the VLSR range in the RAW data is]
+* process spectra as float, the RAW data are double, saving 50%
+  memory. In fact, the RAW data are integers (but 16bit not enough) ,
+  some compression schemes could be used to shrink that. Potentially
+  more memory could be saved if the selected *slice*, not the full
+  spectral band, are retrieved in memory. This depends if the data is
+  doppler tracked or not (I believe it is)
 
 * buffer overruns in C gridder program. One was the convolution running
   over the edge (big maps would prevent this).
   Also needed to fix Cube and Plane access for non-square maps
   (using square maps would solve that). 
   Segfaults show up as Error 11 in the gridder.
-  [Mark Hayer]
 
   Note added: I've still seen a segfault, but harder to reproduce.
 
@@ -23,18 +21,18 @@ list of comments he sent around some moons ago.
   work. more to come (e.g. HISTORY). Need to confirm if other things
   in CASA also work correctly.
 
-* the pipeline now outputs a lot more useful info (map extent, noise
-  stats per pixel), but we are open to more. Some of the current info
-  is not well labeled , and hard to understand for newcomers.
-  Missing at least is what the VLSR range in RAW data is.
+* the pipeline now outputs a lot more useful info (map extent in
+  position and velocity, noise stats per pixel, etc.), but more is
+  needed. Some of the current info is not well labeled , and
+  hard to understand for newcomers. 
 
-* writes a weight map, when used makes for better results in ADMIT.
-  In the code you can also write out a 0/1 map which cells had a pixel
-  inside, but this is not a flag. Can be emulated with otf_select=0
-  and a mask on that..
+* now writes a weight map, when used this makes for better results in
+  ADMIT.  In the code you can also write out a 0/1 map which cells had
+  a pixel inside, but this is not a flag. Can be emulated with
+  otf_select=0 and a mask on that, which requires a re-run of the gridder.
 
 * add otf_select=3 option to use a triangle convolution filter. In the
-  end, normalizing to the same RMS, there are no noticable
+  end, normalizing to the same RMS, there are no noticable visual
   differences. Need a more detailed analysis like in SLR Appendix C?
 
 * by default, now only cells will be given a value if there was at
@@ -44,17 +42,16 @@ list of comments he sent around some moons ago.
   to the old default, based on weight from the convolution.
 
 * a number of NEMO based tools were added that might need a python
-  (astropy) equivalent if deemed useful. The $NEMO comments in the
-  scripts.
+  (astropy) equivalent if deemed useful. 
 
-* The script **lmtoy_reduce.sh** is like a pipeline, intended not to
-  need user input, other then the obsnum. See
+* The script **lmtoy_reduce.sh** is our simple pipeline, intended not
+  to need user input, other then the obsnum. See
   [lmtoy_reduce.md](../examples/lmtoy_reduce.md).  Still a few things
-  to wrap up (e.g. spatial extent).  Script can also be re-run and learn
-  from new parameters.
+  to wrap up (e.g. spatial extent).  Script can also be re-run and
+  learn from new parameters.
 
 * There is a benchmark (IRC+10216) but it's not public data yet. Should we? who
-  is the PI? This is commissionigng data with some bad header info, so
+  is the PI? This is commissioning data with some bad header info, so
   it's scientifically not correct. 
 
 * A new script "lmtinfo.py" that spits out some useful variables in "rc"
@@ -65,9 +62,11 @@ list of comments he sent around some moons ago.
   a robust mean and std, and use (now per pixel!) a cuttof of
   mean + |rms_cut|*std.  So a value of -3 or -4 should be sufficient
   to get rid of the doppler tuning problems of the data prior to Feb 18, 2020.
+  Note:  rms_cut<0 is not supported by all scripts yet!
 
 * New script "view_spec_point.py" to overplot spectra. Also uses the new
-  docopt based user interface.
+  docopt based user interface, where --help shows defaults and additional
+  help like a unix man page. All new scripts use docopt.
 
 * A new Plots() interface with  a --plots= command line interface allows
   users to easily switch between interactive and batch png (or pdf) files.
@@ -93,10 +92,11 @@ added a few that Mark Heyer listed in his report.
   be with the code with minimal repetition of the keyword
   names. Should we look at e.g. click , docopt, clize.  The new
   view_spec_point.py script uses docopt to see how we like this.
+  Thus this item has been tried out, and if deemed a good thing,
+  conversion of other script can be done.
 
 * Here and there more sensible defaults are needed for
-  keywords. [docopt could solve this too, as can be seen in the new
-  "view_spec_point.py"
+  keywords. [docopt would solve this too]
 
 * Using the -c flag and the other options are confusing.  Would be
   nice if the other options can override the configuration
@@ -105,12 +105,14 @@ added a few that Mark Heyer listed in his report.
   problem). This parameter file also seems to place different -
   possibly conflicting - defaults in different places.
 
-* There are still a few places in the C code that don't exit, where they should,
-  for example of malloc() fails.
+* There are still a few places in the C code that don't exit, where
+  they should, for example of malloc() fails. Error messages need to
+  be more descriptive in some places.
 
 * Options to smooth/bin in velocity?  Or leave this to 3rd party
   tools?  [NEMO writes an .nfs. cube, which is a NoiseFlatSMoothed
   version so ADMIT can run on it.]   CASA should be good test for this.
+  The make_spec_fits waterfall script has a --binning= option.
 
 * RFI blanking
 
@@ -145,8 +147,9 @@ added a few that Mark Heyer listed in his report.
   Additional experience with ADMIT and CASA could expose a few more
   things that are useful to have
 
-* An algorithm to fix the doppler update problem (data < Feb 18, 2020), which causes the RMS values
-  to have double or triple histograms. They are now also listed in the output of the
+* An algorithm to fix the doppler update problem (data < Feb 18,
+  2020), which causes the RMS values to have double or triple
+  histograms. They are now also listed in the output of the
   **process_otf_map2.py**:
 
       Pix Nspec  Mean Std MAD_std  Min    Max      <RMS> RMS_max  Warnings
@@ -157,13 +160,14 @@ added a few that Mark Heyer listed in his report.
       3 5739   -0.008 1.003 0.956  -5.934 16.254   0.958 1.989      *M 4.2
       ...
 
-   If either a **P** or **M** is warned about, the ratio of Std/Mad_Std is deemed to
-   high and there are probably reason to not use this pixel or inspect it for perhaps
-   more detailed flagging. Compare this to the M51 data where the doppler issue was
+   If either a **P** or **M** is warned about, the ratio of
+   Std/Mad_Std is deemed to high and there are probably reason to not
+   use this pixel or inspect it for perhaps more detailed
+   flagging. Compare this to the M51 data where the doppler issue was
    fixed:
    
-   [this is now implemented in the gridder, and the view_spec_point.py script is
-   visualizing it's implications]
+   [this is now implemented in the gridder, and the view_spec_point.py
+   script is visualizing it's implications]
 
    Here's the stats for
 
@@ -176,12 +180,15 @@ added a few that Mark Heyer listed in his report.
    M51  363812/364314   0.999    363075  0.997   [taken after 2020-02-18]
 
 
-   So generally there are about 2-7% of the spectra that are doppler related outliers.
+   So generally there are about 2-7% of the spectra that are doppler
+   related outliers.  Looking at a wider waterfall plot, these bad
+   scans and their fractions are fairly obvious.
 
 *  A number of fancy options (e.g. allow different projection systems, galactic included)
    can probably solved much easier by using the *Montage* package after our pipeline.
 
-* visualizing the OFF positions?  The SpecFile has lost them.  There is no view_raw_file
+* visualizing the OFF positions?  The SpecFile has lost them.  There is no view_raw_file.
+  Is a waterfall for raw data useful?
 
 
 # workflow
@@ -262,14 +269,16 @@ and a few filters what spectra to be added to the gridding
 
 ##  resolution
 
-This should be 1.15 * lambda/D, though depending on the filter, and it's parameters, there may be
-a reason to take a larger value. At CO 115.27 GHz this is 12.3". Currently the user has to supply it,
-ideally we set it from the skyfreq.
+This should be 1.15 * lambda/D, though depending on the filter, and
+it's parameters, there may be a reason to take a larger value. At CO
+115.27 GHz this is 12.3". Currently the user has to supply it, ideally
+we set it from the skyfreq.
 
 ##  cell: pixel size
 
-The cell size should be 1/2 of the resolution, if you want to follow Nyquist sampling, but anything a bit
-smaller is ok as well. At CARMA we used a ratio of 3, at ALMA they decided on a ratio of 5!
+The cell size should be 1/2 of the resolution, if you want to follow
+Nyquist sampling, but anything a bit smaller is ok as well. At CARMA
+we used a ratio of 3, at ALMA they decided on a ratio of 5!
 
 ##  otf_select:  the choice of filter
 
@@ -283,13 +292,18 @@ Up to three parameters are used to control the shape of the filter (otf_a, otf_b
 
 ## rmax: convolution size
 
-This is the dimensionless factor how many resolutions the convolution filter should be sampled. There is a secondary
-parameter how many samples are taken, which defaults to 256. These is little reasons to change this parameter,
-in fact, there may be some program array overruns lurking here if set wrong.
+This is the dimensionless factor how many resolutions the convolution
+filter should be sampled. There is a secondary parameter how many
+samples are taken, which defaults to 256. These is little reasons to
+change this parameter, in fact, there may be some program array
+overruns lurking here if set wrong.
 
 ## edge: expand the edge?
 
-This is not a parameter, but could be. It's currently hardcoded and easy to switch. I didn't like the fake expanded edges,
-in paritcual a gaussian (--otf_select=2) woulc cause these straight features perpendicular to the real edge. I decide
-to set a mask on cells where a pixel has never been seen.   I could add one cycle if N neighbors are present. N=3 could
-be a good value, with N=2 this will fill in the odd NaN bands with otf_select=1.
+This is not a parameter, but could be. It's currently hardcoded and
+easy to switch. I didn't like the fake expanded edges, in paritcual a
+gaussian (--otf_select=2) woulc cause these straight features
+perpendicular to the real edge. I decide to set a mask on cells where
+a pixel has never been seen.  I could add one cycle if N neighbors are
+present. N=3 could be a good value, with N=2 this will fill in the odd
+NaN bands with otf_select=1.
