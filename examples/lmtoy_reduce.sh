@@ -9,7 +9,7 @@
 #
 # There is no good mechanism here to make a new variable depend on re-running a certain task on which it depends
 
-version="lmtoy_reduce: 3-jan-2021"
+version="lmtoy_reduce: 4-jan-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>>  Usage: path=DATADIR obsnum=OBSNUM ..."
@@ -24,8 +24,8 @@ fi
 # set -x
 debug=0
 
-# input parameters (defaults are for the IRC benchmark)
-path=IRC_data
+# input parameters (defaults are for the UMass)
+path=/data/LMT/lmt_data
 obsnum=79448
 newrc=0
 #
