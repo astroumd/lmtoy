@@ -29,6 +29,11 @@ help install:
 	@echo "  make config"
 	@echo "  source lmtoy_start.sh"
 	@echo "Users will then see an environment variable LMTOY: $(LMTOY)"
+	@echo ""
+	@echo "Other useful targets:"
+	@echo "    make pull                  update all git repos"
+	@echo "    make status                view git status in all repos"
+	@echo ""
 
 config:
 	./configure
@@ -105,6 +110,9 @@ install_montage:  Montage
 # step 5 (optional)
 install_nemo:  nemo
 	(cd nemo; ./configure; make build MAKELIBS=corelibs)
+
+install_nemo_pgplot:  nemo
+	(cd nemo; ./configure --with-yapp=pgplot; make build MAKELIBS=corelibs)
 
 # Optional hack:  once we agree on a common ste of requirements, we can make a common step
 #                 note the current step2 and step3 mean you can only run one of the two
