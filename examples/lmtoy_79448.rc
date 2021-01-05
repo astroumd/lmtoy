@@ -9,6 +9,7 @@ vlsr=-20
 b_regions=[[-370,-120],[80,330]]
 l_regions=[[-120,80]]
 slice=[-370,330]
+# slice=[-1057,1018]     # close to all channels
 v_range=-120,80
 x_extent=300
 y_extent=300
