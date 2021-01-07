@@ -4,8 +4,8 @@
 #              pixel 3 bad in some data for some of the time
 #
 #  CPU: 240.51user  7.17system 4:12.49elapsed 98%CPU
-#       985.39user 14.67system 4:37.48elapsed 360%CPU
 #
+#  see also lmtoy_reduce.sh for a more general approach
 
 
 # input parameters

@@ -2,12 +2,15 @@
 #
 #  Example OTF sequoia data reduction path for IRC+10216
 #  all pixels are pretty good, but with trimodal RMS distributions
+#  due to the pre-2020 doppler tracking problem
 #
 #  This data is also the benchmark we always run. Even though these
 #  were Sequoia commisioning data and have some header issues, for
 #  the purpose of testing the workflow this is fine.
 #
 #  The benchmark runs in about 80" on a decent 2020 laptop.
+#
+#  see also lmtoy_reduce.sh for a more general approach
 
 
 # input parameters

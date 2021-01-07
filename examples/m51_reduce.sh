@@ -4,7 +4,7 @@
 #
 #  CPU: 301.25user 23.80system 5:38.07elapsed 96%CPU 
 #
-#
+#  see also lmtoy_reduce.sh for a more general approach
 
 
 # input parameters (not everything has been put in a parameter here)
