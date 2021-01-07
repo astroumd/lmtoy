@@ -9,7 +9,7 @@
 #
 # There is no good mechanism here to make a new variable depend on re-running a certain task on which it depends
 
-version="lmtoy_reduce: 4-jan-2021"
+version="lmtoy_reduce: 5-jan-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>>  Usage: path=DATADIR obsnum=OBSNUM ..."
@@ -287,11 +287,12 @@ if [ ! -z $NEMO ]; then
     echo "LMTOY>>   Some NEMO post-processing"
 
     # cleanup, just in case
-    rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 $s_on.data1 $s_on.n.fits $s_on.nfs.fits
+    rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 \
+       $s_on.data1 $s_on.n.fits $s_on.nfs.fits $s_on.mom0.ccd
 
     if [ -e $s_fits ]; then
-	fitsccd $s_fits $s_on.ccd 
-	fitsccd $w_fits $s_on.wt.ccd 
+	fitsccd $s_fits $s_on.ccd    axistype=1
+	fitsccd $w_fits $s_on.wt.ccd axistype=1
     
 	ccdstat $s_on.ccd bad=0 robust=t planes=0 > $s_on.cubestat
 	ccdsub  $s_on.ccd -    centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
@@ -303,6 +304,7 @@ if [ ! -z $NEMO ]; then
 	ccdmath $s_on.wt.ccd $s_on.wtn.ccd "sqrt(%1/$wmax)"
 	ccdmath $s_on.ccd,$s_on.wtn.ccd $s_on.n.ccd '%1*%2' replicate=t
 	ccdmom $s_on.n.ccd $s_on.mom2.ccd  mom=-2
+	ccdmom $s_on.n.ccd $s_on.mom0.ccd  mom=0	
 
 	scanfits $s_fits $s_on.head1 select=header
 	ccdfits $s_on.n.ccd  $s_on.n.fits
