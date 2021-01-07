@@ -9,6 +9,7 @@ pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 b_regions=[[-646,-396],[-196,54]]
 l_regions=[[-396,-196]]
 slice=[-646,54]
+#slice=[-1330,740]        # full band
 v_range=-396,-196
 x_extent=250
 y_extent=250
