@@ -30,7 +30,8 @@ is required for each run
 On the first run it creates an **lmtoy_OBSNUM.rc** parameter file,
 which is nothing more than a collection of shell variables that the
 reduction script uses. This parameter file can be edited and you can
-re-run the script. 
+re-run the script. Remember there are no spaces left and right of the '='
+sign in an rc file.
 
 
 This will create a FITS cube **SRC_OBSNUM.fits**, as well as a
@@ -61,6 +62,25 @@ the makespec=0 parameter you can re-run a new gridding
 experiment. Here are a few examples how to compare the RMS for
 different gridding (see also Appendix C in the SLR manual).
 
+##  List of files
+
+Here a summary of the files that are created:
+
+   
+     lmtoy_OBSNUM.rc         parameter (bash style) file
+     SRC_OBSNUM.nc           SpecFile  (netcdf format)
+     SRC_OBSNUM.wf.fits      Waterfall version of SpecFile
+     SRC_OBSNUM.wf10.fits    Waterfall version of SpecFile with 10 times binning in time
+     SRC_OBSNUM.fits         (flux flat) fits cube
+     SRC_OBSNUM.wt.fits      weights fits map
+     SRC_OBSNUM.nf.fits      noise flat fits cube, ready for ADMIT
+     SRC_OBSNUM.nfs.fits     noise flat XYZ smoothed fits cube, ready for ADMIT
+     SRC_OBSNUM.cubestats    ascii table of some per plane statistics
+
+
+
+## An experiment
+
 
      ./lmtoy_reduce.sh path=M31_data obsnum=85776 
       
@@ -83,22 +103,6 @@ will give the same cube. For those familiar with CASA's tclean and the different
 balance between resolution and signal to noise, you will find the parameters to control this equally
 challenging. Again, Appendix C contains a good summary, and there are some comments on this in our
 future [wishlist](../docs/wishlist.md).
-
-##  List of files
-
-Here a summary of the files that are created:
-
-   
-     lmtoy_OBSNUM.rc         parameter (bash style) file
-     SRC_OBSNUM.nc           SpecFile  (netcdf format)
-     SRC_OBSNUM.wf.fits      Waterfall version of SpecFile
-     SRC_OBSNUM.wf10.fits    Waterfall version of SpecFile with 10 times binning in time
-     SRC_OBSNUM.fits         (flux flat) fits cube
-     SRC_OBSNUM.wt.fits      weights fits map
-     SRC_OBSNUM.nf.fits      noise flat fits cube, ready for ADMIT
-     SRC_OBSNUM.nfs.fits     noise flat XYZ smoothed fits cube, ready for ADMIT
-     SRC_OBSNUM.cubestats    ascii table of some per plane statistics
-
 
 ## Future
 
@@ -275,3 +279,32 @@ culled when rms_cut=-4 was set.
 The measured RMS in each spectrum (describe what that is: RMS from the fitted baseline
 in the b_regions?) can also be used to weigh (1/RMS^2) each spectrum when these spectra
 are combined in the gridding process.
+
+
+
+
+# Advanced concepts:   Combining maps from different OBSNUM
+
+A common situation is that maps from different OBSNUM are combined. There at several
+approaches
+
+1. Use the fits and wt.fits of all obsnum to create a weighted map. Assuming the maps are
+all on the same WCS gridd, this is a simple mathematical (in fits terms) operation, which
+can be easily done in astropy.  Montage could be used, NEMO as well, and we should write
+an astropy based tool for this. Maybe another 3rd party tool has solved this already.
+
+2. Use the fact that the gridder (spec_driver_fits) can actually take a list of SpecFile's
+and grid.  This has now been built into the new version **grid_data.py**. The old
+version only allowed a single SpecFile.
+CAVEAT: make sure that all bad pixels were removed from the specfile, as the pix_list from
+the first lmtoy_OBSNUM.rc is used. We need a better interface for this.
+
+Example for out M31 data:
+
+      ./lmtoy_reduce.sh path=M31_data obsnum=85776 > lmtoy_85776.log 2>&1
+      ./lmtoy_reduce.sh path=M31_data obsnum=85778 > lmtoy_85778.log 2>&1
+      ./lmtoy_reduce.sh path=M31_data obsnum=85824 > lmtoy_85824.log 2>&1
+      ./lmtoy_combine.sh obsnum=85776,85778,85824  > lmtoy_m31.log   2>&1
+
+but again, for now this depends on each OBSNUM having the bad pixels removed
+during the "makespec" stage.
