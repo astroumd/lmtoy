@@ -29,6 +29,7 @@ new:   $(DATA_DIRS)
 	/usr/bin/time ./lmtoy_reduce.sh path=M31_data obsnum=85776 > lmtoy_85776.log 2>&1
 	/usr/bin/time ./lmtoy_reduce.sh path=M31_data obsnum=85778 > lmtoy_85778.log 2>&1
 	/usr/bin/time ./lmtoy_reduce.sh path=M31_data obsnum=85824 > lmtoy_85824.log 2>&1
+	/usr/bin/time ./lmtoy_reduce.sh path=M51_data obsnum=90911 > lmtoy_90911.log 2>&1
 	/usr/bin/time ./lmtoy_reduce.sh path=M51_data obsnum=91112 > lmtoy_91112.log 2>&1
 
 # take about 1'41"
