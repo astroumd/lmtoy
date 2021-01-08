@@ -98,11 +98,11 @@ I gave up.
 
 Since we run from a set of github repos, each with their own update procedures, here some reminders.
 
-To update all repos:
+To update all repos, you will need to run "git pull" in each of them. For convenience we have a shortcut:
 
       make pull
 
-lmtoy needs no extra work, if you see updates.
+lmtoy needs no extra work, if you see updates, since at moment everything is "in place". This may change.
 
 lmtslr needs no extra work, since we installed using the -e flag in pip. But if the C program was
 updated, it's safe to do this:
@@ -112,7 +112,7 @@ updated, it's safe to do this:
 NEMO, depending on what you see, may need to have a new
 executable installed, e.g.
 
-      mknemo ccdstat ccdfits fitsccd ccdhist
+      mknemo ccdstat ccdfits fitsccd ccdhist ccdsub ccdmath ccdsmooth ccdmom scanfits
 
 For montage, I would use
 
@@ -122,4 +122,6 @@ That should keep your environment up to date.
       
 ## Examples
 
-Some examples how to use LMTSLR are in the examples directory.
+Some examples how to use LMTSLR are in the examples directory.  The irc_reduce.sh serves as the benchmark,
+m31_reduce.sh  and m51_reduce.sh  serve as other "hardcoded" example, but lmtoy_reduce.sh should be able
+to reduce any OTF data
