@@ -190,6 +190,13 @@ added a few that Mark Heyer listed in his report.
 * visualizing the OFF positions?  The SpecFile has lost them.  There is no view_raw_file.
   Is a waterfall for raw data useful?
 
+## Keyword Sanitation:
+
+* extent:   is the half the map , or the full map. also, we imply we can only make maps from
+some -X to +X.
+
+* sigma_noise -> rms_weight
+
 
 # workflow
 
