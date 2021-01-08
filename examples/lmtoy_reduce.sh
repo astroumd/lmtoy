@@ -11,7 +11,7 @@
 # There is no good mechanism here to make a new variable depend on re-running a certain task on which it depends
 # that's perhaps for a more advanced pipeline
 
-version="lmtoy_reduce: 7-jan-2021"
+version="lmtoy_reduce: 8-jan-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>>  Usage: path=DATADIR obsnum=OBSNUM ..."
@@ -127,6 +127,7 @@ if [ $newrc = 1 ]; then
     w0=$(echo $v0 - $dw | bc -l)
     w1=$(echo $v1 + $dw | bc -l)
 
+    b_order=$b_order
     b_regions=[[$w0,$v0],[$v1,$w1]]
     l_regions=[[$v0,$v1]]
     slice=[$w0,$w1]
@@ -135,6 +136,7 @@ if [ $newrc = 1 ]; then
     y_extent=$extent
 
     echo "# based on vlsr=$vlsr, dv=$dv,  dw=$dw" >> $rc
+    echo b_order=$b_order           >> $rc
     echo b_regions=$b_regions       >> $rc
     echo l_regions=$l_regions       >> $rc
     echo slice=$slice               >> $rc
