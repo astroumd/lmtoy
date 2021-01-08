@@ -5,11 +5,13 @@
 #
 #  Note:   this will only reduce one OBSNUM.   If you place a file "lmtoy_$obsnum.rc"
 #          in the current directory, parameters will be read from it.
-#          If it does not exist, it will be created on the first run
+#          If it does not exist, it will be created on the first run and you can edit it
+#          for subsequent runs
 #
 # There is no good mechanism here to make a new variable depend on re-running a certain task on which it depends
+# that's perhaps for a more advanced pipeline
 
-version="lmtoy_reduce: 5-jan-2021"
+version="lmtoy_reduce: 7-jan-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>>  Usage: path=DATADIR obsnum=OBSNUM ..."
@@ -24,27 +26,27 @@ fi
 # set -x
 debug=0
 
-# input parameters (defaults are for the UMass)
+# input parameters
+#            - start or restart
 path=/data/LMT/lmt_data
 obsnum=79448
 newrc=0
-#
+#            - procedural
 makespec=1
+makewf=1
 makecube=1
 viewspec=0
 viewcube=0
-#
+#            - meta parameters that will compute other parameters for SLR scripts
+extent=400
+dv=100
+dw=250
+#            - parameters that directly match the SLR scripts
 pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 rms_cut=4
 location=0,0
-# 
-extent=400
-#
-dv=100
-dw=250
-#
-resolution=12.5
-cell=6.25
+resolution=12.5   # will be computed from skyfreq
+cell=6.25         # will be computed from resolution/2
 rmax=3
 otf_select=1
 otf_a=1.1
@@ -53,6 +55,9 @@ otf_c=2
 noise_sigma=1
 b_order=0
 stype=2
+
+# unset a view things, since setting them will give a new meaning
+unset vlsr
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -100,7 +105,6 @@ if [ $newrc = 1 ]; then
 	rm $rc	
 	exit 1
     fi
-
     
     ifproc=$(ls ${path}/ifproc/*${obsnum}*.nc)
     if [ -z $ifproc ]; then
@@ -153,7 +157,7 @@ if [ $newrc = 1 ]; then
     sleep 5
 fi
 
-#             derived parameters (you should not have to edit this)
+#             derived parameters (you should not have to edit these)
 p_dir=${path}
 s_on=${src}_${obsnum}
 s_nc=${s_on}.nc
@@ -172,7 +176,7 @@ fi
 
 
 
-#  convert RAW to SpecFile
+#  convert RAW to SpecFile (hardcoded parameters are hardcoded for a good resaon)
 if [ $makespec = 1 ]; then
     echo "LMTOY>> process_otf_map2 in 2 seconds"
     sleep 2
@@ -213,12 +217,13 @@ fi
 # --show_all_pixels \
     # --show_pixel 10 \
 
+# show spectra, each pixel gets a different curve/color
 view_spec_point.py \
     -i $s_nc \
     --pix_list $pix_list \
     --rms_cut $rms_cut \
     --location $location \
-    --plots ${src}_view,png,1
+    --plots ${src}_specpoint,png,1
 
 view_spec_point.py \
     -i $s_nc \
@@ -226,21 +231,25 @@ view_spec_point.py \
     --rms_cut $rms_cut \
     --location $location \
     --radius 20 \
-    --plots ${src}_view,png,2
+    --plots ${src}_specpoint,png,2
 
-rm -rf ${s_on}.wf.fits 
-make_spec_fits.py \
-    -i $s_nc \
-    -o ${s_on}.wf.fits \
-       --pix_list $pix_list
+#  convert SpecFile to waterfall in fits format
+if [ $makewf = 1 ]; then
+    echo "LMTOY>> make_spec_fits (waterfall)"    
+    rm -rf ${s_on}.wf.fits 
+    make_spec_fits.py \
+	-i $s_nc \
+	-o ${s_on}.wf.fits \
+	--pix_list $pix_list
 
     
-rm -rf ${s_on}.wf10.fits 
-make_spec_fits.py \
-    -i $s_nc \
-    -o ${s_on}.wf10.fits \
-    --pix_list $pix_list \
-    --binning 10,1
+    rm -rf ${s_on}.wf10.fits 
+    make_spec_fits.py \
+	-i $s_nc \
+	-o ${s_on}.wf10.fits \
+	--pix_list $pix_list \
+	--binning 10,1
+fi
     
 
 #  convert SpecFile to FITScube
@@ -269,6 +278,7 @@ fi
 # bug:  when rmax=5  r=12/c=2.4  malloc(): unsorted double linked list corrupted
 
 # limits controls figure 5, but not figure 3, which is scaled for the whole map
+# @todo  tmax_range   tint_range
 if [ $viewcube = 1 ]; then
     echo "LMTOY>> view_cube"
     view_cube.py -i $s_fits \

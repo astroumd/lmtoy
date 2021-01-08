@@ -6,13 +6,32 @@ data without any guidance from the user, as well as
 prepare (or even run) ADMIT on the final cube. This is a
 simple proof of concept, to learn how to generalize the reduction scripts.
 
-It takes a single OBSNUM, and creates an **lmtoy_OBSNUM.rc** parameter file, which
-is nothing more than a collection of shell variables that the reduction
-script uses. This parameter file can be edited and you can re-run the
-script.   The first time you run it, you will probably need to
-pass the path= variable, e.g.:
 
-      $LMTOY/examples/lmt_reduce.sh path=/data/LMT/lmt_data obsnum=91112
+## Running lmtoy_reduce.sh
+
+This pipeline script takes a series of *keyword=value* commandline
+argument pairs. The parser is a very simple one, and does not check if you spelled
+them correctly.  On the first run the **path=** is required, but **obsnum=**
+is required for each run
+
+      $LMTOY/examples/lmtoy_reduce.sh \
+	    obsnum=91112                # always required
+	    path=/data/LMT/lmt_data     # required on the first run
+	    rc=0                        # optional:  force a new rc file
+	    dv=100                      # optional:  width around spectral line (vlsr)
+	    dw=250                      # optional:  width of the wings for baseline
+	    makespec=1                  # optional
+	    makecube=1                  # optional
+	    viewspec=0                  # optional
+	    viewcube=0                  # optional
+	    extent=400                  # square map from -extent:+extent (arcsec)
+
+
+On the first run it creates an **lmtoy_OBSNUM.rc** parameter file,
+which is nothing more than a collection of shell variables that the
+reduction script uses. This parameter file can be edited and you can
+re-run the script. 
+
 
 This will create a FITS cube **SRC_OBSNUM.fits**, as well as a
 FITS weight map **SRC_OBSNUM.wt.fits**.  The current version of the script
@@ -69,6 +88,8 @@ future [wishlist](../docs/wishlist.md).
 
 Here a summary of the files that are created:
 
+   
+     lmtoy_OBSNUM.rc         parameter (bash style) file
      SRC_OBSNUM.nc           SpecFile  (netcdf format)
      SRC_OBSNUM.wf.fits      Waterfall version of SpecFile
      SRC_OBSNUM.wf10.fits    Waterfall version of SpecFile with 10 times binning in time
