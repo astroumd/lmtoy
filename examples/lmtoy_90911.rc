@@ -1,0 +1,33 @@
+# lmtoy_reduce: 5-jan-2021
+# DATE: 2021-01-06T09:02:49.404781943
+# obsnum=90911
+# Using ifproc=M51_data/ifproc/ifproc_2020-02-18_090911_00_0001.nc
+path=M51_data
+# <lmtinfo>
+# ifproc="M51_data/ifproc/ifproc_2020-02-18_090911_00_0001.nc"
+vlsr=463
+skyfreq=115.101
+restfreq=115.271
+src="NGC5194"
+resolution=12.5
+cell=6.25
+# </lmtinfo>
+# based on vlsr=463, dv=100,  dw=250
+b_regions=[[113,363],[563,813]]
+l_regions=[[363,563]]
+b_regions=[[200,380],[580,670]] 
+l_regions=[400,600]
+slice=[113,813]
+slice=[200,800]
+v_range=363,563
+x_extent=450
+y_extent=450
+# pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+pix_list=0,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+rmax=3
+otf_a=1.1
+otf_b=4.75
+otf_c=2
+rms_cut=-4
+#    x=62 y=117  has a bad spectrum, bad baseline?
+#    M51 has signal between 370 - 570
