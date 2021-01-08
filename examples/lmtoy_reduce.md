@@ -298,3 +298,13 @@ and grid.  This has now been built into the new version **grid_data.py**. The ol
 version only allowed a single SpecFile.
 CAVEAT: make sure that all bad pixels were removed from the specfile, as the pix_list from
 the first lmtoy_OBSNUM.rc is used. We need a better interface for this.
+
+Example for out M31 data:
+
+      ./lmtoy_reduce.sh path=M31_data obsnum=85776 > lmtoy_85776.log 2>&1
+      ./lmtoy_reduce.sh path=M31_data obsnum=85778 > lmtoy_85778.log 2>&1
+      ./lmtoy_reduce.sh path=M31_data obsnum=85824 > lmtoy_85824.log 2>&1
+      ./lmtoy_combine.sh obsnum=85776,85778,85824  > lmtoy_m31.log   2>&1
+
+but again, for now this depends on each OBSNUM having the bad pixels removed
+during the "makespec" stage.
