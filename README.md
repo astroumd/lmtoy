@@ -49,7 +49,7 @@ LMT software is very instrument specific:
 
 There are some expanded notes in [INSTALL.md](INSTALL.md), and also check out the
 Makefile for specific targets that simplify the install. Probably the most automated/simple
-way to install (if you have all the preconditions, most importedly the **cfitsio** and **netcdf** library) is:
+way to install (if you have all the preconditions, most importandly the **cfitsio** and **netcdf** library) is:
 
       wget https://astroumd.github.io/lmtoy/install_lmtoy
       bash install_lmtoy
