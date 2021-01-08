@@ -198,7 +198,7 @@ There are a few parameters to the gridding program (**grid_data.py**) that are w
 how CASA's **tclean** program controls the gridding are not too different. The
 following parameters are all related and pertain to the gridding/convolution function:
 
-      --resolution          # should be 1.15 * lambda/ D
+      --resolution          # should be lambda/D because the gridder assumes it, despite that the real one is 1.15 larger
       --cell                # should be 1/2 of resolution, smaller is ok, but larger is not.
       --otf_select          # SLR recommends 1
       --otf_a               # SLR recommends 1.1
@@ -214,9 +214,11 @@ and a few filters what spectra to be added to the gridding
 
 ###  resolution
 
-This should be 1.15 * lambda/D, though depending on the filter, and
-it's parameters, there may be a reason to take a larger value. At CO
-115.27 GHz this is 12.3". Currently the user has to supply it, ideally
+You might think this should be 1.15 * lambda/D, but it depends  on the filter, and
+it's parameters. For otf_select=1 the beam should be 1.15 * resolution.
+For otf_select=2 the beam should be otf_b * resolution.
+
+At CO 115.27 GHz this is 12.3". Currently the user has to supply it, ideally
 we set it from the skyfreq.
 
 ###  cell: pixel size
