@@ -59,7 +59,18 @@ bench2: IRC_data IRC_79448.nc
 	view_spec_point.py -i IRC_79448.nc --pix_list 0,5,10,15 --plots bench2c -z -3 --radius 10
 	@echo xdg-open bench2a.1.png 
 	@echo xdg-open bench2b.1.png
-	@echo xdg-open bench2c.1.png 
+	@echo xdg-open bench2c.1.png
+
+bench31: M31_data
+	/usr/bin/time ./lmtoy_reduce.sh path=M31_data obsnum=85776 > lmtoy_85776.log   2>&1
+	/usr/bin/time ./lmtoy_reduce.sh path=M31_data obsnum=85778 > lmtoy_85778.log   2>&1
+	/usr/bin/time ./lmtoy_reduce.sh path=M31_data obsnum=85824 > lmtoy_85824.log   2>&1
+	/usr/bin/time ./lmtoy_combine.sh  obsnum=85776,85778,85824 > lmtoy_85776_3.log 2>&1
+
+bench51: M51_data
+	/usr/bin/time ./lmtoy_reduce.sh path=M51_data obsnum=90911 > lmtoy_90911.log   2>&1
+	/usr/bin/time ./lmtoy_reduce.sh path=M51_data obsnum=91112 > lmtoy_91112.log   2>&1
+	/usr/bin/time ./lmtoy_combine.sh        obsnum=90911,91112 > lmtoy_90911_2.log 2>&1
 
 
 bench4:
