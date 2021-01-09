@@ -24,7 +24,9 @@ IRC_data:
 	@echo "The same holds for the other test data, M31_data and M51_data"
 	@exit 1
 
-new:   $(DATA_DIRS)
+new:   bench11 bench31 bench51
+
+old_new:
 	/usr/bin/time ./lmtoy_reduce.sh path=IRC_data obsnum=79448 > lmtoy_79448.log 2>&1
 	/usr/bin/time ./lmtoy_reduce.sh path=M31_data obsnum=85776 > lmtoy_85776.log 2>&1
 	/usr/bin/time ./lmtoy_reduce.sh path=M31_data obsnum=85778 > lmtoy_85778.log 2>&1
