@@ -1,6 +1,7 @@
 # Overview of changes to LMTSLR
 
-This list also contains the ones Mark Heyer sent around earlier.
+This list also contains the ones Mark Heyer sent around earlier, but
+not all the ones from the 8-jan-2021 list.
 
 * process spectra as float, the RAW data are double, saving 50%
   memory. In fact, the RAW data are integers (but 16bit not enough) ,
@@ -190,12 +191,36 @@ added a few that Mark Heyer listed in his report.
 * visualizing the OFF positions?  The SpecFile has lost them.  There is no view_raw_file.
   Is a waterfall for raw data useful?
 
+* multiple spectral lines? Or if for any reason you want different SpecFiles, use the obsid= keyword.
+  For any subsequent runs the obsnum=${obsnum}${obsid} would then be used. The default for
+  ${obsid} would be a blank string
+
+  For example, the initial run:
+
+      ./lmtoy_reduce.sh path=   obsnum=79448 obsid=_CO  slice=[-100,100] 
+      ./lmtoy_reduce.sh path=   obsnum=79448 obsid=_HCN slice=[-100,100] restfreq=
+
+  And any repeat runs:
+
+      ./lmtoy_reduce.sh  obsnum=79448_CO
+      ./lmtoy_reduce.sh  obsnum=79448_HCN
+
+
 ## Keyword Sanitation:
+
+Keyword names should make sense, have sensible defaults.
 
 * extent:   is the half the map , or the full map. also, we imply we can only make maps from
 some -X to +X.
 
-* sigma_noise -> rms_weight
+* sigma_noise -> rms_weight, and should be a boolean
+
+* pix_list:    we use the concept called pixels for what really are the beams. Once we grid,
+the parameter is --cell, so I refer to concepts such as if pixels were in cells etc. I started
+a glossary.
+
+* maxwt (and FCRAO keyword) - but minwt makes more sense, as this in the minimum weight in a cell
+preventing it from being masked via a NaN. I had a --min_neighbors idea.
 
 
 # workflow
