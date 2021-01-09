@@ -63,6 +63,9 @@ bench2: IRC_data IRC_79448.nc
 	@echo xdg-open bench2b.1.png
 	@echo xdg-open bench2c.1.png
 
+bench11: IRC_data
+	/usr/bin/time ./lmtoy_reduce.sh path=IRC_data obsnum=79448 > lmtoy_79448.log 2>&1
+
 bench31: M31_data
 	/usr/bin/time ./lmtoy_reduce.sh path=M31_data obsnum=85776 > lmtoy_85776.log   2>&1
 	/usr/bin/time ./lmtoy_reduce.sh path=M31_data obsnum=85778 > lmtoy_85778.log   2>&1

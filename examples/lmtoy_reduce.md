@@ -1,17 +1,29 @@
 #  A short introduction in using lmtoy_reduce.sh
 
-As the name implies **lmtoy_reduce.sh** is a bash shell script, inspired by the
-scripts Mike Heyer shared. Its intent is to reduce any Sequoia OTF
-data without any guidance from the user, as well as
-prepare (or even run) ADMIT on the final cube. This is a
-simple proof of concept, to learn how to generalize the reduction scripts.
+**lmtoy_reduce.sh** is a bash shell script, inspired by the scripts
+Mike Heyer shared. Its intent is to reduce Sequoia OTF data
+without any guidance from the user, as well as prepare (or even run)
+ADMIT on the final cube. This is a simple proof of concept to learn
+how to generalize LMT reduction scripts, with the added bonus that we
+get some science done in a waterfall fashion!
+
+For an observation consisting of a set of OBSNUM's a typical reduction
+strategy could be as follows:
+
+* First use lmtoy_reduce.sh for each OBSNUM. Make sure you cull out the
+spectra that are bad, by reviewing the parameter file and
+re-running the script.
+
+* If applicable, use lmtoy_combine.sh for the series of previously
+determined good OBSNUM's. 
 
 
 ## Running lmtoy_reduce.sh
 
-This pipeline script takes a series of *keyword=value* commandline
-argument pairs. The parser is a very simple one, and does not check if you spelled
-them correctly.  On the first run the **path=** is required, but **obsnum=**
+This script reducing a single OBSNUM, and uses a series of *keyword=value* commandline
+argument pairs to construct a parameter file.
+The commandline parser is a very simple one, and does not check if you spelled
+the parameters correctly.  On the first run **path=** is required, but **obsnum=**
 is required for each run
 
       $LMTOY/examples/lmtoy_reduce.sh \
@@ -20,47 +32,45 @@ is required for each run
 	    rc=0                        # optional:  force a new rc file
 	    dv=100                      # optional:  width around spectral line (vlsr)
 	    dw=250                      # optional:  width of the wings for baseline
-	    makespec=1                  # optional
-	    makecube=1                  # optional
-	    viewspec=0                  # optional
-	    viewcube=0                  # optional
+	    makespec=1                  # optional:  make the specfile
+	    makewf=1                    # optional:  make a fits waterfall cube from specfile
+	    makecube=1                  # optional:  grid fits cube from specfile
+	    viewspec=0                  # optional:  view specfile
+	    viewcube=0                  # optional:  view fits cube
 	    extent=400                  # square map from -extent:+extent (arcsec)
 
 
-On the first run it creates an **lmtoy_OBSNUM.rc** parameter file,
+On the first run it creates the **lmtoy_OBSNUM.rc** parameter file,
 which is nothing more than a collection of shell variables that the
-reduction script uses. This parameter file can be edited and you can
+script uses. This parameter file can be edited and you can
 re-run the script. Remember there are no spaces left and right of the '='
-sign in an rc file.
+sign in an rc file, this is bash, not python!
 
+In the end the script creates a FITS cube **SRC_OBSNUM.fits**, as well
+as a FITS weight map **SRC_OBSNUM.wt.fits**.  The current version of
+the script is not smart enough, for example the spatial extent is
+hardcoded, and the baselining area is guessed based on a VLSR and
+WIDTH.  Future versions should improve on this.  The script will
+produce a number of logfiles and plots from which better values for
+the pipeline parameters can be set, but currently everything is done
+in the current directory and printed to stdout.
 
-This will create a FITS cube **SRC_OBSNUM.fits**, as well as a
-FITS weight map **SRC_OBSNUM.wt.fits**.  The current version of the script
-is not smart enough, for example the spatial extent is hardcoded,
-and the baselining area is guessed based on a VLSR and WIDTH.  Future
-versions should improve on this.
-The script will produce a number of logfiles
-and plots from which better values for the pipeline parameters can be
-set, but currently everything is done in the current directory and
-printed to stdout.
-
-If NEMO was installed, it will create a few ancillary .ccd
-files, but most interestingly, the noise flat **SRC_OBSNUM.nf.fits** cube,
-and a smoothed version **SRC_OBSNUM.nfs.fits** cube,
-on which ADMIT can be more reliably run to the otherwise noisy edge.  In a
-future version this will have to be done via astropy.
+If NEMO was installed, it will create a few ancillary files, but most
+interestingly, the noise flat **SRC_OBSNUM.nf.fits** cube, and a
+smoothed version **SRC_OBSNUM.nfs.fits** cube, on which ADMIT can be
+more reliably run to the otherwise noisy edge.
 
 If unhappy with the initial guesses, or if you want a different
 y_extent, b_order, otf_select etc.etc., edit or add them to the
 **lmtoy_OBSNUM.rc** parameter file. The names of the variables are the
-same as the ones used in the SLR scripts, except we use
-a *keyword=value* syntax with no further error checking.
+same as the ones used in the SLR scripts, except we use a
+*keyword=value* syntax with no further error checking.
 
-To re-run the pipeline, only obsnum= is now required. Since gridding
+To re-run the pipeline, **obsnum=** is required. Since gridding
 (makecube=1) is much faster than making a spectrum (makespec=1), with
-the makespec=0 parameter you can re-run a new gridding
-experiment. Here are a few examples how to compare the RMS for
-different gridding (see also Appendix C in the SLR manual).
+the makespec=0 parameter you can re-run a new gridding experiment. In
+some examples below a few examples how to compare the RMS for
+different gridding settings (see also Appendix C in the SLR manual).
 
 ##  List of files
 
@@ -75,9 +85,8 @@ Here a summary of the files that are created:
      SRC_OBSNUM.wt.fits      weights fits map
      SRC_OBSNUM.nf.fits      noise flat fits cube, ready for ADMIT
      SRC_OBSNUM.nfs.fits     noise flat XYZ smoothed fits cube, ready for ADMIT
-     SRC_OBSNUM.cubestats    ascii table of some per plane statistics
 
-
+If NEMO or ADMIT had been run, a number of other files and directories will be present.
 
 ## An experiment
 
@@ -111,23 +120,25 @@ LMTSLR in December 2020, and what needs we could come up with to let less experi
 people enjoy reducing their Sequoia data.
 
 
-# Description of scripts
+# Short description of LMTSLR scripts
 
-The following script are used by the **lmtoy_reduce.sh** pipeline.
+The following scripts are used by the **lmtoy_reduce.sh** pipeline.
 All scripts should self-describe using the **-h** or **--help** flag.
 
-* **lmtinfo.py**:   gathers some info what OBSNUM's you have, and for a specific OBSNUM, useful info for the pipeline
+* **lmtinfo.py**:            gathers info what OBSNUM's you have, or for a specific OBSNUM selected, useful info for the pipeline
 * **process_otf_map2.py**:   converts RAW to SpecFile
 * **process_otf_map.py**:   *deprecated version*
-* **view_spec_file.py**: make a series of plots summarizing one or a set of pixels
-* **view_spec_point.py**: show average spectrum for each pixel in a radius around a selected point
-* **make_spec_fits.py**: convert SpecFile to a FITS waterfall cube
-* **grid_data.py**: grid a SpecFile into a FITS cube
-* **view_cube.py**: make a series of plots summarizing a FITS cube
+* **view_spec_file.py**:     make a series of plots summarizing one or a set of pixels
+* **view_spec_point.py**:    show average spectrum for each pixel in a radius around a selected point
+* **make_spec_fits.py**:     convert SpecFile to a FITS waterfall SAMPLE-VEL-PIXEL cube
+* **grid_data.py**:          grid a SpecFile into a FITS RA-DEC-VEL cube
+* **view_cube.py**:          make a series of plots summarizing a FITS RA-DEC-VEL cube
+
+We now highlight some keywords for a few selected scripts:
 
 ## lmtinfo
 
-The **lmtinfo.py** script makes a summary listing of the OBSNUM you have, e.g.
+The **lmtinfo.py** script makes a summary listing of the OBSNUM's you have, e.g.
 
       lmtinfo.py /data/lmt_data
       
@@ -148,25 +159,31 @@ The **lmtinfo.py** script makes a summary listing of the OBSNUM you have, e.g.
       2020-02-20  091112  NGC5194     115.271  463    6940
 
 
-Although VLSR -296 agrees with NED, the one used for M51 (463) does not agree with NED (611)
+NOTE: Although VLSR -296 agrees with NED, it is the systemic velocity of M31,
+which could throw off current auto-baselining.
+The one used for M51 (463) does not agree with NED (611)
 
 
-## Process
+## "Process"
 
-The conversion from RAW to SpecFile is the process script. They differ slightly depending on an OTF, MAP, PS or BS.
-There is a different script for each. Here we describe the important
-parameters for **process_otf_map2.py**
+The conversion from RAW to SpecFile is the "*process*" script. They differ slightly depending if you have an OTF, MAP, PS or BS
+type observation. There is a different script for each. Here we describe the important
+parameters for **process_otf_map2.py** script, the currently recommended procedure for OTF data.
 
 
 ### b_regions
 
-two sections, typically left and right of the line, are selected. Check code if we can use more, for example, what to do when two lines
-are in the spectrum.
+A set of [channel0,channel1] channel ranges (in VLSR) can be selected. Typically you would select a set on either side of the
+spectral line. The lmtoy_reduce.sh will make an initial guess based on **vlsr,dv and dw**, but you can edit
+the parameter file and work with posterior values.
+
+If multiple lines are in the spectrum, and **b_order>0** it will likely be important to straddle all lines. For a line forest,
+all bets are off.
 
 ### b_order
 
-The order of the polynomial. Depending on the amount of channels used, and the gap inbetween, the b_order cannot
-be too high. Typically 0 should do.
+The order of the polynomial. Depending on the amount of channels used, and the gap inbetween, the **b_order** cannot
+be too high. Typically 0 should do, which is also the default.
 
 ### l_regions
 
@@ -174,25 +191,35 @@ Why do we even need this? Is says this is for line fitting.   Or is this the eqv
 
 ### slice
 
-This is the min and max of the channels (usual in VLSR) that are to be written out.
-This has to be used with care. If the slice does not contain the b_regions, those sections of the b_regions would not be used.
+This is the channel range (usual in VLSR) that are to be written out to the specfile. Useful to limit the amount
+of data.
+This has to be used with care. If the slice does not contain the b_regions, those sections of the b_regions would not be used
+for fitting!
+
+If multiple spectral lines are present, they could be selected with this keyword, but a new keyword --restfreq will be needed to
+correctly set the velocity scale. 
+
 
 ### stype
 
 This controls how the OFFs are combined with the ONs to create a calibrated spectrum.
+0 for median, 1 for a single reference, and 2 for bracketed reference spectra. The default is 2.
 
 ### pix_list
 
 If you already know certain pixels are bad, no need to include them in the SpecFile. But certainly
-on the first run, better leave them all in, and inspect via a Waterfall Cube or the plots
-via view_spec_file
+on the first run, better leave them all in, and inspect via a Waterfall Cube or the other plots
+via view_spec_file which pixels should be discarded in the SpecFile.
 
 Note there is a pix_list in a number of scripts in the pipeline, which in principle means they could differ. Within
 the pipeline they are all the same.
 
+It is also important to be sure to cull as many pixels as are needed, not just to make a smaller SpecFile, but
+to ensure the **lmtoy_combine.sh** script to properly work. 
 
 
-## Gridding
+
+## "Gridding"
 
 There are a few parameters to the gridding program (**grid_data.py**) that are worth a few comments. The parallels to
 how CASA's **tclean** program controls the gridding are not too different. The
@@ -211,6 +238,7 @@ and a few filters what spectra to be added to the gridding
 
       --pix_list            # which pixels are to be included
       --rms_cut             # which spectra are rejected (but see below)
+      --sample              # proposed new keyword to remove samples per pixel
 
 ###  resolution
 
@@ -261,7 +289,9 @@ NaN bands with otf_select=1.
 ### pix_list:  list of pixels to keep
 
 The same keyword as the process script, which within the pipeline is used
-in all scripts that use it.
+in all scripts that use it. Here you can make an additional selection.
+Useful if you want to make mape per pixel and perhaps change
+the initial pix_list for the **process** portion of the pipeline.
 
 ### rms_cut: cull spectra with high rms
 
@@ -283,25 +313,25 @@ in the b_regions?) can also be used to weigh (1/RMS^2) each spectrum when these 
 are combined in the gridding process.
 
 
-
-
 # Advanced concepts:   Combining maps from different OBSNUM
 
-A common situation is that maps from different OBSNUM are combined. There at several
-approaches
+A common situation is that maps from different OBSNUM are
+combined. There at several approaches
 
-1. Use the fits and wt.fits of all obsnum to create a weighted map. Assuming the maps are
-all on the same WCS gridd, this is a simple mathematical (in fits terms) operation, which
-can be easily done in astropy.  Montage could be used, NEMO as well, and we should write
-an astropy based tool for this. Maybe another 3rd party tool has solved this already.
+1. Use the fits and wt.fits of all obsnum to create a weighted
+map. Assuming the maps are all on the same WCS grid, this is a simple
+mathematical (in fits terms) operation, which can be easily done in
+astropy.  Packages such as NEMO, Miriad, CASA and Montage can all do
+this. We could write our own astropy based tool for this.
 
-2. Use the fact that the gridder (spec_driver_fits) can actually take a list of SpecFile's
-and grid.  This has now been built into the new version **grid_data.py**. The old
-version only allowed a single SpecFile.
-CAVEAT: make sure that all bad pixels were removed from the specfile, as the pix_list from
-the first lmtoy_OBSNUM.rc is used. We need a better interface for this.
+2. Use the fact that the gridder (spec_driver_fits) can actually take
+a list of SpecFile's and grid them.  This has now been built into the
+latest version of **grid_data.py**.  The old version only allowed a
+single SpecFile.  CAVEAT: make sure that all bad pixels were removed
+from the specfile, as the full pix_list (0..15) will be used,
+and will rely on the SpecFiles to contain the good spectra.
 
-Example for out M31 data:
+Example for our M31 data:
 
       ./lmtoy_reduce.sh path=M31_data obsnum=85776 > lmtoy_85776.log 2>&1
       ./lmtoy_reduce.sh path=M31_data obsnum=85778 > lmtoy_85778.log 2>&1
@@ -309,4 +339,9 @@ Example for out M31 data:
       ./lmtoy_combine.sh obsnum=85776,85778,85824  > lmtoy_m31.log   2>&1
 
 but again, for now this depends on each OBSNUM having the bad pixels removed
-during the "makespec" stage.
+during the "makespec" stage. 
+
+Dangerous assumptions:  gridding may not work if certain header variables
+(e.g. RA,DEC center) are not the same. 
+
+
