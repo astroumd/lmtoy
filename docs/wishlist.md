@@ -89,17 +89,19 @@ added a few that Mark Heyer listed in his report.
   VLSR of the galaxy is not appropriate for the small patches in the
   M31 survey the LMT undertook.
 
-* To encourage making apps, the keywords belonging to the app should
-  be with the code with minimal repetition of the keyword
-  names. Should we look at e.g. click , docopt, clize.  The new
-  view_spec_point.py script uses docopt to see how we like this.
-  Thus this item has been tried out, and if deemed a good thing,
-  conversion of other script can be done.
+* The Commandline. A few subitems:
 
-* Here and there more sensible defaults are needed for
+  * To encourage making apps, the keywords belonging to the app should
+    be with the code with minimal repetition of the keyword
+    names. Should we look at e.g. click , docopt, clize.  The new
+    view_spec_point.py script uses docopt to see how we like this.
+    Thus this item has been tried out, and if deemed a good thing,
+    conversion of other script can be done.
+
+  * Here and there more sensible defaults are needed for
   keywords. [docopt would solve this too]
 
-* Using the -c flag and the other options are confusing.  Would be
+  * Using the -c flag and the other options are confusing.  Would be
   nice if the other options can override the configuration
   file. Honestly, I believe the configuration is overrated and I would
   like to see it gone (would simplify this exploding parameter
@@ -117,7 +119,7 @@ added a few that Mark Heyer listed in his report.
 
 * RFI blanking
 
-* Add a time column to the SpecFile
+* Add a time column to the SpecFile (maybe the proposed --sample can solve this too)
 
 * Masking file with more flexible filtering:
   - by pixel number
@@ -261,13 +263,14 @@ grid_map is probably the worst, it requires 7 times a modification to 4 files to
 Here are the different orderings, the first one being the one we adopt to adjust the others:
 
 
-      1. lmtslr/utils/configuration.py      help file (--help) with 15 options
-      2. bin/grid_data.py                   15 options passed to spec_driver_fits
-      3. C/OTFParameters.h                  struct definitions
-      4. C/OTFParameters.c                  struct elements get their default
-      5. C/OTFParameters.c                  long_options[] is defined
-      6. C/OTFParameters.c                  getopt_long() is called with short options
-      7. C/OTFParameters.c                  switch(coption) to set the values
+      1. bin/grid_data.py                   15 options passed to spec_driver_fits
+      2. lmtslr/utils/configuration.py      help file (--help) with 15 options
+      3. lmtslr/utils/argparser.py          self.parser.add_argument()
+      4. C/OTFParameters.h                  struct definitions
+      5. C/OTFParameters.c                  struct elements get their default
+      6. C/OTFParameters.c                  long_options[] is defined
+      7. C/OTFParameters.c                  getopt_long() is called with short options
+      8. C/OTFParameters.c                  switch(coption) to set the values
 
       i:o:l:c:u:z:s:x:y:f:r:n:0:1:2:m:p:q:
          ^
