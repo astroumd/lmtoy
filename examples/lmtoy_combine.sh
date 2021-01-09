@@ -34,7 +34,7 @@ obsnum=85776,85778,85824
 makecube=1
 viewcube=0
 #            - parameters that directly match the SLR scripts
-pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+unset pix_list
 rms_cut=4
 location=0,0
 resolution=12.5   # will be computed from skyfreq
@@ -85,7 +85,7 @@ fi
 # first find out which .nc files we have
 ons=""
 for on in $(echo $obsnum | sed 's/,/ /g'); do
-    echo OBSNUM: $on
+    # echo OBSNUM: $on
     fon=${src}_${on}.nc
     if [ -e $fon ]; then
 	ons="$ons ${src}_${on}.nc"
@@ -95,18 +95,12 @@ for on in $(echo $obsnum | sed 's/,/ /g'); do
 done
 s_ons=$(echo $ons | sed 's/ /,/g')
 
-
-
 s_on=${src}_${on0}_${on1}
 s_fits=${s_on}.fits
 w_fits=${s_on}.wt.fits
 
-
 echo OBSNUM range: $on0 $on1
 echo FILES: $s_ons
-echo S_ON BASENAME: $s_on
-
-set -x
 
 #  convert SpecFile to FITScube
 if [ $makecube = 1 ]; then
@@ -148,7 +142,7 @@ if [ $viewcube = 1 ]; then
 fi
 
 if [ ! -z $NEMO ]; then
-    echo "LMTOY>>   Some NEMO post-processing"
+    echo "LMTOY>>    Some NEMO post-processing"
 
     # cleanup, just in case
     rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 \
@@ -159,7 +153,9 @@ if [ ! -z $NEMO ]; then
 	fitsccd $w_fits $s_on.wt.ccd axistype=1
     
 	ccdstat $s_on.ccd bad=0 robust=t planes=0 > $s_on.cubestat
+	echo "LMTOY>>    STATS  $s_on.ccd     centerbox robust"
 	ccdsub  $s_on.ccd -    centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
+	echo "LMTOY>>    STATS  $s_on.wt.ccd  centerbox robust"	
 	ccdsub  $s_on.wt.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
 
 	# convert flux flat to noise flat
@@ -190,7 +186,7 @@ if [ ! -z $NEMO ]; then
 fi
 
 if [ ! -z $ADMIT ]; then
-    echo "LMTOY>> Some ADMIT post-processing"
+    echo "LMTOY>>    Some ADMIT post-processing"
     if [ -e $s_on.nf.fits ]; then
 	runa1 $s_on.nf.fits
     else
@@ -199,5 +195,5 @@ if [ ! -z $ADMIT ]; then
 fi
 
 echo "LMTOY>> Created $s_fits and $w_fits"
-echo "LMTOY>> Parameter file in $rc"
+echo "LMTOY>> Parameter file used: $rc"
 
