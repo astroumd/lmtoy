@@ -146,7 +146,7 @@ if [ ! -z $NEMO ]; then
 
     # cleanup, just in case
     rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 \
-       $s_on.data1 $s_on.n.fits $s_on.nfs.fits $s_on.mom0.ccd
+       $s_on.data1 $s_on.n.fits $s_on.nfs.fits $s_on.mom0.ccd $s_on.mom1.ccd
 
     if [ -e $s_fits ]; then
 	fitsccd $s_fits $s_on.ccd    axistype=1
@@ -163,8 +163,9 @@ if [ ! -z $NEMO ]; then
 
 	ccdmath $s_on.wt.ccd $s_on.wtn.ccd "sqrt(%1/$wmax)"
 	ccdmath $s_on.ccd,$s_on.wtn.ccd $s_on.n.ccd '%1*%2' replicate=t
-	ccdmom $s_on.n.ccd $s_on.mom2.ccd  mom=-2
 	ccdmom $s_on.n.ccd $s_on.mom0.ccd  mom=0	
+	ccdmom $s_on.n.ccd $s_on.mom1.ccd  mom=1 rngmsk=t
+	ccdmom $s_on.n.ccd $s_on.mom2.ccd  mom=-2
 
 	scanfits $s_fits $s_on.head1 select=header
 	ccdfits $s_on.n.ccd  $s_on.n.fits
