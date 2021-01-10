@@ -34,7 +34,7 @@ done
 p_dir=${src}_data
 s_nc=${src}_${obsnum}.nc
 s_fits=${src}_${obsnum}.fits
-w_fits=${src}_${obsnum}.w.fits
+w_fits=${src}_${obsnum}.wt.fits
 
 # bug? tsys 220 vs. 110 seems to make no pdiff
 #  convert RAW to SpecFile
