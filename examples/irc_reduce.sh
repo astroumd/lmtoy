@@ -131,6 +131,7 @@ fi
 #       115.3774  U
 #       115.3871  U
 # The two candidates differ by 0.68 km/s, within the same 1 km/s channel
+# RA/DEC in IRCS (J2000) is : 09 47 57.40632 +13 16 43.5648
 
 # QAC_STATS: IRC_79448.fits.ccd -0.0295232 25.0818 -7545.73 5872.96  0 -0.0455642
 
