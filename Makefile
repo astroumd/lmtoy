@@ -39,7 +39,7 @@ config:
 	./configure
 
 
-git:  SpectralLineReduction SpectralLineConfigFiles dreampy3
+git:  SpectralLineReduction dreampy3
 
 SpectralLineReduction:
 	git clone --branch teuben1 $(URL1a)
