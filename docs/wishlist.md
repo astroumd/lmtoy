@@ -20,7 +20,7 @@ not all the ones from the 8-jan-2021 list.
 
 * more header information passing from RAW to FITS, e.g. for ADMIT to
   work. more to come (e.g. HISTORY). Need to confirm if other things
-  in CASA also work correctly.
+  in CASA and MIRIAD also work correctly.
 
 * the pipeline now outputs a lot more useful info (map extent in
   position and velocity, noise stats per pixel, etc.), but more is
@@ -73,7 +73,10 @@ not all the ones from the 8-jan-2021 list.
   users to easily switch between interactive and batch png (or pdf) files.
   The first example is in "view_spec_point.py"
 
-* New script "make_spec_fits.pu" that makes a waterfall fits cube 
+* New script "make_spec_fits.pu" that makes a waterfall fits cube
+
+* The lmtoy_combine.sh is able to combine multiple SpecFil's and create
+  an output cube
 
 
 # A wishlist
@@ -117,7 +120,7 @@ added a few that Mark Heyer listed in his report.
   version so ADMIT can run on it.]   CASA should be good test for this.
   The make_spec_fits waterfall script has a --binning= option.
 
-* RFI blanking
+* RFI blanking - do we even need this?
 
 * Add a time column to the SpecFile (maybe the proposed --sample can solve this too)
 
@@ -187,8 +190,8 @@ added a few that Mark Heyer listed in his report.
    related outliers.  Looking at a wider waterfall plot, these bad
    scans and their fractions are fairly obvious.
 
-*  A number of fancy options (e.g. allow different projection systems, galactic included)
-   can probably solved much easier by using the *Montage* package after our pipeline.
+* A number of fancy options (e.g. allow different projection systems, galactic included)
+  can probably solved much easier by using the *Montage* package after our pipeline.
 
 * visualizing the OFF positions?  The SpecFile has lost them.  There is no view_raw_file.
   Is a waterfall for raw data useful?
@@ -197,12 +200,14 @@ added a few that Mark Heyer listed in his report.
   For any subsequent runs the obsnum=${obsnum}${obsid} would then be used. The default for
   ${obsid} would be a blank string
 
-  For example, the initial run:
+  For example, the initial run has a restfreq default for CO, but for some crazy line XY at 115.12 GHz
+  a new narrower cube is made:
+  
 
-      ./lmtoy_reduce.sh path=   obsnum=79448 obsid=_CO  slice=[-100,100] 
-      ./lmtoy_reduce.sh path=   obsnum=79448 obsid=_HCN slice=[-100,100] restfreq=
+      ./lmtoy_reduce.sh path=   obsnum=79448 obsid=_CO slice=[-100,100] 
+      ./lmtoy_reduce.sh path=   obsnum=79448 obsid=_XY slice=[-100,100] restfreq=115.12 dv=50 dw=100
 
-  And any repeat runs:
+  And any repeat runs now with
 
       ./lmtoy_reduce.sh  obsnum=79448_CO
       ./lmtoy_reduce.sh  obsnum=79448_HCN
@@ -212,33 +217,18 @@ added a few that Mark Heyer listed in his report.
 
 Keyword names should make sense, have sensible defaults.
 
-* extent:   is the half the map , or the full map. also, we imply we can only make maps from
-some -X to +X.
+* extent: is the half the map , or the full map. also, we imply we can
+  only make maps from some -X to +X.
 
 * sigma_noise -> rms_weight, and should be a boolean
 
-* pix_list:    we use the concept called pixels for what really are the beams. Once we grid,
-the parameter is --cell, so I refer to concepts such as if pixels were in cells etc. I started
-a glossary.
+* pix_list: we use the concept called pixels for what really are the
+  beams. Once we grid, the parameter is --cell, so I refer to concepts
+  such as if pixels were in cells etc. I started a glossary.
 
-* maxwt (and FCRAO keyword) - but minwt makes more sense, as this in the minimum weight in a cell
-preventing it from being masked via a NaN. I had a --min_neighbors idea.
-
-
-# workflow
-
-Remove some old things from the workflow:   e.g. tsys is not used
-
-## process_otf_map2.py
-
-- there is an stype=3 in the code
-- where does the cpu go?
-
-## grid_map.py
-
-- there is some new otf_select=3,4 that I played with, but it doesn't seem to really
-effect/improve maps. Setting the parameter to get a certain RMS gives pretty identical
-looking maps. Not quantified. Probably plenty papers written on this.
+* maxwt (and FCRAO keyword) - but the name minwt makes more sense, as
+  this in the minimum weight in a cell preventing it from being masked
+  via a NaN. I had a --min_neighbors idea.
 
 
 # Adding a variable from RAW -> SPECFILE ->  FITS
