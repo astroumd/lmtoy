@@ -8,8 +8,8 @@ obsnum=(85776 85778 85824)
 
 src=Region_J-K_
 o1=85776
-o2=85776
-o3=85776
+o2=85778
+o3=85824
 
 
 #                  fits files base names
@@ -31,6 +31,12 @@ fitsccd $w2.fits $w2.ccd error=1
 fitsccd $w3.fits $w3.ccd error=1
 
 #                  combine
-ccdmath $f1.ccd,$w1.ccd,$f2.ccd,$w2.ccd,$f3.ccd,$w3.ccd - '(%1*%2+%3*%4+%5*%6)/(%2+%4+%6)' replicate=t error=1 |\
-    ccdfits - ${src}_nemo.fits fitshead=$f1.fits
+ccdmath $f1.ccd,$w1.ccd,$f2.ccd,$w2.ccd,$f3.ccd,$w3.ccd ${src}_nemo.ccd '(%1*%2+%3*%4+%5*%6)/(%2+%4+%6)' replicate=t error=1 
+ccdsub  ${src}_nemo.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
 
+
+ccdfits ${src}_nemo.ccd  ${src}_nemo.fits fitshead=$f1.fits error=1
+
+fitsccd Region_J-K_85776_85824.fits - | ccdmath -,${src}_nemo.ccd ${src}_diff.ccd %1-%2 error=1
+
+ccdsub  ${src}_diff.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
