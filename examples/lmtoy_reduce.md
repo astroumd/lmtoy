@@ -20,7 +20,7 @@ determined good OBSNUM's.
 
 ## Running lmtoy_reduce.sh
 
-This script reducing a single OBSNUM, and uses a series of *keyword=value* commandline
+This script reduces a single OBSNUM, and uses a series of *keyword=value* commandline
 argument pairs to construct a parameter file.
 The commandline parser is a very simple one, and does not check if you spelled
 the parameters correctly.  On the first run **path=** is required, but **obsnum=**
@@ -32,7 +32,7 @@ is required for each run
 	    obsid=                      # optional on first run [not yet implemented]
 	    dv=100                      # optional:  width around spectral line (vlsr) 
 	    dw=250                      # optional:  width of the wings for baseline
-	    rc=0                        # optional:  force a new run/rc file
+	    rc=0                        # optional:  force a new rc file (i.e. new run)
             makespec=1                  # optional:  make the specfile
 	    makewf=1                    # optional:  make a fits waterfall cube from specfile
 	    makecube=1                  # optional:  grid fits cube from specfile
@@ -253,7 +253,7 @@ and a few filters what spectra to be added to the gridding
 
       --pix_list            # which pixels are to be included
       --rms_cut             # which spectra are rejected (but see below)
-      --sample              # proposed new keyword to remove samples per pixel
+      --sample              # remove samples per pixel
 
 ###  resolution
 
@@ -307,7 +307,8 @@ NaN bands with otf_select=1.
 The same keyword as the process script, which within the pipeline is used
 in all scripts that use it. Here you can make an additional selection.
 Useful if you want to make mape per pixel and perhaps change
-the initial pix_list for the **process** portion of the pipeline.
+the initial pix_list for the **process** portion of the pipeline. Pixels
+are counted from 0 to 15.
 
 ### rms_cut: cull spectra with high rms
 
@@ -321,6 +322,13 @@ Data prior to 2020-02-18 suffered from occasionally corrupted spectra
 due to a doppler tracking based mishap. These data in particular can be easily
 culled when rms_cut=-4 was set.
 
+### sample:  remove samples per pixel
+
+This one (for now) replaces the non-existent time flagging. Each pixel has a number
+of samples, which can be seen in the RMS plots, or the waterfall plot or fits file.
+The format is the pixel number, and starting and ending sample number, where 0 is the
+first.
+
 
 ### noise_sigma:   RMS weighting
 
@@ -332,7 +340,7 @@ are combined in the gridding process.
 # Advanced concepts:   Combining maps from different OBSNUM
 
 A common situation is that maps from different OBSNUM are
-combined. There at several approaches
+combined. There are several approaches:
 
 1. Use the .fits and .wt.fits of all obsnum to create a weighted
 map. Assuming the maps have the same WCS grid, this is a simple
@@ -347,7 +355,11 @@ single SpecFile.  CAVEAT: make sure that all bad pixels were removed
 from the specfile, as the full pix_list (0..15) will be used,
 and will rely on the SpecFiles to contain the good spectra/pixels.
 
-Example for our M31 data:
+There are two different ways to make a weight (.wt.fits) map.
+
+## lmtoy_combine.sh
+
+Example for our M31 data (see also "make bench31" in examples)
 
       ./lmtoy_reduce.sh path=M31_data obsnum=85776 > lmtoy_85776.log 2>&1
       ./lmtoy_reduce.sh path=M31_data obsnum=85778 > lmtoy_85778.log 2>&1
@@ -358,6 +370,34 @@ but again, for now this depends on each OBSNUM having the bad pixels removed
 during the "makespec" stage. 
 
 Dangerous assumptions:  gridding may not work if certain header variables
-(e.g. RA,DEC center) are not the same. 
+(e.g. RA,DEC center) are not the same. Also, the --sample flag cannot be
+applied, as it would be applied to each OBSNUM
 
+The "bench31" target in the Makefile compares the two methods 1) and 2) and
+they agree to the 1e-7 level, but at the 1e-6 level one can see an imprint
+of the CO lines.
+
+## lmtrc.py
+
+When a large number of obsnum's are processed, once a single good rc file
+has been decided (with the correct extent, b_regions, l_regions etc.) they
+can simply be copied, e.g.
+
+      for o in 91113 91115 91117; do
+          cp lmtoy_91111.rc lmtoy_${o}.rc
+      done		    
+
+After this, inspection of each OBSNUM will show which pixel etc. will need to
+be culled for gridding, and the scripts can be rerun for a clean set of
+SpecFiles for each OBSNUM.  After this lmtoy_combine.sh can be run for a clean
+combination, or the cubes can be combined.
+
+If for some reason all rc files need an edit, consider using the lmtrc.py script,
+e.g.
+
+      lmtrc.py lmtoy_9*.rc otf_select=2 otf_b=1.5
+
+after which you can either re-run all single cubes, or just run for example
+
+      lmtoy_combine.sh obsnum=91111,91113,91115,91117
 
