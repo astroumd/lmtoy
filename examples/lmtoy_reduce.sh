@@ -11,7 +11,7 @@
 # There is no good mechanism here to make a new variable depend on re-running a certain task on which it depends
 # that's perhaps for a more advanced pipeline
 
-version="lmtoy_reduce: 8-jan-2021"
+version="lmtoy_reduce: 11-jan-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>>  Usage: path=DATADIR obsnum=OBSNUM ..."
@@ -30,6 +30,7 @@ debug=0
 #            - start or restart
 path=/data/LMT/lmt_data
 obsnum=79448
+obsid=""
 newrc=0
 #            - procedural
 makespec=1
@@ -55,6 +56,7 @@ otf_c=2
 noise_sigma=1
 b_order=0
 stype=2
+sample=-1
 
 # unset a view things, since setting them will give a new meaning
 unset vlsr
@@ -151,6 +153,7 @@ if [ $newrc = 1 ]; then
     echo otf_a=$otf_a               >> $rc
     echo otf_b=$otf_b               >> $rc
     echo otf_c=$otf_c               >> $rc
+    echo sample=$sample             >> $rc
     
 
     echo "LMTOY>> this is your startup $rc file:"
@@ -273,6 +276,7 @@ if [ $makecube = 1 ]; then
 	--otf_a       $otf_a \
 	--otf_b       $otf_b \
 	--otf_c       $otf_c \
+	--sample      $sample \
 	--n_samples   256 \
 	--noise_sigma $noise_sigma
 fi
