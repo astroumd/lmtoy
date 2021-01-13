@@ -17,10 +17,11 @@ not all the ones from the 8-jan-2021 list.
   Segfaults show up as Error 11 in the gridder.
 
   Note added: I've still seen a segfault, but harder to reproduce.
+  [github issue on this]
 
 * more header information passing from RAW to FITS, e.g. for ADMIT to
-  work. more to come (e.g. HISTORY). Need to confirm if other things
-  in CASA and MIRIAD also work correctly.
+  work. Need to confirm if other things in CASA and MIRIAD also work correctly.
+  [github issue on this]
 
 * the pipeline now outputs a lot more useful info (map extent in
   position and velocity, noise stats per pixel, etc.), but more is
@@ -45,7 +46,7 @@ not all the ones from the 8-jan-2021 list.
 * a number of NEMO based tools were added that might need a python
   (astropy) equivalent if deemed useful. 
 
-* The script **lmtoy_reduce.sh** is our simple pipeline, intended not
+* The script **lmtoy_reduce.sh** is a simple pipeline, intended not
   to need user input, other then the obsnum. See
   [lmtoy_reduce.md](../examples/lmtoy_reduce.md).  Still a few things
   to wrap up (e.g. spatial extent).  Script can also be re-run and
@@ -53,16 +54,16 @@ not all the ones from the 8-jan-2021 list.
 
 * There is a benchmark (IRC+10216) but it's not public data yet. Should we? who
   is the PI? This is commissioning data with some bad header info, so
-  it's scientifically not correct. 
+  it's scientifically not correct. Keep it for developers only?
 
-* A new script "lmtinfo.py" that spits out some useful variables in "rc"
+* A new script **lmtinfo.py** that spits out some useful variables in "rc"
   format. Used by the lmtoy_reduce.sh script. This could be expanded to
   provide better guesses on baselining for example.
 
 * rms_cut is now allowed to be negative.  This will cause it to compute
   a robust mean and std, and use (now per pixel!) a cuttof of
   mean + |rms_cut|*std.  So a value of -3 or -4 should be sufficient
-  to get rid of the doppler tuning problems of the data prior to Feb 18, 2020.
+  to get rid of the doppler tuning problems of the data prior to Feb 19, 2020.
   Note:  rms_cut<0 is not supported by all scripts yet!
 
 * New script "view_spec_point.py" to overplot spectra. Also uses the new
@@ -71,12 +72,24 @@ not all the ones from the 8-jan-2021 list.
 
 * A new Plots() interface with  a --plots= command line interface allows
   users to easily switch between interactive and batch png (or pdf) files.
-  The first example is in "view_spec_point.py"
+  The first example is in **view_spec_point.py**, though some issue with
+  multi-panel plots   [code not committed yet]
 
-* New script "make_spec_fits.pu" that makes a waterfall fits cube
+* New script **make_spec_fits.py** that makes a waterfall fits cube
 
-* The lmtoy_combine.sh is able to combine multiple SpecFil's and create
+* The **lmtoy_combine.sh** is able to combine multiple SpecFil's and create
   an output cube
+
+* There is a new --sample flag in grid_data.py, to allow you to mask out
+  samples from given pixels. So the argument is a multiple of 3 integers:
+  P,S0,S1, where P is the pixel number (0.15), and sequence from S0 through S1
+  are then not included in the gridding. S0 can start at 0, S1 can max out
+  to whatever number it has for that pixel, consult your output for this.
+  There is no check on valid values, so you can --sample 99,-100,-10
+
+* There is a new -a flag in spec_driver_fits, for which the output weight file
+  (the -w flag) will contain the beam. This is achieved by processing one
+  pixel at (0,0) with 1 channel of intensity 1.0
 
 
 # A wishlist
@@ -84,15 +97,15 @@ not all the ones from the 8-jan-2021 list.
 In no particular order, there are some remaining things on the wish
 list, the important ones are tracked in our [github
 issues](https://github.com/astroumd/lmtoy/issues) list.  I've also
-added a few that Mark Heyer listed in his report.
+added a few that Mark Heyer listed in his reports.
 
-* A much better auto-baselining. The current VLSR (from netcdf) and
+* A better auto-baselining. The current VLSR (from netcdf) and
   guessed DV and DW only does that much, but it's ok for a first
   start. The M31 data is already showing the VLSR is no good, as the
   VLSR of the galaxy is not appropriate for the small patches in the
   M31 survey the LMT undertook.
 
-* The Commandline. A few subitems:
+* The Commandline Parser. A few subitems:
 
   * To encourage making apps, the keywords belonging to the app should
     be with the code with minimal repetition of the keyword
@@ -122,13 +135,14 @@ added a few that Mark Heyer listed in his report.
 
 * RFI blanking - do we even need this?
 
-* Add a time column to the SpecFile (maybe the proposed --sample can solve this too)
+* Add a time column to the SpecFile (--sample can solve this too)
 
 * Masking file with more flexible filtering:
   - by pixel number
   - by rms (absolute, or fractional [rms_cut < 0 can do that now])
   - by time
   - by sequence
+  
   Inspired by miriad, the format could look at follows:
 
       time(11:20,11:35)
@@ -192,25 +206,26 @@ added a few that Mark Heyer listed in his report.
 
 * A number of fancy options (e.g. allow different projection systems, galactic included)
   can probably solved much easier by using the *Montage* package after our pipeline.
+  Rotated frames?
 
 * visualizing the OFF positions?  The SpecFile has lost them.  There is no view_raw_file.
   Is a waterfall for raw data useful?
 
-* multiple spectral lines? Or if for any reason you want different SpecFiles, use the obsid= keyword.
-  For any subsequent runs the obsnum=${obsnum}${obsid} would then be used. The default for
+* multiple spectral lines? Or if for any reason you want different
+  SpecFiles, use the proposed obsid= keyword.  For any subsequent runs
+  the obsnum=${obsnum}${obsid} would then be used. The default for
   ${obsid} would be a blank string
 
-  For example, the initial run has a restfreq default for CO, but for some crazy line XY at 115.12 GHz
-  a new narrower cube is made:
+  For example, the initial run has a restfreq default for CO, but for some crazy line XY at
+  115.38211 GHz a new narrower cube is made:
   
-
       ./lmtoy_reduce.sh path=   obsnum=79448 obsid=_CO slice=[-100,100] 
-      ./lmtoy_reduce.sh path=   obsnum=79448 obsid=_XY slice=[-100,100] restfreq=115.12 dv=50 dw=100
+      ./lmtoy_reduce.sh path=   obsnum=79448 obsid=_ZZ slice=[-100,100] restfreq=115.38211 dv=50 dw=100
 
   And any repeat runs now with
 
       ./lmtoy_reduce.sh  obsnum=79448_CO
-      ./lmtoy_reduce.sh  obsnum=79448_HCN
+      ./lmtoy_reduce.sh  obsnum=79448_ZZ
 
 
 ## Keyword Sanitation:
@@ -248,9 +263,11 @@ is that a netcdf oddity? It's nuts.
 # Adding another parameter to the gridding program
 
 
-grid_map is probably the worst, it requires 7 times a modification to 4 files to add a keyword
+grid_map is probably the worst, it requires 8 times a similar
+modification to 5 files to add a keyword
 
-Here are the different orderings, the first one being the one we adopt to adjust the others:
+Here are the different orderings, the first one being the one we adopt
+to adjust the others:
 
 
       1. bin/grid_data.py                   15 options passed to spec_driver_fits
@@ -262,9 +279,6 @@ Here are the different orderings, the first one being the one we adopt to adjust
       7. C/OTFParameters.c                  getopt_long() is called with short options
       8. C/OTFParameters.c                  switch(coption) to set the values
 
-      i:o:l:c:u:z:s:x:y:f:r:n:0:1:2:m:p:q:
-         ^
-         b:
 
 I decided to jot this down as I added the weight (-w) flag.
 Having so much work to do for a little does not encourage app hacking.
