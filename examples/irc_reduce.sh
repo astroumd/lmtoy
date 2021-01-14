@@ -21,6 +21,8 @@ viewspec=0
 viewcube=0
 pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 rms_cut=4
+resolution=12.5
+cell=6.25
 
 
 
@@ -80,8 +82,8 @@ grid_data.py --program_path spec_driver_fits \
 	     -i $s_nc \
 	     -o $s_fits \
 	     -w $w_fits \
-	     --resolution  12.5 \
-	     --cell        6.25 \
+	     --resolution  $resolution \
+	     --cell        $cell \
              --pix_list    $pix_list \
 	     --rms_cut     $rms_cut \
 	     --x_extent    300 \
