@@ -14,12 +14,15 @@ See [lmtoy_reduce.md](lmtoy_reduce.md) on using the new experimental pipeline
 
 2. Plot the spectra of all or one pixel. View coverage, etc
 
-3. Grid the spectrum file into a FITS cube. This is where one can select on RMS etc.
+3. Grid the spectrum file into a FITS cube. This is where one can select on RMS etc.  This will also
+   produce a waterfall fits cube, which may be a little easier to understand than the plots from
+   step 2.
 
 4. Plot the cube, by picking a point to view a spectrum, slices, and a TMAX or TINT.  Or take your cube
-to your	favorite fits cube viewer (ds9, casaviewer, carta, qfitsview, ...)
+   to your	favorite fits cube viewer (ds9, casaviewer, carta, qfitsview, ...)
 
-Currently this workflow is in four different python scripts that are executed in succession.
+5. If you have many OBSNUM's to process, there is a script to combine them, much like step 3.
+
 
 ## Overview of three datasets
 
