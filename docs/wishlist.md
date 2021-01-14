@@ -10,28 +10,27 @@ not all the ones from the 8-jan-2021 list.
   spectral band, are retrieved in memory. This depends if the data is
   doppler tracked or not (I believe it is)
 
-* buffer overruns in C gridder program. One was the convolution running
-  over the edge (big maps would prevent this).
-  Also needed to fix Cube and Plane access for non-square maps
-  (using square maps would solve that). 
+* buffer overruns in C gridder program have mostly (all?) been solved
+  now.   There were issues with the convolution going over the edge,
+  non-square maps and WCS errors. In the latest version (14-jan-2021)
+  this turned up as a 1 cell offset that needed to be fixed.
   Segfaults show up as Error 11 in the gridder.
-
-  Note added: I've still seen a segfault, but harder to reproduce.
-  [github issue on this]
+  [github issue on this]  
 
 * more header information passing from RAW to FITS, e.g. for ADMIT to
   work. Need to confirm if other things in CASA and MIRIAD also work correctly.
   [github issue on this]
 
 * the pipeline now outputs a lot more useful info (map extent in
-  position and velocity, noise stats per pixel, etc.), but more is
-  needed. Some of the current info is not well labeled , and
-  hard to understand for newcomers. 
+  position and velocity, noise stats per pixel, etc.).  Some of the
+  current info is not well labeled , and hard to understand for
+  newcomers, so still need some serious labeling and cleanup.
 
-* now writes a weight map, when used this makes for better results in
-  ADMIT.  In the code you can also write out a 0/1 map which cells had
-  a pixel inside, but this is not a flag. Can be emulated with
-  otf_select=0 and a mask on that, which requires a re-run of the gridder.
+* gridder now writes a weight map, when used this makes for better
+  results in ADMIT.  In the code you can also write out a 0/1 map
+  which cells had a pixel inside, but this is not a flag. Can be
+  emulated with otf_select=0 and a mask on that, which requires a
+  re-run of the gridder.
 
 * add otf_select=3 option to use a triangle convolution filter. In the
   end, normalizing to the same RMS, there are no noticable visual
@@ -65,8 +64,9 @@ not all the ones from the 8-jan-2021 list.
   mean + |rms_cut|*std.  So a value of -3 or -4 should be sufficient
   to get rid of the doppler tuning problems of the data prior to Feb 19, 2020.
   Note:  rms_cut<0 is not supported by all scripts yet!
+  [caveat: only in gridder, not in viewing]
 
-* New script "view_spec_point.py" to overplot spectra. Also uses the new
+* New script **view_spec_point.py** to overplot spectra. Also uses the new
   docopt based user interface, where --help shows defaults and additional
   help like a unix man page. All new scripts use docopt.
 
@@ -77,20 +77,20 @@ not all the ones from the 8-jan-2021 list.
 
 * New script **make_spec_fits.py** that makes a waterfall fits cube
 
-* The **lmtoy_combine.sh** is able to combine multiple SpecFil's and create
+* The **lmtoy_combine.sh** is able to combine multiple SpecFile's and create
   an output cube
 
-* There is a new --sample flag in grid_data.py, to allow you to mask out
-  samples from given pixels. So the argument is a multiple of 3 integers:
-  P,S0,S1, where P is the pixel number (0.15), and sequence from S0 through S1
+* There is a new --sample flag in the gridder, to allow you to mask out
+  samples from given pixels. The argument is a multiple of 3 integers:
+  P,S0,S1, where P is the pixel number (0...15), and sequence from S0 through S1
   are then not included in the gridding. S0 can start at 0, S1 can max out
   to whatever number it has for that pixel, consult your output for this.
-  There is no check on valid values, so you can --sample 99,-100,-10
+  There is no check on valid values, so you can set --sample 99,-100,-10
 
-* There is a new -a flag in spec_driver_fits, for which the output weight file
-  (the -w flag) will contain the beam. This is achieved by processing one
-  pixel at (0,0) with 1 channel of intensity 1.0
-
+* There is a new -a flag in **spec_driver_fits**, for which the output weight file
+  (the -w flag) will contain the beam. This is achieved by rewriting the
+  internal SpecFIle to contain one  pixel at (0,0) with 1 channel of
+  intensity 1.0.  See also Appendix C in the SLR manual.
 
 # A wishlist
 
@@ -105,7 +105,8 @@ added a few that Mark Heyer listed in his reports.
   VLSR of the galaxy is not appropriate for the small patches in the
   M31 survey the LMT undertook.
 
-* The Commandline Parser. A few subitems:
+* The Commandline Parser. I propose using docopt instead.
+  A few subitems:
 
   * To encourage making apps, the keywords belonging to the app should
     be with the code with minimal repetition of the keyword
@@ -115,17 +116,17 @@ added a few that Mark Heyer listed in his reports.
     conversion of other script can be done.
 
   * Here and there more sensible defaults are needed for
-  keywords. [docopt would solve this too]
+    keywords. [docopt would solve this too]
 
   * Using the -c flag and the other options are confusing.  Would be
-  nice if the other options can override the configuration
-  file. Honestly, I believe the configuration is overrated and I would
-  like to see it gone (would simplify this exploding parameter
-  problem). This parameter file also seems to place different -
-  possibly conflicting - defaults in different places.
+    nice if the other options can override the configuration
+    file. Honestly, I believe the configuration is overrated and I
+    would like to see it gone (would simplify this exploding parameter
+    problem). This parameter file also seems to place different -
+    possibly conflicting - defaults in different places.
 
 * There are still a few places in the C code that don't exit, where
-  they should, for example of malloc() fails. Error messages need to
+  they should, for example if malloc() fails. Error messages need to
   be more descriptive in some places.
 
 * Options to smooth/bin in velocity?  Or leave this to 3rd party
@@ -152,7 +153,10 @@ added a few that Mark Heyer listed in his reports.
       rfi(10)
       
   have to decide on if you filter down or up, and if we allow a - sign
-  in front of a directive
+  in front of a directive.
+
+  This is quite involved, and not clear with the current capabilities if
+  we still need it.
       
 * Additional parameters from the Hedwig proposal system should go in
   the workflow, so they can be used in the pipeline, and eventually go
