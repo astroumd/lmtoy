@@ -125,3 +125,15 @@ That should keep your environment up to date.
 Some examples how to use LMTSLR are in the examples directory.  The irc_reduce.sh serves as the benchmark,
 m31_reduce.sh  and m51_reduce.sh  serve as other "hardcoded" example, but lmtoy_reduce.sh should be able
 to reduce any OTF data
+
+# Other packages
+
+A few popular 3rd party tools for cube analysis
+
+* MIRIAD
+* karma
+* casa
+* radio astro tools
+  * pip install spectral-cube pyds9 pvextractor
+* bettermoments
+  * pip install bettermoments
