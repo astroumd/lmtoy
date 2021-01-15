@@ -245,6 +245,8 @@ Keyword names should make sense, have sensible defaults.
   beams. Once we grid, the parameter is --cell, so I refer to concepts
   such as if pixels were in cells etc. I started a glossary.
 
+* otf_select -> otf_filter ?
+
 * maxwt (and FCRAO keyword) - but the name minwt makes more sense, as
   this in the minimum weight in a cell preventing it from being masked
   via a NaN. I had a --min_neighbors idea.
