@@ -130,38 +130,39 @@ All scripts should self-describe using the **-h** or **--help** flag.
 * **process_otf_map.py**:   *deprecated version*
 * **view_spec_file.py**:     make a series of plots summarizing one or a set of pixels
 * **view_spec_point.py**:    show average spectrum for each pixel in a radius around a selected point
-* **make_spec_fits.py**:     convert SpecFile to a FITS waterfall SAMPLE-VEL-PIXEL cube
-* **grid_data.py**:          grid a SpecFile into a FITS RA-DEC-VEL cube
-* **view_cube.py**:          make a series of plots summarizing a FITS RA-DEC-VEL cube
+* **make_spec_fits.py**:     convert SpecFile to a FITS waterfall *"SAMPLE-VEL-PIXEL"* cube
+* **grid_data.py**:          grid a SpecFile into a FITS *"RA-DEC-VEL"* cube
+* **view_cube.py**:          make a series of plots summarizing a FITS *"RA-DEC-VEL"* cube
 
 We now highlight some keywords for a few selected scripts:
 
-## lmtinfo
+## "lmtinfo"
 
 The **lmtinfo.py** script makes a summary listing of the OBSNUM's you have, e.g.
 
       lmtinfo.py /data/lmt_data
       
-      #     DATE  OBSNUM   SOURCE     RESTFRQ VLSR INTTIME
-      2018-11-16  079447  IRC+10216   115.271  -20       8
-      2018-11-16  079448  IRC+10216   115.271  -20     686
+      #     DATE           OBSNUM   SOURCE     RESTFRQ VLSR INTTIME
+      
+      2018-11-16T06:48:30  079447  IRC+10216   115.271  -20       8
+      2018-11-16T06:48:52  079448  IRC+10216   115.271  -20     686
 
-      2019-10-31  085775  Region_J-K  115.271 -296       7
-      2019-10-31  085776  Region_J-K  115.271 -296    1471
-      2019-10-31  085777  Region_J-K  115.271 -296       8
-      2019-10-31  085778  Region_J-K  115.271 -296    1483
-      2019-11-01  085823  Region_J-K  115.271 -296       7
-      2019-11-01  085824  Region_J-K  115.271 -296    1488
+      2019-10-31T03:01:32  085775  Region_J-K  115.271 -296       7
+      2019-10-31T03:01:57  085776  Region_J-K  115.271 -296    1471
+      2019-10-31T03:31:05  085777  Region_J-K  115.271 -296       8
+      2019-10-31T03:31:31  085778  Region_J-K  115.271 -296    1483
+      2019-11-01T03:09:20  085823  Region_J-K  115.271 -296       7
+      2019-11-01T03:09:48  085824  Region_J-K  115.271 -296    1488
 
-      2020-02-18  090910  NGC5194     115.271  463       7
-      2020-02-18  090911  NGC5194     115.271  463    3986
-      2020-02-20  091111  NGC5194     115.271  463       7
-      2020-02-20  091112  NGC5194     115.271  463    6940
+      2020-02-18T01:08:23  090910  NGC5194     115.271  463       7
+      2020-02-18T01:08:47  090911  NGC5194     115.271  463    3986
+      2020-02-20T01:03:30  091111  NGC5194     115.271  463       7
+      2020-02-20T01:03:56  091112  NGC5194     115.271  463    6940
 
 
 NOTE: Although VLSR -296 agrees with NED, it is the systemic velocity of M31,
-which could throw off current auto-baselining.
-The one used for M51 (463) does not agree with NED (611)
+which could throw off current auto-baselining for fields away from the
+minor axis ofr M31. The one used for M51 (463) does not agree with NED (611)
 
 
 ## "Process"
@@ -178,7 +179,7 @@ script in the **makespec=1** setting.
 
 A set of [channel0,channel1] ranges (in VLSR) can be
 selected. Typically you would select a set on either side of the
-spectral line. The lmtoy_reduce.sh will make an initial guess based on
+spectral line. The **lmtoy_reduce.sh** will make an initial guess based on
 **vlsr,dv and dw**, but you can edit the parameter file and work with
 posterior values.
 
@@ -257,10 +258,11 @@ and a few filters what spectra to be added to the gridding
 
 ###  resolution
 
-You might think this should be 1.15 * lambda/D, but it depends  on the filter, and
-it's parameters. For otf_select=1 the beam should be 1.15 * resolution.
-For otf_select=2 the beam should be otf_b * resolution.
-The pipeline script will also round this value up to the neareset arcsecond.
+You might think this should be 1.15 * lambda/D, but it depends on the
+filter (otf_select), and it's parameters. For otf_select=1 the beam
+should be 1.15 * resolution.  For otf_select=2 the beam should be
+otf_b * resolution.  The pipeline script will also round this value up
+to the neareset arcsecond.
 
 At CO 115.27 GHz this is 12.3". Currently the user has to supply it, ideally
 we set it from the skyfreq.
