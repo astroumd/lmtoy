@@ -13,6 +13,7 @@ URL2  = https://github.com/lmt-heterodyne/dreampy3
 URL3  = https://github.com/lmt-heterodyne/SpectralLineConfigFiles
 URL4  = https://github.com/Caltech-IPAC/Montage
 URL5  = https://github.com/teuben/nemo
+URL6  = https://github.com/teuben/maskmoment
 
 .PHONY:  help install build
 
@@ -39,7 +40,7 @@ config:
 	./configure
 
 
-git:  SpectralLineReduction dreampy3
+git:  SpectralLineReduction dreampy3 maskmoment
 
 SpectralLineReduction:
 	git clone --branch teuben1 $(URL1a)
@@ -59,6 +60,9 @@ Montage:
 
 nemo:
 	git clone $(URL5)
+
+maskmoment:
+	git clone $(URL6)
 
 # step 1 (or skip and use another python)
 #        after this install, the start_python.sh should be sourced in the shell
@@ -81,7 +85,7 @@ install_lmtslr_venv: SpectralLineReduction lmtoy_venv
 	pip3 install -r requirements_lmtoy.txt; \
 	pip3 install -e .)
 	@echo C
-	(cd SpectralLineReduction/C ; make install)
+	(cd SpectralLineReduction/C ; make clean install; ./spec_driver_fits)
 
 # step 2b
 install_lmtslr:  SpectralLineReduction
@@ -91,7 +95,7 @@ install_lmtslr:  SpectralLineReduction
 	pip3 install -r requirements_lmtoy.txt; \
 	pip3 install -e .)
 	@echo C
-	(cd SpectralLineReduction/C ; make install)
+	(cd SpectralLineReduction/C ; make install; ./spec_driver_fits)
 
 # step 3
 install_dreampy3: dreampy3 lmtoy_venv
@@ -113,6 +117,9 @@ install_nemo:  nemo
 
 install_nemo_pgplot:  nemo
 	(cd nemo; ./configure --with-yapp=pgplot; make build MAKELIBS=corelibs)
+
+install_maskmoment:
+	(cd maskmoment; pip install -e .)
 
 # Optional hack:  once we agree on a common ste of requirements, we can make a common step
 #                 note the current step2 and step3 mean you can only run one of the two
