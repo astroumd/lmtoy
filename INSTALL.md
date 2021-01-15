@@ -137,3 +137,5 @@ A few popular 3rd party tools for cube analysis
   * pip install spectral-cube pyds9 pvextractor
 * bettermoments
   * pip install bettermoments
+* maskmoment
+  * Tony's EDGE scripts https://github.com/tonywong94/maskmoment
