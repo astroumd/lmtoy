@@ -62,7 +62,7 @@ nemo:
 	git clone $(URL5)
 
 maskmoment:
-	git clone $(URL6)
+	git clone --branch teuben1 $(URL6)
 
 # step 1 (or skip and use another python)
 #        after this install, the start_python.sh should be sourced in the shell
@@ -118,7 +118,7 @@ install_nemo:  nemo
 install_nemo_pgplot:  nemo
 	(cd nemo; ./configure --with-yapp=pgplot; make build MAKELIBS=corelibs)
 
-install_maskmoment:
+install_maskmoment: maskmoment
 	(cd maskmoment; pip install -e .)
 
 # Optional hack:  once we agree on a common ste of requirements, we can make a common step
