@@ -3,91 +3,91 @@
 This list also contains the ones Mark Heyer sent around earlier, but
 not all the ones from the 8-jan-2021 list.
 
-* process spectra as float, the RAW data are double, saving 50%
-  memory. In fact, the RAW data are integers (but 16bit not enough) ,
-  some compression schemes could be used to shrink that. Potentially
-  more memory could be saved if the selected *slice*, not the full
-  spectral band, are retrieved in memory. This depends if the data is
-  doppler tracked or not (I believe it is)
+1. process spectra as float, the RAW data are double, saving 50%
+  memory. In fact, the RAW data are actually integers (but 16bit not
+  enough) , some compression schemes could be used to shrink
+  that. Potentially more memory could be saved if the selected
+  *slice*, not the full spectral band, are retrieved in memory. This
+  depends if the data is doppler tracked or not (which it is).
 
-* buffer overruns in C gridder program have mostly (all?) been solved
-  now.   There were issues with the convolution going over the edge,
+1. buffer overruns in C gridder program have mostly (all?) been solved
+  now.  There were issues with the convolution going over the edge,
   non-square maps and WCS errors. In the latest version (14-jan-2021)
-  this turned up as a 1 cell offset that needed to be fixed.
-  Segfaults show up as Error 11 in the gridder.
-  [github issue on this]  
-
-* more header information passing from RAW to FITS, e.g. for ADMIT to
-  work. Need to confirm if other things in CASA and MIRIAD also work correctly.
+  this turned up as a 1 cell offset that was fixed.  Segfaults show up
+  as Error 11 in the gridder.  Non-square maps also suffer from
+  another X-Y axis reversal, there is still an error left here.
   [github issue on this]
 
-* the pipeline now outputs a lot more useful info (map extent in
+1. more header information passing from RAW to FITS, e.g. for ADMIT to
+  work. Need to confirm if other things in CASA and MIRIAD also work
+  correctly.
+  [github issue on this]
+
+1. the pipeline now outputs a lot more useful info (map extent in
   position and velocity, noise stats per pixel, etc.).  Some of the
   current info is not well labeled , and hard to understand for
   newcomers, so still need some serious labeling and cleanup.
 
-* gridder now writes a weight map, when used this makes for better
+1. gridder now writes a weight map, when used this makes for better
   results in ADMIT.  In the code you can also write out a 0/1 map
   which cells had a pixel inside, but this is not a flag. Can be
   emulated with otf_select=0 and a mask on that, which requires a
   re-run of the gridder.
 
-* add otf_select=3 option to use a triangle convolution filter. In the
+1. add otf_select=3 option to use a triangle convolution filter. In the
   end, normalizing to the same RMS, there are no noticable visual
   differences. Need a more detailed analysis like in SLR Appendix C?
 
-* by default, now only cells will be given a value if there was at
+1. by default, now only cells will be given a value if there was at
   least one pixel in it. This only works well for convex areas. For
   small cell size there can be empty cells surrounded by filled
   cells. In these circumstances it would be useful to turn this option
   to the old default, based on weight from the convolution.
 
-* a number of NEMO based tools were added that might need a python
+1. a number of NEMO based tools were added that might need a python
   (astropy) equivalent if deemed useful. 
 
-* The script **lmtoy_reduce.sh** is a simple pipeline, intended not
-  to need user input, other then the obsnum. See
-  [lmtoy_reduce.md](../examples/lmtoy_reduce.md).  Still a few things
-  to wrap up (e.g. spatial extent).  Script can also be re-run and
-  learn from new parameters.
+1. The script **lmtoy_reduce.sh** is a simple pipeline, intended not to
+  need user input, other then the obsnum. See
+  [lmtoy_reduce.md](../examples/lmtoy_reduce.md).  Script can also be
+  re-run and learn from new parameters.
 
-* There is a benchmark (IRC+10216) but it's not public data yet. Should we? who
-  is the PI? This is commissioning data with some bad header info, so
+1. There is a benchmark (IRC+10216) but it's not public data yet. Should we? who
+  is the PI? This is commissioning data with some "wrong" headerinfo, so
   it's scientifically not correct. Keep it for developers only?
 
-* A new script **lmtinfo.py** that spits out some useful variables in "rc"
+1. A new script **lmtinfo.py** that spits out some useful variables in "rc"
   format. Used by the lmtoy_reduce.sh script. This could be expanded to
   provide better guesses on baselining for example.
 
-* rms_cut is now allowed to be negative.  This will cause it to compute
+1. rms_cut is now allowed to be negative.  This will cause it to compute
   a robust mean and std, and use (now per pixel!) a cuttof of
   mean + |rms_cut|*std.  So a value of -3 or -4 should be sufficient
   to get rid of the doppler tuning problems of the data prior to Feb 19, 2020.
-  Note:  rms_cut<0 is not supported by all scripts yet!
-  [caveat: only in gridder, not in viewing]
+  Caveat  rms_cut<0 is only supported in the gridder, not the viewers.
 
-* New script **view_spec_point.py** to overplot spectra. Also uses the new
+1. New script **view_spec_point.py** to overplot spectra. Also uses the new
   docopt based user interface, where --help shows defaults and additional
   help like a unix man page. All new scripts use docopt.
 
-* A new Plots() interface with  a --plots= command line interface allows
+1. New Plots() interface with  a --plots= command line interface allows
   users to easily switch between interactive and batch png (or pdf) files.
   The first example is in **view_spec_point.py**, though some issue with
   multi-panel plots   [code not committed yet]
 
-* New script **make_spec_fits.py** that makes a waterfall fits cube
+1. New script **make_spec_fits.py** that makes a waterfall fits cube
 
-* The **lmtoy_combine.sh** is able to combine multiple SpecFile's and create
+1. The **lmtoy_combine.sh** is able to combine multiple SpecFile's and create
   an output cube
 
-* There is a new --sample flag in the gridder, to allow you to mask out
+1. There is a new --sample flag in the gridder, to allow you to mask out
   samples from given pixels. The argument is a multiple of 3 integers:
   P,S0,S1, where P is the pixel number (0...15), and sequence from S0 through S1
   are then not included in the gridding. S0 can start at 0, S1 can max out
   to whatever number it has for that pixel, consult your output for this.
   There is no check on valid values, so you can set --sample 99,-100,-10
 
-* There is a new -a flag in **spec_driver_fits**, for which the output weight file
+1. There is a new -a flag in **spec_driver_fits**, for which the output weight file
   (the -w flag) will contain the beam. This is achieved by rewriting the
   internal SpecFIle to contain one  pixel at (0,0) with 1 channel of
   intensity 1.0.  See also Appendix C in the SLR manual.
@@ -99,13 +99,13 @@ list, the important ones are tracked in our [github
 issues](https://github.com/astroumd/lmtoy/issues) list.  I've also
 added a few that Mark Heyer listed in his reports.
 
-* A better auto-baselining. The current VLSR (from netcdf) and
+1. A better auto-baselining. The current VLSR (from netcdf) and
   guessed DV and DW only does that much, but it's ok for a first
   start. The M31 data is already showing the VLSR is no good, as the
   VLSR of the galaxy is not appropriate for the small patches in the
   M31 survey the LMT undertook.
 
-* The Commandline Parser. I propose using docopt instead.
+1. The Commandline Parser. I propose using docopt instead.
   A few subitems:
 
   * To encourage making apps, the keywords belonging to the app should
@@ -125,20 +125,20 @@ added a few that Mark Heyer listed in his reports.
     problem). This parameter file also seems to place different -
     possibly conflicting - defaults in different places.
 
-* There are still a few places in the C code that don't exit, where
+1. There are still a few places in the C code that don't exit, where
   they should, for example if malloc() fails. Error messages need to
   be more descriptive in some places.
 
-* Options to smooth/bin in velocity?  Or leave this to 3rd party
+1. Options to smooth/bin in velocity?  Or leave this to 3rd party
   tools?  [NEMO writes an .nfs. cube, which is a NoiseFlatSMoothed
   version so ADMIT can run on it.]   CASA should be good test for this.
   The make_spec_fits waterfall script has a --binning= option.
 
-* RFI blanking - do we even need this?
+1. RFI blanking - do we even need this?
 
-* Add a time column to the SpecFile (--sample can solve this too)
+1. Add a time column to the SpecFile (--sample can solve this too)
 
-* Masking file with more flexible filtering:
+1. Masking file with more flexible filtering:
   - by pixel number
   - by rms (absolute, or fractional [rms_cut < 0 can do that now])
   - by time
@@ -158,7 +158,7 @@ added a few that Mark Heyer listed in his reports.
   This is quite involved, and not clear with the current capabilities if
   we still need it.
       
-* Additional parameters from the Hedwig proposal system should go in
+1. Additional parameters from the Hedwig proposal system should go in
   the workflow, so they can be used in the pipeline, and eventually go
   into FITS
 
@@ -171,7 +171,7 @@ added a few that Mark Heyer listed in his reports.
   Additional experience with ADMIT and CASA could expose a few more
   things that are useful to have
 
-* An algorithm to fix the doppler update problem (data < Feb 18,
+1. An algorithm to fix the doppler update problem (data < Feb 18,
   2020), which causes the RMS values to have double or triple
   histograms. They are now also listed in the output of the
   **process_otf_map2.py**:
@@ -208,14 +208,14 @@ added a few that Mark Heyer listed in his reports.
    related outliers.  Looking at a wider waterfall plot, these bad
    scans and their fractions are fairly obvious.
 
-* A number of fancy options (e.g. allow different projection systems, galactic included)
+1. A number of fancy options (e.g. allow different projection systems, galactic included)
   can probably solved much easier by using the *Montage* package after our pipeline.
   Rotated frames?
 
-* visualizing the OFF positions?  The SpecFile has lost them.  There is no view_raw_file.
+1. visualizing the OFF positions?  The SpecFile has lost them.  There is no view_raw_file.
   Is a waterfall for raw data useful?
 
-* multiple spectral lines? Or if for any reason you want different
+1. multiple spectral lines? Or if for any reason you want different
   SpecFiles, use the proposed obsid= keyword.  For any subsequent runs
   the obsnum=${obsnum}${obsid} would then be used. The default for
   ${obsid} would be a blank string
@@ -236,18 +236,18 @@ added a few that Mark Heyer listed in his reports.
 
 Keyword names should make sense, have sensible defaults.
 
-* extent: is the half the map , or the full map. also, we imply we can
+1. extent: is the half the map , or the full map. also, we imply we can
   only make maps from some -X to +X.
 
-* sigma_noise -> rms_weight, and should be a boolean
+1. sigma_noise -> rms_weight, and should be a boolean
 
-* pix_list: we use the concept called pixels for what really are the
+1. pix_list: we use the concept called pixels for what really are the
   beams. Once we grid, the parameter is --cell, so I refer to concepts
   such as if pixels were in cells etc. I started a glossary.
 
-* otf_select -> otf_filter ?
+1. otf_select -> otf_filter ?
 
-* maxwt (and FCRAO keyword) - but the name minwt makes more sense, as
+1. maxwt (and FCRAO keyword) - but the name minwt makes more sense, as
   this in the minimum weight in a cell preventing it from being masked
   via a NaN. I had a --min_neighbors idea.
 
