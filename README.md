@@ -94,7 +94,11 @@ a file **lmtoy_79448.rc** which you can edit and re-run the script to finetune.
 * [dash](https://dash.plotly.com/) or [plotly dash](https://plotly.com/dash/)
   *  https://alpha.iodide.io/      Doing datascience in your browser
 * [sdfits](https://fits.gsfc.nasa.gov/registry/sdfits.html) and https://github.com/timj/aandc-gsdd
-* [cygrid](https://github.com/bwinkel/cygrid)
+* Various related:
+  * [cygrid](https://github.com/bwinkel/cygrid)
+  * [destriper](https://github.com/low-sky/destriper)
+  * [sdpy](https://github.com/keflavich/sdpy)
+  * [otfmap](https://github.com/low-sky/otfmap)
 * VO links:
   * [2019 radio hackathon](https://www.asterics2020.eu/dokuwiki/doku.php?id=open:wp4:wp4techforum5:radiointhevo) - has several VO presentations and links to VO standards
   * IVOA meetings (spring 2020 onwards)
