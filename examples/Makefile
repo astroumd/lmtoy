@@ -41,13 +41,8 @@ bench: IRC_data
 	/usr/bin/time ./irc_reduce.sh > irc_bench.log 2>&1
 	@echo "Result:"
 	@grep QAC_STATS irc_bench.log
-	@echo "Should see:"
-	@echo "With edge blanking"
-	@echo "QAC_STATS: IRC_79448.fits.ccd 0.0138192 2.28207 -626.549 469.641  0 0.0580601"
-	@echo "Without edge blanking (original)"
-	@echo "QAC_STATS: IRC_79448.fits.ccd -0.00431168 8.59776 -2360.77 2454.97  0 -0.0124982"
-
-
+	@echo "Should see, With the new edge blanking"
+	@echo "QAC_STATS: IRC_79448.fits.ccd 0.0153953 0.503169 -66.2138 75.2123  0 0.0720699"
 
 # takes about 14"
 bench1: IRC_data
