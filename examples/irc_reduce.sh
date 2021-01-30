@@ -19,10 +19,12 @@ obsnum=79448
 makespec=1
 viewspec=0
 viewcube=0
-pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+#pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+pix_list=0,1,2,3,4,5,6,7,8,9,10,11
 rms_cut=4
 resolution=12.5
 cell=6.25
+x_axis=VLSR
 
 
 
@@ -48,7 +50,7 @@ process_otf_map2.py -p $p_dir \
 		    --bank 0 \
 		    --stype 2 \
 		    --use_cal \
-		    --x_axis VLSR \
+		    --x_axis $x_axis \
 		    --b_order 0 \
 		    --b_regions [[-250,-150],[150,300]] \
 		    --l_region [[-100,100]] \
