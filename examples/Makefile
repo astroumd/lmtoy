@@ -38,7 +38,7 @@ old_new:
 # take about 1'41"
 bench: IRC_data
 	@echo "Running benchmark"
-	/usr/bin/time ./irc_reduce.sh > irc_bench.log 2>&1
+	OMP_NUM_THREADS=1 /usr/bin/time ./irc_reduce.sh > irc_bench.log 2>&1
 	@echo "Result:"
 	@grep QAC_STATS irc_bench.log
 	@echo "Should see, With the new edge blanking"
