@@ -79,10 +79,11 @@ bench51: M51_data
 	/usr/bin/time ./lmtoy_combine.sh        obsnum=90911,91112 > lmtoy_90911_2.log 2>&1
 
 
+ONT=1 2 4
 bench4:
-	OMP_NUM_THREADS=1 /usr/bin/time ./irc_reduce.sh > irc1.log 2>&1
-	OMP_NUM_THREADS=2 /usr/bin/time ./irc_reduce.sh > irc2.log 2>&1
-	OMP_NUM_THREADS=4 /usr/bin/time ./irc_reduce.sh > irc4.log 2>&1
+	@echo ONT=$(ONT)
+	-@for i in $(ONT); do\
+	(echo $$i;OMP_NUM_THREADS=$$i /usr/bin/time ./irc_reduce.sh > irc$$i.log 2>&1); done
 
 
 test1:
