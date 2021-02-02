@@ -2,13 +2,34 @@
 #
 #    display present obsnums, which can be fed into tar
 #
-#    tar cf lmt_m51 `./lmtar 91111 91112`
-
-d=lmt_data
-
-# warning:  ifproc has 6 digits with leading 0, roach has just 5
+# data_lmt/
+# |----ifproc/
+# |----spectrometer/
+#      |-----roach0/
+#      |-----roach1/
+#      |-----roach2/
+#      |-----roach3/
+# |----RedshiftChassis0/
+# |----RedshiftChassis1/
+# |----RedshiftChassis2/
+# |----RedshiftChassis3/
+#
+#   Example filenames:
 #    ifproc_2020-02-18_090910_00_0001.nc
 #    roach0_90910_0_1_NGC5194_2020-02-18_060822.nc
+#    RedshiftChassis0_2020-03-05_092083_00_0001.nc
+
+
+
+
+#
+#    tar cf lmt_m51 `./lmtar 91111 91112`
+
+d=${LMT_DATA:-lmt_data}
+
+echo Using LMT_DATA=$d
+
+# warning:  ifproc has 6 digits with leading 0, roach has just 5
 
 for obsnum in $*; do\
   ls $d/ifproc/ifproc*${obsnum}*.nc
