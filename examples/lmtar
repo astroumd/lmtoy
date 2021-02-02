@@ -1,0 +1,23 @@
+#! /bin/bash
+#
+#    display present obsnums, which can be fed into tar
+#
+#    tar cf lmt_m51 `./lmtar 91111 91112`
+
+d=lmt_data
+
+# warning:  ifproc has 6 digits with leading 0, roach has just 5
+#    ifproc_2020-02-18_090910_00_0001.nc
+#    roach0_90910_0_1_NGC5194_2020-02-18_060822.nc
+
+for obsnum in $*; do\
+  ls $d/ifproc/ifproc*${obsnum}*.nc
+  ls $d/spectrometer/roach0/roach0_${obsnum}*.nc
+  ls $d/spectrometer/roach1/roach1_${obsnum}*.nc
+  ls $d/spectrometer/roach2/roach2_${obsnum}*.nc
+  ls $d/spectrometer/roach3/roach3_${obsnum}*.nc
+done
+
+
+
+
