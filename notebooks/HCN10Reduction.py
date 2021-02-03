@@ -151,7 +151,7 @@ pl.plot([-20,20],[0,0],'k')
 
 llp,nllp = a.xlist([[-10,10]])
 for c in llp:
-    print a.xarray[c],a.yarray[c]
+    print(a.xarray[c],a.yarray[c])
 
 
 # In[ ]:
