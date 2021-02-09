@@ -43,6 +43,7 @@ bench: IRC_data
 	@grep QAC_STATS irc_bench.log
 	@echo "Should see, With the new edge blanking"
 	@echo "QAC_STATS: IRC_79448.fits.ccd 0.0153953 0.503169 -66.2138 75.2123  0 0.0720699"
+	@tail -2 irc_bench.log
 
 # takes about 14"
 bench1: IRC_data
