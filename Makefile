@@ -14,6 +14,7 @@ URL3  = https://github.com/lmt-heterodyne/SpectralLineConfigFiles
 URL4  = https://github.com/Caltech-IPAC/Montage
 URL5  = https://github.com/teuben/nemo
 URL6  = https://github.com/teuben/maskmoment
+URL7  = https://github.com/gopastro/sculpt
 
 .PHONY:  help install build
 
@@ -64,6 +65,9 @@ nemo:
 maskmoment:
 	git clone --branch teuben1 $(URL6)
 
+sculpt:
+	git clone $(URL7)
+
 # step 1 (or skip and use another python)
 #        after this install, the start_python.sh should be sourced in the shell
 install_python:
@@ -98,10 +102,17 @@ install_lmtslr:  SpectralLineReduction
 	(cd SpectralLineReduction/C ; make install; ./spec_driver_fits)
 
 # step 3
-install_dreampy3: dreampy3 lmtoy_venv
+install_dreampy3_venv: dreampy3 lmtoy_venv
 	@echo python3 dreampy3
 	(cd dreampy3; \
 	source ../lmtoy_venv/bin/activate; \
+	awk -F= '{print $$1}'  requirements.txt > requirements_lmtoy.txt ; \
+	pip3 install -r requirements_lmtoy.txt; \
+	pip3 install -e .)
+
+install_dreampy3: dreampy3 lmtoy_venv
+	@echo python3 dreampy3
+	(cd dreampy3; \
 	awk -F= '{print $$1}'  requirements.txt > requirements_lmtoy.txt ; \
 	pip3 install -r requirements_lmtoy.txt; \
 	pip3 install -e .)
