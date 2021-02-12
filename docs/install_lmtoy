@@ -46,6 +46,8 @@ cd examples
 
 if [ -d ~/LMT/IRC_data ]; then
     ln -s ~/LMT/IRC_data
+elif [ -d /lma1/lmt/data_lmt ]; then
+    ln -s /lma1/lmt/data_lmt IRC_data
 elif [ -d /data/LMT/lmt_data ]; then
     ln -s /data/LMT/lmt_data IRC_data
 elif [ -e /n/chara/teuben/LMT/IRC_data.tar.gz ]; then
