@@ -32,7 +32,8 @@ make install_python WGET=$wget
 source python_start.sh
 make install_lmtslr
 # make install_lmtslr_venv
-# make install_dreampy3
+make install_dreampy3
+# make install_dreampy3_venv
 make install_nemo
 # make install_montage
 make config

@@ -37,8 +37,20 @@ help install:
 	@echo "    make status                view git status in all repos"
 	@echo ""
 
-config:
+config:  lmtoy_local.sh lmtoy_local.csh
 	./configure
+
+# for dreampy3
+lmtoy_local.sh:
+	@echo '# local LMTOY settings can go here'         > lmtoy_local.sh
+	@echo '# export DATA_LMT=data_lmt'                >> lmtoy_local.sh
+	@echo '# export CORR_CAL_DIR=$DATA_LMT/rsr/cal'   >> lmtoy_local.sh
+
+
+lmtoy_local.csh:
+	@echo '# local LMTOY settings can go here'         > lmtoy_local.csh
+	@echo '# setenv DATA_LMT data_lmt'                >> lmtoy_local.csh
+	@echo '# setenv CORR_CAL_DIR $DATA_LMT/rsr/cal'   >> lmtoy_local.csh
 
 
 git:  SpectralLineReduction dreampy3 maskmoment
