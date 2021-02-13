@@ -309,7 +309,8 @@ if [ ! -z $NEMO ]; then
     if [ -e $s_fits ]; then
 	fitsccd $s_fits $s_on.ccd    axistype=1
 	fitsccd $w_fits $s_on.wt.ccd axistype=1
-    
+
+	ccdspec $s_on.ccd > $s_on.spectab
 	ccdstat $s_on.ccd bad=0 robust=t planes=0 > $s_on.cubestat
 	echo "LMTOY>>    STATS  $s_on.ccd     centerbox robust"
 	ccdsub  $s_on.ccd -    centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
@@ -332,6 +333,11 @@ if [ ! -z $NEMO ]; then
 	cat $s_on.head1 $s_on.data1 > $s_on.nf.fits
 
 	ccdsmooth $s_on.n.ccd - dir=xyz nsmooth=5 | ccdfits - $s_on.nfs.fits fitshead=$s_fits
+
+	# hack
+	fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.specstab
+	echo -n "spectab : ";  tail -1  $s_on.spectab
+	echo -n "specstab: ";  tail -1  $s_on.specstab
 
 	# remove useless files
 	rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd
