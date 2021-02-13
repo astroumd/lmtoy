@@ -9,7 +9,7 @@
 
 
 # input parameters
-path=/lmt_data
+path=M31_data
 src=M31
 obsnum=85776
 makespec=1
@@ -37,8 +37,8 @@ done
 if [ -d $path ]; then
     p_dir=$path
 else
-    p_dir=${src}_data
-    echo "Warning: assuming you have $p_dir (or a symlink) where the M31 data are"
+    p_dir=${DATA_LMT}
+    echo "Warning: assuming you have $p_dir (or a symlink) where the M31_data are"
 fi
 s_nc=${src}_${obsnum}.nc
 s_fits=${src}_${obsnum}.fits

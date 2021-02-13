@@ -14,6 +14,7 @@
 
 
 # input parameters
+path=IRC_data
 src=IRC
 obsnum=79448
 makespec=1
@@ -34,7 +35,12 @@ done
 
 
 # derived parameters
-p_dir=${src}_data
+if [ -d $path ]; then
+    p_dir=$path
+else
+    p_dir=${DATA_LMT}
+    echo "Warning: assuming you have $p_dir (or a symlink) where the IRC_data are"
+fi    
 s_nc=${src}_${obsnum}.nc
 s_fits=${src}_${obsnum}.fits
 w_fits=${src}_${obsnum}.wt.fits
