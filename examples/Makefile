@@ -5,7 +5,7 @@
 DATA_DIRS = IRC_data M31_data M51_data
 
 #  takes 20'44" (with NEMO, 20'20" without)
-all:   $(DATA_DIRS)
+all:   # $(DATA_DIRS)
 	/usr/bin/time ./irc_reduce.sh              > irc_79488.log 2>&1
 	/usr/bin/time ./m31_reduce.sh obsnum=85776 > m31_85776.log 2>&1
 	/usr/bin/time ./m31_reduce.sh obsnum=85778 > m31_85778.log 2>&1
