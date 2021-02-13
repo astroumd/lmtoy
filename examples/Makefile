@@ -16,7 +16,7 @@ IRC_data:
 	@echo For the IRC benchmark:  The directory IRC_data does not exist yet
 	@echo and needs to manually created or symlinked to where the IRC_data are, e.g.
 	@echo ""
-	@echo "     ln -s /your_big_disk/lmt_data  IRC_data"
+	@echo "     ln -s /your_big_disk/data_lmt  IRC_data"
 	@echo ""
 	@echo "If @UMD: tar zxf /n/chara/teuben/LMT/IRC_data.tar.gz"
 	@echo "Else:    contact us"
