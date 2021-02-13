@@ -65,7 +65,7 @@ can make a symlink to the big data disk
 
 pick the appropriate one for you:
 
-      ln -s /data/LMT/lmt_data  IRC_data
+      ln -s /data/LMT/data_lmt  IRC_data
       ln -s ~/LMT/IRC_data
       tar zxf /n/chara/teuben/LMT/IRC_data.tar.gz
 
@@ -82,7 +82,7 @@ This should produce three plots.
 
 In your own directory you can use the more general **lmtoy_reduce.sh** script
 
-      $LMTOY/examples/lmtoy_reduce.sh path=/data/LMT/lmt_data  obsnum=79448
+      $LMTOY/examples/lmtoy_reduce.sh path=/data/LMT/data_lmt  obsnum=79448
 
 (again with the appropriate **path=**) to analyse any dataset. It will produce
 a file **lmtoy_79448.rc** which you can edit and re-run the script to finetune.

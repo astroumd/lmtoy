@@ -31,6 +31,10 @@ if [ ! -z $ADMIT ]; then
     echo Warning:  ADMIT=$ADMIT present.  LMTOY will not behave nicely with ADMIT yet.
 fi
 
+# if you want to change this, edit lmtoy_local.sh instead
+export DATA_LMT=@DATA_LMT@
+export CORR_CAL_DIR=$DATA_LMT/rsr/cal
+
 if [ -e $LMTOY/lmtoy_local.sh ]; then
     source $LMTOY/lmtoy_local.sh
 fi
