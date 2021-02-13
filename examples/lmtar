@@ -25,9 +25,9 @@
 #
 #    tar cf lmt_m51 `./lmtar 91111 91112`
 
-d=${LMT_DATA:-lmt_data}
+d=${DATA_LMT:-data_lmt}
 
-echo Using LMT_DATA=$d
+echo Using DATA_LMT=$d
 
 # warning:  ifproc has 6 digits with leading 0, roach has just 5
 
