@@ -11,10 +11,10 @@
 # There is no good mechanism here to make a new variable depend on re-running a certain task on which it depends
 # that's perhaps for a more advanced pipeline
 
-version="lmtoy_reduce: 30-jan-2021"
+version="lmtoy_reduce: 12-feb-2021"
 
 if [ -z $1 ]; then
-    echo "LMTOY>>  Usage: path=LMT_DATA obsnum=OBSNUM ..."
+    echo "LMTOY>>  Usage: path=DATA_LMT obsnum=OBSNUM ..."
     echo "LMTOY>>  $version"
     echo ""
     echo "See lmtoy_reduce.md for examples on usage"
@@ -28,7 +28,7 @@ debug=0
 
 # input parameters
 #            - start or restart
-path=${LMT_DATA:-/data/LMT/lmt_data}
+path=${DATA_LMT:-data_lmt}
 obsnum=79448
 obsid=""
 newrc=0
