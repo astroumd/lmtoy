@@ -8,7 +8,7 @@
 
 
 # input parameters (not everything has been put in a parameter here)
-path=/lmt_data
+path=M51_data
 src=M51
 obsnum=91112
 makespec=1
@@ -17,6 +17,9 @@ viewcube=0
 pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 pix_list=1,2,3,4,6,7,8,9,10,11,12,13,14,15
 noise_sigma=1  
+resolution=12.5
+cell=6.25
+sample=-1
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -28,8 +31,8 @@ done
 if [ -d $path ]; then
     p_dir=$path
 else
-    p_dir=${src}_data
-    echo "Warning: assuming you have $p_dir (or a symlink) where the M51 data are"
+    p_dir=${DATA_LMT}
+    echo "Warning: assuming you have $p_dir (or a symlink) where the M51_data are"
 fi    
 s_nc=${src}_${obsnum}.nc
 s_fits=${src}_${obsnum}.fits
@@ -75,8 +78,8 @@ grid_data.py --program_path spec_driver_fits \
 	     -i $s_nc \
 	     -o $s_fits \
 	     -w $w_fits \
-	     --resolution 12.5 \
-	     --cell 6.25 \
+	     --resolution $resolution \
+	     --cell $cell \
 	     --pix_list $pix_list \
 	     --rms_cut 10 \
 	     --x_extent 400 \
@@ -88,6 +91,8 @@ grid_data.py --program_path spec_driver_fits \
 	     --otf_c 2 \
 	     --n_samples 256 \
 	     --noise_sigma $noise_sigma
+
+# x--sample $sample
 
 
 if [ $viewcube = 1 ]; then

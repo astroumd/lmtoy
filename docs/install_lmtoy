@@ -3,6 +3,7 @@
 #    this is an example how the LMTOY environment can be installed
 #    28-dec-2020:     LMTSRL installed (more to come)
 #     4-jan-2021:     try to be smart on finding LMT data; disable montage for now
+#    12-feb-2021:     lmt_data -> data_lmt
 
 # set -x
 
@@ -45,14 +46,16 @@ source lmtoy_start.sh
 which python
 cd examples
 
-if [ -d ~/LMT/IRC_data ]; then
+if   [ -d ~/LMT/IRC_data ]; then
     ln -s ~/LMT/IRC_data
-elif [ -d /data/LMT/lmt_data ]; then
-    ln -s /data/LMT/lmt_data IRC_data
-elif [ -e /n/chara/teuben/LMT/IRC_data.tar.gz ]; then
+elif [ -d  /lma1/lmt/data_lmt ]; then
+    ln -s  /lma1/lmt/data_lmt IRC_data
+elif [ -d  /data/LMT/data_lmt ]; then
+    ln -s  /data/LMT/data_lmt IRC_data
+elif [ -e  /n/chara/teuben/LMT/IRC_data.tar.gz ]; then
     tar zxf /n/chara/teuben/LMT/IRC_data.tar.gz
 else
-    echo Could not find the IRC_data or lmt_data, skipping benchmark
+    echo Could not find the IRC_data or data_lmt, skipping benchmark
     exit 0
 fi
 
