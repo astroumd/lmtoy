@@ -5,7 +5,7 @@
 DATA_DIRS = IRC_data M31_data M51_data
 
 #  takes 20'44" (with NEMO, 20'20" without)
-all:   $(DATA_DIRS)
+all:   # $(DATA_DIRS)
 	/usr/bin/time ./irc_reduce.sh              > irc_79488.log 2>&1
 	/usr/bin/time ./m31_reduce.sh obsnum=85776 > m31_85776.log 2>&1
 	/usr/bin/time ./m31_reduce.sh obsnum=85778 > m31_85778.log 2>&1
@@ -16,7 +16,7 @@ IRC_data:
 	@echo For the IRC benchmark:  The directory IRC_data does not exist yet
 	@echo and needs to manually created or symlinked to where the IRC_data are, e.g.
 	@echo ""
-	@echo "     ln -s /your_big_disk/lmt_data  IRC_data"
+	@echo "     ln -s /your_big_disk/data_lmt  IRC_data"
 	@echo ""
 	@echo "If @UMD: tar zxf /n/chara/teuben/LMT/IRC_data.tar.gz"
 	@echo "Else:    contact us"
@@ -27,16 +27,16 @@ IRC_data:
 new:   bench11 bench31 bench51
 
 old_new:
-	/usr/bin/time ./lmtoy_reduce.sh path=IRC_data obsnum=79448 > lmtoy_79448.log 2>&1
-	/usr/bin/time ./lmtoy_reduce.sh path=M31_data obsnum=85776 > lmtoy_85776.log 2>&1
-	/usr/bin/time ./lmtoy_reduce.sh path=M31_data obsnum=85778 > lmtoy_85778.log 2>&1
-	/usr/bin/time ./lmtoy_reduce.sh path=M31_data obsnum=85824 > lmtoy_85824.log 2>&1
+	/usr/bin/time ./lmtoy_reduce.sh obsnum=79448 > lmtoy_79448.log 2>&1
+	/usr/bin/time ./lmtoy_reduce.sh obsnum=85776 > lmtoy_85776.log 2>&1
+	/usr/bin/time ./lmtoy_reduce.sh obsnum=85778 > lmtoy_85778.log 2>&1
+	/usr/bin/time ./lmtoy_reduce.sh obsnum=85824 > lmtoy_85824.log 2>&1
 	/usr/bin/time ./lmtoy_combine.sh  obsnum=85776,85778,85824 > lmtoy_85776_3.log  2>&1
-	/usr/bin/time ./lmtoy_reduce.sh path=M51_data obsnum=90911 > lmtoy_90911.log 2>&1
-	/usr/bin/time ./lmtoy_reduce.sh path=M51_data obsnum=91112 > lmtoy_91112.log 2>&1
+	/usr/bin/time ./lmtoy_reduce.sh obsnum=90911 > lmtoy_90911.log 2>&1
+	/usr/bin/time ./lmtoy_reduce.sh obsnum=91112 > lmtoy_91112.log 2>&1
 
 # take about 1'41"
-bench: IRC_data
+bench: # IRC_data
 	@echo "Running benchmark"
 	OMP_NUM_THREADS=1 /usr/bin/time ./irc_reduce.sh > irc_bench.log 2>&1
 	@echo "Result:"
@@ -46,7 +46,7 @@ bench: IRC_data
 	@tail -2 irc_bench.log
 
 # takes about 14"
-bench1: IRC_data
+bench1: # IRC_data
 	@echo "Running quick test for 1 pixel"
 	/usr/bin/time ./irc_reduce.sh pix_list=1 > irc_bench1.log 2>&1
 
@@ -59,19 +59,19 @@ bench2: IRC_data IRC_79448.nc
 	@echo xdg-open bench2b.1.png
 	@echo xdg-open bench2c.1.png
 
-bench11: IRC_data
-	/usr/bin/time ./lmtoy_reduce.sh path=IRC_data obsnum=79448 > lmtoy_79448.log 2>&1
+bench11: # IRC_data
+	/usr/bin/time ./lmtoy_reduce.sh obsnum=79448 > lmtoy_79448.log 2>&1
 
-bench31: M31_data
-	/usr/bin/time ./lmtoy_reduce.sh path=M31_data obsnum=85776 > lmtoy_85776.log   2>&1
-	/usr/bin/time ./lmtoy_reduce.sh path=M31_data obsnum=85778 > lmtoy_85778.log   2>&1
-	/usr/bin/time ./lmtoy_reduce.sh path=M31_data obsnum=85824 > lmtoy_85824.log   2>&1
+bench31: # M31_data
+	/usr/bin/time ./lmtoy_reduce.sh obsnum=85776 > lmtoy_85776.log   2>&1
+	/usr/bin/time ./lmtoy_reduce.sh obsnum=85778 > lmtoy_85778.log   2>&1
+	/usr/bin/time ./lmtoy_reduce.sh obsnum=85824 > lmtoy_85824.log   2>&1
 	/usr/bin/time ./lmtoy_combine.sh  obsnum=85776,85778,85824 > lmtoy_85776_3.log 2>&1
 	/usr/bin/time ./nemo_combine.sh                        >  lmtoy_85776_nemo.log 2>&1
 
-bench51: M51_data
-	/usr/bin/time ./lmtoy_reduce.sh path=M51_data obsnum=90911 > lmtoy_90911.log   2>&1
-	/usr/bin/time ./lmtoy_reduce.sh path=M51_data obsnum=91112 > lmtoy_91112.log   2>&1
+bench51: # M51_data
+	/usr/bin/time ./lmtoy_reduce.sh obsnum=90911 > lmtoy_90911.log   2>&1
+	/usr/bin/time ./lmtoy_reduce.sh obsnum=91112 > lmtoy_91112.log   2>&1
 	/usr/bin/time ./lmtoy_combine.sh        obsnum=90911,91112 > lmtoy_90911_2.log 2>&1
 
 

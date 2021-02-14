@@ -28,7 +28,7 @@ is required for each run
 
       $LMTOY/examples/lmtoy_reduce.sh \
 	    obsnum=91112                # always required
-	    path=/data/LMT/lmt_data     # required on the first run
+	    path=data_lmt               # optional via $DATA_LMT
 	    obsid=                      # optional on first run [not yet implemented]
 	    dv=100                      # optional:  width around spectral line (vlsr) 
 	    dw=250                      # optional:  width of the wings for baseline
@@ -140,7 +140,7 @@ We now highlight some keywords for a few selected scripts:
 
 The **lmtinfo.py** script makes a summary listing of the OBSNUM's you have, e.g.
 
-      lmtinfo.py /data/lmt_data
+      lmtinfo.py $DATA_LMT
       
       #     DATE           OBSNUM   SOURCE     RESTFRQ VLSR INTTIME
       
