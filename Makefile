@@ -40,18 +40,18 @@ help install:
 config:  lmtoy_local.sh lmtoy_local.csh
 	./configure
 
-# for dreampy3
+# local variations that override the lmtoy_start version
 lmtoy_local.sh:
 	@echo '# local LMTOY settings can go here'         > lmtoy_local.sh
 	@echo '# export DATA_LMT=data_lmt'                >> lmtoy_local.sh
 	@echo '# export CORR_CAL_DIR=$DATA_LMT/rsr/cal'   >> lmtoy_local.sh
-
+	@echo '# export HDF5_DISABLE_VERSION_CHECK=2'     >> lmtoy_local.sh
 
 lmtoy_local.csh:
 	@echo '# local LMTOY settings can go here'         > lmtoy_local.csh
 	@echo '# setenv DATA_LMT data_lmt'                >> lmtoy_local.csh
 	@echo '# setenv CORR_CAL_DIR $DATA_LMT/rsr/cal'   >> lmtoy_local.csh
-
+	@echo '# setenv HDF5_DISABLE_VERSION_CHECK 2'     >> lmtoy_local.csh
 
 git:  SpectralLineReduction dreampy3 maskmoment
 
