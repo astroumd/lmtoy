@@ -111,7 +111,11 @@ install_lmtslr:  SpectralLineReduction
 	pip3 install -r requirements_lmtoy.txt; \
 	pip3 install -e .)
 	@echo C
-	(cd SpectralLineReduction/C ; make install; ./spec_driver_fits)
+	(cd SpectralLineReduction/C ; make clean install; ./spec_driver_fits)
+
+update_lmtslr:  SpectralLineReduction
+	@echo C
+	(cd SpectralLineReduction/C ; make clean install; ./spec_driver_fits)
 
 # step 3
 install_dreampy3_venv: dreampy3 lmtoy_venv
@@ -140,6 +144,9 @@ install_nemo:  nemo
 
 install_nemo_pgplot:  nemo
 	(cd nemo; ./configure --with-yapp=pgplot; make build MAKELIBS=corelibs)
+
+update_nemo:	nemo
+	(cd nemo; make build MAKELIBS=corelibs)
 
 install_maskmoment: maskmoment
 	(cd maskmoment; pip install -e .)
