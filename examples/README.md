@@ -21,7 +21,8 @@ See [lmtoy_reduce.md](lmtoy_reduce.md) on using the new experimental pipeline
 4. Plot the cube, by picking a point to view a spectrum, slices, and a TMAX or TINT.  Or take your cube
    to your	favorite fits cube viewer (ds9, casaviewer, carta, qfitsview, ...)
 
-5. If you have many OBSNUM's to process, there is a script to combine them, much like step 3.
+5. If you have many OBSNUM's to process, the lmt_combine.sh script combines them, much like step 3. You
+   can also use 3rd party tools to combine the cubes.
 
 
 ## Overview of three datasets
@@ -68,8 +69,17 @@ These amend the examples given in SpectralLineReduction.
      405252 ./spectrometer/roach3/roach3_79448_1_0_IRC+10216_2018-11-16_114845.nc
 
 The 79447 obsnum refers to the "Cal", and 79448 to an OTF map of the source (IRC+10216).
+Via the Makefile you can run **make bench** which should report
 
+      QAC_STATS: IRC_79448.fits.ccd 0.0153953 0.503169 -66.2138 75.2123  0 0.0720699
 
+as well as a CPU time output. Here are some examples how long the benchmark takes
+
+      205.84user 7.96system 3:42.94elapsed 95%CPU    "chara", Xeon E3-1280 @ 3.50GHz 
+      179.97user 4.61system 3:09.17elapsed 97%CPU    "cln" @UMass; Xeon E5-1630 v3 @ 3.70GHz
+      151.71user 2.12system 2:34.57elapsed 99%CPU    "lma" @UMD; AMD EPYC 7302 16-Core Processor
+      110.78user 2.03system 1:52.83elapsed 99%CPU    "xps13", Peter's i5-1135G7 based laptop
+      
 ## M31:   M31_data
 
         284 ./ifproc/ifproc_2019-10-31_085775_00_0001.nc
