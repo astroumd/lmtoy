@@ -33,8 +33,7 @@ LMT software is very instrument specific:
 
 
 * LMT heterodyne: SEQUOIA, MSIP 1mm and OMAyA
-  * [LMTSLR](https://github.com/lmt-heterodyne/SpectralLineReduc
-  tion)   (SpectralLineReduction)  
+  * [LMTSLR](https://github.com/lmt-heterodyne/SpectralLineReduction)   (SpectralLineReduction)  
 
 * RSR (Redshift Search Receiver)
   * [dreampy3](https://github.com/lmt-heterodyne/dreampy3)
