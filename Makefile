@@ -136,14 +136,14 @@ install_dreampy3: dreampy3 lmtoy_venv
 # step 4 (optional)
 install_montage:  Montage
 	(cd Montage; make)
-	# @todo: install the (2?) python interfaces
+	@echo  @todo: install the python interface for Montage
 
 # step 5 (optional)
 install_nemo:  nemo
-	(cd nemo; ./configure; make build MAKELIBS=corelibs)
+	(cd nemo; ./configure; make build1 build2 build3 MAKELIBS=corelibs)
 
 install_nemo_pgplot:  nemo
-	(cd nemo; ./configure --with-yapp=pgplot; make build MAKELIBS=corelibs)
+	(cd nemo; ./configure --with-yapp=pgplot; make build1 build2 build3 MAKELIBS=corelibs)
 
 update_nemo:	nemo
 	(cd nemo; make build MAKELIBS=corelibs)
