@@ -11,7 +11,7 @@
 # There is no good mechanism here to make a new variable depend on re-running a certain task on which it depends
 # that's perhaps for a more advanced pipeline
 
-version="lmtoy_reduce: 12-feb-2021"
+version="lmtoy_reduce: 15-feb-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>>  Usage: path=DATA_LMT obsnum=OBSNUM ..."

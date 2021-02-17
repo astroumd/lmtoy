@@ -146,7 +146,7 @@ install_nemo_pgplot:  nemo
 	(cd nemo; ./configure --with-yapp=pgplot; make build1 build2 build3 MAKELIBS=corelibs)
 
 update_nemo:	nemo
-	(cd nemo; make build MAKELIBS=corelibs)
+	(cd nemo; make build2a build3 MAKELIBS=corelibs)
 
 install_maskmoment: maskmoment
 	(cd maskmoment; pip install -e .)
