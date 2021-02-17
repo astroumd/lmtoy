@@ -15,9 +15,9 @@ URL4  = https://github.com/Caltech-IPAC/Montage
 URL5  = https://github.com/teuben/nemo
 URL6  = https://github.com/teuben/maskmoment
 URL7  = https://github.com/gopastro/sculpt
+URL8  = https://github.com/LMTdevs/RSR_driver
 
 .PHONY:  help install build
-
 
 
 help install:
@@ -37,6 +37,8 @@ help install:
 	@echo "    make status                view git status in all repos"
 	@echo ""
 
+git:  SpectralLineReduction dreampy3 maskmoment RSR_driver
+
 config:  lmtoy_local.sh lmtoy_local.csh
 	./configure
 
@@ -53,7 +55,6 @@ lmtoy_local.csh:
 	@echo '# setenv CORR_CAL_DIR $DATA_LMT/rsr/cal'   >> lmtoy_local.csh
 	@echo '# setenv HDF5_DISABLE_VERSION_CHECK 2'     >> lmtoy_local.csh
 
-git:  SpectralLineReduction dreampy3 maskmoment
 
 SpectralLineReduction:
 	git clone --branch teuben1 $(URL1a)
@@ -79,6 +80,10 @@ maskmoment:
 
 sculpt:
 	git clone $(URL7)
+
+RSR_driver:
+	git clone $(URL8)
+
 
 # step 1 (or skip and use another python)
 #        after this install, the start_python.sh should be sourced in the shell
