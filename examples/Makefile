@@ -93,3 +93,21 @@ test1:
 	./irc_reduce.sh makespec=0 pix_list=1,5,9,13    > test1f.log 2>&1; mv IRC_79448.fits test1f.fits
 	./irc_reduce.sh makespec=0 pix_list=2,6,10,14   > test1g.log 2>&1; mv IRC_79448.fits test1g.fits
 	./irc_reduce.sh makespec=0 pix_list=3,7,11,15   > test1h.log 2>&1; mv IRC_79448.fits test1h.fits
+
+# RSR script example for obnum=33551  IRAS 10565+2448
+#  https://iopscience.iop.org/article/10.1088/0004-6256/138/3/858/pdf
+#  10 59 18.1 24 32 34 ;   1.4h   0.60 mK
+#     -p doesn't seem to do anything
+# Without the -o you get the default:
+#     I10565_rsr_spectrum_bandspec.txt   (this is the -o file)
+#     I10565_rsr_spectrum.txt            (not created if -o absent)
+
+rsr:
+	@echo python ../RSR_driver/rsr_driver.py rsr.obsnum -w rsr.wf.pdf -o rsr.tab -p -b 3
+	python ../RSR_driver/rsr_driver.py rsr.obsnum -w rsr.wf.pdf
+	tabplot I10565_rsr_spectrum.txt xmin=104 xmax=112 line=1,1 ycoord=0 point=2,0.05 \
+		xlab='GHz' ylab='K (T_A)' headline=obsnum=33551 
+
+rsr_plot:
+	tabplot I10565_rsr_spectrum.txt xmin=104 xmax=112  line=1,1 ycoord=0 point=2,0.05 \
+		xlab='GHz' ylab='K (T_A)' headline=obsnum=33551 yapp=I10565_rsr_spectrum.png/png
