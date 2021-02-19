@@ -101,13 +101,14 @@ test1:
 # Without the -o you get the default:
 #     I10565_rsr_spectrum_bandspec.txt   (this is the -o file)
 #     I10565_rsr_spectrum.txt            (not created if -o absent)
+# 5 bands, of which band 4: [(104.30771875, 112.27646875)]
 
 rsr:
-	@echo python ../RSR_driver/rsr_driver.py rsr.obsnum -w rsr.wf.pdf -o rsr.tab -p -b 3
-	python ../RSR_driver/rsr_driver.py rsr.obsnum -w rsr.wf.pdf
-	tabplot I10565_rsr_spectrum.txt xmin=104 xmax=112 line=1,1 ycoord=0 point=2,0.05 \
-		xlab='GHz' ylab='K (T_A)' headline=obsnum=33551 
+	python ../RSR_driver/rsr_driver.py rsr.obsnum -w rsr.wf.pdf -p -b 3 --exclude 110.51 0.15 -R rsr.band
+	tabplot I10565_rsr_spectrum.txt xmin=104 xmax=112 ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
+		xlab='GHz' ylab='mK (T_A)' headline=obsnum=33551 yapp=I10565_rsr_spectrum.png/png
 
-rsr_plot:
-	tabplot I10565_rsr_spectrum.txt xmin=104 xmax=112  line=1,1 ycoord=0 point=2,0.05 \
-		xlab='GHz' ylab='K (T_A)' headline=obsnum=33551 yapp=I10565_rsr_spectrum.png/png
+rsr_all:
+	python ../RSR_driver/rsr_driver.py rsr.obsnum -w rsr.wf.pdf -p
+	tabplot I10565_rsr_spectrum.txt  line=1,1 ycoord=0 point=2,0.05 \
+		xlab='GHz' ylab='K (T_A)' headline=obsnum=33551 
