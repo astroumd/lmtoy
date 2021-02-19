@@ -126,6 +126,7 @@ The following scripts are used by the **lmtoy_reduce.sh** pipeline.
 All scripts should self-describe using the **-h** or **--help** flag.
 
 * **lmtinfo.py**:            gathers info what OBSNUM's you have, or for a specific OBSNUM selected, useful info for the pipeline
+* **lmtrc.py**:              edit the (lmtoy) parameter in a set of rc files
 * **process_otf_map2.py**:   converts RAW to SpecFile
 * **process_otf_map.py**:   *deprecated version*
 * **view_spec_file.py**:     make a series of plots summarizing one or a set of pixels
