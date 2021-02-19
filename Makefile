@@ -37,7 +37,22 @@ help install:
 	@echo "    make status                view git status in all repos"
 	@echo ""
 
-git:  SpectralLineReduction dreampy3 maskmoment RSR_driver
+# git directories we should have here
+
+GIT_DIRS = SpectralLineReduction dreampy3 maskmoment RSR_driver nemo Montage
+
+git:  $(GIT_DIRS)
+
+pull:
+	@echo -n "lmtoy: "; git pull
+	-@for dir in $(GIT_DIRS); do\
+	(echo -n "$$dir: " ;cd $$dir; git pull); done
+
+status:
+	@echo -n "lmtoy: "; git status -uno
+	-@for dir in $(GIT_DIRS); do\
+	(echo -n "$$dir: " ;cd $$dir; git status -uno); done
+
 
 config:  lmtoy_local.sh lmtoy_local.csh
 	./configure
@@ -166,14 +181,3 @@ common: lmtoy_venv
 	pip install -e dreampy3)
 
 
-# git pull on all repos we use here
-DIRS = SpectralLineReduction nemo Montage
-pull:
-	@echo -n "lmtoy: "; git pull
-	-@for dir in $(DIRS); do\
-	(echo -n "$$dir: " ;cd $$dir; git pull); done
-
-status:
-	@echo -n "lmtoy: "; git status -uno
-	-@for dir in $(DIRS); do\
-	(echo -n "$$dir: " ;cd $$dir; git status -uno); done
