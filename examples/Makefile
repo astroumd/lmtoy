@@ -96,19 +96,34 @@ test1:
 
 # RSR script example for obnum=33551  IRAS 10565+2448
 #  https://iopscience.iop.org/article/10.1088/0004-6256/138/3/858/pdf
-#  10 59 18.1 24 32 34 ;   1.4h   0.60 mK
+#  RA 10 59 18.1 DEC  24 32 34 ;  tint 1.4h   rms 0.60 mK
 #     -p doesn't seem to do anything
 # Without the -o you get the default:
 #     I10565_rsr_spectrum_bandspec.txt   (this is the -o file)
 #     I10565_rsr_spectrum.txt            (not created if -o absent)
-# 5 bands, of which band 4: [(104.30771875, 112.27646875)]
+# 5 bands, of which band 4: [(104.30771875, 112.27646875)] where the CO line is
 
-rsr:
-	python ../RSR_driver/rsr_driver.py rsr.obsnum -w rsr.wf.pdf -p -b 3 --exclude 110.51 0.15 -R rsr.band
-	tabplot I10565_rsr_spectrum.txt xmin=104 xmax=112 ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
-		xlab='GHz' ylab='mK (T_A)' headline=obsnum=33551 yapp=I10565_rsr_spectrum.png/png
+rsr1:
+	python ../RSR_driver/rsr_driver.py rsr1.obsnum -w rsr1.wf.pdf -p -b 0 --exclude 110.51 0.15 
+	cp I10565_rsr_spectrum.txt I10565_rsr1_spectrum.txt
+	@echo The following two plots should be "identical", but first one peaks at 46mK, second at 50mK.
+	tabplot I10565_rsr1_spectrum.txt xmin=104 xmax=112 ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
+		xlab='GHz' ylab='mK (T_A)' headline=obsnum=33551  yapp=I10565_rsr1_spectrum.png/png
+	tabplot I10565_rsr_spectrum_bandspec.txt xcol=9 ycol=10 xmin=104 xmax=112 ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
+		xlab='GHz' ylab='mK (T_A)' headline=obsnum=33551a yapp=I10565_rsr1a_spectrum.png/png
 
 rsr_all:
-	python ../RSR_driver/rsr_driver.py rsr.obsnum -w rsr.wf.pdf -p
+	python ../RSR_driver/rsr_driver.py rsr.obsnum -w rsr1.wf.pdf -p
 	tabplot I10565_rsr_spectrum.txt  line=1,1 ycoord=0 point=2,0.05 \
-		xlab='GHz' ylab='K (T_A)' headline=obsnum=33551 
+		xlab='GHz' ylab='K (T_A)' headline=obsnum=33551
+
+# typical timing for 450 obsnums
+# all procs:    2206.00user 123.86system 15:19.56elapsed 253%CPU
+# 1 proc:        872.98user  48.28system 15:29.06elapsed  99%CPU
+# 
+
+rsr2:
+	python ../RSR_driver/rsr_driver.py rsr1.obsnum -w rsr2.wf.pdf -p -b 3
+	cp I10565_rsr_spectrum.txt I10565_rsr2_spectrum.txt 
+	tabplot I10565_rsr2_spectrum.txt  ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
+		xlab='GHz' ylab='mK (T_A)' headline=obsnum=all yapp=I10565_rsr2_spectrum.png/png
