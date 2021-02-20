@@ -8,13 +8,11 @@ LMTOY is your toy box for installing and running codes related to LMT data reduc
 
 LMT raw telescope data are (mostly) in netCDF-3 format (extension: .nc), which stores
 data hierarchically in a big binary blob.
-A typical LSR observation consists of a about 10 files
-in a specific directory hierarchy, all identified via an OBSNUM.  Other instruments
-use a different number of datasets, for example, RSR uses up to 5.
+A typical LSR observation consists of a number of files in a specific directory hierarchy, starting at
+$DATA_LMT, and all identified via a 7 digit OBSNUM.  Differentr instruments
+use a different number of datasets, for example, RSR uses up to 5, LSR uses 10 in Map/Cal mode.
 
-Tools like **ncdump** display structure and contents (as
-CDL). Careful, hdf5 also contains **ncdump** but it differs in subtle
-ways.
+Tools like **ncdump** display structure and contents (as CDL).
 
 A simple way to get at the raw data is the following:
 
@@ -86,14 +84,15 @@ test is plotting:
 This should produce three plots.
 
 If you are one of the standard sites, you should be able to use $DATA_LMT, where all the data is,
-not just LMT_data.
+not just IRC_data.
 
 In your own directory you can use the more general **lmtoy_reduce.sh** script
 
-      $LMTOY/examples/lmtoy_reduce.sh path=/data/LMT/data_lmt  obsnum=79448
+      $LMTOY/examples/lmtoy_reduce.sh obsnum=79448
 
-(again with the appropriate **path=**) to analyse any dataset. It will produce
-a file **lmtoy_79448.rc** which you can edit and re-run the script to finetune.
+to analyse any dataset. It will produce
+a file **lmtoy_79448.rc** which you can edit and re-run the script to finetune
+its settings.
 
 
 ## References
