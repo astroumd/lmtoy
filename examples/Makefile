@@ -1,10 +1,13 @@
-#
+#  Various examples, benchmarks, tests
 #
 
-#  Directories (or symlinks to) the data
+TIME = /usr/bin/time
+
+#  Directories (or symlinks to) the data, though normally you should point to $DATA_LMT
+#  The named links are for off-site tests with limited disk space
 DATA_DIRS = IRC_data M31_data M51_data
 
-#  takes 20'44" (with NEMO, 20'20" without)
+#  takes about 21'
 all:   # $(DATA_DIRS)
 	/usr/bin/time ./irc_reduce.sh              > irc_79448.log 2>&1
 	/usr/bin/time ./m31_reduce.sh obsnum=85776 > m31_85776.log 2>&1
@@ -27,13 +30,13 @@ IRC_data:
 new:   bench11 bench31 bench51
 
 old_new:
-	/usr/bin/time ./lmtoy_reduce.sh obsnum=79448 > lmtoy_79448.log 2>&1
-	/usr/bin/time ./lmtoy_reduce.sh obsnum=85776 > lmtoy_85776.log 2>&1
-	/usr/bin/time ./lmtoy_reduce.sh obsnum=85778 > lmtoy_85778.log 2>&1
-	/usr/bin/time ./lmtoy_reduce.sh obsnum=85824 > lmtoy_85824.log 2>&1
-	/usr/bin/time ./lmtoy_combine.sh  obsnum=85776,85778,85824 > lmtoy_85776_3.log  2>&1
-	/usr/bin/time ./lmtoy_reduce.sh obsnum=90911 > lmtoy_90911.log 2>&1
-	/usr/bin/time ./lmtoy_reduce.sh obsnum=91112 > lmtoy_91112.log 2>&1
+	$(TIME) ./lmtoy_reduce.sh obsnum=79448 > lmtoy_79448.log 2>&1
+	$(TIME) ./lmtoy_reduce.sh obsnum=85776 > lmtoy_85776.log 2>&1
+	$(TIME) ./lmtoy_reduce.sh obsnum=85778 > lmtoy_85778.log 2>&1
+	$(TIME) ./lmtoy_reduce.sh obsnum=85824 > lmtoy_85824.log 2>&1
+	$(TIME) ./lmtoy_combine.sh  obsnum=85776,85778,85824 > lmtoy_85776_3.log  2>&1
+	$(TIME) ./lmtoy_reduce.sh obsnum=90911 > lmtoy_90911.log 2>&1
+	$(TIME) ./lmtoy_reduce.sh obsnum=91112 > lmtoy_91112.log 2>&1
 
 # take about 1'41"
 bench: # IRC_data
@@ -48,7 +51,7 @@ bench: # IRC_data
 # takes about 14"
 bench1: # IRC_data
 	@echo "Running quick test for 1 pixel"
-	/usr/bin/time ./irc_reduce.sh pix_list=1 > irc_bench1.log 2>&1
+	$(TIME) ./irc_reduce.sh pix_list=1 > irc_bench1.log 2>&1
 
 # a plot bench for
 bench2: IRC_data IRC_79448.nc
@@ -60,26 +63,26 @@ bench2: IRC_data IRC_79448.nc
 	@echo xdg-open bench2c.1.png
 
 bench11: # IRC_data
-	/usr/bin/time ./lmtoy_reduce.sh obsnum=79448 > lmtoy_79448.log 2>&1
+	$(TIME) ./lmtoy_reduce.sh obsnum=79448 > lmtoy_79448.log 2>&1
 
 bench31: # M31_data
-	/usr/bin/time ./lmtoy_reduce.sh obsnum=85776 > lmtoy_85776.log   2>&1
-	/usr/bin/time ./lmtoy_reduce.sh obsnum=85778 > lmtoy_85778.log   2>&1
-	/usr/bin/time ./lmtoy_reduce.sh obsnum=85824 > lmtoy_85824.log   2>&1
-	/usr/bin/time ./lmtoy_combine.sh  obsnum=85776,85778,85824 > lmtoy_85776_3.log 2>&1
-	/usr/bin/time ./nemo_combine.sh                        >  lmtoy_85776_nemo.log 2>&1
+	$(TIME) ./lmtoy_reduce.sh obsnum=85776 > lmtoy_85776.log   2>&1
+	$(TIME) ./lmtoy_reduce.sh obsnum=85778 > lmtoy_85778.log   2>&1
+	$(TIME) ./lmtoy_reduce.sh obsnum=85824 > lmtoy_85824.log   2>&1
+	$(TIME) ./lmtoy_combine.sh  obsnum=85776,85778,85824 > lmtoy_85776_3.log 2>&1
+	$(TIME) ./nemo_combine.sh                        >  lmtoy_85776_nemo.log 2>&1
 
 bench51: # M51_data
-	/usr/bin/time ./lmtoy_reduce.sh obsnum=90911 > lmtoy_90911.log   2>&1
-	/usr/bin/time ./lmtoy_reduce.sh obsnum=91112 > lmtoy_91112.log   2>&1
-	/usr/bin/time ./lmtoy_combine.sh        obsnum=90911,91112 > lmtoy_90911_2.log 2>&1
+	$(TIME) ./lmtoy_reduce.sh obsnum=90911 > lmtoy_90911.log   2>&1
+	$(TIME) ./lmtoy_reduce.sh obsnum=91112 > lmtoy_91112.log   2>&1
+	$(TIME) ./lmtoy_combine.sh        obsnum=90911,91112 > lmtoy_90911_2.log 2>&1
 
 
 ONT=1 2 4
 bench4:
 	@echo ONT=$(ONT)
 	-@for i in $(ONT); do\
-	(echo $$i;OMP_NUM_THREADS=$$i /usr/bin/time ./irc_reduce.sh > irc$$i.log 2>&1); done
+	(echo $$i;OMP_NUM_THREADS=$$i $(TIME) ./irc_reduce.sh > irc$$i.log 2>&1); done
 
 
 test1:
@@ -104,7 +107,7 @@ test1:
 # 5 bands, of which band 4: [(104.30771875, 112.27646875)] where the CO line is
 
 rsr1:
-	python ../RSR_driver/rsr_driver.py rsr1.obsnum -w rsr1.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3
+	$(TIME) python ../RSR_driver/rsr_driver.py rsr1.obsnum -w rsr1.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3
 	cp I10565_rsr_spectrum.txt I10565_rsr1_spectrum.txt
 	@echo The following two plots should be "identical", but first one peaks at 46mK, second at 50mK.
 	-tabplot I10565_rsr1_spectrum.txt xmin=104 xmax=112 ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
@@ -117,17 +120,18 @@ rsr1:
 
 
 rsr_all:
-	python ../RSR_driver/rsr_driver.py rsr.obsnum -w rsr1.wf.pdf -p
+	$(TIME) python ../RSR_driver/rsr_driver.py rsr.obsnum -w rsr1.wf.pdf -p
 	tabplot I10565_rsr_spectrum.txt  line=1,1 ycoord=0 point=2,0.05 \
 		xlab='GHz' ylab='K (T_A)' headline=obsnum=33551
 
 # typical timing for 450 obsnums
 # all procs:    2206.00user 123.86system 15:19.56elapsed 253%CPU
 # 1 proc:        872.98user  48.28system 15:29.06elapsed  99%CPU
-# 
+#
+# See also: https://ui.adsabs.harvard.edu/abs/2011ApJ...732L..15C/abstract
 
 rsr2:
-	python ../RSR_driver/rsr_driver.py rsr2.obsnum -w rsr2.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 85.2 0.4
+	$(TIME)	python ../RSR_driver/rsr_driver.py rsr2.obsnum -w rsr2.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 85.2 0.4
 	cp I10565_rsr_spectrum.txt I10565_rsr2_spectrum.txt 
 	-tabplot I10565_rsr2_spectrum.txt  ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
 		xlab='GHz' ylab='mK (T_A)' headline=obsnum=all yapp=I10565_rsr2_spectrum.png/png
