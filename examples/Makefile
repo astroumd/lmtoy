@@ -110,10 +110,10 @@ rsr1:
 	$(TIME) python ../RSR_driver/rsr_driver.py rsr1.obsnum -w rsr1.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3
 	cp I10565_rsr_spectrum.txt I10565_rsr1_spectrum.txt
 	@echo The following two plots should be "identical", but first one peaks at 46mK, second at 50mK.
-	-tabplot I10565_rsr1_spectrum.txt xmin=104 xmax=112 ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
-		xlab='GHz' ylab='mK (T_A)' headline=obsnum=33551  yapp=I10565_rsr1_spectrum.png/png
+	-tabplot I10565_rsr1_spectrum.txt         xcol=1 ycol=2  xmin=104 xmax=112 ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
+		xlab='GHz' ylab='mK (T_A)' headline=obsnum=33551  yapp=I10565_rsr1a_spectrum.png/png
 	-tabplot I10565_rsr_spectrum_bandspec.txt xcol=9 ycol=10 xmin=104 xmax=112 ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
-		xlab='GHz' ylab='mK (T_A)' headline=obsnum=33551a yapp=I10565_rsr1a_spectrum.png/png
+		xlab='GHz' ylab='mK (T_A)' headline=obsnum=33551a yapp=I10565_rsr1b_spectrum.png/png
 	-tabnllsqfit I10565_rsr1_spectrum.txt fit=gauss1d xrange=110:111
 	@echo FIT should show: a= -4.68656e-05 0.000227127 b= 0.0504297 0.00101759 c= 110.514 0.000808871 d= 0.0351696 0.00084017 rms= 0.00108359
 
@@ -124,7 +124,7 @@ rsr_all:
 	tabplot I10565_rsr_spectrum.txt  line=1,1 ycoord=0 point=2,0.05 \
 		xlab='GHz' ylab='K (T_A)' headline=obsnum=33551
 
-# typical timing for 450 obsnums
+# typical timing for 300 obsnums (one still bad)
 # all procs:    2206.00user 123.86system 15:19.56elapsed 253%CPU
 # 1 proc:        872.98user  48.28system 15:29.06elapsed  99%CPU
 #
