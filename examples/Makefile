@@ -123,7 +123,7 @@ rsr_all:
 # 
 
 rsr2:
-	python ../RSR_driver/rsr_driver.py rsr2.obsnum -w rsr2.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3
+	python ../RSR_driver/rsr_driver.py rsr2.obsnum -w rsr2.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 85.2 0.4
 	cp I10565_rsr_spectrum.txt I10565_rsr2_spectrum.txt 
 	tabplot I10565_rsr2_spectrum.txt  ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
 		xlab='GHz' ylab='mK (T_A)' headline=obsnum=all yapp=I10565_rsr2_spectrum.png/png
