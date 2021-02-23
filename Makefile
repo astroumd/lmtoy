@@ -138,7 +138,7 @@ update_lmtslr:  SpectralLineReduction
 	(cd SpectralLineReduction/C ; make clean install; ./spec_driver_fits)
 
 # step 3
-install_dreampy3_venv: dreampy3 lmtoy_venv
+install_dreampy3_venv: dreampy3 RSR_driver lmtoy_venv
 	@echo python3 dreampy3
 	(cd dreampy3; \
 	source ../lmtoy_venv/bin/activate; \
@@ -146,7 +146,7 @@ install_dreampy3_venv: dreampy3 lmtoy_venv
 	pip3 install -r requirements_lmtoy.txt; \
 	pip3 install -e .)
 
-install_dreampy3: dreampy3 lmtoy_venv
+install_dreampy3: dreampy3 RSR_driver lmtoy_venv
 	@echo python3 dreampy3
 	(cd dreampy3; \
 	awk -F= '{print $$1}'  requirements.txt > requirements_lmtoy.txt ; \
