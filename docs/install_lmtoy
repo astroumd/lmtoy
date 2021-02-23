@@ -4,11 +4,14 @@
 #    28-dec-2020:     LMTSRL installed (more to come)
 #     4-jan-2021:     try to be smart on finding LMT data; disable montage for now
 #    12-feb-2021:     lmt_data -> data_lmt
+#    23-feb-2021:     new options (venv, nemo)
 
 # set -x
 
-lmtoy=lmtoy       # root directory name where to install
+lmtoy=lmtoy       # root directory name where to install (probably should not change it)
 wget=wget         # use wgetc if you have my caching version
+venv=0            # set to 1 if you want to bypass a new anaconda2 and use venv
+nemo=1            # set to 0 if you don't need NEMO
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -29,13 +32,21 @@ rm -rf $lmtoy
 
 git clone https://github.com/astroumd/lmtoy $lmtoy
 cd $lmtoy
-make install_python WGET=$wget
-source python_start.sh
-make install_lmtslr
-# make install_lmtslr_venv
-make install_dreampy3
-# make install_dreampy3_venv
-make install_nemo
+
+if [ $venv = 0 ]; then
+  make install_python WGET=$wget
+  source python_start.sh
+  make install_lmtslr
+  make install_dreampy3
+else
+  make install_lmtslr_venv
+  make install_dreampy3_venv
+fi
+
+if [ $nemo = 1 ]; then
+  make install_nemo
+fi
+
 # make install_montage
 make config
 
@@ -46,17 +57,37 @@ source lmtoy_start.sh
 which python
 cd examples
 
+#                                                SLR bench uses IRC_data
 if   [ -d ~/LMT/IRC_data ]; then
     ln -s ~/LMT/IRC_data
 elif [ -d  /lma1/lmt/data_lmt ]; then
     ln -s  /lma1/lmt/data_lmt IRC_data
 elif [ -d  /data/LMT/data_lmt ]; then
     ln -s  /data/LMT/data_lmt IRC_data
-elif [ -e  /n/chara/teuben/LMT/IRC_data.tar.gz ]; then
+elif [ -e   /n/lmt1/lmt/IRC_data.tar.gz ]; then
+    tar zxf /n/lmt1/lmt/IRC_data.tar.gz
+elif [ -e   /n/chara/teuben/LMT/IRC_data.tar.gz ]; then
     tar zxf /n/chara/teuben/LMT/IRC_data.tar.gz
+elif [ -e   ../IRC_data.tar.gz ]; then
+    tar zxf ../IRC_data.tar.gz
 else
     echo Could not find the IRC_data or data_lmt, skipping benchmark
     exit 0
 fi
 
-make bench
+if [ -e IRC_data ]; then 
+    ls -ld IRC_data
+    make bench
+else
+    echo Sorry, no IRC_data found for the SLR benchmark. 
+fi  
+
+
+#                                                 RSR_bench uses I10565
+
+if [ -e     ../RSR_bench.tar.gz ]; then
+    tar zxf ../RSR_bench.tar.gz
+else
+    echo Could not find the RSR_bench data. Hope your DATA_LMT=$DATA_LMT is good
+fi    
+
