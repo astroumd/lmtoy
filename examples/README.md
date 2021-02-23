@@ -32,9 +32,8 @@ These amend the examples given in SpectralLineReduction.
 
       src             M51          M31        IRC
 		    
-      type            OTF          OTF         OTF
-      
-      obs            7000"        1500"        700"
+      skytime        6934"        1471"        686"
+      inttime        4984"        1297"        528"
       data size      13.3 GB       2.8 GB      1.6 GB
       data rate       1.9 MB/s     1.9 MB/s    2.3 MB/s
       CPU             300"         200"         70"
@@ -47,7 +46,6 @@ These amend the examples given in SpectralLineReduction.
       noise           135mK        108mK       181mK
 
       #obsnum           1            3           1
-      #sweeps          1x           1x          1x
       bad_pixels      0,5            3           - (1?)
 
       Cube size (MP) 12.8          5.7         8.5
