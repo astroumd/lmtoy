@@ -6,6 +6,8 @@
 #    12-feb-2021:     lmt_data -> data_lmt
 #    23-feb-2021:     new options (venv, nemo)
 
+version="23-feb-2011"
+
 # set -x
 
 lmtoy=lmtoy       # root directory name where to install (probably should not change it)
@@ -17,6 +19,9 @@ nemo=1            # set to 0 if you don't need NEMO
 for arg in $*; do\
   export $arg
 done
+
+# Announce
+echo LMTOY install script version $version
 
 # this takes about 4-5 minutes to run, including the benchmark, and takes 4.3GB
 
