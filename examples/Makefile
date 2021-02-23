@@ -118,9 +118,9 @@ rsr1:
 		xlab='GHz' ylab='mK (T_A)' headline=obsnum=33551  yapp=I10565_rsr1a_spectrum.png/png
 	-tabplot I10565_rsr_spectrum_bandspec.txt xcol=9 ycol=10 xmin=104 xmax=112 ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
 		xlab='GHz' ylab='mK (T_A)' headline=obsnum=33551a yapp=I10565_rsr1b_spectrum.png/png
-	@echo Determine the RMS
-	-grep -v nan I10565_rsr1_spectrum.txt | tabtrend - 2 | tabhist - 1  -4 4     scale=1000 robust=t
-	@echo Example fit of the 12CO line
+	@echo "Determine the RMS*sqrt(2) in mK"
+	-grep -v nan I10565_rsr1_spectrum.txt | tabtrend - 2 | tabhist - 1  -4 4     scale=1000 robust=t yapp=I10565_rsr1_rms.png/png
+	@echo "Example fit of the 12CO line"
 	-tabnllsqfit I10565_rsr1_spectrum.txt fit=gauss1d xrange=110:111
 	@echo FIT should show: a= -4.68656e-05 0.000227127 b= 0.0504297 0.00101759 c= 110.514 0.000808871 d= 0.0351696 0.00084017 rms= 0.00108359
 
@@ -136,8 +136,8 @@ rsr2:
 	cp I10565_rsr_spectrum.txt I10565_rsr2_spectrum.txt 
 	-tabplot I10565_rsr2_spectrum.txt  ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
 		xlab='GHz' ylab='mK (T_A)' headline=obsnum=all yapp=I10565_rsr2_spectrum.png/png
-	@echo Determine the RMS
-	-grep -v nan I10565_rsr2_spectrum.txt | tabtrend - 2 | tabhist - 1  -0.4 0.4     scale=1000 robust=t
-	@echo Example fits of the 12CO line
+	@echo "Determine the RMS*sqrt(2) in mK"
+	-grep -v nan I10565_rsr2_spectrum.txt | tabtrend - 2 | tabhist - 1  -0.4 0.4     scale=1000 robust=t yapp=I10565_rsr2_rms.png/png
+	@echo "Example fits of the 12CO line"
 	-tabnllsqfit I10565_rsr2_spectrum.txt fit=gauss1d xrange=110:111
 	@echo FIT should show: a= 0.000113749 0.000115652 b= 0.0440424 0.000525824 c= 110.507 0.000467126 d= 0.0342954 0.00048396 rms= 0.000553378
