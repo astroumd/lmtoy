@@ -6,7 +6,7 @@
 #    12-feb-2021:     lmt_data -> data_lmt
 #    23-feb-2021:     new options (venv, nemo)
 
-version="23-feb-2011"
+version="23-feb-2021"
 
 # set -x
 
@@ -75,9 +75,11 @@ elif [ -e   /n/chara/teuben/LMT/IRC_data.tar.gz ]; then
     tar zxf /n/chara/teuben/LMT/IRC_data.tar.gz
 elif [ -e   ../IRC_data.tar.gz ]; then
     tar zxf ../IRC_data.tar.gz
+elif [ -d ~/LMT/data_lmt ]; then
+    ln -s ~/LMT/data_lmt IRC_data
+    echo Assuming your ~/LMT/data_lmt has the IRC data
 else
     echo Could not find the IRC_data or data_lmt, skipping benchmark
-    exit 0
 fi
 
 if [ -e IRC_data ]; then 
