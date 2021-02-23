@@ -128,6 +128,8 @@ if [ ! -z $NEMO ]; then
     rm $s_fits.ccd
 else
     echo NEMO not installed, no QAC_STATS for benchmark available.
+    echo This is your FITS cube:
+    ls -l $s_fits
 fi
 
 if [ ! -z $ADMIT ]; then
