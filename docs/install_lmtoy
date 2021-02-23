@@ -90,9 +90,10 @@ fi
 
 #                                                 RSR_bench uses I10565
 
-if [ -e     ../RSR_bench.tar.gz ]; then
-    tar zxf ../RSR_bench.tar.gz
+if [ -d $DATA_LMT/rsr ]; then     
+    make rsr1
 else
-    echo Could not find the RSR_bench data. Hope your DATA_LMT=$DATA_LMT is good
+    echo Could not find the RSR data. Hope your DATA_LMT=$DATA_LMT is good:
+    ls -l $DATA_LMT
 fi    
 
