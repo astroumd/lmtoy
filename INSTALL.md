@@ -4,6 +4,67 @@
 2. dreampy3 - for RSR
 3. tolteca/citlali - for TolTEC
 
+First we go through a guided install example. Please see the sections
+below if you need more information on the pre-conditions.
+
+## Install Example
+
+Instructions for installing LMTOY:
+
+0) Pre-conditions: We are assuming you have a python3 development like
+   anaconda3 already in your path. We also assuming you have a C
+   compiler, and that cfitsio and netcdf have been installed (e.g. on
+   a mac via brew).  Things can and will massively and confusingly fail
+   if this is not in tip top shape :-)
+
+   We have silently assumed the command python is a python3.
+
+1) Make a small shadow tree of the official $DATA_LMT on your laptop.
+
+   mkdir ~/LMT
+   cd ~/LMT
+
+   scp cln:/home/teuben/LMT/RSR_bench.tar.gz  .
+   tar zxf RSR_bench.tar.gz
+   rm RSR_bench.tar.gz
+
+   scp cln:/home/teuben/LMT/IRC_data.tar.gz  .
+   tar zxf IRC_data.tar.gz
+   rm IRC_data.tar.gz
+
+   At Umass the machine "cln" has to be used. 
+   At UMD the machine "lma" has to be used.
+
+   The IRC is "big" (600MB), if you don't want to use the SLR software, skip it.
+   The RSR is small, 33 MB.
+
+
+2) Install LMTOY (do this within the previously created ~/LMT)
+
+   wget https://astroumd.github.io/lmtoy/install_lmtoy
+   bash install_lmtoy venv=1 nemo=1
+
+   This would assume you have a proper python3 in your environment. If not, then
+   use the default venv=0. This will cost 3.3 GB
+   I recommend using the default nemo=1, as it's useful to see benchmark results,
+   but if you don't care, use nemo=0.  
+
+3) After the install, your shell needs the following command to activate LMTOY:
+
+   source lmtoy/lmtoy_start.sh
+
+   and to see what data you have in $DATA_LMT, try this:
+   
+   lmtinfo.py $DATA_LMT
+
+   You can now go back in the examples directory, and run the two benchmarks:
+
+   cd lmtoy/examples
+   make bench
+   make rsr1
+
+
+
 # 1. Installing SpectralLineReduction
 
 See also the Makefile, as this has many targets that simplify this, and this is the
@@ -119,58 +180,6 @@ For montage, I would use
       make install_montage
 
 That should keep your environment up to date.
-
-## Install Example
-
-Instructions for installing LMTOY:
-
-0) I'm assuming you have a python3 development like anaconda3 already
-   in your path. I'm also assuming you have a C compiler, and that
-   cfitsio and netcdf have been installed (e.g. on mac via brew). 
-   Things can and will massively and confusingly fail if this is not
-   in tip top shape :-)
-
-   I realize I have silently assumed the command python is a python3.
-
-1) Make a small shadow tree of the official $DATA_LMT on your laptop.
-
-   mkdir ~/LMT
-   cd ~/LMT
-
-   scp cln:/home/teuben/LMT/RSR_bench.tar.gz  .
-   tar zxf RSR_bench.tar.gz
-   rm RSR_bench.tar.gz
-
-   scp cln:/home/teuben/LMT/IRC_data.tar.gz  .
-   tar zxf IRC_data.tar.gz
-   rm IRC_data.tar.gz
-
-   At Umass the machine "cln" has to be used. 
-   At UMD the machine "lma" has to be used.
-
-   The IRC is "big" (600MB), if you don't want to use the SLR software, skip it.
-   The RSR is small, 33 MB.
-
-
-2) Install LMTOY (do this within the previously created ~/LMT)
-
-   wget https://astroumd.github.io/lmtoy/install_lmtoy
-   bash install_lmtoy venv=1 nemo=1
-
-   This would assume you have a proper python3 in your environment. If not, then
-   use the default venv=0. This will cost 3.3 GB
-   I recommend using the default nemo=1, as it's useful to see benchmark results,
-   but if you don't care, use nemo=0.  
-
-3) After the install, your shell needs the following command to activate LMTOY:
-
-   source lmtoy/lmtoy_start.sh
-
-   You can now go back in the examples directory, and run the two benchmarks:
-
-   cd lmtoy/examples
-   make bench
-   make rsr1
 
       
 ## Examples
