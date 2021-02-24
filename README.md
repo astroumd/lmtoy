@@ -7,14 +7,14 @@ LMTOY is your toy box for installing and running codes related to LMT data reduc
 ## DATA
 
 LMT raw telescope data are (mostly) in netCDF-3 format (extension: .nc), which stores
-data hierarchically in a big binary blob.
-A typical LSR observation consists of a number of files in a specific directory hierarchy, starting at
-$DATA_LMT, and all identified via a 7 digit OBSNUM.  Differentr instruments
-use a different number of datasets, for example, RSR uses up to 5, LSR uses 10 in Map/Cal mode.
+data hierarchically, name and type tagged.
+A typical LSR observation consists of a number of netCDF in a specific directory hierarchy, starting at
+$DATA_LMT, and all identified via a 7 digit OBSNUM.  Different instruments
+use a different number of datasets, for example, RSR uses up to 9, LSR uses 10.
 
 Tools like **ncdump** display structure and contents (as CDL).
 
-A simple way to get at the raw data is the following:
+A simple example to get at the raw data is the following:
 
       import netCDF4
       nc = netCDF4.Dataset(filename)
@@ -44,13 +44,14 @@ LMT software is very instrument specific:
 
 * MUSCAT: 1mm camera (Mexico-UK)
   *  4' FOV with 5.5" resolution
+  *  Will use TolTecA
 
 
 ## Installation
 
 There are some expanded notes in [INSTALL.md](INSTALL.md), and also check out the
 Makefile for specific targets that simplify the install and updates. Probably the most automated/simple
-way to install (if you have all the preconditions, most importandly the **cfitsio** and **netcdf** library) is:
+way to install (if you have all the preconditions, most importantly the **cfitsio** and **netcdf** library) is:
 
       wget https://astroumd.github.io/lmtoy/install_lmtoy
       bash install_lmtoy
@@ -92,8 +93,10 @@ In your own directory you can use the more general **lmtoy_reduce.sh** script
 
 to analyse any dataset. It will produce
 a file **lmtoy_79448.rc** which you can edit and re-run the script to finetune
-its settings.
-
+its settings. After a large number of OBSNUM's have been reduce this way, they
+can be combined (stacked) using **lmtoy_combine.sh**. A description of these
+steps can be seen in 
+[lmtoy_reduce.sh](examples/lmtoy_reduce.sh).
 
 ## References
 
