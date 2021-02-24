@@ -24,6 +24,7 @@ pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 rms_cut=4
 resolution=12.5
 cell=6.25
+rmax=3
 x_axis=VLSR
 
 
@@ -96,7 +97,7 @@ grid_data.py --program_path spec_driver_fits \
 	     --x_extent    300 \
 	     --y_extent    300 \
 	     --otf_select  1 \
-	     --rmax        3 \
+	     --rmax        $rmax \
 	     --otf_a       1.1 \
 	     --otf_b       4.75 \
 	     --otf_c       2 \
