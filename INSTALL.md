@@ -1,11 +1,12 @@
 # LMT software
 
-1. SpectralLineReduction - for Sequoia
+1. SpectralLineReduction - for Sequoia, Omaya
 2. dreampy3 - for RSR
-3. tolteca/citlali - for TolTEC
+3. tolteca/citlali - for TolTEC, Muscat and also old Aztec data
 
 First we go through a guided install example. Please see the sections
-below if you need more information on the pre-conditions.
+below if you need more information on the pre-conditions or other
+intermediate steps.
 
 ## Install Example
 
@@ -59,6 +60,13 @@ Instructions for installing **LMTOY**:
    and to see what data you have in $DATA_LMT, try this (but not at a place where $DATA_LMT is huge):
    
         lmtinfo.py $DATA_LMT
+
+        # Y-M-D   T H:M:S     ObsNum ObsPgm SourceName                     RestFreq  VLSR    TSKY     RA        DEC          AZ    EL
+        2015-01-21T23:12:07    33550  Cal   I10565                             RSR      0      39.5  164.825417  24.542778   74.3  51.6
+        2015-01-21T23:12:07    33551  Bs    I10565                             RSR      0     319.5  164.825417  24.542778   74.3  51.9
+        2018-11-16T06:48:30   079447  Cal   IRC+10216                      115.2712   -20       7.8  146.989192  13.278767  115.0  77.1
+        2018-11-16T06:48:52   079448  Map   IRC+10216                      115.2712   -20     685.8  146.989192  13.278767  115.2  77.2
+
 
    You can now go back in the examples directory, and run the two benchmarks:
 
