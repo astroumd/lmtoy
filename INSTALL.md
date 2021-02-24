@@ -1,10 +1,82 @@
 # LMT software
 
-1. SpectralLineReduction - for Sequoia
+1. SpectralLineReduction - for Sequoia, Omaya
 2. dreampy3 - for RSR
-3. tolteca/citlali - for TolTEC
+3. tolteca/citlali - for TolTEC, Muscat and also old Aztec data
 
-# 1. Installing SpectralLineReduction
+First we go through a guided install example. Please see the sections
+below if you need more information on the pre-conditions or other
+intermediate steps.
+
+## Install Example
+
+Instructions for installing **LMTOY**:
+
+0) Pre-conditions: We are assuming you have a python3 development like
+   anaconda3 already in your path. We also assume you have a C
+   compiler, and that cfitsio and netcdf have been installed (e.g. on
+   a mac via brew).  Things can and will massively and confusingly fail
+   if this is not in tip top shape :-)
+
+   We have silently assumed the command python is a python3.
+
+   More can be found on the pre-conditions below in this document.
+
+1) Make a small shadow tree of the official $DATA_LMT on your laptop.
+
+        mkdir ~/LMT
+        cd ~/LMT
+
+        scp cln:/home/teuben/LMT/RSR_bench.tar.gz  .
+        tar zxf RSR_bench.tar.gz
+        rm RSR_bench.tar.gz
+
+        scp cln:/home/teuben/LMT/IRC_data.tar.gz  .
+        tar zxf IRC_data.tar.gz
+        rm IRC_data.tar.gz
+
+   At Umass the machine **cln** has to be used. 
+   At UMD the machine **lma** has to be used.
+
+   The IRC data is "big" (600MB), if you don't want to use the SLR software, skip it.
+   The RSR bench is small, 33 MB. Their OBSNUM's are 79448 and 33551 resp.
+
+
+2) Install LMTOY (do this within the previously created ~/LMT)
+
+        wget https://astroumd.github.io/lmtoy/install_lmtoy
+        bash install_lmtoy venv=1 nemo=1
+
+   This would assume you have a proper python3 in your environment. If
+   not, then use the default **venv=0**, and it will install anaconda3 for
+   you. This will cost an extra 3.3 GB and a long download.  For now we
+   recommend using the default **nemo=1**, as it's useful to see benchmark
+   results. If you don't care, use **nemo=0**.
+
+3) After the install, your shell needs the following command to activate LMTOY:
+
+        source lmtoy/lmtoy_start.sh
+
+   and to see what data you have in $DATA_LMT, try this (but not at a place where $DATA_LMT is huge):
+   
+        lmtinfo.py $DATA_LMT
+
+        # Y-M-D   T H:M:S     ObsNum ObsPgm SourceName                     RestFreq  VLSR    TSKY     RA        DEC          AZ    EL
+        2015-01-21T23:12:07    33550  Cal   I10565                             RSR      0      39.5  164.825417  24.542778   74.3  51.6
+        2015-01-21T23:12:07    33551  Bs    I10565                             RSR      0     319.5  164.825417  24.542778   74.3  51.9
+        2018-11-16T06:48:30   079447  Cal   IRC+10216                      115.2712   -20       7.8  146.989192  13.278767  115.0  77.1
+        2018-11-16T06:48:52   079448  Map   IRC+10216                      115.2712   -20     685.8  146.989192  13.278767  115.2  77.2
+
+
+   You can now go back in the examples directory, and run the two benchmarks:
+
+        cd $LMTOY/examples
+        make bench
+        make rsr1
+
+
+
+# 1. Installing SpectralLineReduction (old notes)
 
 See also the Makefile, as this has many targets that simplify this, and this is the
 method that I've employed on a few machines (Ubuntu, Centos, and a Mac/brew).
@@ -92,14 +164,16 @@ an example.
 
 I had some strange experiences with a python venv.  For one, any bins that are not in setup.py (e.g. a new one)
 could not be executed. Made no sense, since it's in my path, and /usr/bin/env python  even pointed to the venv.
-I gave up.
+I gave up, I bypass venv and install directly. This is a bit easier in a locally grown anaconda3. YMMV.
 
 ### Updates
 
 Since we run from a set of github repos, each with their own update procedures, here some reminders.
 
-To update all repos, you will need to run "git pull" in each of them. For convenience we have a shortcut:
+To update all repos, you will need to run "git pull" in each of them. For convenience we have a shortcut,
+all executed from $LMTOY:
 
+      cd $LMTOY
       make pull
 
 lmtoy needs no extra work, if you see updates, since at moment everything is "in place". This may change.
@@ -112,72 +186,20 @@ updated, it's safe to do this:
 NEMO, depending on what you see, may need to have a new
 executable installed, e.g.
 
-      mknemo ccdstat ccdfits fitsccd ccdhist ccdsub ccdmath ccdsmooth ccdmom scanfits
+      mknemo ccdstat ccdfits fitsccd ccdhist ccdsub ccdmath ccdsmooth ccdmom scanfits tabplot tabhist
 
 For montage, I would use
 
       make install_montage
 
-That should keep your environment up to date.
-
-## Install Example
-
-Instructions for installing LMTOY:
-
-0) I'm assuming you have a python3 development like anaconda3 already
-   in your path. I'm also assuming you have a C compiler, and that
-   cfitsio and netcdf have been installed (e.g. on mac via brew). 
-   Things can and will massively and confusingly fail if this is not
-   in tip top shape :-)
-
-   I realize I have silently assumed the command python is a python3.
-
-1) Make a small shadow tree of the official $DATA_LMT on your laptop.
-
-   mkdir ~/LMT
-   cd ~/LMT
-
-   scp cln:/home/teuben/LMT/RSR_bench.tar.gz  .
-   tar zxf RSR_bench.tar.gz
-   rm RSR_bench.tar.gz
-
-   scp cln:/home/teuben/LMT/IRC_data.tar.gz  .
-   tar zxf IRC_data.tar.gz
-   rm IRC_data.tar.gz
-
-   At Umass the machine "cln" has to be used. 
-   At UMD the machine "lma" has to be used.
-
-   The IRC is "big" (600MB), if you don't want to use the SLR software, skip it.
-   The RSR is small, 33 MB.
-
-
-2) Install LMTOY (do this within the previously created ~/LMT)
-
-   wget https://astroumd.github.io/lmtoy/install_lmtoy
-   bash install_lmtoy venv=1 nemo=1
-
-   This would assume you have a proper python3 in your environment. If not, then
-   use the default venv=0. This will cost 3.3 GB
-   I recommend using the default nemo=1, as it's useful to see benchmark results,
-   but if you don't care, use nemo=0.  
-
-3) After the install, your shell needs the following command to activate LMTOY:
-
-   source lmtoy/lmtoy_start.sh
-
-   You can now go back in the examples directory, and run the two benchmarks:
-
-   cd lmtoy/examples
-   make bench
-   make rsr1
+That should keep your environment up to date. Note we currently don't use Montage yet, so you can skip this.
 
       
 ## Examples
 
-Some examples how to use LMTSLR are in the examples directory.  The irc_reduce.sh serves as the benchmark,
+Some examples how to use LMT software are in the examples directory.  The irc_reduce.sh serves as the benchmark,
 m31_reduce.sh  and m51_reduce.sh  serve as other "hardcoded" example, but lmtoy_reduce.sh should be able
-to reduce any OTF data
+to reduce any OTF data. There are now also some RSR data reduction methods.   
 
 # Other packages
 
