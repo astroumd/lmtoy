@@ -21,8 +21,8 @@ Instructions for installing LMTOY:
 
 1) Make a small shadow tree of the official $DATA_LMT on your laptop.
 
-      mkdir ~/LMT
-      cd ~/LMT
+        mkdir ~/LMT
+        cd ~/LMT
 
       scp cln:/home/teuben/LMT/RSR_bench.tar.gz  .
       tar zxf RSR_bench.tar.gz
@@ -41,8 +41,8 @@ Instructions for installing LMTOY:
 
 2) Install LMTOY (do this within the previously created ~/LMT)
 
-      wget https://astroumd.github.io/lmtoy/install_lmtoy
-      bash install_lmtoy venv=1 nemo=1
+        wget https://astroumd.github.io/lmtoy/install_lmtoy
+        bash install_lmtoy venv=1 nemo=1
 
    This would assume you have a proper python3 in your environment. If not, then
    use the default venv=0. This will cost an extra 3.3 GB and a long download.
@@ -51,11 +51,11 @@ Instructions for installing LMTOY:
 
 3) After the install, your shell needs the following command to activate LMTOY:
 
-      source lmtoy/lmtoy_start.sh
+        source lmtoy/lmtoy_start.sh
 
    and to see what data you have in $DATA_LMT, try this (but not at a place where $DATA_LMT is huge):
    
-      lmtinfo.py $DATA_LMT
+        lmtinfo.py $DATA_LMT
 
    You can now go back in the examples directory, and run the two benchmarks:
 
