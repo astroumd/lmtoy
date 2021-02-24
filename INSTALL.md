@@ -24,13 +24,13 @@ Instructions for installing LMTOY:
         mkdir ~/LMT
         cd ~/LMT
 
-      scp cln:/home/teuben/LMT/RSR_bench.tar.gz  .
-      tar zxf RSR_bench.tar.gz
-      rm RSR_bench.tar.gz
+        scp cln:/home/teuben/LMT/RSR_bench.tar.gz  .
+        tar zxf RSR_bench.tar.gz
+        rm RSR_bench.tar.gz
 
-      scp cln:/home/teuben/LMT/IRC_data.tar.gz  .
-      tar zxf IRC_data.tar.gz
-      rm IRC_data.tar.gz
+        scp cln:/home/teuben/LMT/IRC_data.tar.gz  .
+        tar zxf IRC_data.tar.gz
+        rm IRC_data.tar.gz
 
    At Umass the machine "cln" has to be used. 
    At UMD the machine "lma" has to be used.
@@ -59,9 +59,9 @@ Instructions for installing LMTOY:
 
    You can now go back in the examples directory, and run the two benchmarks:
 
-      cd $LMTOY/examples
-      make bench
-      make rsr1
+        cd $LMTOY/examples
+        make bench
+        make rsr1
 
 
 
