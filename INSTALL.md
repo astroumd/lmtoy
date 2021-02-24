@@ -21,47 +21,47 @@ Instructions for installing LMTOY:
 
 1) Make a small shadow tree of the official $DATA_LMT on your laptop.
 
-   mkdir ~/LMT
-   cd ~/LMT
+      mkdir ~/LMT
+      cd ~/LMT
 
-   scp cln:/home/teuben/LMT/RSR_bench.tar.gz  .
-   tar zxf RSR_bench.tar.gz
-   rm RSR_bench.tar.gz
+      scp cln:/home/teuben/LMT/RSR_bench.tar.gz  .
+      tar zxf RSR_bench.tar.gz
+      rm RSR_bench.tar.gz
 
-   scp cln:/home/teuben/LMT/IRC_data.tar.gz  .
-   tar zxf IRC_data.tar.gz
-   rm IRC_data.tar.gz
+      scp cln:/home/teuben/LMT/IRC_data.tar.gz  .
+      tar zxf IRC_data.tar.gz
+      rm IRC_data.tar.gz
 
    At Umass the machine "cln" has to be used. 
    At UMD the machine "lma" has to be used.
 
    The IRC is "big" (600MB), if you don't want to use the SLR software, skip it.
-   The RSR is small, 33 MB.
+   The RSR is small, 33 MB. Their OBSNUM's are 79448 and 33551 resp.
 
 
 2) Install LMTOY (do this within the previously created ~/LMT)
 
-   wget https://astroumd.github.io/lmtoy/install_lmtoy
-   bash install_lmtoy venv=1 nemo=1
+      wget https://astroumd.github.io/lmtoy/install_lmtoy
+      bash install_lmtoy venv=1 nemo=1
 
    This would assume you have a proper python3 in your environment. If not, then
-   use the default venv=0. This will cost 3.3 GB
-   I recommend using the default nemo=1, as it's useful to see benchmark results,
+   use the default venv=0. This will cost an extra 3.3 GB and a long download.
+   For now I recommend using the default nemo=1, as it's useful to see benchmark results,
    but if you don't care, use nemo=0.  
 
 3) After the install, your shell needs the following command to activate LMTOY:
 
-   source lmtoy/lmtoy_start.sh
+      source lmtoy/lmtoy_start.sh
 
-   and to see what data you have in $DATA_LMT, try this:
+   and to see what data you have in $DATA_LMT, try this (but not at a place where $DATA_LMT is huge):
    
-   lmtinfo.py $DATA_LMT
+      lmtinfo.py $DATA_LMT
 
    You can now go back in the examples directory, and run the two benchmarks:
 
-   cd lmtoy/examples
-   make bench
-   make rsr1
+      cd $LMTOY/examples
+      make bench
+      make rsr1
 
 
 
