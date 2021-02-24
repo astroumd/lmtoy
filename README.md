@@ -96,7 +96,7 @@ a file **lmtoy_79448.rc** which you can edit and re-run the script to finetune
 its settings. After a large number of OBSNUM's have been reduce this way, they
 can be combined (stacked) using **lmtoy_combine.sh**. A description of these
 steps can be seen in 
-[lmtoy_reduce.sh](examples/lmtoy_reduce.sh).
+[lmtoy_reduce.md](examples/lmtoy_reduce.md).
 
 ## References
 
