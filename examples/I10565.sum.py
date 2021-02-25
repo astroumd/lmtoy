@@ -11,7 +11,7 @@ from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 # from dreampy3.utils.filterscans import FilterScans
 from dreampy3.redshift.plots import RedshiftPlot
 
-sourceobs = 'i10565.sum' 
+sourceobs = 'I10565.sum' 
 hdulist=[]
 obs = 1
 windows = {}
