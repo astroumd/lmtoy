@@ -27,6 +27,9 @@ def blanking(filename, debug=False):
     function, so this may result in python syntax errors
 
     Returns:    (obslist, chassis, banks)
+
+    @todo  could we do without the single obslist lines, and derive the obslist
+           from the ones with chassis?
     
     """
     def to_obslist(obsnums, to_list=False):
