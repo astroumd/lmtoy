@@ -130,6 +130,8 @@ rsr1:
 # 1 proc:        872.98user  48.28system 15:29.06elapsed  99%CPU
 #
 # See also: https://ui.adsabs.harvard.edu/abs/2011ApJ...732L..15C/abstract
+#
+# CAVEAT: data with 32m and 50m are combined here, so don't trust the mK scale
 
 rsr2:
 	$(TIME)	python ../RSR_driver/rsr_driver.py rsr2.obsnum -w rsr2.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 85.2 0.4 > rsr2.log 2>&1
@@ -141,3 +143,7 @@ rsr2:
 	@echo "Example fits of the 12CO line"
 	-tabnllsqfit I10565_rsr2_spectrum.txt fit=gauss1d xrange=110:111
 	@echo FIT should show: a= 0.000113749 0.000115652 b= 0.0440424 0.000525824 c= 110.507 0.000467126 d= 0.0342954 0.00048396 rms= 0.000553378
+
+# Min Yun's example. This also needs "all" the RSR data
+rsr3:
+	$(TIME) python I10565.sum.py > rsr3.log 2>&1
