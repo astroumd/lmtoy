@@ -2,7 +2,7 @@
 #
 #   Example of detailed flagging of RSR data (courtesy Min Yun)
 #
-#   25-feb-2021:    PJT     added (obslist,blanking,windows) file 
+#   25-feb-2021:    PJT     added (obslist,blanks,windows) file 
 #
 
 import os
@@ -20,7 +20,7 @@ else:
     data_lmt = '/data_lmt'
 
 sourceobs = 'I10565.sum'
-(obslist,bands,windows)  = blanking('I10565.blanking')
+(obslist,blanks,windows)  = blanking('I10565.blanking')
 threshold_sigma = 0.01
 hdulist=[]
 pl = RedshiftPlot()
@@ -30,7 +30,7 @@ for ObsNum in obslist:        # for observations in obslist
 
         try:
             # first check to see if for this obsnum and chassis it can be skipped
-            for b in bands:
+            for b in blanks:
                 if chassis == b[0] and ObsNum in b[1] and len(b[2]) == 0:
                     print("Skipping ",b)
                     raise
@@ -54,7 +54,7 @@ for ObsNum in obslist:        # for observations in obslist
         #nc.hdu.spectrum = nc.hdu.spectrum/gain.curve(el)
 
         # flag chassis/obsnum/band triples, or skip out the whole chassis
-        for b in bands:
+        for b in blanks:
             if chassis == b[0] and ObsNum in b[1]:
                 if len(b[2]) == 0:
                     continue
