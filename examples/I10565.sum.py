@@ -12,7 +12,52 @@ from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 # from dreampy3.utils.filterscans import FilterScans
 from dreampy3.redshift.plots import RedshiftPlot
 
-sourceobs = 'I10565.sum' 
+def blanking(filename):
+    """   blanking rules       obsnum,chassis,bank
+    """
+    blanks = []
+    lines = open(filename)
+    for line in lines:
+        if line[0] == '#':
+            continue
+        line = line.strip()
+        w = line.split()
+        if len(w) < 2:
+            # warning
+            continue
+        #print("B:",line)
+        obsnum = w[0]
+        chassis = int(w[1])
+        #print("CHASSIS: ",chassis)
+        dash = obsnum.find('-')
+        if dash > 0:
+            o1 = int(obsnum[:dash])
+            o2 = int(obsnum[dash+1:])
+            obsnums = 'range(%d,%d)' % (o1,o2)
+        else:
+            obsnums = '[%s]' % obsnum
+        #print("OBSNUMS: " , obsnums)
+
+        if len(w) == 2:
+            bands = '{}'
+        else:
+            bands = ' '.join(w[2:]).replace(' ','').replace('}{',',')
+        #print("BANDS: ", bands)
+
+        d = {}
+        exec('x=%d' % chassis, d)
+        exec('y=%s' % obsnums, d)
+        exec('z=%s' % bands,   d)
+        print('PJT',d['x'], d['y'], d['z'])
+        blanks.append([d['x'], d['y'], d['z']])
+
+    print("Found %d blanking lines" % len(blanks))
+    return blanks
+
+
+
+sourceobs = 'I10565.sum'
+bands     = blanking('I10565.blanking')
 hdulist=[]
 obs = 1
 windows = {}                     # freq sections in the 6 bands in which baselines are to be computed
@@ -84,8 +129,8 @@ while obs == 1:
     for ObsNum in obslist: #for observations in obslist
         for chassis in (0,1,2,3): #for all chassis
             try:
-                if ObsNum in (36231,36387,) and chassis in (2,3):
-                    continue
+                #if ObsNum in (36231,36387,) and chassis in (2,3):
+                #    continue
                 globs = '/data_lmt/RedshiftChassis%d/RedshiftChassis%d_*_0%d_00_0001.nc' % (chassis, chassis, ObsNum)
                 # print("Trying globs",globs)
                 fn = glob.glob(globs)
@@ -101,124 +146,18 @@ while obs == 1:
             print(nc.hdu.header.SourceName)
             #count += 1
             nc.hdu.process_scan()
+
             #el = nc.hdu.header.ElReq
             #nc.hdu.spectrum = nc.hdu.spectrum/gain.curve(el)
-            ###
-            # flag some chassis
-         #   if ObsNum in (obslist) and chassis in(2,3): 
-         #        nc.hdu.blank_frequencies( {3: [(95.,100.),]} )
-            ### Flag Chassis 0
-            #flaglist00=[1000]    
-            if chassis == 0 and ObsNum in range(51800, 62000):
-                nc.hdu.blank_frequencies( {0: [(70.,100.),]} )
-                nc.hdu.blank_frequencies( {1: [(70.,100.),]} )
-            flaglist00=[40608,40609]    
-            if chassis == 0 and ObsNum in (flaglist00):
-                nc.hdu.blank_frequencies( {0: [(65.,100.)]} )
-            flaglist01=[2000]    
-            if chassis == 0 and ObsNum in (flaglist01):
-                nc.hdu.blank_frequencies( {1: [(65.,100.)]} )
-            flaglist02=[1000]    
-            if chassis == 0 and ObsNum in (flaglist02):
-                nc.hdu.blank_frequencies( {2: [(75.,100.)]} )
-            flaglist03=[1000]    
-            if chassis == 0 and ObsNum in (flaglist03):
-                nc.hdu.blank_frequencies( {3: [(95.,100.)]} )
-            flaglist04=[28709,29313,32019,54803,59399]    
-            if chassis == 0 and ObsNum in (flaglist04):
-                nc.hdu.blank_frequencies( {4: [(95.,120.)]} )
-            flaglist05=[31349,38494,40286,49516,58449,59112,59257,61219]  
-            if chassis == 0 and ObsNum in (flaglist05):
-                nc.hdu.blank_frequencies( {5: [(95.,111.),]} )
-            ### Flag Chassis 1
-            #if chassis == 1 and ObsNum in range(15600, 59500):
-            #    nc.hdu.blank_frequencies( {0: [(67.5,100.),]} )
-            if chassis == 1 and ObsNum in range(54400, 62000):
-                nc.hdu.blank_frequencies( {0: [(70.,100.),]} )
-                nc.hdu.blank_frequencies( {2: [(70.,100.),]} )
-            if chassis == 1 and ObsNum in range(49900, 51000):
-                nc.hdu.blank_frequencies( {2: [(70.,100.),]} )
-            if chassis == 1 and ObsNum in range(15600, 34500):
-                nc.hdu.blank_frequencies( {3: [(98.,100.),]} )
-            if chassis == 1 and ObsNum in range(14400, 39500):
-                nc.hdu.blank_frequencies( {0: [(70.,100.),]} )
-            flaglist10=[49515]    
-            if chassis == 1 and ObsNum in (flaglist10):
-                nc.hdu.blank_frequencies( {0: [(70.,100.),]} )
-            flaglist11=[37575,40609,42318,42319]    
-            if chassis == 1 and ObsNum in (flaglist11):
-                nc.hdu.blank_frequencies( {1: [(75.,120.),]} )
-            flaglist12=[1000]    
-            if chassis == 1 and ObsNum in (flaglist12):
-                nc.hdu.blank_frequencies( {2: [(75.,120.),]} )
-            flaglist13=[34488,34489,58866,58867,58962,58963,59035,59122,59123]    
-            if chassis == 1 and ObsNum in (flaglist13):
-                nc.hdu.blank_frequencies( {3: [(97.,100.),]} )
-            flaglist14=[39594,42318]    
-            if chassis == 1 and ObsNum in (flaglist14):
-                nc.hdu.blank_frequencies( {4: [(90.,120.),]} )
-            flaglist15=[37500,42318,58732]    
-            if chassis == 1 and ObsNum in (flaglist15):
-                nc.hdu.blank_frequencies( {5: [(90.,120.),]} )
-            ### Flag Chassis 2
-            if chassis == 2 and ObsNum in range(49500, 51000):
-                nc.hdu.blank_frequencies( {1: [(70.,100.),]} )
-            flaglist2=[32019,42313,42314,42318,42319]    
-            if chassis == 2 and ObsNum in (flaglist2):
-                nc.hdu.blank_frequencies( {4: [(95.,111.),]} )
-                nc.hdu.blank_frequencies( {5: [(95.,111.),]} )
-            flaglist20=[1000]    
-            if chassis == 2 and ObsNum in (flaglist20):
-                nc.hdu.blank_frequencies( {0: [(64.,95.)]} )
-            flaglist21=[37553]    
-            if chassis == 2 and ObsNum in (flaglist21):
-                nc.hdu.blank_frequencies( {1: [(74.,95.)]} )
-            flaglist22=[33906,40798]    
-            if chassis == 2 and ObsNum in (flaglist22):
-                nc.hdu.blank_frequencies( {2: [(74.,95.)]} )
-            flaglist23 = [28190,28191,35692,36446,36949,36950,42865,49515,49516,52195,54693,54694,55770,58393,58866,58867,59035,59036,59122,59470] 
-            if chassis == 2 and ObsNum in (flaglist23):
-                nc.hdu.blank_frequencies( {3: [(95.,100.),]} )
-            flaglist230 = [35691,38494,38495,38624,38625,39593,39594,39686,39687,40134,40135,40286,40287,40606,40608,40609,40797,40798,42166,42167,42303,42304,42313,42314,42318,42319,54802,57632,57633,58448,58731,58732,59471,60125,60126,60978,61218,61219,61352,61353,61581,61582,61696,61697,61827,61828,61978,61979] 
-            if chassis == 2 and ObsNum in (flaglist230):
-                nc.hdu.blank_frequencies( {3: [(90.,100.),]} )
-            if chassis == 2 and ObsNum in range(29312, 35000):
-                nc.hdu.blank_frequencies( {3: [(90.,100.),]} )
-            flaglist24=[1000,58618,59036]    
-            if chassis == 2 and ObsNum in (flaglist24):
-                nc.hdu.blank_frequencies( {4: [(95.,111.),]} )
-            flaglist25=[28191,32018,33392,33905,33906,35691,36950,40287,55770,57633,59257,61353,61827]    
-            if chassis == 2 and ObsNum in (flaglist25):
-                nc.hdu.blank_frequencies( {5: [(95.,111.),]} )
-            ### Flag Chassis 3 
-            flaglist3=[35691,40134,40609,42314,42318,42319,60977]
-            if chassis == 3 and ObsNum in (flaglist3):
-                nc.hdu.blank_frequencies( {4: [(95.,111.),]} )
-                nc.hdu.blank_frequencies( {5: [(95.,111.),]} )
-            flaglist30=[42865,52195,57633,58392]    
-            if chassis == 3 and ObsNum in (flaglist30):
-                nc.hdu.blank_frequencies( {0: [(70.,88.)]} )
-            flaglist31=[1000]    
-            if chassis == 3 and ObsNum in (flaglist31):
-                nc.hdu.blank_frequencies( {1: [(84.,88.)]} )
-            flaglist32=[29446,31236,38244]    
-            if chassis == 3 and ObsNum in (flaglist32):
-                nc.hdu.blank_frequencies( {2: [(74.,90.)]} )
-            flaglist33 = [28190,28191,29674,32018,32019,32876,33392,33906,35691,35692,40608,40609,42303,42313,42314,42318,42319,49516,52195,52196,54694,54803,57632,57633,58393,58732,58962,59036,59258,61352,61353] 
-            if chassis == 3 and ObsNum in (flaglist33):
-                nc.hdu.blank_frequencies( {3: [(95.,100.),]} )
-            if chassis == 3 and ObsNum in range(36198, 39900):
-                nc.hdu.blank_frequencies( {3: [(95.,100.),]} )
-            flaglist330 = [40134,42864,42865] 
-            if chassis == 3 and ObsNum in (flaglist330):
-                nc.hdu.blank_frequencies( {3: [(90.,100.),]} )
-            flaglist34=[29163,32876,40797,42304,59112]
-            if chassis == 3 and ObsNum in (flaglist34):
-                nc.hdu.blank_frequencies( {4: [(95.,111.),]} )
-            flaglist35=[29674,29675,31349,31350,32018,32019,32876,32877,33905,33906,38495,38624,38625,39594,39686,39687,40286,49516,52196,55770,55785,57633,58393,58448,58449,58618,58619,58620,58731,58732,59257,59258,59399,59400,59470,59471,59951,59952,60978,61219,61352,61353,61582]
-            if chassis == 3 and ObsNum in (flaglist35):
-                nc.hdu.blank_frequencies( {5: [(95.,111.),]} )
-            #
+            
+            # flag some chassis/obsnum/band triples
+            for b in bands:
+                if chassis = b[0] and ObsNum in b[1]:
+                    if len(b[2]) == 0:
+                        continue
+                    for k in b[2].keys():
+                        nc.hdu.blank_frequencies( b[2][k] )
+
             nc.hdu.baseline(order=1, windows=windows, subtract=True)
             nc.hdu.average_all_repeats(weight='sigma')
             # Comment out the following 3 lines if you don't
