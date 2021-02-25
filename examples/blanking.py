@@ -22,6 +22,8 @@ def blanking(filename):
             obslist = '[%s]' % obsnums
         return obslist
 
+    win = {}
+    exec('windows={}', win)
     obslist = []
     blanks = []
     lines = open(filename)
@@ -29,6 +31,9 @@ def blanking(filename):
         if line[0] == '#':
             continue
         line = line.strip()
+        if line.find('windows[') == 0:
+            exec(line, win)
+            continue
         w = line.split()
         if len(w) == 0:
             continue
@@ -66,14 +71,18 @@ def blanking(filename):
         print('BLANK',d['x'], d['y'], d['z'])
         blanks.append([d['x'], d['y'], d['z']])
 
+    windows = win['windows']        
+
     print("Found %d blanking lines" % len(blanks))
     print("Found %d obsnums" % len(obslist))
-    return (obslist,blanks)
+    print("Found %d windows for baselining" % len(windows))
+
+    return (obslist,blanks,windows)
 
 
 if __name__ == '__main__':    
 
-    (obslist,blanks) = blanking(sys.argv[1])
+    (obslist,blanks,windows) = blanking(sys.argv[1])
 
     if len(sys.argv) > 2:
         for b in blanks:
@@ -81,3 +90,6 @@ if __name__ == '__main__':
 
         for i in obslist:
             print('O',i)
+
+        for w in windows.keys():
+            print('W',w,windows[w])
