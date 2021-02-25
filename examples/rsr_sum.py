@@ -7,14 +7,36 @@
 #   25-feb-2021:    PJT     converted from I10565.sum.py to a commandline version
 #
 
-"""Usage: rsr_sum.py -b BLANKING_FILE
+"""Usage: rsr_sum.py -b BLANKING_FILE [--o1 1] [--o2 -1] [-p $DATA_LMT] [-t THRESHOLD] 
 
--b BLANKING_FILE              Input Blanking File
+-b BLANKING_FILE              Input ASCII blanking file. No default.
+-t THRESHOLD_SIGMA            Threshold sigma in spectrum needed for averaging [Default: 0.01]
+--o1 ORDER1 -1 ORDER1         Baseline order fit for individual spectra [Default: 1]
+--o2 ORDER2 -2 ORDER2         Baseline order fit for final combined spectrum [Default: -1]
+                              Use -1 to skip another fit
+-p PATH                       Data path to data_lmt for the raw RedshiftChassis files.
+                              By default $DATA_LMT will be used else '/data_lmt'.
 
 -h --help                     show this help
 
- 
-bla bla
+
+rsr_sum.py allows you to pass a very detailed blanking file to summing the spectra to a single
+final spectrum. The operation of this script is somewhat similar to rsr_driver.py.  The
+blanking file specifies which obsnum's to use, which ones to blank, and optionally specifies
+the baseline regions for baseline subtraction.
+
+The format of this blanking file is as follows:
+
+       # optionally set up to 6 window banks (0..5) where to fit the baselines
+       windows[2] = [(80.0,83.3),(83.8,84.6)]
+       # list of obsnums for the sum; give one or more comma separated, or an inclusive range
+       12345,12346  
+       30001-30100
+       65432
+       # list of obsnums where blanking is needed.
+       12345,12346  0
+       30001-30100  2    {4: [(95.,111.)]}   {5: [(95.,111.)]} 
+
 
 """
 
@@ -36,16 +58,27 @@ def main(argv):
     av = docopt(__doc__,options_first=True, version='0.1')
     print(av)
 
+    # -b
     blanking_file = av['-b']
-
-    if 'DATA_LMT' in os.environ:
-        data_lmt = os.environ['DATA_LMT']
+    
+    # -p
+    if av['-p'] == None:
+        if 'DATA_LMT' in os.environ:
+            data_lmt = os.environ['DATA_LMT']
+        else:
+            data_lmt = '/data_lmt'
     else:
-        data_lmt = '/data_lmt'
+        data_lmt =  av['-p']
+
+    # -t
+    threshold_sigma = float(av['-t'])
+
+    # o1, o2
+    order1 = int(av['--o1'])
+    order2 = int(av['--o2'])
 
     sourceobs = blanking_file + '.sum'
     (obslist,blanks,windows)  = blanking(blanking_file)
-    threshold_sigma = 0.01
     hdulist=[]
     pl = RedshiftPlot()
 
@@ -80,9 +113,9 @@ def main(argv):
                 if chassis == b[0] and ObsNum in b[1]:
                     nc.hdu.blank_frequencies (b[2]) 
             if len(windows[0]) > 0:
-                nc.hdu.baseline(order=1, windows=windows, subtract=True)
+                nc.hdu.baseline(order=order1, windows=windows, subtract=True)
             else:
-                nc.hdu.baseline(order=1, subtract=True)
+                nc.hdu.baseline(order=order1, subtract=True)
             nc.hdu.average_all_repeats(weight='sigma')
             # Comment out the following 3 lines if you don't
             #   want to see individual spectrum again
@@ -101,11 +134,10 @@ def main(argv):
 
     pl.plot_spectra(hdu)
     # baselinesub = int(input('Order of baseline (use ''-1'' for none):'))
-    baselinesub = -1    # -1, 0, 1, ...
-    if baselinesub < 0:
-        hdu.baseline(order=0, subtract=False)
+    if order2 < 0:
+        hdu.baseline(order=0, subtract=False)    # @todo    can we just skip this call?
     else:
-        hdu.baseline(order=baselinesub,subtract=True)
+        hdu.baseline(order=order2,subtract=True)
     txtfl = '%s.txt' % sourceobs
     hdu.make_composite_scan()
     hdu.write_composite_scan_to_ascii(txtfl)
