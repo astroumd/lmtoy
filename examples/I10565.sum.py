@@ -339,13 +339,12 @@ while obs == 1:
     hdu = hdulist[0]
     hdu.average_scans(hdulist[1:],threshold_sigma=0.01)
     pl.plot_spectra(hdu)
-    baselinesub = raw_input('Order of baseline (type ''n'' for none):')
-    if baselinesub == 'n':
+    # baselinesub = raw_input('Order of baseline (type ''n'' for none):')
+    baselinesub = -1    # -1, 0, 1, ...
+    if baselinesub < 0:
         hdu.baseline(order=0, subtract=False)
-    elif baselinesub == '':
-        hdu.baseline(order=0, subtract=True)
     else:
-        hdu.baseline(order=int(baselinesub),subtract=True)
+        hdu.baseline(order=baselinesub,subtract=True)
     txtfl = '%s.txt' % sourceobs
     hdu.make_composite_scan()
     hdu.write_composite_scan_to_ascii(txtfl)
