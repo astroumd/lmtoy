@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 #
 #   Example of detailed flagging of RSR data (courtesy Min Yun)
+#   See "make rsr3" how to run this example.
 #
 #   25-feb-2021:    PJT     added (obslist,blanks,windows) file 
 #
