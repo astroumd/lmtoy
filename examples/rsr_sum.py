@@ -7,7 +7,7 @@
 #   25-feb-2021:    PJT     converted from I10565.sum.py to a commandline version
 #
 
-"""Usage: rsr_sum.py -b BLANKING_FILE [--o1 1] [--o2 -1] [-p $DATA_LMT] [-t THRESHOLD] 
+"""Usage: rsr_sum.py -b BLANKING_FILE [options]
 
 -b BLANKING_FILE              Input ASCII blanking file. No default.
 -t THRESHOLD_SIGMA            Threshold sigma in spectrum needed for averaging [Default: 0.01]
@@ -25,13 +25,13 @@ final spectrum. The operation of this script is somewhat similar to rsr_driver.p
 blanking file specifies which obsnum's to use, which ones to blank, and optionally specifies
 the baseline regions for baseline subtraction.
 
-The format of this blanking file is as follows:
+The format of this blanking file is currently as follows (subject to change):
 
        # optionally set up to 6 window banks (0..5) where to fit the baselines
        windows[2] = [(80.0,83.3),(83.8,84.6)]
        # list of obsnums for the sum; give one or more comma separated, or an inclusive range
-       12345,12346  
-       30001-30100
+       12345,12346,12347
+       30001-30010
        65432
        # list of obsnums where blanking is needed.
        12345,12346  0
@@ -73,7 +73,7 @@ def main(argv):
     # -t
     threshold_sigma = float(av['-t'])
 
-    # o1, o2
+    # --o1, --o2
     order1 = int(av['--o1'])
     order2 = int(av['--o2'])
 
