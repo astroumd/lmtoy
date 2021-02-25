@@ -17,17 +17,10 @@ from blanking import blanking
 
 
 sourceobs = 'I10565.sum'
-(obslist,bands)  = blanking('I10565.blanking')
+(obslist,bands,windows)  = blanking('I10565.blanking')
 threshold_sigma = 0.01
 hdulist=[]
 obs = 1
-windows = {}                     # freq sections in the 6 bands where baselines are to be computed, carefully ignoring a few obvious lines
-windows[0] = [(73.5,79.3)]
-windows[1] = [(87.0,91.5)]
-windows[2] = [(80.0,83.3),(83.8,84.6)]
-windows[3] = [(92.5,98.0)]
-windows[4] = [(104.0,105.3),(105.8,108.0),(109.0,109.9)]
-windows[5] = [(98.1,104.5)]
 pl = RedshiftPlot()
 while obs == 1:
     for ObsNum in obslist:        # for observations in obslist
