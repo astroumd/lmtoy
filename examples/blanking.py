@@ -1,18 +1,33 @@
 #! /usr/bin/env python
 #
 #
-#   parses a blanking file with the follow format options
+# parses an ascii blanking file with obsvlist
 #
-#   windows[N] = [(f1,f2),(f3,f4)]
-#   obslist
-#   obslist    chassis
-#   obslist    chassis    bank_dict
 #   
 
-import sys
+def blanking(filename, debug=False):
+    """   Process a file with blanking information.
+    
+    Each (ascii) line can be of the following format:
+    
+    windows[N] = [(f1,f2),(f3,f4)]           sections for baselining
+    obslist                                  inclusive list
+    obslist    chassis                       blanking for this chassis
+    obslist    chassis    bank_dict          blanking for this chassis/bank
 
-def blanking(filename):
-    """   blanking rules       obsnum,chassis,bank
+    where obslist can be "a,b,c" or "a-b" (but not both)
+
+    bank_dict is a (set of) dictionaries, e.g.
+          {1: [(70.,100.)]}
+          {4: [(95.,111.),]} {5: [(95.,111.),]}
+          {4: [(95.,111.),] , 5: [(95.,111.),]}
+    
+    
+    Note that windows, obslist and bank_dict are parsed with the python exec()
+    function, so this may result in python syntax errors
+
+    Returns:    (obslist, chassis, banks)
+    
     """
     def to_obslist(obsnums, to_list=False):
         """  convert  a,b,c  or a-b to a python string for exec()
@@ -85,7 +100,10 @@ def blanking(filename):
     return (obslist,blanks,windows)
 
 
+#  a small testbed
+
 if __name__ == '__main__':    
+    import sys
 
     (obslist,blanks,windows) = blanking(sys.argv[1])
 
