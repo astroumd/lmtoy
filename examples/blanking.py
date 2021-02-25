@@ -1,6 +1,13 @@
 #! /usr/bin/env python
 #
 #
+#   parses a blanking file with the follow format options
+#
+#   windows[N] = [(f1,f2),(f3,f4)]
+#   obslist
+#   obslist    chassis
+#   obslist    chassis    bank_dict
+#   
 
 import sys
 
@@ -24,6 +31,8 @@ def blanking(filename):
 
     win = {}
     exec('windows={}', win)
+    for w in [0,1,2,3,4,5]:
+        exec('windows[%d]=[]' % w, win)
     obslist = []
     blanks = []
     lines = open(filename)
@@ -31,24 +40,21 @@ def blanking(filename):
         if line[0] == '#':
             continue
         line = line.strip()
-        if line.find('windows[') == 0:
+        if line.find('windows[') == 0:           # parse a 'windows[N] = []' line
             exec(line, win)
             continue
         w = line.split()
-        if len(w) == 0:
+        if len(w) == 0:                          # blank lines
             continue
-        if len(w) == 1:
-            # accumulate obslist
+        if len(w) == 1:                          # add obslist only line
             o = to_obslist(w[0], True)
             d = {}
             exec('x=%s' % o, d)
-            # print("OBSLIST",d['x'])
             obslist = obslist + d['x']
             continue
-        #print("B:",line)
+                                                 # add obslist,chassis,[band] line
         obsnum = w[0]
         chassis = int(w[1])
-        #print("CHASSIS: ",chassis)
         dash = obsnum.find('-')
         if dash > 0:
             o1 = int(obsnum[:dash])
@@ -56,13 +62,12 @@ def blanking(filename):
             obsnums = 'range(%d,%d)' % (o1,o2)
         else:
             obsnums = '[%s]' % obsnum
-        #print("OBSNUMS: " , obsnums)
 
         if len(w) == 2:
             bands = '{}'
         else:
+            #  merge dicts and make one
             bands = ' '.join(w[2:]).replace(' ','').replace('}{',',')
-        #print("BANDS: ", bands)
 
         d = {}
         exec('x=%d' % chassis, d)
