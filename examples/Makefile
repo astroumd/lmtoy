@@ -123,7 +123,7 @@ rsr1:
 	@echo "Example fit of the 12CO line"
 	-tabnllsqfit I10565_rsr1_spectrum.txt fit=gauss1d xrange=110:111 | tee fit1.log
 	@a=$$(grep a= fit1.log); b=$$(grep b= fit1.log); c=$$(grep c= fit1.log); d=$$(grep d= fit1.log); rms=$$(grep rms= fit1.log);\
-	echo "FIT shows      : $$a $$b $$c $$d $$rms"
+	echo  "FIT shows      : $$a $$b $$c $$d $$rms"
 	@echo "FIT should show: a= -4.68656e-05 0.000227127  b= 0.0504297 0.00101759  c= 110.514 0.000808871 d= 0.0351696 0.00084017 rms= 0.00108359"
 
 
@@ -145,13 +145,13 @@ rsr2:
 	@echo "Example fits of the 12CO line"
 	-tabnllsqfit I10565_rsr2_spectrum.txt fit=gauss1d xrange=110:111 | tee fit2.log
 	@a=$$(grep a= fit2.log); b=$$(grep b= fit2.log); c=$$(grep c= fit2.log); d=$$(grep d= fit2.log); rms=$$(grep rms= fit2.log);\
-	echo "FIT shows      : $$a $$b $$c $$d $$rms"
+	echo  "FIT shows      : $$a $$b $$c $$d $$rms"
 	@echo "FIT should show: a= 0.000113749 0.000115652  b= 0.0440424 0.000525824  c= 110.507 0.000467126 d= 0.0342954 0.00048396  rms= 0.000553378"
 
 # Min Yun's example. This also needs "all" the RSR data (111 obsnums are used).  Takes about 3' on "cln"
-# These are data between obsnum 28190 (11/13/14) and 61979 (4/17/16)
-rsr3:
-	$(TIME) python I10565.sum.py > rsr3.log 2>&1
+# These are data between obsnum 28190 (2014-11-13) and 61979 (2016-04-17)
+rsr3-old:
+	$(TIME) python I10565.sum.py > rsr3-old.log 2>&1
 	-tabplot I10565.sum.txt  ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
 		xlab='GHz' ylab='mK (T_A)' headline=obsnum=all yapp=I10565.sum.png/png
 	@echo "Determine the RMS*sqrt(2) in mK"
@@ -160,5 +160,18 @@ rsr3:
 	@echo "Example fits of the 12CO line"
 	-tabnllsqfit I10565.sum.txt fit=gauss1d xrange=110:111 | tee fit3.log
 	@a=$$(grep a= fit3.log); b=$$(grep b= fit3.log); c=$$(grep c= fit3.log); d=$$(grep d= fit3.log); rms=$$(grep rms= fit3.log);\
-	echo "FIT shows      : $$a $$b $$c $$d $$rms"
+	echo  "FIT shows      : $$a $$b $$c $$d $$rms"
+	@echo "FIT should show: a= 0.000179097 0.000118254  b= 0.0466679 0.000536265  c= 110.508 0.000451531 d= 0.0344496 0.000468057 rms= 0.000565537"
+
+rsr3:
+	$(TIME) python rsr_sum.py -b I10565.blanking > rsr3.log 2>&1
+	-tabplot I10565.blanking.sum.txt  ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
+		xlab='GHz' ylab='mK (T_A)' headline=obsnum=all yapp=I10565.blanking.sum.png/png
+	@echo "Determine the RMS*sqrt(2) in mK"
+	-grep -v nan I10565.blanking.sum.txt | tabtrend - 2 | tabhist - 1  -0.4 0.4     scale=1000 robust=t yapp=I10565.blanking.sum.rms.png/png
+	@echo "Should show:         Robust Mean Disp     : -0.00100919 0.124678"
+	@echo "Example fits of the 12CO line"
+	-tabnllsqfit I10565.blanking.sum.txt fit=gauss1d xrange=110:111 | tee fit3.log
+	@a=$$(grep a= fit3.log); b=$$(grep b= fit3.log); c=$$(grep c= fit3.log); d=$$(grep d= fit3.log); rms=$$(grep rms= fit3.log);\
+	echo  "FIT shows      : $$a $$b $$c $$d $$rms"
 	@echo "FIT should show: a= 0.000179097 0.000118254  b= 0.0466679 0.000536265  c= 110.508 0.000451531 d= 0.0344496 0.000468057 rms= 0.000565537"
