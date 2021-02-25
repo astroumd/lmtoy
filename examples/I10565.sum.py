@@ -6,6 +6,7 @@
 import os
 #import gain
 import numpy as np
+import glob
 
 from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 # from dreampy3.utils.filterscans import FilterScans
@@ -14,12 +15,12 @@ from dreampy3.redshift.plots import RedshiftPlot
 sourceobs = 'I10565.sum' 
 hdulist=[]
 obs = 1
-windows = {}
+windows = {}                     # freq sections in the 6 bands in which baselines are to be computed
 windows[0] = [(73.5,79.3)]
-windows[1] = [(87.,91.5)]
-windows[2] = [(80.,83.3),(83,8,84.6)]
-windows[3] = [(92.5,98.)]
-windows[4] = [(104.,105.3),(105.8,108.),(109.,109.9)]
+windows[1] = [(87.0,91.5)]
+windows[2] = [(80.0,83.3),(83.8,84.6)]
+windows[3] = [(92.5,98.0)]
+windows[4] = [(104.0,105.3),(105.8,108.0),(109.0,109.9)]
 windows[5] = [(98.1,104.5)]
 pl = RedshiftPlot()
 while obs == 1:
@@ -81,121 +82,13 @@ while obs == 1:
     #obslist = [61978,61979]# 4/17/16 Tsys=96K 
 
     for ObsNum in obslist: #for observations in obslist
-        for chassis in (0,1,2,3): #fol all chassis
+        for chassis in (0,1,2,3): #for all chassis
             try:
                 if ObsNum in (36231,36387,) and chassis in (2,3):
                     continue
-                if ObsNum > 28000:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2014-11-13_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 29500:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2014-11-27_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 31200:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2014-12-17_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 31500:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2014-12-19_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 32000:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-01-04_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 32800:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-01-17_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 32900:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-01-18_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 33300:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-01-21_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 33500:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-01-22_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 33800:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-01-25_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 33900:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-01-26_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 34400:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-01-31_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 34600:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-02-04_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 35600:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-02-12_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 36400:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-02-17_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 36900:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-02-21_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 38400:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-03-18_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 38600:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-03-19_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 39500:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-04-03_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 39600:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-04-04_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 40100:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-04-07_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 40200:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-04-08_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 40600:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-04-21_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 40700:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-04-24_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 41100:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-05-02_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 42100:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-05-18_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 42300:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-05-19_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 42800:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-05-25_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 49500:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-11-23_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 52050:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2015-12-13_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 54600:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-01-29_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 54800:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-01-30_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 55700:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-02-07_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 57600:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-02-24_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 58300:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-03-08_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 58400:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-03-15_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 58600:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-03-17_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 58700:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-03-18_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 58800:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-03-19_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 58900:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-03-20_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 59000:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-03-24_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 59100:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-03-25_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 59120:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-03-27_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 59200:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-03-28_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 59300:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-03-30_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 59400:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-03-31_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 59900:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-04-03_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 60100:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-04-04_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 60900:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-04-09_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 61200:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-04-11_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 61300:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-04-12_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 61500:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-04-14_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 61600:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-04-15_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 61800:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-04-16_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if ObsNum > 61900:
-                    fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-04-17_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
-                if fname:
+                globs = glob.glob('/data_lmt/RedshiftChassis%d/RedshiftChassis%d_*_%d_00_0001.nc' % (chassis, chassis, ObsNum))
+                if len(globs) == 1:
+                    fname = globs[0]
                     print("Process filename %s" % fname)
                     nc = RedshiftNetCDFFile(fname)
                 else:
