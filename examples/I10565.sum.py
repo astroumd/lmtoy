@@ -27,7 +27,14 @@ pl = RedshiftPlot()
 
 for ObsNum in obslist:        # for observations in obslist
     for chassis in (0,1,2,3): # for all chassis
+
         try:
+            # first check to see if for this obsnum and chassis it can be skipped
+            for b in bands:
+                if chassis == b[0] and ObsNum in b[1] and len(b[2]) == 0:
+                    print("Skipping ",b)
+                    raise
+                    
             globs = '%s/RedshiftChassis%d/RedshiftChassis%d_*_0%d_00_0001.nc' % (data_lmt, chassis, chassis, ObsNum)
             fn = glob.glob(globs)
             if len(fn) == 1:
@@ -61,10 +68,10 @@ for ObsNum in obslist:        # for observations in obslist
         zz = 1
         #zz = input('To reject observation, type ''r'':')
         if zz != 'r':
-         hdulist.append(nc.hdu)
-         nc.sync()
-         nc.close()
-         del nc
+            hdulist.append(nc.hdu)
+            nc.sync()
+            nc.close()
+            del nc
 
 print("Accumulated %d hdu's" % len(hdulist))
 hdu = hdulist[0]
