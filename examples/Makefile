@@ -121,8 +121,10 @@ rsr1:
 	@echo "Determine the RMS*sqrt(2) in mK"
 	-grep -v nan I10565_rsr1_spectrum.txt | tabtrend - 2 | tabhist - 1  -4 4     scale=1000 robust=t yapp=I10565_rsr1_rms.png/png
 	@echo "Example fit of the 12CO line"
-	-tabnllsqfit I10565_rsr1_spectrum.txt fit=gauss1d xrange=110:111
-	@echo FIT should show: a= -4.68656e-05 0.000227127 b= 0.0504297 0.00101759 c= 110.514 0.000808871 d= 0.0351696 0.00084017 rms= 0.00108359
+	-tabnllsqfit I10565_rsr1_spectrum.txt fit=gauss1d xrange=110:111 | tee fit1.log
+	@a=$$(grep a= fit1.log); b=$$(grep b= fit1.log); c=$$(grep c= fit1.log); d=$$(grep d= fit1.log); rms=$$(grep rms= fit1.log);\
+	@echo "FIT shows      : $$a $$b $$c $$d $$rms"
+	@echo "FIT should show: a= -4.68656e-05 0.000227127 b= 0.0504297 0.00101759 c= 110.514 0.000808871 d= 0.0351696 0.00084017 rms= 0.00108359"
 
 
 # typical timing for 300 obsnums (one still bad)
@@ -156,6 +158,6 @@ rsr3:
 	@echo "Should show:         Robust Mean Disp     : -0.00100919 0.124678"
 	@echo "Example fits of the 12CO line"
 	-tabnllsqfit I10565.sum.txt fit=gauss1d xrange=110:111 | tee fit3.log
-	@a=$$(grep a= fit2.log); b=$$(grep b= fit2.log); c=$$(grep c= fit2.log); d=$$(grep d= fit2.log); rms=$$(grep rms= fit2.log);\
+	@a=$$(grep a= fit3.log); b=$$(grep b= fit3.log); c=$$(grep c= fit3.log); d=$$(grep d= fit3.log); rms=$$(grep rms= fit3.log);\
 	@echo "FIT shows      : $$a $$b $$c $$d $$rms"
 	@echo "Should show: a= 0.000179097 0.000118254 b= 0.0466679 0.000536265 c= 110.508 0.000451531 d= 0.0344496 0.000468057 rms= 0.000565537"
