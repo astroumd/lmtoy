@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # seek_bad_channels.py
 # This is the bad channel searcher
 #
@@ -5,11 +6,20 @@
 # March 4, 2014
 #
 # Revision 2014-03-04: Fixed problem with variable for number of channels.  Now always do 256 channels
+#          2021-02-23: Converted for dreampy3/python3
 
-from dreampy.redshift.netcdf import RedshiftNetCDFFile
-from matplotlib import pyplot as pl
+import os
+import sys
+import glob
 import numpy
+from matplotlib import pyplot as pl
+from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 
+if 'DATA_LMT' in os.environ:
+    data_lmt = os.environ['DATA_LMT']
+else:
+    data_lmt = '/data_lmt'
+    
 # The bad channel searcher reviews a set of scans to find channels
 # with unusually large variations in the ACF for the set of "On"
 # spectra associated with a typical BS observation.
@@ -20,8 +30,6 @@ import numpy
 # The scans to be reviewed are given in a simple text file containing
 # the date and the observation number for each one. 
 
-# This is the name of file with date and obsnum for scans we wish to review
-the_filename = 'testfile.lis'
 
 # Here is the list of chassis and boards to review
 # You can specify any number with chassis and board id's in a list
@@ -38,21 +46,35 @@ plot_max = 10
 bc_threshold = 3.0
 
 
-# now ready to process.  First read in the data from the file
+# now ready to process.  First read in the data from the file or commandline
 
-# the data format has two columns: date and obsnum, one observation per line 
-lfile = open(the_filename,'r')
-lc = 0
-date_list = []
-o_list = []
-for line in lfile:
-    lc = lc+1
-    ss = line.split()
-    date_list.append(ss[0])
-    o_list.append(int(ss[1]))
-
-lfile.close()
-print 'read file: %s  %d observations\n'%(the_filename,len(o_list))
+if True:
+    # simply a list of obsnum 
+    o_list = []
+    for arg in sys.argv[1:]:
+        o_list.append(int(arg))
+    if len(o_list) == 0:
+        print("Provide obsnum list on the commandline")
+        sys.exit(0)
+    print('read obsnum %d observations\n'%(len(o_list)))
+    
+else:
+    # This is the name of file with date and obsnum for scans we wish to review
+    the_filename = 'testfile.lis'
+    # the data format has two columns: date and obsnum, one observation per line 
+    lfile = open(the_filename,'r')
+    lc = 0
+    date_list = []
+    o_list = []
+    for line in lfile:
+        if line[0]=='#':
+            continue
+        lc = lc+1
+        ss = line.split()
+        date_list.append(ss[0])
+        o_list.append(int(ss[1]))
+    lfile.close()
+    print('read file: %s  %d observations\n'%(the_filename,len(o_list)))
 
 # set up an array to hold the maximum values of std dev for a channel
 findmax = numpy.zeros((nchassis,nboards,256))
@@ -61,12 +83,19 @@ scanmax = numpy.zeros((nchassis,nboards,256))
 
 # now we will go through all the scans and compute rms for each channel
 for iobs in range(len(o_list)):
-    print '%2d %s %6d'%(iobs+1,date_list[iobs],o_list[iobs])
+    #print('%2d %s %6d'%(iobs+1,date_list[iobs],o_list[iobs]))
+    print('%2d %6d'%(iobs+1,o_list[iobs]))
     for ic in range(nchassis):
         chassis = chassis_list[ic]
         # open the data file for this chassis
-        nc = RedshiftNetCDFFile('/data_lmt/RedshiftChassis%d/RedshiftChassis%d_%s_%06d_00_0001.nc' % (chassis, chassis, date_list[iobs],\
- o_list[iobs]))
+        # glob for filenames like RedshiftChassis?/RedshiftChassis?_*_016975_00_0001.nc
+        globs = glob.glob(data_lmt + '/RedshiftChassis%d/RedshiftChassis%d_*_%06d_00_0001.nc' % (chassis, chassis, o_list[iobs]))
+        print("Found ",globs)
+        if len(globs) != 1:
+            print("Unexpected obsnum %06d " % o_list[iobs])
+            sys.exit(0)
+        nc = RedshiftNetCDFFile(globs[0])
+        # nc = RedshiftNetCDFFile(data_lmt + '/RedshiftChassis%d/RedshiftChassis%d_*_%06d_00_0001.nc' % (chassis, chassis, date_list[iobs],o_list[iobs]))
         nons,nb,nch = numpy.shape(nc.hdu.data.AccData)
         acf_diff = numpy.zeros((nons,256))
         for ib in range(nboards):
@@ -90,11 +119,11 @@ pl.ion()
 pl.figure(num=1,figsize=(12,8))
 pl.clf()
 
-print ' '
-print 'Bad Channel Threshold = %6.1f'%(bc_threshold)
-print '-----------------------'
-print ' c  b  ch   scan metric'
-print '-----------------------'
+print(' ')
+print('Bad Channel Threshold = %6.1f'%(bc_threshold))
+print('-----------------------')
+print(' c  b  ch   scan metric')
+print('-----------------------')
 
 # for each chassis and each board, we plot maximum standard deviations found for all channels
 for ic in range(nchassis):
@@ -109,6 +138,9 @@ for ic in range(nchassis):
         for chan in range(256):
             # check the value of the standard deviation against threshold and print if above threshold
             if findmax[ic,ib,chan] > bc_threshold:
-                print '%2d %2d %3d %6d %6.1f'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmax[ic,ib,chan])
+                print('%2d %2d %3d %6d %6.1f'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmax[ic,ib,chan]))
 
-print '-----------------------'
+print('-----------------------')
+
+pl.savefig('sbc.png')
+#pl.show()
