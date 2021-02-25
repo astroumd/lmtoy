@@ -141,8 +141,10 @@ rsr2:
 	@echo "Determine the RMS*sqrt(2) in mK"
 	-grep -v nan I10565_rsr2_spectrum.txt | tabtrend - 2 | tabhist - 1  -0.4 0.4     scale=1000 robust=t yapp=I10565_rsr2_rms.png/png
 	@echo "Example fits of the 12CO line"
-	-tabnllsqfit I10565_rsr2_spectrum.txt fit=gauss1d xrange=110:111
-	@echo FIT should show: a= 0.000113749 0.000115652 b= 0.0440424 0.000525824 c= 110.507 0.000467126 d= 0.0342954 0.00048396 rms= 0.000553378
+	-tabnllsqfit I10565_rsr2_spectrum.txt fit=gauss1d xrange=110:111 | tee fit2.log
+	@a=$$(grep a= fit2.log); b=$$(grep b= fit2.log); c=$$(grep c= fit2.log); d=$$(grep d= fit2.log); rms=$$(grep rms= fit2.log);\
+	@echo "FIT shows      : $$a $$b $$c $$d $$rms"
+	@echo "FIT should show: a= 0.000113749 0.000115652  b= 0.0440424 0.000525824  c= 110.507 0.000467126 d= 0.0342954 0.00048396  rms= 0.000553378"
 
 # Min Yun's example. This also needs "all" the RSR data (111 obsnums are used).  Takes about 3' on "cln"
 rsr3:
@@ -153,5 +155,7 @@ rsr3:
 	-grep -v nan I10565.sum.txt | tabtrend - 2 | tabhist - 1  -0.4 0.4     scale=1000 robust=t yapp=I10565.sum.rms.png/png
 	@echo "Should show:         Robust Mean Disp     : -0.00100919 0.124678"
 	@echo "Example fits of the 12CO line"
-	-tabnllsqfit I10565.sum.txt fit=gauss1d xrange=110:111
+	-tabnllsqfit I10565.sum.txt fit=gauss1d xrange=110:111 | tee fit3.log
+	@a=$$(grep a= fit2.log); b=$$(grep b= fit2.log); c=$$(grep c= fit2.log); d=$$(grep d= fit2.log); rms=$$(grep rms= fit2.log);\
+	@echo "FIT shows      : $$a $$b $$c $$d $$rms"
 	@echo "Should show: a= 0.000179097 0.000118254 b= 0.0466679 0.000536265 c= 110.508 0.000451531 d= 0.0344496 0.000468057 rms= 0.000565537"
