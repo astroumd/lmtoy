@@ -149,6 +149,7 @@ rsr2:
 	@echo "FIT should show: a= 0.000113749 0.000115652  b= 0.0440424 0.000525824  c= 110.507 0.000467126 d= 0.0342954 0.00048396  rms= 0.000553378"
 
 # Min Yun's example. This also needs "all" the RSR data (111 obsnums are used).  Takes about 3' on "cln"
+# These are data between obsnum 28190 (11/13/14) and 61979 (4/17/16)
 rsr3:
 	$(TIME) python I10565.sum.py > rsr3.log 2>&1
 	-tabplot I10565.sum.txt  ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
@@ -160,4 +161,4 @@ rsr3:
 	-tabnllsqfit I10565.sum.txt fit=gauss1d xrange=110:111 | tee fit3.log
 	@a=$$(grep a= fit3.log); b=$$(grep b= fit3.log); c=$$(grep c= fit3.log); d=$$(grep d= fit3.log); rms=$$(grep rms= fit3.log);\
 	echo "FIT shows      : $$a $$b $$c $$d $$rms"
-	@echo "Should show: a= 0.000179097 0.000118254  b= 0.0466679 0.000536265  c= 110.508 0.000451531 d= 0.0344496 0.000468057 rms= 0.000565537"
+	@echo "FIT should show: a= 0.000179097 0.000118254  b= 0.0466679 0.000536265  c= 110.508 0.000451531 d= 0.0344496 0.000468057 rms= 0.000565537"
