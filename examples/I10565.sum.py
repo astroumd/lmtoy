@@ -34,7 +34,7 @@ for ObsNum in obslist:        # for observations in obslist
                 if chassis == b[0] and ObsNum in b[1] and len(b[2]) == 0:
                     print("Skipping ",b)
                     raise
-                    
+            # find the chassis file         
             globs = '%s/RedshiftChassis%d/RedshiftChassis%d_*_0%d_00_0001.nc' % (data_lmt, chassis, chassis, ObsNum)
             fn = glob.glob(globs)
             if len(fn) == 1:
