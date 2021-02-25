@@ -1,9 +1,15 @@
-from dreampy.redshift.netcdf import RedshiftNetCDFFile
-from dreampy.utils.filterscans import FilterScans
-from dreampy.redshift.plots import RedshiftPlot
+#! /usr/bin/env python
+#
+#   Example of detailed flagging of RSR data (courtesy Min Yun)
+#
+
 import os
 #import gain
-import numpy as np #import required modules
+import numpy as np
+
+from dreampy3.redshift.netcdf import RedshiftNetCDFFile
+# from dreampy3.utils.filterscans import FilterScans
+from dreampy3.redshift.plots import RedshiftPlot
 
 sourceobs = 'i10565.sum' 
 hdulist=[]
@@ -190,13 +196,13 @@ while obs == 1:
                 if ObsNum > 61900:
                     fname = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_2016-04-17_0%s_00_0001.nc' % (chassis, chassis, ObsNum)          
                 if fname:
-                    print "Process filename %s" % fname
+                    print("Process filename %s" % fname)
                     nc = RedshiftNetCDFFile(fname)
                 else:
                     continue
             except:
                 continue
-            print nc.hdu.header.SourceName
+            print(nc.hdu.header.SourceName)
             #count += 1
             nc.hdu.process_scan()
             #el = nc.hdu.header.ElReq
