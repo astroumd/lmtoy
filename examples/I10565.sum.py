@@ -87,13 +87,14 @@ while obs == 1:
                 if ObsNum in (36231,36387,) and chassis in (2,3):
                     continue
                 globs = '/data_lmt/RedshiftChassis%d/RedshiftChassis%d_*_0%d_00_0001.nc' % (chassis, chassis, ObsNum)
-                print("Trying globs",globs)
+                # print("Trying globs",globs)
                 fn = glob.glob(globs)
                 if len(fn) == 1:
                     fname = fn[0]
                     print("Process filename %s" % fname)
                     nc = RedshiftNetCDFFile(fname)
                 else:
+                    print("Warning: [%d] failed globbing on %s" % (len(fn),globs))
                     continue
             except:
                 continue
