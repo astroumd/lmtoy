@@ -86,7 +86,7 @@ while obs == 1:
             try:
                 if ObsNum in (36231,36387,) and chassis in (2,3):
                     continue
-                globs = '/data_lmt/RedshiftChassis%d/RedshiftChassis%d_*_%d_00_0001.nc' % (chassis, chassis, ObsNum)
+                globs = '/data_lmt/RedshiftChassis%d/RedshiftChassis%d_*_0%d_00_0001.nc' % (chassis, chassis, ObsNum)
                 print("Trying globs",globs)
                 fn = glob.glob(globs)
                 if len(fn) == 1:
