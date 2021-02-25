@@ -2,15 +2,14 @@
 #  I10565 blanking file for RSR data
 #
 
-###   WINDOWS not implemented yet
+###   WINDOWS are the sections in each bank where the baseline is computed, this is a pythonic line
 
-# windows = {}                     # freq sections in the 6 bands where baselines are to be computed, carefully ignoring a few obvious lines
-# windows[0] = [(73.5,79.3)]
-# windows[1] = [(87.0,91.5)]
-# windows[2] = [(80.0,83.3),(83.8,84.6)]
-# windows[3] = [(92.5,98.0)]
-# windows[4] = [(104.0,105.3),(105.8,108.0),(109.0,109.9)]
-# windows[5] = [(98.1,104.5)]
+windows[0] = [(73.5,79.3)]
+windows[1] = [(87.0,91.5)]
+windows[2] = [(80.0,83.3),(83.8,84.6)]
+windows[3] = [(92.5,98.0)]
+windows[4] = [(104.0,105.3),(105.8,108.0),(109.0,109.9)]
+windows[5] = [(98.1,104.5)]
 
 
 ###             OBSNUM's to be included in this sum
