@@ -86,9 +86,11 @@ while obs == 1:
             try:
                 if ObsNum in (36231,36387,) and chassis in (2,3):
                     continue
-                globs = glob.glob('/data_lmt/RedshiftChassis%d/RedshiftChassis%d_*_%d_00_0001.nc' % (chassis, chassis, ObsNum))
-                if len(globs) == 1:
-                    fname = globs[0]
+                globs = '/data_lmt/RedshiftChassis%d/RedshiftChassis%d_*_%d_00_0001.nc' % (chassis, chassis, ObsNum)
+                print("Trying globs",globs)
+                fn = glob.glob(globs)
+                if len(fn) == 1:
+                    fname = fn[0]
                     print("Process filename %s" % fname)
                     nc = RedshiftNetCDFFile(fname)
                 else:
@@ -222,7 +224,7 @@ while obs == 1:
             #   want to see individual spectrum again
             #pl.plot_spectra(nc)
             zz = 1
-            #zz = raw_input('To reject observation, type ''r'':')
+            #zz = input('To reject observation, type ''r'':')
             if zz != 'r':
              hdulist.append(nc.hdu)
              nc.sync()
@@ -232,7 +234,7 @@ while obs == 1:
     hdu = hdulist[0]
     hdu.average_scans(hdulist[1:],threshold_sigma=0.01)
     pl.plot_spectra(hdu)
-    # baselinesub = raw_input('Order of baseline (type ''n'' for none):')
+    # baselinesub = int(input('Order of baseline (use ''-1'' for none):'))
     baselinesub = -1    # -1, 0, 1, ...
     if baselinesub < 0:
         hdu.baseline(order=0, subtract=False)
