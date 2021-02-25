@@ -10,12 +10,15 @@ get some science done in a waterfall fashion!
 For an observation consisting of a set of OBSNUM's a typical reduction
 strategy could be as follows:
 
-* First use **lmtoy_reduce.sh** for each OBSNUM. Make sure you cull out the
+* Find out which OBSNUM's you are interested in. For example a simple grep
+on the **data_lmt.log** file could be sufficient.
+
+* Then use **lmtoy_reduce.sh** for each OBSNUM. Make sure you cull out the
 spectra that are bad, by reviewing logs, figures and data, edit the parameter file and
 re-running the script. 
 
 * If applicable, use **lmtoy_combine.sh** for the series of previously
-determined good OBSNUM's. 
+determined good OBSNUM's.  Make sure the gridding is the same for all OBSNUM's.
 
 
 ## Running lmtoy_reduce.sh
@@ -23,8 +26,8 @@ determined good OBSNUM's.
 This script reduces a single OBSNUM, and uses a series of *keyword=value* commandline
 argument pairs to construct a parameter file.
 The commandline parser is a very simple one, and does not check if you spelled
-the parameters correctly.  On the first run **path=** is required, but **obsnum=**
-is required for each run
+the parameters correctly.  Only **obsnum=** is required for each run, the rest
+is optional:
 
       $LMTOY/examples/lmtoy_reduce.sh \
 	    obsnum=91112                # always required
@@ -126,7 +129,7 @@ The following scripts are used by the **lmtoy_reduce.sh** pipeline.
 All scripts should self-describe using the **-h** or **--help** flag.
 
 * **lmtinfo.py**:            gathers info what OBSNUM's you have, or for a specific OBSNUM selected, useful info for the pipeline
-* **lmtrc.py**:              edit the (lmtoy) parameter in a set of rc files
+* **lmtrc.py**:              edit the (lmtoy) parameter for a set of rc files
 * **process_otf_map2.py**:   converts RAW to SpecFile
 * **process_otf_map.py**:   *deprecated version*
 * **view_spec_file.py**:     make a series of plots summarizing one or a set of pixels
