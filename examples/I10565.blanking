@@ -1,6 +1,9 @@
 #
 #  I10565 blanking file for RSR data
 #
+#  The function blanking() will parse this file and return an (obslist,blanks,windows) tuple
+#  for clients to use.
+#
 
 ###   WINDOWS are the sections in each bank where the baseline is computed, this is a pythonic line
 
