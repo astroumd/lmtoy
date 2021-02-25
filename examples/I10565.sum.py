@@ -27,7 +27,6 @@ pl = RedshiftPlot()
 
 for ObsNum in obslist:        # for observations in obslist
     for chassis in (0,1,2,3): # for all chassis
-
         try:
             # first check to see if for this obsnum and chassis it can be skipped
             for b in blanks:
@@ -47,17 +46,14 @@ for ObsNum in obslist:        # for observations in obslist
         except:
             continue
         print(nc.hdu.header.SourceName)
-        #count += 1
         nc.hdu.process_scan()
 
         #el = nc.hdu.header.ElReq
         #nc.hdu.spectrum = nc.hdu.spectrum/gain.curve(el)
 
-        # flag chassis/obsnum/band triples, or skip out the whole chassis
+        # flag chassis/obsnum/band triples
         for b in blanks:
             if chassis == b[0] and ObsNum in b[1]:
-                if len(b[2]) == 0:
-                    continue
                 nc.hdu.blank_frequencies (b[2]) 
 
         nc.hdu.baseline(order=1, windows=windows, subtract=True)
