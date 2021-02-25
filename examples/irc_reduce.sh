@@ -25,6 +25,7 @@ rms_cut=4
 resolution=12.5
 cell=6.25
 rmax=3
+noise_sigma=1
 x_axis=VLSR
 
 
@@ -102,7 +103,7 @@ grid_data.py --program_path spec_driver_fits \
 	     --otf_b       4.75 \
 	     --otf_c       2 \
 	     --n_samples   256 \
-	     --noise_sigma 1
+	     --noise_sigma $noise_sigma 
 
 
 # bug:  when rmax=5  r=12/c=2.4  malloc(): unsorted double linked list corrupted
