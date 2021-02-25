@@ -150,13 +150,14 @@ while obs == 1:
             #el = nc.hdu.header.ElReq
             #nc.hdu.spectrum = nc.hdu.spectrum/gain.curve(el)
             
-            # flag some chassis/obsnum/band triples
+            # flag some chassis/obsnum/band triples, or skip out the whole chassis
             for b in bands:
-                if chassis = b[0] and ObsNum in b[1]:
+                if chassis == b[0] and ObsNum in b[1]:
                     if len(b[2]) == 0:
                         continue
+                    # nc.hdu.blank_frequencies (b[2]) 
                     for k in b[2].keys():
-                        nc.hdu.blank_frequencies( b[2][k] )
+                        nc.hdu.blank_frequencies( { k : b[2][k] } )
 
             nc.hdu.baseline(order=1, windows=windows, subtract=True)
             nc.hdu.average_all_repeats(weight='sigma')
