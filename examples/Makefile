@@ -126,6 +126,16 @@ rsr1:
 	echo  "FIT shows      : $$a $$b $$c $$d $$rms"
 	@echo "FIT should show: a= -4.68656e-05 0.000227127  b= 0.0504297 0.00101759  c= 110.514 0.000808871 d= 0.0351696 0.00084017 rms= 0.00108359"
 
+rsr1a:
+	$(TIME) python rsr_sum.py -b rsr1.obsnum  > rsr1a.log 2>&1
+	@echo "Determine the RMS*sqrt(2) in mK"
+	-grep -v nan rsr1.obsnum.sum.txt | tabtrend - 2 | tabhist - 1  -4 4     scale=1000 robust=t yapp=I10565_rsr1a_rms.png/png
+	@echo "Example fit of the 12CO line"
+	-tabnllsqfit rsr1.obsnum.sum.txt fit=gauss1d xrange=110:111 | tee fit1a.log
+	@a=$$(grep a= fit1a.log); b=$$(grep b= fit1a.log); c=$$(grep c= fit1a.log); d=$$(grep d= fit1a.log); rms=$$(grep rms= fit1a.log);\
+	echo  "FIT shows      : $$a $$b $$c $$d $$rms"
+	@echo "FIT should show: a= -0.00218228 0.000231047  b= 0.049534 0.0010418  c= 110.514 0.000834269 d= 0.0347996 0.000866358 rms= 0.00110362"
+
 
 # typical timing for 300 obsnums (one still bad)
 # all procs:    2206.00user 123.86system 15:19.56elapsed 253%CPU
