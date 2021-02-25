@@ -108,6 +108,9 @@ install_python:
 lmtoy_venv:
 	python3 -m venv lmtoy_venv
 
+pip:
+	pip install -r requirements.txt
+
 
 # I find venv not working for me during development.
 
