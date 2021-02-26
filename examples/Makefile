@@ -72,6 +72,13 @@ bench31: # M31_data
 	$(TIME) ./lmtoy_combine.sh  obsnum=85776,85778,85824 > lmtoy_85776_3.log 2>&1
 	$(TIME) ./nemo_combine.sh                        >  lmtoy_85776_nemo.log 2>&1
 
+bench31a: # M31_data
+	$(TIME) ./lmtoy_reduce.sh obsnum=85776 noise_sigma=0 > lmtoy_85776.log   2>&1
+	$(TIME) ./lmtoy_reduce.sh obsnum=85778 noise_sigma=0 > lmtoy_85778.log   2>&1
+	$(TIME) ./lmtoy_reduce.sh obsnum=85824 noise_sigma=0 > lmtoy_85824.log   2>&1
+	$(TIME) ./lmtoy_combine.sh obsnum=85776,85778,85824 noise_sigma=0 > lmtoy_85776_3.log 2>&1
+	$(TIME) ./nemo_combine.sh                        >  lmtoy_85776_nemo.log 2>&1
+
 bench51: # M51_data
 	$(TIME) ./lmtoy_reduce.sh obsnum=90911 > lmtoy_90911.log   2>&1
 	$(TIME) ./lmtoy_reduce.sh obsnum=91112 > lmtoy_91112.log   2>&1
