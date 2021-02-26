@@ -128,8 +128,20 @@ rsr1:
 	@echo "Determine the RMS*sqrt(2) in mK"
 	-grep -v nan I10565_rsr1_spectrum.txt | tabtrend - 2 | tabhist - 1  -4 4     scale=1000 robust=t yapp=I10565_rsr1_rms.png/png
 	@echo "Example fit of the 12CO line"
-	-tabnllsqfit I10565_rsr1_spectrum.txt fit=gauss1d xrange=110:111
-	@echo FIT should show: a= -4.68656e-05 0.000227127 b= 0.0504297 0.00101759 c= 110.514 0.000808871 d= 0.0351696 0.00084017 rms= 0.00108359
+	-tabnllsqfit I10565_rsr1_spectrum.txt fit=gauss1d xrange=110:111 | tee fit1.log
+	@a=$$(grep a= fit1.log); b=$$(grep b= fit1.log); c=$$(grep c= fit1.log); d=$$(grep d= fit1.log); rms=$$(grep rms= fit1.log);\
+	echo  "FIT shows      : $$a $$b $$c $$d $$rms"
+	@echo "FIT should show: a= -4.68656e-05 0.000227127  b= 0.0504297 0.00101759  c= 110.514 0.000808871 d= 0.0351696 0.00084017 rms= 0.00108359"
+
+rsr1a:
+	$(TIME) python rsr_sum.py -b rsr1.obsnum  > rsr1a.log 2>&1
+	@echo "Determine the RMS*sqrt(2) in mK"
+	-grep -v nan rsr1.obsnum.sum.txt | tabtrend - 2 | tabhist - 1  -4 4     scale=1000 robust=t yapp=I10565_rsr1a_rms.png/png
+	@echo "Example fit of the 12CO line"
+	-tabnllsqfit rsr1.obsnum.sum.txt fit=gauss1d xrange=110:111 | tee fit1a.log
+	@a=$$(grep a= fit1a.log); b=$$(grep b= fit1a.log); c=$$(grep c= fit1a.log); d=$$(grep d= fit1a.log); rms=$$(grep rms= fit1a.log);\
+	echo  "FIT shows      : $$a $$b $$c $$d $$rms"
+	@echo "FIT should show: a= -0.00218228 0.000231047  b= 0.049534 0.0010418  c= 110.514 0.000834269 d= 0.0347996 0.000866358 rms= 0.00110362"
 
 
 # typical timing for 300 obsnums (one still bad)
@@ -137,6 +149,8 @@ rsr1:
 # 1 proc:        872.98user  48.28system 15:29.06elapsed  99%CPU
 #
 # See also: https://ui.adsabs.harvard.edu/abs/2011ApJ...732L..15C/abstract
+#
+# CAVEAT: data with 32m and 50m are combined here, so don't trust the mK scale
 
 rsr2:
 	$(TIME)	python ../RSR_driver/rsr_driver.py rsr2.obsnum -w rsr2.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 85.2 0.4 > rsr2.log 2>&1
@@ -146,5 +160,35 @@ rsr2:
 	@echo "Determine the RMS*sqrt(2) in mK"
 	-grep -v nan I10565_rsr2_spectrum.txt | tabtrend - 2 | tabhist - 1  -0.4 0.4     scale=1000 robust=t yapp=I10565_rsr2_rms.png/png
 	@echo "Example fits of the 12CO line"
-	-tabnllsqfit I10565_rsr2_spectrum.txt fit=gauss1d xrange=110:111
-	@echo FIT should show: a= 0.000113749 0.000115652 b= 0.0440424 0.000525824 c= 110.507 0.000467126 d= 0.0342954 0.00048396 rms= 0.000553378
+	-tabnllsqfit I10565_rsr2_spectrum.txt fit=gauss1d xrange=110:111 | tee fit2.log
+	@a=$$(grep a= fit2.log); b=$$(grep b= fit2.log); c=$$(grep c= fit2.log); d=$$(grep d= fit2.log); rms=$$(grep rms= fit2.log);\
+	echo  "FIT shows      : $$a $$b $$c $$d $$rms"
+	@echo "FIT should show: a= 0.000113749 0.000115652  b= 0.0440424 0.000525824  c= 110.507 0.000467126 d= 0.0342954 0.00048396  rms= 0.000553378"
+
+# Min Yun's example. This also needs "all" the RSR data (111 obsnums are used).  Takes about 3' on "cln"
+# These are data between obsnum 28190 (2014-11-13) and 61979 (2016-04-17)
+rsr3-old:
+	$(TIME) python I10565.sum.py > rsr3-old.log 2>&1
+	-tabplot I10565.sum.txt  ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
+		xlab='GHz' ylab='mK (T_A)' headline=obsnum=all yapp=I10565.sum.png/png
+	@echo "Determine the RMS*sqrt(2) in mK"
+	-grep -v nan I10565.sum.txt | tabtrend - 2 | tabhist - 1  -0.4 0.4     scale=1000 robust=t yapp=I10565.sum.rms.png/png
+	@echo "Should show:         Robust Mean Disp     : -0.00100919 0.124678"
+	@echo "Example fits of the 12CO line"
+	-tabnllsqfit I10565.sum.txt fit=gauss1d xrange=110:111 | tee fit3.log
+	@a=$$(grep a= fit3.log); b=$$(grep b= fit3.log); c=$$(grep c= fit3.log); d=$$(grep d= fit3.log); rms=$$(grep rms= fit3.log);\
+	echo  "FIT shows      : $$a $$b $$c $$d $$rms"
+	@echo "FIT should show: a= 0.000179097 0.000118254  b= 0.0466679 0.000536265  c= 110.508 0.000451531 d= 0.0344496 0.000468057 rms= 0.000565537"
+
+rsr3:
+	$(TIME) python rsr_sum.py -b I10565.blanking > rsr3.log 2>&1
+	-tabplot I10565.blanking.sum.txt  ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
+		xlab='GHz' ylab='mK (T_A)' headline=obsnum=all yapp=I10565.blanking.sum.png/png
+	@echo "Determine the RMS*sqrt(2) in mK"
+	-grep -v nan I10565.blanking.sum.txt | tabtrend - 2 | tabhist - 1  -0.4 0.4     scale=1000 robust=t yapp=I10565.blanking.sum.rms.png/png
+	@echo "Should show:         Robust Mean Disp     : -0.00100919 0.124678"
+	@echo "Example fits of the 12CO line"
+	-tabnllsqfit I10565.blanking.sum.txt fit=gauss1d xrange=110:111 | tee fit3.log
+	@a=$$(grep a= fit3.log); b=$$(grep b= fit3.log); c=$$(grep c= fit3.log); d=$$(grep d= fit3.log); rms=$$(grep rms= fit3.log);\
+	echo  "FIT shows      : $$a $$b $$c $$d $$rms"
+	@echo "FIT should show: a= 0.000179097 0.000118254  b= 0.0466679 0.000536265  c= 110.508 0.000451531 d= 0.0344496 0.000468057 rms= 0.000565537"
