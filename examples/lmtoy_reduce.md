@@ -85,9 +85,12 @@ Here a summary of the files that are created:
      SRC_OBSNUM.wf.fits      Waterfall version of SpecFile
      SRC_OBSNUM.wf10.fits    Waterfall version of SpecFile with 10 times binning in time
      SRC_OBSNUM.fits         (flux flat) fits cube
-     SRC_OBSNUM.wt.fits      weights fits map
      SRC_OBSNUM.nf.fits      noise flat fits cube, ready for ADMIT
      SRC_OBSNUM.nfs.fits     noise flat XYZ smoothed fits cube, ready for ADMIT
+     SRC_OBSNUM.wt.fits      weights fits map based on spectra
+     SRC_OBSNUM.wt2.fits     weights fits map based on difference spectra in cube
+     SRC_OBSNUM.wt3.fits     weights fits map based on spectra in b_range
+     SRC_OBSNUM.wtr.fits     ratio of wt3/wt2.  Can get > 1 if bad wavy spectra or extra line emission
 
 If NEMO or ADMIT had been run, a number of other files and directories will be present.
 
@@ -251,7 +254,7 @@ following parameters are all related and pertain to the gridding/convolution fun
       --otf_a               # SLR recommends 1.1
       --otf_b               # SLR recommends 4.75 (should be 1 for a gauss otf_select=2)
       --otf_c               # SLR recommands 2.0
-      --sigma_noise         # should be 1
+      --noise_sigma         # should be 1
       --rmax                # should be 3
 
 and a few filters what spectra to be added to the gridding
@@ -340,7 +343,10 @@ first.
 
 The measured RMS in each spectrum (describe what that is: RMS from the fitted baseline
 in the b_regions?) can also be used to weigh (1/RMS^2) each spectrum when these spectra
-are combined in the gridding process.
+are combined in the gridding process. This is the current default. By setting this to
+0 one can weigh each spectrum the same, so only the
+
+After the pipeline, if NEMO is present, it also computed a "wt2" and "wt3" map.
 
 
 # Advanced concepts:   Combining maps from different OBSNUM
