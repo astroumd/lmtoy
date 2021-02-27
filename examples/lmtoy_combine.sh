@@ -193,7 +193,7 @@ if [ ! -z $NEMO ]; then
 	echo -n "specstab: ";  tail -1  $s_on.specstab
 	
 	# remove useless files
-	rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd $s_on.wt2.ccd  $s_on.wt3.ccd
+	rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd $s_on.wt2.ccd  $s_on.wt3.ccd $s_on.n.ccd
 
 	echo "LMTOY>> Created $s_on.nf.fits and $s_on.nfs.fits"
 
