@@ -144,6 +144,7 @@ rsr1a:
 # See also: https://ui.adsabs.harvard.edu/abs/2011ApJ...732L..15C/abstract
 #
 # CAVEAT: data with 32m and 50m are combined here, so don't trust the mK scale
+# These are data between obsum 15161 (2014-01-30) and 92068 (2020-03-04)
 
 rsr2:
 	$(TIME)	python ../RSR_driver/rsr_driver.py rsr2.obsnum -w rsr2.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 85.2 0.4 > rsr2.log 2>&1
