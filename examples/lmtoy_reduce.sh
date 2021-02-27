@@ -11,7 +11,7 @@
 # There is no good mechanism here to make a new variable depend on re-running a certain task on which it depends
 # that's perhaps for a more advanced pipeline
 
-version="lmtoy_reduce: 26-feb-2021"
+version="lmtoy_reduce: 27-feb-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>>  Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -302,9 +302,10 @@ fi
 if [ ! -z $NEMO ]; then
     echo "LMTOY>>    Some NEMO post-processing"
 
-    # cleanup, just in case
+    # cleanup from a previous run
     rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 \
-       $s_on.data1 $s_on.n.fits $s_on.nfs.fits $s_on.mom0.ccd $s_on.mom1.ccd
+       $s_on.data1 $s_on.n.fits $s_on.nfs.fits $s_on.mom0.ccd $s_on.mom1.ccd \
+       $s_on.wt2.fits $s_on.wt3.fits $s_on.wtr.fits
 
     if [ -e $s_fits ]; then
 	fitsccd $s_fits $s_on.ccd    axistype=1
@@ -325,7 +326,14 @@ if [ ! -z $NEMO ]; then
 	ccdmom $s_on.n.ccd $s_on.mom0.ccd  mom=0	
 	ccdmom $s_on.n.ccd $s_on.mom1.ccd  mom=1 rngmsk=t
 	ccdmom $s_on.n.ccd $s_on.mom2.ccd  mom=-2
-	ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - - "ifne(%1,0,2/(%1*%1),0)" | ccdfits - $s_on.wt2.fits fitshead=$w_fits
+	
+	ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "ifne(%1,0,2/(%1*%1),0)"
+	ccdfits $s_on.wt2.ccd $s_on.wt2.fits fitshead=$w_fits
+	# e.g. [[-646,-396],[-196,54]] -> -646,-396,-196,54
+	zslabs=$(echo $b_regions | sed 's/\[//g' | sed 's/\[//g')
+	ccdslice $s_on.ccd - zslabs=-646,-396,-196,54 zscale=1000 | ccdmom - - mom=-2  | ccdmath - $s_on.wt3.ccd "ifne(%1,0,1/(%1*%1),0)"
+	ccdfits $s_on.wt3.ccd $s_on.wt3.fits fitshead=$w_fits
+	ccdmath $s_on.wt2.ccd,$s_on.wt3.ccd - %2/%1 | ccdfits - $s_on.wtr.fits fitshead=$w_fits
 
 	scanfits $s_fits $s_on.head1 select=header
 	ccdfits $s_on.n.ccd  $s_on.n.fits
@@ -341,7 +349,7 @@ if [ ! -z $NEMO ]; then
 	echo -n "specstab: ";  tail -1  $s_on.specstab
 
 	# remove useless files
-	rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd
+	rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd $s_on.wt2.ccd  $s_on.wt3.ccd
 
 	echo "LMTOY>> Created $s_on.nf.fits and $s_on.nfs.fits"
 
