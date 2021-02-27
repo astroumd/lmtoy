@@ -11,7 +11,7 @@
 # There is no good mechanism here to make a new variable depend on re-running a certain task on which it depends
 # that's perhaps for a more advanced pipeline
 
-version="lmtoy_reduce: 15-feb-2021"
+version="lmtoy_reduce: 26-feb-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>>  Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -325,6 +325,7 @@ if [ ! -z $NEMO ]; then
 	ccdmom $s_on.n.ccd $s_on.mom0.ccd  mom=0	
 	ccdmom $s_on.n.ccd $s_on.mom1.ccd  mom=1 rngmsk=t
 	ccdmom $s_on.n.ccd $s_on.mom2.ccd  mom=-2
+	ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - - "ifne(%1,0,2/(%1*%1),0)" | ccdfits - $s_on.wt2.fits fitshead=$w_fits
 
 	scanfits $s_fits $s_on.head1 select=header
 	ccdfits $s_on.n.ccd  $s_on.n.fits
