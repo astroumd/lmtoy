@@ -10,6 +10,8 @@
 #
 # There is no good mechanism here to make a new variable depend on re-running a certain task on which it depends
 # that's perhaps for a more advanced pipeline
+#
+# @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
 version="lmtoy_reduce: 27-feb-2021"
 
@@ -330,8 +332,9 @@ if [ ! -z $NEMO ]; then
 	ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "ifne(%1,0,2/(%1*%1),0)"
 	ccdfits $s_on.wt2.ccd $s_on.wt2.fits fitshead=$w_fits
 	# e.g. [[-646,-396],[-196,54]] -> -646,-396,-196,54
-	zslabs=$(echo $b_regions | sed 's/\[//g' | sed 's/\[//g')
-	ccdslice $s_on.ccd - zslabs=-646,-396,-196,54 zscale=1000 | ccdmom - - mom=-2  | ccdmath - $s_on.wt3.ccd "ifne(%1,0,1/(%1*%1),0)"
+	zslabs=$(echo $b_regions | sed 's/\[//g' | sed 's/\]//g')
+	echo SLABS: $b_regions == $zslabs
+	ccdslice $s_on.ccd - zslabs=$zslabs zscale=1000 | ccdmom - - mom=-2  | ccdmath - $s_on.wt3.ccd "ifne(%1,0,1/(%1*%1),0)"
 	ccdfits $s_on.wt3.ccd $s_on.wt3.fits fitshead=$w_fits
 	ccdmath $s_on.wt2.ccd,$s_on.wt3.ccd - %2/%1 | ccdfits - $s_on.wtr.fits fitshead=$w_fits
 

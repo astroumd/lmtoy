@@ -121,6 +121,7 @@ if [ $makecube = 1 ]; then
 	--otf_a       $otf_a \
 	--otf_b       $otf_b \
 	--otf_c       $otf_c \
+	--sample      -1 \
 	--n_samples   256 \
 	--noise_sigma $noise_sigma
 fi
@@ -172,8 +173,9 @@ if [ ! -z $NEMO ]; then
 	ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "ifne(%1,0,2/(%1*%1),0)"
 	ccdfits $s_on.wt2.ccd $s_on.wt2.fits fitshead=$w_fits
 	# e.g. [[-646,-396],[-196,54]] -> -646,-396,-196,54
-	zslabs=$(echo $b_regions | sed 's/\[//g' | sed 's/\[//g')
-	ccdslice $s_on.ccd - zslabs=-646,-396,-196,54 zscale=1000 | ccdmom - - mom=-2  | ccdmath - $s_on.wt3.ccd "ifne(%1,0,1/(%1*%1),0)"
+	zslabs=$(echo $b_regions | sed 's/\[//g' | sed 's/\]//g')
+	echo SLABS: $b_regions == $zslabs
+	ccdslice $s_on.ccd - zslabs=$zslabs zscale=1000 | ccdmom - - mom=-2  | ccdmath - $s_on.wt3.ccd "ifne(%1,0,1/(%1*%1),0)"
 	ccdfits $s_on.wt3.ccd $s_on.wt3.fits fitshead=$w_fits
 	ccdmath $s_on.wt2.ccd,$s_on.wt3.ccd - %2/%1 | ccdfits - $s_on.wtr.fits fitshead=$w_fits
 	
