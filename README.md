@@ -1,6 +1,6 @@
 # lmtoy
 
-LMTOY is your toy box for installing and running codes related to LMT data reduction. LMT is a large
+LMTOY is a toy box for installing and running codes related to LMT data reduction. LMT is a large
 50m single dish radio telescope located in Mexico (18:59:09N 97:18:53W) operating at mm wavelengths.
 
 
@@ -8,7 +8,7 @@ LMTOY is your toy box for installing and running codes related to LMT data reduc
 
 LMT raw telescope data are (mostly) in netCDF-3 format (extension: .nc), which stores
 data hierarchically, name and type tagged.
-A typical LSR observation consists of a number of netCDF in a specific directory hierarchy, starting at
+A typical LSR observation consists of a number of netCDF files in a specific directory hierarchy, starting at
 $DATA_LMT, and all identified via a 7 digit OBSNUM.  Different instruments
 use a different number of datasets, for example, RSR uses up to 9, LSR uses 10.
 
