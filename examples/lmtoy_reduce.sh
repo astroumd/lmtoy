@@ -13,14 +13,15 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="lmtoy_reduce: 1-mar-2021"
+version="lmtoy_reduce: 2-mar-2021"
 
 if [ -z $1 ]; then
-    echo "LMTOY>>  Usage: path=DATA_LMT obsnum=OBSNUM ..."
-    echo "LMTOY>>  $version"
+    echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
     echo ""
     echo "See lmtoy_reduce.md for examples on usage"
     exit 0
+else
+    echo "LMTOY>> $version"
 fi
 
 
@@ -310,7 +311,7 @@ if [ $viewcube = 1 ]; then
 fi
 
 if [ ! -z $NEMO ]; then
-    echo "LMTOY>>    Some NEMO post-processing"
+    echo "LMTOY>> Some NEMO post-processing"
 
     # cleanup from a previous run
     rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 \
@@ -323,9 +324,9 @@ if [ ! -z $NEMO ]; then
 
 	ccdspec $s_on.ccd > $s_on.spectab
 	ccdstat $s_on.ccd bad=0 robust=t planes=0 > $s_on.cubestat
-	echo "LMTOY>>    STATS  $s_on.ccd     centerbox robust"
+	echo "LMTOY>> STATS  $s_on.ccd     centerbox robust"
 	ccdsub  $s_on.ccd -    centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
-	echo "LMTOY>>    STATS  $s_on.wt.ccd  centerbox robust"
+	echo "LMTOY>> STATS  $s_on.wt.ccd  centerbox robust"
 	ccdsub  $s_on.wt.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
 
 	# convert flux flat to noise flat
