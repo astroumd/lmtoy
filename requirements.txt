@@ -4,3 +4,4 @@ bettermoments
 pvextractor
 pyds9
 ephem
+aplpy
