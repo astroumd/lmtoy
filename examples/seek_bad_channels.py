@@ -49,12 +49,12 @@ bc_threshold = 3.0
 # now ready to process.  First read in the data from the file or commandline
 
 if True:
-    # simply a list of obsnum 
+    # simply a list of obsnum via commandline
     o_list = []
     for arg in sys.argv[1:]:
         o_list.append(int(arg))
     if len(o_list) == 0:
-        print("Provide obsnum list on the commandline")
+        print("ERROR: provide an obsnum list on the commandline, e.g. 33551")
         sys.exit(0)
     print('read obsnum %d observations\n'%(len(o_list)))
     
@@ -89,12 +89,13 @@ for iobs in range(len(o_list)):
         chassis = chassis_list[ic]
         # open the data file for this chassis
         # glob for filenames like RedshiftChassis?/RedshiftChassis?_*_016975_00_0001.nc
-        globs = glob.glob(data_lmt + '/RedshiftChassis%d/RedshiftChassis%d_*_%06d_00_0001.nc' % (chassis, chassis, o_list[iobs]))
-        print("Found ",globs)
-        if len(globs) != 1:
+        globs = data_lmt + '/RedshiftChassis%d/RedshiftChassis%d_*_%06d_00_0001.nc' % (chassis, chassis, o_list[iobs])
+        fn = glob.glob(globs)
+        print("Found ",fn)
+        if len(fn) != 1:
             print("Unexpected obsnum %06d " % o_list[iobs])
             sys.exit(0)
-        nc = RedshiftNetCDFFile(globs[0])
+        nc = RedshiftNetCDFFile(fn[0])
         # nc = RedshiftNetCDFFile(data_lmt + '/RedshiftChassis%d/RedshiftChassis%d_*_%06d_00_0001.nc' % (chassis, chassis, date_list[iobs],o_list[iobs]))
         nons,nb,nch = numpy.shape(nc.hdu.data.AccData)
         acf_diff = numpy.zeros((nons,256))
@@ -115,9 +116,9 @@ for iobs in range(len(o_list)):
         del nc
 
 # make plot and report results
-pl.ion()
+#pl.ion()
 pl.figure(num=1,figsize=(12,8))
-pl.clf()
+#pl.clf()
 
 print(' ')
 print('Bad Channel Threshold = %6.1f'%(bc_threshold))
@@ -143,4 +144,5 @@ for ic in range(nchassis):
 print('-----------------------')
 
 pl.savefig('sbc.png')
-#pl.show()
+print("Wrote sbc.png")
+pl.show()

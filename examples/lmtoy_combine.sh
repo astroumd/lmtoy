@@ -6,20 +6,23 @@
 #          Two methods:
 #          1. combine all the SpecFiles
 #          2. combine the weighted maps  (comes with assumptions)     [not implemented yet]
+#             this assumes OBJECT_OBSNUM.fits and OBJECT_OBSNUM.wt.fits for all OBSNUM
 #
 
 
-version="lmtoy_combine: 27-feb-2021"
+version="lmtoy_combine: 2-mar-2021"
 
 if [ -z $1 ]; then
-    echo "LMTOY>>  Usage: obsnum=ON1,ON2,..."
-    echo "LMTOY>>  $version"
+    echo "LMTOY>> Usage: obsnum=ON1,ON2,..."
+    echo "LMTOY>> $version"
     echo ""
     echo "This will combine OBSNUM based OTF data that were reduced with lmtoy_reduce.sh"
     echo "Parameters are taken from the first lmtoy_OBSNUM.rc file, but can be overridden here"
     echo "where we implemented this (TBD)"
     echo "See lmtoy_reduce.md for examples on usage"
     exit 0
+else
+    echo "LMTOY>> $version"    
 fi
 
 
@@ -143,7 +146,7 @@ if [ $viewcube = 1 ]; then
 fi
 
 if [ ! -z $NEMO ]; then
-    echo "LMTOY>>    Some NEMO post-processing"
+    echo "LMTOY>> Some NEMO post-processing"
 
     # cleanup, just in case
     rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 \
@@ -156,9 +159,9 @@ if [ ! -z $NEMO ]; then
 	
         ccdspec $s_on.ccd > $s_on.spectab
 	ccdstat $s_on.ccd bad=0 robust=t planes=0 > $s_on.cubestat
-	echo "LMTOY>>    STATS  $s_on.ccd     centerbox robust"
+	echo "LMTOY>> STATS  $s_on.ccd     centerbox robust"
 	ccdsub  $s_on.ccd -    centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
-	echo "LMTOY>>    STATS  $s_on.wt.ccd  centerbox robust"	
+	echo "LMTOY>> STATS  $s_on.wt.ccd  centerbox robust"	
 	ccdsub  $s_on.wt.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
 
 	# convert flux flat to noise flat
@@ -204,7 +207,7 @@ if [ ! -z $NEMO ]; then
 fi
 
 if [ ! -z $ADMIT ]; then
-    echo "LMTOY>>    Some ADMIT post-processing"
+    echo "LMTOY>> Some ADMIT post-processing"
     if [ -e $s_on.nf.fits ]; then
 	runa1 $s_on.nf.fits
     else

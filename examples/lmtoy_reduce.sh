@@ -13,14 +13,15 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="lmtoy_reduce: 27-feb-2021"
+version="lmtoy_reduce: 2-mar-2021"
 
 if [ -z $1 ]; then
-    echo "LMTOY>>  Usage: path=DATA_LMT obsnum=OBSNUM ..."
-    echo "LMTOY>>  $version"
+    echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
     echo ""
     echo "See lmtoy_reduce.md for examples on usage"
     exit 0
+else
+    echo "LMTOY>> $version"
 fi
 
 
@@ -59,6 +60,7 @@ noise_sigma=1
 b_order=0
 stype=2
 sample=-1
+otf_cal=0
 
 # unset a view things, since setting them will give a new meaning
 unset vlsr
@@ -156,6 +158,7 @@ if [ $newrc = 1 ]; then
     echo otf_b=$otf_b               >> $rc
     echo otf_c=$otf_c               >> $rc
     echo sample=$sample             >> $rc
+    echo otf_cal=$otf_cal           >> $rc
     
 
     echo "LMTOY>> this is your startup $rc file:"
@@ -187,6 +190,11 @@ fi
 if [ $makespec = 1 ]; then
     echo "LMTOY>> process_otf_map2 in 2 seconds"
     sleep 2
+    if [ $otf_cal = 1 ]; then
+	use_otf_cal="--use_otf_cal"
+    else
+	use_otf_cal=""
+    fi
     process_otf_map2.py \
 	-p $p_dir \
 	-o $s_nc \
@@ -195,6 +203,7 @@ if [ $makespec = 1 ]; then
 	--bank 0 \
 	--stype $stype \
 	--use_cal \
+	  $use_otf_cal \
 	--x_axis VLSR \
 	--b_order $b_order \
 	--b_regions $b_regions \
@@ -205,7 +214,7 @@ fi
 #		    --slice [-1000,1000] \
 #		    --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
 
-# bug:  --use_otf_cal does not work here
+# bug:  --use_otf_cal does not work here?? (maybe it does now)
 # bug?   x_axis FLSR doesn't seem to go into freq mode
 
 
@@ -302,7 +311,7 @@ if [ $viewcube = 1 ]; then
 fi
 
 if [ ! -z $NEMO ]; then
-    echo "LMTOY>>    Some NEMO post-processing"
+    echo "LMTOY>> Some NEMO post-processing"
 
     # cleanup from a previous run
     rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 \
@@ -315,9 +324,9 @@ if [ ! -z $NEMO ]; then
 
 	ccdspec $s_on.ccd > $s_on.spectab
 	ccdstat $s_on.ccd bad=0 robust=t planes=0 > $s_on.cubestat
-	echo "LMTOY>>    STATS  $s_on.ccd     centerbox robust"
+	echo "LMTOY>> STATS  $s_on.ccd     centerbox robust"
 	ccdsub  $s_on.ccd -    centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
-	echo "LMTOY>>    STATS  $s_on.wt.ccd  centerbox robust"
+	echo "LMTOY>> STATS  $s_on.wt.ccd  centerbox robust"
 	ccdsub  $s_on.wt.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
 
 	# convert flux flat to noise flat
