@@ -54,7 +54,7 @@ if True:
     for arg in sys.argv[1:]:
         o_list.append(int(arg))
     if len(o_list) == 0:
-        print("Provide obsnum list on the commandline")
+        print("ERROR: provide an obsnum list on the commandline, e.g. 33551")
         sys.exit(0)
     print('read obsnum %d observations\n'%(len(o_list)))
     
@@ -116,9 +116,9 @@ for iobs in range(len(o_list)):
         del nc
 
 # make plot and report results
-pl.ion()
+#pl.ion()
 pl.figure(num=1,figsize=(12,8))
-pl.clf()
+#pl.clf()
 
 print(' ')
 print('Bad Channel Threshold = %6.1f'%(bc_threshold))
@@ -144,4 +144,5 @@ for ic in range(nchassis):
 print('-----------------------')
 
 pl.savefig('sbc.png')
-#pl.show()
+print("Wrote sbc.png")
+pl.show()
