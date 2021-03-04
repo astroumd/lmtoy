@@ -7,7 +7,9 @@ E.g. *pixel/cell/beam* and *board/band/chassis* are notorious. Currently
 
 
 * **band**:  coherent section in frequency space. For **RSR** there are 6 bands, sometimes the word **board** is used as well.
-LSR also uses this keyword, but there is currently only board=0 for LSR.
+LSR also uses this keyword.  
+
+* **bank**:  OTF uses this, it's always 0.  There are 2 slots (bank 0 and 1) in the data file, but only 0 is used.
 
 * **beam**:   in the 4x4 multi-beam. Not to be confused with the **FWHM**.  At 115 GHz the **FWHM** is about 16", at 86 GHz about 21".
 The beam separation is 27.8"
