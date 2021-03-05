@@ -64,7 +64,8 @@ process_otf_map2.py -p $p_dir \
 		    --slice [-350,350] \
 		    --eliminate_list 0 
 fi
-#		    --slice [-1000,1000] \
+#		    --slice [-1058,1018] \
+
 #		    --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
 
 # bug:  --use_otf_cal does not work here
