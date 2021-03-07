@@ -37,8 +37,8 @@ obsid=""
 newrc=0
 #            - procedural
 makespec=1
-makewf=1
 makecube=1
+makewf=0
 viewspec=0
 viewcube=0
 #            - meta parameters that will compute other parameters for SLR scripts
