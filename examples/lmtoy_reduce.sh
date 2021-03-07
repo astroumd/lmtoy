@@ -13,7 +13,7 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="lmtoy_reduce: 2-mar-2021"
+version="lmtoy_reduce: 7-mar-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -228,10 +228,10 @@ if [ $viewspec = 1 ]; then
 	-i $s_nc \
         --pix_list $pix_list \
 	--rms_cut $rms_cut \
-	--plot_range=-1,3
+	--plot_range=-1,3 \
+	--plots ${s_on}_specviews
+
 fi
-# --show_all_pixels \
-    # --show_pixel 10 \
 
 # show spectra, each pixel gets a different curve/color
 view_spec_point.py \
@@ -239,7 +239,7 @@ view_spec_point.py \
     --pix_list $pix_list \
     --rms_cut $rms_cut \
     --location $location \
-    --plots ${src}_specpoint,png,1
+    --plots ${s_on}_specpoint,png,1
 
 view_spec_point.py \
     -i $s_nc \
@@ -247,7 +247,7 @@ view_spec_point.py \
     --rms_cut $rms_cut \
     --location $location \
     --radius 20 \
-    --plots ${src}_specpoint,png,2
+    --plots ${s_on}_specpoint,png,2
 
 #  convert SpecFile to waterfall in fits format
 if [ $makewf = 1 ]; then
