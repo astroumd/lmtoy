@@ -92,6 +92,16 @@ not all the ones from the 8-jan-2021 list.
   internal SpecFIle to contain one  pixel at (0,0) with 1 channel of
   intensity 1.0.  See also Appendix C in the SLR manual.
 
+1. The **lmtoy_reduce** also writes a "wt2" and "wt3" map, to aid in combining
+   maps at the cube stage, without having to go through the specfiles.
+
+1. $DATA_LMT is now more used (dreampy3 was already). 
+
+1. Tsys spectra are now stored as Data.Tsys(ncal,npix,nchan) as of March 6, 2021.
+   If there are embedded CAL's in a MAP, and those are used in the calibration,
+   each CAL will be stored as a separate spectrum for each pixel. The **view_spect_file**
+   script will display them.
+
 # A wishlist
 
 In no particular order, there are some remaining things on the wish
@@ -223,8 +233,9 @@ added a few that Mark Heyer listed in his reports.
   For example, the initial run has a restfreq default for CO, but for some crazy line XY at
   115.38211 GHz a new narrower cube is made:
   
-      ./lmtoy_reduce.sh path=   obsnum=79448 obsid=_CO slice=[-100,100] 
-      ./lmtoy_reduce.sh path=   obsnum=79448 obsid=_ZZ slice=[-100,100] restfreq=115.38211 dv=50 dw=100
+      ./lmtoy_reduce.sh obsnum=79448 obsid=_CO slice=[-100,100] 
+      ./lmtoy_reduce.sh obsnum=79448 obsid=_ZZ slice=[-100,100] restfreq=115.38211 dv=50 dw=100dth
+      
 
   And any repeat runs now with
 
@@ -291,3 +302,44 @@ Having so much work to do for a little does not encourage app hacking.
 I wanted an option to enable/disable edge blanking.... it's now #if hardcoded. There
 should be a better way to pass parameters and provide help.
 
+
+
+# Masking / Blanking file
+
+Any such ascii files should allow comments in the form that python/bash allow:
+a line starting with '#' is preferred, but we should also allow a '# comment'
+after any legal commands/directives.
+
+## RSR
+
+For RSR there are already two formats.
+
+1.  rsr_driver.py uses the --rfile file, which is an ascii file, with comma separated
+    obsnum,chassis,band integers.  obsnum can also be a range by using a dash between
+    the two integers,e.g.
+
+       12345,2,3
+       12350-12360,1,2
+
+2.  rsr_sum.py uses a blanking file which contain three sections:  windows,obslist and
+    blankings.
+    1. windows define the sections where baseline fits are done, useful to ignore
+       strong lines
+    2. obslist is either a comma separated list of obsnums, or a range of obsnums
+    3. blankings contain two or more items: obslist, chassis and band:freq
+
+           #    
+           windows[1]=  [(87.0,91.5)]
+           #
+           28190,28191
+           58618-58620
+           #
+           7553          2   {1: [(74.,75.)]}
+
+Question:   in RSR data typically there are a number of repetitions, each of order 30". But in either
+flaggings a selection of chassis/band seems to be applied to all repetitions.
+    
+## SLR
+
+There is no blanking file for SLR. A few keywords allow blanking by pixel/beam (pix_list), by rms value (rms_cut)
+and some hard to determine list of sample ranges per pixel (sample).
