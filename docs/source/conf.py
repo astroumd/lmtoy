@@ -13,6 +13,8 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../../lmtoy'))
+sys.path.insert(0, os.path.abspath('../../SpectralLineReduction/lmtslr'))
+sys.path.insert(0, os.path.abspath('../../dreampy3/dreampy3'))
 
 
 # -- Project information -----------------------------------------------------
