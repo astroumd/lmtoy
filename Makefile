@@ -42,11 +42,13 @@ help install:
 GIT_DIRS = SpectralLineReduction dreampy3 maskmoment RSR_driver nemo Montage
 
 git:  $(GIT_DIRS)
+	@echo Last git: `date` >> git.log
 
 pull:
 	@echo -n "lmtoy: "; git pull
 	-@for dir in $(GIT_DIRS); do\
 	(echo -n "$$dir: " ;cd $$dir; git pull); done
+	@echo Last pull: `date` >> git.log
 
 status:
 	@echo -n "lmtoy: "; git status -uno
