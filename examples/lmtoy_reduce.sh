@@ -13,7 +13,7 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="lmtoy_reduce: 7-mar-2021"
+version="lmtoy_reduce: 10-mar-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -354,6 +354,9 @@ if [ ! -z $NEMO ]; then
 	cat $s_on.head1 $s_on.data1 > $s_on.nf.fits
 
 	ccdsmooth $s_on.n.ccd - dir=xyz nsmooth=5 | ccdfits - $s_on.nfs.fits fitshead=$s_fits
+
+	# QAC_STATS:
+	ccdstat $s_on.ccd bad=0 qac=t
 
 	# hack
 	fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.specstab
