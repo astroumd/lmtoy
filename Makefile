@@ -7,6 +7,9 @@ SHELL = /bin/bash
 # use standard wget or Peter's caching wgetc 
 WGET = wget
 
+# use python3 or anaconda3
+PYTHON = anaconda3
+
 URL1  = https://github.com/teuben/SpectralLineReduction
 URL1a = https://github.com/teuben/SpectralLineReduction
 URL2  = https://github.com/lmt-heterodyne/dreampy3
@@ -105,7 +108,7 @@ RSR_driver:
 # step 1 (or skip and use another python)
 #        after this install, the start_python.sh should be sourced in the shell
 install_python:
-	./install_anaconda3 wget=$(WGET)
+	./install_$(PYTHON) wget=$(WGET)
 
 lmtoy_venv:
 	python3 -m venv lmtoy_venv
