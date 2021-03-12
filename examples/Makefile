@@ -84,7 +84,9 @@ ONT=1 2 4
 bench4:
 	@echo ONT=$(ONT)
 	-@for i in $(ONT); do\
-	(echo $$i;OMP_NUM_THREADS=$$i $(TIME) ./irc_reduce.sh > irc$$i.log 2>&1); done
+	(echo -n "$$i ";OMP_NUM_THREADS=$$i $(TIME) ./irc_reduce.sh > irc$$i.log 2>&1); done
+	-@for i in $(ONT); do\
+	(echo -n "$$i ";grep CPU irc$$i.log); done
 
 
 test1:
