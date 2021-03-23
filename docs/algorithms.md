@@ -41,6 +41,18 @@ For Sequioa the ifproc and roach data are sampled at 125 Hz and 10 Hz resp., hav
 need to be aligned to build the **data[]** for further calibration and analysis. This interpolation process is
 somewhat expensive. Effective processing speed is about 20-40 MB/sec for this *process* step.
 
+Given the SDFITS agreement a spectrum based data structure that could be written as
+
+      SpectralData[ra,dec,band,pol,chan]
+
+where effectively each parameter (but not all at the same time?) can be 1 value. For LMT:
+
+1. SLR/OTF :  ra,dec>1  band=1  pol=1  chan=2k,4k,8k
+1. SLR/BS  :  ra,dec=1  band=1  pol=1  chan=2k,4k,8k
+1. SLR/PS  :  ra,dec=1  band=1  pol=1  chan=2k,4k,8k
+1. SLR/OTF :  ra,dec>1  band=1  pol=1  chan=2k,4k,8k
+2. RSR     :  ra,dec=1  band=6  pol=1  chan=256
+
 ## OPS
 
 Various operations are needed on spectra.
