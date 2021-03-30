@@ -39,7 +39,7 @@ not all the ones from the 8-jan-2021 list.
   differences. Need a more detailed analysis like in SLR Appendix C?
 
 1. by default, now only cells will be given a value if there was at
-  least one pixel in it. This only works well for convex areas. For
+v  least one pixel in it. This only works well for convex areas. For
   small cell size there can be empty cells surrounded by filled
   cells. In these circumstances it would be useful to turn this option
   to the old default, based on weight from the convolution.
@@ -102,6 +102,15 @@ not all the ones from the 8-jan-2021 list.
    each CAL will be stored as a separate spectrum for each pixel. The **view_spect_file**
    script will display them.
 
+1. Some plotting functions are now using the plots module, which allows scripts to
+   use the --plots method to easily switch between on-screen plots and files (e.g. png
+   or pdf).
+
+1. A -a (or --model) flag to spec_driver_fits (the gridder) was re-implemented with a model
+   filename (convolved with LMT beam) so the gridding can be checked. This is currently
+   dumped in channel-0 with the then wrong WCS.  It is meant for debugging, and not for
+   users. In theory we can make this a more formal feature via grid_data.py
+
 # A wishlist
 
 In no particular order, there are some remaining things on the wish
@@ -147,6 +156,8 @@ added a few that Mark Heyer listed in his reports.
 1. RFI blanking - do we even need this?
 
 1. Add a time column to the SpecFile (--sample can solve this too)
+
+1. SpecFile vs. SDFITS.
 
 1. Masking file with more flexible filtering:
   - by pixel number
