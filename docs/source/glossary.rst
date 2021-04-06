@@ -72,3 +72,23 @@ E.g. *pixel/cell/beam* and *board/band/chassis* are notorious. Currently
 
 
 
+
+Single Dish Math
+----------------
+
+The meat of Single Dish math is getting the system temperature
+
+
+.. math::
+
+   T_{sys} = T_{amb} { { SKY } \over { HOT - SKY } }
+
+and using this system temperature, calculating the signal by comparing an *ON* and *OFF* position,
+assuming there is only sky in the *OFF*:
+
+.. math::
+
+   T_A = T_{sys}  {   { ON - OFF } \over {OFF} }
+
+All of these have values for each channel. How exactly the :math:`T_{sys}` is computed (scalar, vector,
+mean/median) is something we generally leave open.
