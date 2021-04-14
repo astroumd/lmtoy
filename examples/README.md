@@ -125,3 +125,16 @@ as well as a CPU time output. Here are some examples how long the benchmark take
         3928 ./spectrometer/roach3/roach3_91111_0_1_NGC5194_2020-02-20_060330.nc
      3370720 ./spectrometer/roach3/roach3_91112_0_1_NGC5194_2020-02-20_060348.nc
 
+## Filenames:   (ObsNum,SubObsNum,ScanNum)
+
+A keen observer may have noticed some oddities in the filenames, for example for the IFPROC the obsnum has 6 digits,
+for the ROACH files they have 5. The **ObsNum** is followed by two other integers, the **SubObsNum** and the
+**ScanNum**
+
+For IRC we have **079447_00_0001** and **079448_01_0000** (this is a mistake in the 2nd, Map, data)
+but for M51/M31 we have **091111_00_0001** and **091112_00_0001**, which is the expected pattern.
+
+Kamal says the ScanNum starts at 0 for Ps and at 1 for OTF.  The
+ObsPgms increment the SubObsNum if they are in SubObsMode.
+
+Examples of RSR: 010185_00_0001, but we do have 092085_00_0000 and 092087_00_0001 that don't fits the 0,1 pattern.
