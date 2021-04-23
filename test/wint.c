@@ -13,11 +13,12 @@
 
 
  wint junk5 100000 2000 4000,200 500000,50000 10
+ 543504 = 70%
  wint:     21.69user 5.96system 0:28.86elapsed 95%CPU
- gzip:
- gunzip:
- 
- */
+ gzip:    151.46user 2.73system 2:34.72elapsed 99%CPU
+ gunzip:   16.47user 4.44system 0:24.34elapsed 85%CPU
+
+*/
 
 #include <nemo.h>
 
