@@ -11,7 +11,7 @@
  wint junk4 100000 2000 4000,200 100000,10000 10
  465688  = 60%
 
-
+ AMP = 500000 is more realistic
  wint junk5 100000 2000 4000,200 500000,50000 10
  543504 = 70%
  wint:     21.69user 5.96system 0:28.86elapsed 95%CPU
