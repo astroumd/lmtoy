@@ -19,6 +19,8 @@ URL5  = https://github.com/teuben/nemo
 URL6  = https://github.com/teuben/maskmoment
 URL7  = https://github.com/gopastro/sculpt
 URL8  = https://github.com/LMTdevs/RSR_driver
+URL9a = https://github.com/toltec-astro/dasha
+URL9b = https://github.com/toltec-astro/tollan
 
 .PHONY:  help install build
 
@@ -104,6 +106,12 @@ sculpt:
 RSR_driver:
 	git clone $(URL8)
 
+dasha:
+	git clone $(URL9a)
+
+tollan:
+	git clone $(URL9b)
+
 
 # step 1 (or skip and use another python)
 #        after this install, the start_python.sh should be sourced in the shell
@@ -160,6 +168,11 @@ install_dreampy3: dreampy3 RSR_driver
 	awk -F= '{print $$1}'  requirements.txt > requirements_lmtoy.txt ; \
 	pip3 install -r requirements_lmtoy.txt; \
 	pip3 install -e .)
+
+install_dasha: dasha tollan
+	@echo python3 dasha
+	(cd tollan; pip3 install -e .)
+	(cd dasha; pip3 install -e .)
 
 # step 4 (optional)
 install_montage:  Montage
