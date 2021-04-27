@@ -359,3 +359,23 @@ flaggings a selection of chassis/band seems to be applied to all repetitions.
 
 There is no blanking file for SLR. A few keywords allow blanking by pixel/beam (--pix_list), by rms value (--rms_cut)
 and some hard to determine list of sample ranges per pixel (--sample).
+
+## Live Stream netCDF/RAW data
+
+Given that the procedure to read live stream data is something like the following:
+
+  
+        nc = netCDF4.Dataset(filename)
+	while True:
+		nc.sync()
+                datatime = nc.variables['Data.Integrate.time'][:]
+                print("Found %d " % len(datatime))
+                #check for change in BufPos to see when ON is done
+                #slice accordingly and do the incremental work
+                sleep(1)
+
+
+any re-design of the SLR (RSR to a lesser extent?) is quite major, given the extra
+constraint that the IFPROC and 4 ROACH file each have their own clock, but mostly
+the 125Hz IFPROC needs to be re-sampled for the 10Hz ROACH files.more j
+	    
