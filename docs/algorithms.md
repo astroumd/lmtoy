@@ -52,6 +52,8 @@ where effectively each parameter (but not all at the same time?) can be 1 value.
 1. SLR/PS  :  ra,dec=1  band=1  pol=1  chan=2k,4k,8k
 1. SLR/OTF :  ra,dec>1  band=1  pol=1  chan=2k,4k,8k
 2. RSR     :  ra,dec=1  band=6  pol=1  chan=256
+3. OMAYA   :  ra,dec>1  band=1  pol=2  chan=2k,4k,8k
+
 
 ## OPS
 
@@ -72,6 +74,23 @@ Various operations are needed on spectra.
 1. gridding to a spatial domain
 
 1. exporting to FITS/CLASS/ECSV
+
+We differentiate three different data operations here:
+
+0. **Process**:  this is the process that converts RAW data files (taking into account different instruments)
+into SDFITS format for any of the following (two) operations
+
+1. **Stacking**: naively this applies to data such as taken with the RSR. Spectra are all taken at the same sky position,
+and eventually the good spectra will be stacked to gain S/N. This results in a single spectrum, and common
+formats for output are ECSV and 1D FITS.
+
+2. **Gridding**: naively this applies to data such as taken with the LSR. Spectra at different arbitrary sky positions
+in a region of the sky are convolved and gridded on a regular grid. The common output format for this
+is the popular 3D FITS cube.
+
+Advanced topics such as stacking grids, and using IFU type concepts such as used by the MUSE instrument, can be discussed
+later.
+
 
 ## STATS
 
@@ -105,3 +124,75 @@ Various operations are needed on spectra.
 		  		  		  
 		  
 		  
+## Parameters
+
+The lmtoy_reduce.md document described the parameters for SLR, which to some degree could guide us
+to the RAW -> SDFITS conversion and what parameters are part of that conversion. A more advanced working
+document is in **lmtoy_reduce_Parameters_v3.docx** (WIP)
+Obviously a similar step is needed for RSR and the parameters will be different.
+
+The **obsnum** is what all data have in common, as well as combining a series of them to make
+a final spectrum/cube.
+
+### RSR Process:
+
+The step from RAW to Spectrum has the following parameters:
+
+| Keyword        | Description  |
+| -----------    |:------------ |
+| b              |  order of baseline poly       |
+| c              |  chassis |
+| smoothing      |  Number of channels of a boxcar lowpass filter |
+| repeat_thr     | which part of the spectrum to work on |
+| waterfall-file | name of waterfall plot file |
+| exclude        | A set of frequencies to exclude from baseline calculations |
+
+There are two masking files in trend that can take over command line flags
+
+### RSR Stacking:
+
+Currently these are in the **process** step in RSR.
+
+### SLR Process:
+
+The step from RAW to SpecFile has the following parameters:
+
+| Keyword     | Description  |
+| ----------- |:------------ |
+| b_regions   |  region of baselines |
+| b_order     |  order of poly       | 
+| l_regions   |  where the line is (needed?) |
+| slice       | which part of the spectrum to work on |
+| stype       |  method how to combine the OFF to make a real ON |
+| pix_list    | which pixels to keep |
+| otf_cal     | method how to compute Tsys |
+
+
+### SLR Gridding:
+
+The step from SpecFile to FITS cube has the following parameters:
+
+| Keyword     | Description  |
+| ----------- |:------------ |
+| pixel       | pixel size (should be 1/2 resolution ) |
+| otf_select  | kernel function |
+| rmax        | convolution size |
+| edge        | fuzzy edge ? |
+| pix_list    | which pixels to keep |
+| rms_cut     | filtering noisy spectra |
+| sample      | which times to mask out |
+| noise_sigma | ? |
+
+
+
+
+## Figures: SLR
+
+
+![figure](figures/hot-sky_slr.png "Hot and Sky")
+![figure](figures/Tsys_slr.png "Tsys")
+
+## Figures: RSR
+
+![afigure](figures/Tsys_rsr.png)
+![afigure](figures/Ta_rsr.png)

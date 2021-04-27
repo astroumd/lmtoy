@@ -37,7 +37,7 @@ LMT software is very instrument specific:
   * [dreampy3](https://github.com/lmt-heterodyne/dreampy3)
   * [RSR_driver](https://github.com/LMTdevs/RSR_driver)
 
-* TolTEC (later in 2021)
+* TolTEC (later in 2021) - [private](https://github.com/toltec-astro)
   * TolTecA
   * CitLali
   * Dash
