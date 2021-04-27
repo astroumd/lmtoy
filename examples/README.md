@@ -39,6 +39,7 @@ These amend the examples given in SpectralLineReduction.
       CPU             300"         200"         70"
       processing rate  40 MB/s      20 MB/s     20 MB/s
       memory         10.5 GB       4.0 GB      1.7 GB
+                  ?? 12.1 ??
       ntime           834k         231k       101k
       nspectra        340k         228k        92k
       nchan          2048         2048        2048
