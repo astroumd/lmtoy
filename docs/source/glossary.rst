@@ -40,6 +40,8 @@ E.g. *pixel/cell/beam* and *board/band/chassis* are notorious. Currently
 
     * **LSR**: (Spectral Line Reduction):  the software reduction Sequoia (3mm) data, and presumably in the future, Omaya (1mm)
 
+    * **obsnum**:  Observatation Number. This is not all, obsnum is part of the (**ObsNum**,**SubObsNum**,**ScanNum**) tuple.
+
     * **pixel**: synonym for **beam** as in multi-beam. The keyword --pix_list= is used to select pixels (0..15) for processing.
 
     * **ramp**: The ramp is the area where not all beams have
@@ -61,6 +63,8 @@ E.g. *pixel/cell/beam* and *board/band/chassis* are notorious. Currently
       receiver operating between 70 and 110 GHz in 6 separate bands of
       256 channels each.  Typical resolution: 100 km/s.  Each pixel is
       really dual-beam dual-pol.
+    
+    * **scannum**:  Scan Number - see **obsnum**    
 
     * **SDFITS**: Single Dish **FITS** format, normally used to store
       raw or even calibrated spectra in a FITS BINTABLE format.  Each
@@ -69,8 +73,7 @@ E.g. *pixel/cell/beam* and *board/band/chassis* are notorious. Currently
 
     * **SFL**: Sanson-Flamsteed projection, used in LMT **FITS** files (the GLS - GLobal Sinusoidal is similar to SFL).
 
-
-
+    * **subobsnum**:  Sub-Observatation Number - see **obsnum**
 
 
 Single Dish Math
@@ -92,3 +95,4 @@ assuming there is only sky in the *OFF*:
 
 All of these have values for each channel. How exactly the :math:`T_{sys}` is computed (scalar, vector,
 mean/median) is something we generally leave open.
+
