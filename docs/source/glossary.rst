@@ -40,7 +40,8 @@ E.g. *pixel/cell/beam* and *board/band/chassis* are notorious. Currently
 
     * **LSR**: (Spectral Line Reduction):  the software reduction Sequoia (3mm) data, and presumably in the future, Omaya (1mm)
 
-    * **obsnum**:  Observatation Number. This is not all, obsnum is part of the (**ObsNum**,**SubObsNum**,**ScanNum**) tuple.
+    * **obsnum**:  Observatation Number. This is not all, obsnum is part of the 
+	(**ObsNum** , **SubObsNum** , **ScanNum**) tuple.
 
     * **pixel**: synonym for **beam** as in multi-beam. The keyword --pix_list= is used to select pixels (0..15) for processing.
 
