@@ -75,16 +75,19 @@ Various operations are needed on spectra.
 
 1. exporting to FITS/CLASS/ECSV
 
-We differentiate three different data operations here:
+We differentiate a number of data operations here:
 
-0. **Process**:  this is the process that converts RAW data files (taking into account different instruments)
+1. **Process**:  this is the process that converts RAW data files (taking into account different instruments)
 into SDFITS format for any of the following (two) operations
+
+1. **Operations**:  these are the operations (flagging, smoothing, ...) that define the data good enough for
+either Stacking or Gridding.
 
 1. **Stacking**: naively this applies to data such as taken with the RSR. Spectra are all taken at the same sky position,
 and eventually the good spectra will be stacked to gain S/N. This results in a single spectrum, and common
 formats for output are ECSV and 1D FITS.
 
-2. **Gridding**: naively this applies to data such as taken with the LSR. Spectra at different arbitrary sky positions
+1. **Gridding**: naively this applies to data such as taken with the LSR. Spectra at different arbitrary sky positions
 in a region of the sky are convolved and gridded on a regular grid. The common output format for this
 is the popular 3D FITS cube.
 
@@ -96,6 +99,8 @@ later.
 
 
 ## Correspondence Table
+
+Here's a reminder (not complete) on where in the code the fundamental algorithms and operations are:
 
 
       TA (eq.1)   lmtslr.spec.RoachSpec.reduce_spectra()
