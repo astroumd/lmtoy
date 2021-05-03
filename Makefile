@@ -7,6 +7,9 @@ SHELL = /bin/bash
 # use standard wget or Peter's caching wgetc 
 WGET = wget
 
+# use python3 or anaconda3
+PYTHON = anaconda3
+
 URL1  = https://github.com/teuben/SpectralLineReduction
 URL1a = https://github.com/teuben/SpectralLineReduction
 URL2  = https://github.com/lmt-heterodyne/dreampy3
@@ -14,9 +17,14 @@ URL3  = https://github.com/lmt-heterodyne/SpectralLineConfigFiles
 URL4  = https://github.com/Caltech-IPAC/Montage
 URL5  = https://github.com/teuben/nemo
 URL6  = https://github.com/teuben/maskmoment
+URL7  = https://github.com/gopastro/sculpt
+URL8  = https://github.com/LMTdevs/RSR_driver
+URL9a = https://github.com/toltec-astro/dasha
+URL9b = https://github.com/toltec-astro/tollan
+URL10a= https://github.com/astropy/specutils
+URL10b= https://github.com/pyspeckit/pyspeckit
 
 .PHONY:  help install build
-
 
 
 help install:
@@ -36,11 +44,41 @@ help install:
 	@echo "    make status                view git status in all repos"
 	@echo ""
 
-config:
+# git directories we should have here
+
+GIT_DIRS = SpectralLineReduction dreampy3 maskmoment RSR_driver nemo Montage
+
+git:  $(GIT_DIRS)
+	@echo Last git: `date` >> git.log
+
+pull:
+	@echo -n "lmtoy: "; git pull
+	-@for dir in $(GIT_DIRS); do\
+	(echo -n "$$dir: " ;cd $$dir; git pull); done
+	@echo Last pull: `date` >> git.log
+
+status:
+	@echo -n "lmtoy: "; git status -uno
+	-@for dir in $(GIT_DIRS); do\
+	(echo -n "$$dir: " ;cd $$dir; git status -uno); done
+
+
+config:  lmtoy_local.sh lmtoy_local.csh
 	./configure
 
+# local variations that override the lmtoy_start version
+lmtoy_local.sh:
+	@echo '# local LMTOY settings can go here'         > lmtoy_local.sh
+	@echo '# export DATA_LMT=data_lmt'                >> lmtoy_local.sh
+	@echo '# export CORR_CAL_DIR=$DATA_LMT/rsr/cal'   >> lmtoy_local.sh
+	@echo '# export HDF5_DISABLE_VERSION_CHECK=2'     >> lmtoy_local.sh
 
-git:  SpectralLineReduction dreampy3 maskmoment
+lmtoy_local.csh:
+	@echo '# local LMTOY settings can go here'         > lmtoy_local.csh
+	@echo '# setenv DATA_LMT data_lmt'                >> lmtoy_local.csh
+	@echo '# setenv CORR_CAL_DIR $DATA_LMT/rsr/cal'   >> lmtoy_local.csh
+	@echo '# setenv HDF5_DISABLE_VERSION_CHECK 2'     >> lmtoy_local.csh
+
 
 SpectralLineReduction:
 	git clone --branch teuben1 $(URL1a)
@@ -64,13 +102,35 @@ nemo:
 maskmoment:
 	git clone --branch teuben1 $(URL6)
 
+sculpt:
+	git clone $(URL7)
+
+RSR_driver:
+	git clone $(URL8)
+
+dasha:
+	git clone $(URL9a)
+
+tollan:
+	git clone $(URL9b)
+
+specutils:
+	git clone $(URL10a)
+
+pyspeckit:
+	git clone $(URL10b)
+
+
 # step 1 (or skip and use another python)
 #        after this install, the start_python.sh should be sourced in the shell
 install_python:
-	./install_anaconda3 wget=$(WGET)
+	./install_$(PYTHON) wget=$(WGET)
 
 lmtoy_venv:
 	python3 -m venv lmtoy_venv
+
+pip:
+	pip install -r requirements.txt
 
 
 # I find venv not working for me during development.
@@ -95,10 +155,14 @@ install_lmtslr:  SpectralLineReduction
 	pip3 install -r requirements_lmtoy.txt; \
 	pip3 install -e .)
 	@echo C
-	(cd SpectralLineReduction/C ; make install; ./spec_driver_fits)
+	(cd SpectralLineReduction/C ; make clean install; ./spec_driver_fits)
+
+update_lmtslr:  SpectralLineReduction
+	@echo C
+	(cd SpectralLineReduction/C ; make clean install; ./spec_driver_fits)
 
 # step 3
-install_dreampy3: dreampy3 lmtoy_venv
+install_dreampy3_venv: dreampy3 RSR_driver lmtoy_venv
 	@echo python3 dreampy3
 	(cd dreampy3; \
 	source ../lmtoy_venv/bin/activate; \
@@ -106,17 +170,37 @@ install_dreampy3: dreampy3 lmtoy_venv
 	pip3 install -r requirements_lmtoy.txt; \
 	pip3 install -e .)
 
+install_dreampy3: dreampy3 RSR_driver
+	@echo python3 dreampy3
+	(cd dreampy3; \
+	awk -F= '{print $$1}'  requirements.txt > requirements_lmtoy.txt ; \
+	pip3 install -r requirements_lmtoy.txt; \
+	pip3 install -e .)
+
+install_dasha: dasha tollan
+	@echo python3 dasha
+	(cd tollan; pip3 install -e .)
+	(cd dasha; pip3 install -e .)
+
+install_astropy: specutils pyspeckit
+	@echo specutils pyspeckit
+	(cd specutils; pip3 install -e .)
+	(cd pyspeckit; pip3 install -e .)
+
 # step 4 (optional)
 install_montage:  Montage
 	(cd Montage; make)
-	# @todo: install the (2?) python interfaces
+	@echo  @todo: install the python interface for Montage
 
 # step 5 (optional)
 install_nemo:  nemo
-	(cd nemo; ./configure; make build MAKELIBS=corelibs)
+	(cd nemo; ./configure; make build1 build2 build3 MAKELIBS=corelibs)
 
 install_nemo_pgplot:  nemo
-	(cd nemo; ./configure --with-yapp=pgplot; make build MAKELIBS=corelibs)
+	(cd nemo; ./configure --with-yapp=pgplot; make build1 build2 build3 MAKELIBS=corelibs)
+
+update_nemo:	nemo
+	(cd nemo; make build2a build3 MAKELIBS=corelibs)
 
 install_maskmoment: maskmoment
 	(cd maskmoment; pip install -e .)
@@ -131,14 +215,3 @@ common: lmtoy_venv
 	pip install -e dreampy3)
 
 
-# git pull on all repos we use here
-DIRS = SpectralLineReduction nemo Montage
-pull:
-	@echo -n "lmtoy: "; git pull
-	-@for dir in $(DIRS); do\
-	(echo -n "$$dir: " ;cd $$dir; git pull); done
-
-status:
-	@echo -n "lmtoy: "; git status -uno
-	-@for dir in $(DIRS); do\
-	(echo -n "$$dir: " ;cd $$dir; git status -uno); done

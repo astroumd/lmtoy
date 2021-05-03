@@ -1,0 +1,15 @@
+notebooks evolve:
+ These three initially checked notebooks are old, but were updated to work wiht the current LMTSLR
+
+BS_example.ipynb
+GridMapExample.ipynb
+HCN10Reduction.ipynb
+
+This is unfinished.
+
+There are also 3 notebooks in the root directory of LMTSLR:
+
+
+BS_example.ipynb
+PipelineProcessExample.ipynb  (OTF, but cheating via the -c parfile approach)
+PS_EXAMPLE.ipynb

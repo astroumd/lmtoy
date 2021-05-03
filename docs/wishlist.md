@@ -1,12 +1,12 @@
 # Overview of changes to LMTSLR
 
-This list also contains the ones Mark Heyer sent around earlier, but
+This list also contains the suggestions  Mark Heyer sent around earlier, but
 not all the ones from the 8-jan-2021 list.
 
-1. process spectra as float, the RAW data are double, saving 50%
-  memory. In fact, the RAW data are actually integers (but 16bit not
-  enough) , some compression schemes could be used to shrink
-  that. Potentially more memory could be saved if the selected
+1. SpecFile now has spectra as float, the RAW data were double, thus
+  saving 50% memory. In fact, the RAW data are actually integers (but
+  16bit not enough) , some compression schemes could be used to shrink
+  that if need be. Potentially more memory could be saved if the selected
   *slice*, not the full spectral band, are retrieved in memory. This
   depends if the data is doppler tracked or not (which it is).
 
@@ -16,12 +16,12 @@ not all the ones from the 8-jan-2021 list.
   this turned up as a 1 cell offset that was fixed.  Segfaults show up
   as Error 11 in the gridder.  Non-square maps also suffer from
   another X-Y axis reversal, there is still an error left here.
-  [github issue on this]
+  [https://github.com/astroumd/lmtoy/issues/9]
 
 1. more header information passing from RAW to FITS, e.g. for ADMIT to
   work. Need to confirm if other things in CASA and MIRIAD also work
   correctly.
-  [github issue on this]
+  [https://github.com/astroumd/lmtoy/issues/12]
 
 1. the pipeline now outputs a lot more useful info (map extent in
   position and velocity, noise stats per pixel, etc.).  Some of the
@@ -39,26 +39,28 @@ not all the ones from the 8-jan-2021 list.
   differences. Need a more detailed analysis like in SLR Appendix C?
 
 1. by default, now only cells will be given a value if there was at
-  least one pixel in it. This only works well for convex areas. For
+v  least one pixel in it. This only works well for convex areas. For
   small cell size there can be empty cells surrounded by filled
   cells. In these circumstances it would be useful to turn this option
   to the old default, based on weight from the convolution.
 
-1. a number of NEMO based tools were added that might need a python
-  (astropy) equivalent if deemed useful. 
+1. a number of NEMO tools were added that might need a python
+  (astropy) equivalent if deemed useful.
 
 1. The script **lmtoy_reduce.sh** is a simple pipeline, intended not to
   need user input, other then the obsnum. See
   [lmtoy_reduce.md](../examples/lmtoy_reduce.md).  Script can also be
   re-run and learn from new parameters.
 
-1. There is a benchmark (IRC+10216) but it's not public data yet. Should we? who
-  is the PI? This is commissioning data with some "wrong" headerinfo, so
-  it's scientifically not correct. Keep it for developers only?
+1. There is a benchmark (IRC+10216, obsnum=79448) but it's not public
+  data yet. Should we? who is the PI? This is commissioning data with
+  some "wrong" headerinfo, so it's scientifically not correct. Keep it
+  for developers only?
 
-1. A new script **lmtinfo.py** that spits out some useful variables in "rc"
-  format. Used by the lmtoy_reduce.sh script. This could be expanded to
-  provide better guesses on baselining for example.
+1. A new script **lmtinfo.py** that spits out some useful variables in
+  "rc" (bash) format. Used by the **lmtoy_reduce.sh** script. This
+  could be expanded to provide better guesses on baselining for
+  example.
 
 1. rms_cut is now allowed to be negative.  This will cause it to compute
   a robust mean and std, and use (now per pixel!) a cuttof of
@@ -90,7 +92,28 @@ not all the ones from the 8-jan-2021 list.
 1. There is a new -a flag in **spec_driver_fits**, for which the output weight file
   (the -w flag) will contain the beam. This is achieved by rewriting the
   internal SpecFIle to contain one  pixel at (0,0) with 1 channel of
-  intensity 1.0.  See also Appendix C in the SLR manual.
+  intensity 1.0.  See also Appendix C in the SLR manual.  
+  **NOTE: the option has been removed in favor of the --model, see below**
+
+1. The **lmtoy_reduce** script also writes a "wt2" and "wt3" map, to aid in combining
+   maps at the cube stage, without having to go through the specfiles. Eventually
+   this will be cleaned up in favor of a single weight map.
+
+1. $DATA_LMT is now more used (dreampy3 was already using it). 
+
+1. Tsys spectra are now stored as Data.Tsys(ncal,npix,nchan) as of March 6, 2021.
+   If there are embedded CAL's in a MAP, and those are used in the calibration,
+   each CAL will be stored as a separate spectrum for each pixel. The **view_spect_file**
+   script will display them.
+
+1. Some plotting functions are now using the plots module, which allows scripts to
+   use the --plots method to easily switch between on-screen plots and files (e.g. png
+   or pdf).
+
+1. A -a (or --model) flag to spec_driver_fits (the gridder) was re-implemented with a model
+   filename (convolved with LMT beam) so the gridding can be checked. This is currently
+   dumped in channel-0 with the then wrong WCS.  It is meant for debugging, and not for
+   users. In theory we can make this a more formal feature via grid_data.py
 
 # A wishlist
 
@@ -134,15 +157,17 @@ added a few that Mark Heyer listed in his reports.
   version so ADMIT can run on it.]   CASA should be good test for this.
   The make_spec_fits waterfall script has a --binning= option.
 
-1. RFI blanking - do we even need this?
+1. RFI blanking - do we even need this? Is the --sample flag good enough?
 
 1. Add a time column to the SpecFile (--sample can solve this too)
 
+1. SpecFile vs. SDFITS.
+
 1. Masking file with more flexible filtering:
-  - by pixel number
-  - by rms (absolute, or fractional [rms_cut < 0 can do that now])
-  - by time
-  - by sequence
+   - by pixel number
+   - by rms (absolute, or fractional [rms_cut < 0 can do that now])
+   - by time
+   - by sequence
   
   Inspired by miriad, the format could look at follows:
 
@@ -223,8 +248,9 @@ added a few that Mark Heyer listed in his reports.
   For example, the initial run has a restfreq default for CO, but for some crazy line XY at
   115.38211 GHz a new narrower cube is made:
   
-      ./lmtoy_reduce.sh path=   obsnum=79448 obsid=_CO slice=[-100,100] 
-      ./lmtoy_reduce.sh path=   obsnum=79448 obsid=_ZZ slice=[-100,100] restfreq=115.38211 dv=50 dw=100
+      ./lmtoy_reduce.sh obsnum=79448 obsid=_CO slice=[-100,100] 
+      ./lmtoy_reduce.sh obsnum=79448 obsid=_ZZ slice=[-100,100] restfreq=115.38211 dv=50 dw=100dth
+      
 
   And any repeat runs now with
 
@@ -252,7 +278,7 @@ Keyword names should make sense, have sensible defaults.
   via a NaN. I had a --min_neighbors idea.
 
 
-# Adding a variable from RAW -> SPECFILE ->  FITS
+# Procedure: Adding a variable from RAW -> SPECFILE ->  FITS
 
 string handling in particular is just out of this world, even in python.
 is that a netcdf oddity? It's nuts.
@@ -266,7 +292,7 @@ is that a netcdf oddity? It's nuts.
 
 
 
-# Adding another parameter to the gridding program
+# Procedure: Adding another parameter to the gridding program
 
 
 grid_map is probably the worst, it requires 8 times a similar
@@ -291,3 +317,65 @@ Having so much work to do for a little does not encourage app hacking.
 I wanted an option to enable/disable edge blanking.... it's now #if hardcoded. There
 should be a better way to pass parameters and provide help.
 
+
+
+# Masking / Blanking file
+
+Any such ascii files should allow comments in the form that python/bash allow:
+a line starting with '#' is preferred, but we should also allow a '# comment'
+after any legal commands/directives.
+
+## RSR
+
+For RSR there are already two formats for a masking/blanking file. They are closely
+related, and how a rather fine grained approach to masking:
+
+1.  rsr_driver.py uses the --rfile file, which is an ascii file, with comma separated
+    obsnum,chassis,band integers.  obsnum can also be a range by using a dash between
+    the two integers,e.g.
+
+       12345,2,3
+       12350-12360,1,2
+
+2.  rsr_sum.py uses a blanking file which contain three sections:  windows,obslist and
+    blankings.
+    1. windows define the sections where baseline fits are done, useful to ignore
+       strong lines
+    2. obslist is either a comma separated list of obsnums, or a range of obsnums
+    3. blankings contain two or more items: obslist, chassis and band:freq
+
+           #    
+           windows[1]=  [(87.0,91.5)]
+           #
+           28190,28191
+           58618-58620
+           #
+           7553          2   {1: [(74.,75.)]}
+
+Question:   in RSR data typically there are a number of repetitions, each of order 30". But in either
+flaggings a selection of chassis/band seems to be applied to all repetitions.
+    
+## SLR
+
+There is no blanking file for SLR. A few keywords allow blanking by pixel/beam (--pix_list), by rms value (--rms_cut)
+and some hard to determine list of sample ranges per pixel (--sample).
+
+## Live Stream netCDF/RAW data
+
+Given that the procedure to read live stream data is something like the following:
+
+  
+        nc = netCDF4.Dataset(filename)
+	while True:
+		nc.sync()
+                datatime = nc.variables['Data.Integrate.time'][:]
+                print("Found %d " % len(datatime))
+                #check for change in BufPos to see when ON is done
+                #slice accordingly and do the incremental work
+                sleep(1)
+
+
+any re-design of the SLR (RSR to a lesser extent?) is quite major, given the extra
+constraint that the IFPROC and 4 ROACH file each have their own clock, but mostly
+the 125Hz IFPROC needs to be re-sampled for the 10Hz ROACH files.more j
+	    

@@ -14,6 +14,7 @@
 
 
 # input parameters
+path=IRC_data
 src=IRC
 obsnum=79448
 makespec=1
@@ -23,6 +24,8 @@ pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 rms_cut=4
 resolution=12.5
 cell=6.25
+rmax=3
+noise_sigma=1
 x_axis=VLSR
 
 
@@ -34,7 +37,12 @@ done
 
 
 # derived parameters
-p_dir=${src}_data
+if [ -d $path ]; then
+    p_dir=$path
+else
+    p_dir=${DATA_LMT}
+    echo "Warning: assuming you have $p_dir (or a symlink) where the IRC_data are"
+fi    
 s_nc=${src}_${obsnum}.nc
 s_fits=${src}_${obsnum}.fits
 w_fits=${src}_${obsnum}.wt.fits
@@ -56,7 +64,8 @@ process_otf_map2.py -p $p_dir \
 		    --slice [-350,350] \
 		    --eliminate_list 0 
 fi
-#		    --slice [-1000,1000] \
+#		    --slice [-1058,1018] \
+
 #		    --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
 
 # bug:  --use_otf_cal does not work here
@@ -90,12 +99,12 @@ grid_data.py --program_path spec_driver_fits \
 	     --x_extent    300 \
 	     --y_extent    300 \
 	     --otf_select  1 \
-	     --rmax        3 \
+	     --rmax        $rmax \
 	     --otf_a       1.1 \
 	     --otf_b       4.75 \
 	     --otf_c       2 \
 	     --n_samples   256 \
-	     --noise_sigma 1
+	     --noise_sigma $noise_sigma 
 
 
 # bug:  when rmax=5  r=12/c=2.4  malloc(): unsorted double linked list corrupted
@@ -122,6 +131,8 @@ if [ ! -z $NEMO ]; then
     rm $s_fits.ccd
 else
     echo NEMO not installed, no QAC_STATS for benchmark available.
+    echo This is your FITS cube:
+    ls -l $s_fits
 fi
 
 if [ ! -z $ADMIT ]; then

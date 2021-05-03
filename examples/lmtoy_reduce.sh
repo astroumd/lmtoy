@@ -10,15 +10,18 @@
 #
 # There is no good mechanism here to make a new variable depend on re-running a certain task on which it depends
 # that's perhaps for a more advanced pipeline
+#
+# @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="lmtoy_reduce: 30-jan-2021"
+version="lmtoy_reduce: 10-mar-2021"
 
 if [ -z $1 ]; then
-    echo "LMTOY>>  Usage: path=LMT_DATA obsnum=OBSNUM ..."
-    echo "LMTOY>>  $version"
+    echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
     echo ""
     echo "See lmtoy_reduce.md for examples on usage"
     exit 0
+else
+    echo "LMTOY>> $version"
 fi
 
 
@@ -28,14 +31,14 @@ debug=0
 
 # input parameters
 #            - start or restart
-path=${LMT_DATA:-/data/LMT/lmt_data}
+path=${DATA_LMT:-data_lmt}
 obsnum=79448
 obsid=""
 newrc=0
 #            - procedural
 makespec=1
-makewf=1
 makecube=1
+makewf=0
 viewspec=0
 viewcube=0
 #            - meta parameters that will compute other parameters for SLR scripts
@@ -57,6 +60,7 @@ noise_sigma=1
 b_order=0
 stype=2
 sample=-1
+otf_cal=0
 
 # unset a view things, since setting them will give a new meaning
 unset vlsr
@@ -154,6 +158,7 @@ if [ $newrc = 1 ]; then
     echo otf_b=$otf_b               >> $rc
     echo otf_c=$otf_c               >> $rc
     echo sample=$sample             >> $rc
+    echo otf_cal=$otf_cal           >> $rc
     
 
     echo "LMTOY>> this is your startup $rc file:"
@@ -185,6 +190,11 @@ fi
 if [ $makespec = 1 ]; then
     echo "LMTOY>> process_otf_map2 in 2 seconds"
     sleep 2
+    if [ $otf_cal = 1 ]; then
+	use_otf_cal="--use_otf_cal"
+    else
+	use_otf_cal=""
+    fi
     process_otf_map2.py \
 	-p $p_dir \
 	-o $s_nc \
@@ -193,6 +203,7 @@ if [ $makespec = 1 ]; then
 	--bank 0 \
 	--stype $stype \
 	--use_cal \
+	  $use_otf_cal \
 	--x_axis VLSR \
 	--b_order $b_order \
 	--b_regions $b_regions \
@@ -203,7 +214,7 @@ fi
 #		    --slice [-1000,1000] \
 #		    --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
 
-# bug:  --use_otf_cal does not work here
+# bug:  --use_otf_cal does not work here?? (maybe it does now)
 # bug?   x_axis FLSR doesn't seem to go into freq mode
 
 
@@ -217,10 +228,10 @@ if [ $viewspec = 1 ]; then
 	-i $s_nc \
         --pix_list $pix_list \
 	--rms_cut $rms_cut \
-	--plot_range=-1,3
+	--plot_range=-1,3 \
+	--plots ${s_on}_specviews
+
 fi
-# --show_all_pixels \
-    # --show_pixel 10 \
 
 # show spectra, each pixel gets a different curve/color
 view_spec_point.py \
@@ -228,7 +239,7 @@ view_spec_point.py \
     --pix_list $pix_list \
     --rms_cut $rms_cut \
     --location $location \
-    --plots ${src}_specpoint,png,1
+    --plots ${s_on}_specpoint,png,1
 
 view_spec_point.py \
     -i $s_nc \
@@ -236,7 +247,7 @@ view_spec_point.py \
     --rms_cut $rms_cut \
     --location $location \
     --radius 20 \
-    --plots ${src}_specpoint,png,2
+    --plots ${s_on}_specpoint,png,2
 
 #  convert SpecFile to waterfall in fits format
 if [ $makewf = 1 ]; then
@@ -300,20 +311,22 @@ if [ $viewcube = 1 ]; then
 fi
 
 if [ ! -z $NEMO ]; then
-    echo "LMTOY>>    Some NEMO post-processing"
+    echo "LMTOY>> Some NEMO post-processing"
 
-    # cleanup, just in case
+    # cleanup from a previous run
     rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 \
-       $s_on.data1 $s_on.n.fits $s_on.nfs.fits $s_on.mom0.ccd $s_on.mom1.ccd
+       $s_on.data1 $s_on.n.fits $s_on.nfs.fits $s_on.mom0.ccd $s_on.mom1.ccd \
+       $s_on.wt2.fits $s_on.wt3.fits $s_on.wtr.fits
 
     if [ -e $s_fits ]; then
 	fitsccd $s_fits $s_on.ccd    axistype=1
 	fitsccd $w_fits $s_on.wt.ccd axistype=1
-    
+
+	ccdspec $s_on.ccd > $s_on.spectab
 	ccdstat $s_on.ccd bad=0 robust=t planes=0 > $s_on.cubestat
-	echo "LMTOY>>    STATS  $s_on.ccd     centerbox robust"
+	echo "LMTOY>> STATS  $s_on.ccd     centerbox robust"
 	ccdsub  $s_on.ccd -    centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
-	echo "LMTOY>>    STATS  $s_on.wt.ccd  centerbox robust"
+	echo "LMTOY>> STATS  $s_on.wt.ccd  centerbox robust"
 	ccdsub  $s_on.wt.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
 
 	# convert flux flat to noise flat
@@ -324,6 +337,15 @@ if [ ! -z $NEMO ]; then
 	ccdmom $s_on.n.ccd $s_on.mom0.ccd  mom=0	
 	ccdmom $s_on.n.ccd $s_on.mom1.ccd  mom=1 rngmsk=t
 	ccdmom $s_on.n.ccd $s_on.mom2.ccd  mom=-2
+	
+	ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "ifne(%1,0,2/(%1*%1),0)"
+	ccdfits $s_on.wt2.ccd $s_on.wt2.fits fitshead=$w_fits
+	# e.g. [[-646,-396],[-196,54]] -> -646,-396,-196,54
+	zslabs=$(echo $b_regions | sed 's/\[//g' | sed 's/\]//g')
+	echo SLABS: $b_regions == $zslabs
+	ccdslice $s_on.ccd - zslabs=$zslabs zscale=1000 | ccdmom - - mom=-2  | ccdmath - $s_on.wt3.ccd "ifne(%1,0,1/(%1*%1),0)"
+	ccdfits $s_on.wt3.ccd $s_on.wt3.fits fitshead=$w_fits
+	ccdmath $s_on.wt2.ccd,$s_on.wt3.ccd - %2/%1 | ccdfits - $s_on.wtr.fits fitshead=$w_fits
 
 	scanfits $s_fits $s_on.head1 select=header
 	ccdfits $s_on.n.ccd  $s_on.n.fits
@@ -333,8 +355,16 @@ if [ ! -z $NEMO ]; then
 
 	ccdsmooth $s_on.n.ccd - dir=xyz nsmooth=5 | ccdfits - $s_on.nfs.fits fitshead=$s_fits
 
+	# QAC_STATS:
+	ccdstat $s_on.ccd bad=0 qac=t
+
+	# hack
+	fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.specstab
+	echo -n "spectab : ";  tail -1  $s_on.spectab
+	echo -n "specstab: ";  tail -1  $s_on.specstab
+
 	# remove useless files
-	rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd
+	rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd $s_on.wt2.ccd  $s_on.wt3.ccd $s_on.n.ccd
 
 	echo "LMTOY>> Created $s_on.nf.fits and $s_on.nfs.fits"
 

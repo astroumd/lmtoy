@@ -1,0 +1,25 @@
+#! /bin/bash
+#
+#   example of processing many obsnum's
+#
+
+#   simple list of all obsnums, one per line. This one has 49
+#   we allow a '#' in column 1 for commenting out an obsnum
+ofile=sextans2020ok.obsnum
+
+
+#   process each obsnum
+
+obsnum=$(grep -v ^# $ofile)
+echo Processing $(echo $obsnum | wc -w) obsnum:
+
+for o in $obsnum; do
+    echo  ../lmtoy_reduce.sh obsnum=$o ...
+    ../lmtoy_reduce.sh obsnum=$o makespec=0 > lmtoy_$o.log 2>&1
+    rm -f *.ccd
+done
+
+#   combine them
+
+obsnum=$(grep -v ^# $ofile | awk '{printf(",%s",$1)}' | cut -c2-)
+../lmtoy_combine.sh obsnum="$obsnum"

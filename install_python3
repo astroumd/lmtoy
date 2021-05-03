@@ -1,0 +1,55 @@
+#! /bin/bash
+#
+# Install a python from source - courtesy Felix Stoehr - for casa6
+#
+# using pip for package management (conda does not seem to be needed for our purposes)
+#
+#  note:
+#  - Python vs. python 
+#
+# Dependencies:
+#   on ubuntu-20 you will need at least:  libssl-dev libsqlite3-dev
+#                maybe also: libreadline-gplv2-dev libncursesw5-dev tk-dev libgdbm-dev libc6-dev libbz2-dev
+#   on centos:   zlib-devel openssl-devel sqlite-devel
+#   versions on feb 15-19, 2021         3.9.2    3.8.8    3.7.10   3.6.13
+             
+INSTALLOCATION=$PWD
+version=3.8.8
+wget=wget
+
+# key=val COMMAND LINE PARSING
+for arg in $*; do
+  export $arg
+done
+
+
+# PYTHON
+if [ ! -f Python-$version.tgz ]; then
+    $wget https://www.python.org/ftp/python/$version/Python-$version.tgz
+fi
+tar -xzvf Python-$version.tgz
+cd Python-$version
+
+prefix=$INSTALLOCATION/python3
+./configure --prefix=$prefix
+make -j
+make install
+
+# PIP
+$prefix/bin/pip3 install --upgrade pip
+
+# IPYTHON
+$prefix/bin/pip3 install ipython
+
+# ASTROPY, NUMPY
+$prefix/bin/pip3 install astropy
+
+
+# LN - provide a default python here as well (they do pip and ipython, why not python)
+ln -s $prefix/bin/python3 $prefix/bin/python
+
+cd ..
+
+echo "set path = ($INSTALLOCATION/python3/bin \$path); rehash" >> python_start.csh
+echo "export PATH=$INSTALLOCATION/python3/bin:\$PATH"          >> python_start.sh
+

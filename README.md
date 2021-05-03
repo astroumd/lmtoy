@@ -1,21 +1,20 @@
 # lmtoy
 
-LMTOY is your toy box for installing and running codes related to LMT data reduction. LMT is a large
+LMTOY is a toy box for installing and running codes related to LMT data reduction. LMT is a large
 50m single dish radio telescope located in Mexico (18:59:09N 97:18:53W) operating at mm wavelengths.
 
 
 ## DATA
 
-LMT raw telescope data are (mostly) in netCDF format (extension: .nc), which stores
-data hierarchically in a big binary blob, much like HDF5.
-A typical LMT observation consists of a about 10 files
-in a specific directory hierarchy, all identified via an OBSNUM. 
+LMT raw telescope data are (mostly) in netCDF-3 format (extension: .nc), which stores
+data hierarchically, name and type tagged.
+A typical LSR observation consists of a number of netCDF files in a specific directory hierarchy, starting at
+$DATA_LMT, and all identified via a 7 digit OBSNUM.  Different instruments
+use a different number of datasets, for example, RSR uses up to 9, LSR uses 10.
 
-Tools like **ncdump** display structure and contents (as
-CDL). Careful, hdf5 also contains **ncdump** but it differs in subtle
-ways.
+Tools like **ncdump** display structure and contents (as CDL).
 
-A simple way to get at the raw data is the following:
+A simple example to get at the raw data is the following:
 
       import netCDF4
       nc = netCDF4.Dataset(filename)
@@ -23,7 +22,7 @@ A simple way to get at the raw data is the following:
       nc.close()
 
 where **rawdata** is now a 2D array, shaped (ntime,nchan) in the python sense (nchan runs fastest).
-The LMT software will typically calibrate and convert these data to the more common FITS format.
+The LMT software will typically calibrate and convert (grid) these data to the more common FITS format.
 
 
 # LMT software
@@ -36,38 +35,43 @@ LMT software is very instrument specific:
 
 * RSR (Redshift Search Receiver)
   * [dreampy3](https://github.com/lmt-heterodyne/dreampy3)
+  * [RSR_driver](https://github.com/LMTdevs/RSR_driver)
 
-* TolTEC
+* TolTEC (later in 2021) - [private](https://github.com/toltec-astro)
   * TolTecA
   * CitLali
   * Dash
 
 * MUSCAT: 1mm camera (Mexico-UK)
   *  4' FOV with 5.5" resolution
+  *  Will use TolTecA
+
 
 ## Installation
 
 There are some expanded notes in [INSTALL.md](INSTALL.md), and also check out the
-Makefile for specific targets that simplify the install. Probably the most automated/simple
-way to install (if you have all the preconditions, most importandly the **cfitsio** and **netcdf** library) is:
+Makefile for specific targets that simplify the install and updates. Probably the most automated/simple
+way to install (if you have all the preconditions, most importantly the **cfitsio** and **netcdf** library) is:
 
       wget https://astroumd.github.io/lmtoy/install_lmtoy
       bash install_lmtoy
 
-if this worked, activate it in your shell
+if this worked, activate it in your shell:
 
       source lmtoy/lmtoy_start.sh
 
-Now you can place the benchmark data in for example ~/LMT/IRC_data, or in UMass you
-can make a symlink to the big data disk
+If this failed, follow the steps in the script and find our where/when it failed. At the end of the script it
+will have run the LSR benchmark. This could fail if you don't have the data (or pointer to) in the examples
+directory:
 
       cd $LMTOY/examples
 
 pick the appropriate one for you:
 
-      ln -s /data/LMT/lmt_data  IRC_data
+      ln -s /data/LMT/data_lmt  IRC_data
       ln -s ~/LMT/IRC_data
       tar zxf /n/chara/teuben/LMT/IRC_data.tar.gz
+      lmtinfo.py $DATA_LMT 79488
 
 after which you can run a benchmark to verify if LMTSLR is working
 
@@ -80,13 +84,19 @@ test is plotting:
 
 This should produce three plots.
 
+If you are one of the standard sites, you should be able to use $DATA_LMT, where all the data is,
+not just IRC_data.
+
 In your own directory you can use the more general **lmtoy_reduce.sh** script
 
-      $LMTOY/examples/lmtoy_reduce.sh path=/data/LMT/lmt_data  obsnum=79448
+      $LMTOY/examples/lmtoy_reduce.sh obsnum=79448
 
-(again with the appropriate **path=**) to analyse any dataset. It will produce
-a file **lmtoy_79448.rc** which you can edit and re-run the script to finetune.
-
+to analyse any dataset. It will produce
+a file **lmtoy_79448.rc** which you can edit and re-run the script to finetune
+its settings. After a large number of OBSNUM's have been reduce this way, they
+can be combined (stacked) using **lmtoy_combine.sh**. A description of these
+steps can be seen in 
+[lmtoy_reduce.md](examples/lmtoy_reduce.md).
 
 ## References
 
@@ -95,10 +105,11 @@ a file **lmtoy_79448.rc** which you can edit and re-run the script to finetune.
   *  https://alpha.iodide.io/      Doing datascience in your browser
 * [sdfits](https://fits.gsfc.nasa.gov/registry/sdfits.html) and https://github.com/timj/aandc-gsdd
 * Various related:
-  * [cygrid](https://github.com/bwinkel/cygrid)
+  * [cygrid](https://github.com/bwinkel/cygrid) - Effelsberg group
+  * [HCGrid](https://github.com/HWang-Summit/HCGrid) - FAST group
   * [destriper](https://github.com/low-sky/destriper)
-  * [sdpy](https://github.com/keflavich/sdpy)
-  * [otfmap](https://github.com/low-sky/otfmap)
+  * [sdpy](https://github.com/keflavich/sdpy) - Ginsburg
+  * [otfmap](https://github.com/low-sky/otfmap) - Rosolowsky
 * VO links:
   * [2019 radio hackathon](https://www.asterics2020.eu/dokuwiki/doku.php?id=open:wp4:wp4techforum5:radiointhevo) - has several VO presentations and links to VO standards
   * IVOA meetings (spring 2020 onwards)

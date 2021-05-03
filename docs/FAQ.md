@@ -1,15 +1,35 @@
 # Frequencly Asked Questions
 
+
+## What is the netCDF format.
+
+netCDF is a portable binary dataformat, a close cousin of HDF, originally designed by
+NOOA? In fact, the storage model
+in netCDF-4 is now HDF5, so you can now use the **h5dump** program as well as the native
+(and more readable) **ncdump** program to look at an ascii representation of
+the data.
+
+A simple way to get at the raw LMT data is the following snippet of python code:
+
+      import netCDF4
+      nc = netCDF4.Dataset(filename)
+      rawdata = nc.variables['Data.Integrate.Data'][:]
+      nc.close()
+
+where **rawdata** is now a 2D array, shaped (ntime,nchan) in the python sense (nchan runs fastest).
+The LMT software will typically calibrate and convert these data to the more common FITS format.
+
+
 ## What is a typical workflow for OTF data reduction
 
 First find out which obsnums belong to a given observation, where a common
 sky and spectral are. Perhaps the **lmtinfo.py** can be useful too:
 
-      lmtinfo.py /data/lmt_data
+      lmtinfo.py $DATA_LMT
 
 Lets say you find there are only three: 85776 85778 85824.   You start with one:
 
-      lmtoy_reduce path=/data/lmt_data obsnum=85776
+      lmtoy_reduce obsnum=85776
 
 this will attempt to make a cube of the line specified by the VLSR in the header, and
 make some decisions on where to place the baseline fitting. Inspect the waterfall cube
@@ -41,10 +61,12 @@ pixel (the -u flag), although this is not essential, and inspect the
          -u 0 -z 4 -s 1 -x 4 -y 4 -f 1 -r 1 -n 256 -0 1.1 -1 1 -2 2 -b -1 -a -l 2 -c 1
 
 
+CAVEAT:   this option is still under development.
+
 ## Cubes in VLSR or FREQ
 
-Both miriad and casa have conversion routines between them, but they will depend on
-other keywords to be correct.  WCS can be a tricky thing, especially if you need
+Both MIRIAD and CASA have conversion routines between them, but they will depend on
+other keywords to be *correct*.  WCS can be a tricky thing, especially if you need
 good accuracy.
 Currently LMT cubes have the following keywords that influence the WCS:
 
@@ -87,11 +109,11 @@ Importing this FREQ based file, makes it work in CASA.
       imhead ('irc.mir.fits.im')
       exportfits('irc.mir.fits.im','irc.mir.fits.im.fits',velocity=True,overwrite=True)
       
-but this doesn't work
+but the following one does not work
 
       exportfits('irc.mir.fits.im','irc.mir.fits.im.fits',velocity=True,overwrite=True,optical=True)
 
-Miriad also differtiates between CELLSCAL= 'CONSTANT' and CELLSCAL= '1/F'
+Miriad also differtiates between CELLSCAL='CONSTANT' and CELLSCAL='1/F'
 
 in CASA:
 
@@ -103,7 +125,9 @@ issue?
       imhead('irc.im')
       exportfits('irc.im','irc.fits',velocity=True,optical=True,overwrite=True)
 
-The reference pixel is 350.303, but in exportfits I see ALTRVAL = 349.894
+The reference pixel is 350.303, but in exportfits I see ALTRVAL=349.894
 It works fine of CTYPE3 is VRAD, and not the current VELO-LSR, but VELO_LSR
 is not a recognized axis name, so it sticks to the (correct) m/s, but doesn't
 know about FREQ.
+
+

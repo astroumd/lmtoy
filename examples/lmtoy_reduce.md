@@ -10,12 +10,15 @@ get some science done in a waterfall fashion!
 For an observation consisting of a set of OBSNUM's a typical reduction
 strategy could be as follows:
 
-* First use **lmtoy_reduce.sh** for each OBSNUM. Make sure you cull out the
+* Find out which OBSNUM's you are interested in. For example a simple grep
+on the **data_lmt.log** file could be sufficient.
+
+* Then use **lmtoy_reduce.sh** for each OBSNUM. Make sure you cull out the
 spectra that are bad, by reviewing logs, figures and data, edit the parameter file and
 re-running the script. 
 
 * If applicable, use **lmtoy_combine.sh** for the series of previously
-determined good OBSNUM's. 
+determined good OBSNUM's.  Make sure the gridding is the same for all OBSNUM's.
 
 
 ## Running lmtoy_reduce.sh
@@ -23,12 +26,12 @@ determined good OBSNUM's.
 This script reduces a single OBSNUM, and uses a series of *keyword=value* commandline
 argument pairs to construct a parameter file.
 The commandline parser is a very simple one, and does not check if you spelled
-the parameters correctly.  On the first run **path=** is required, but **obsnum=**
-is required for each run
+the parameters correctly.  Only **obsnum=** is required for each run, the rest
+is optional:
 
       $LMTOY/examples/lmtoy_reduce.sh \
 	    obsnum=91112                # always required
-	    path=/data/LMT/lmt_data     # required on the first run
+	    path=data_lmt               # optional via $DATA_LMT
 	    obsid=                      # optional on first run [not yet implemented]
 	    dv=100                      # optional:  width around spectral line (vlsr) 
 	    dw=250                      # optional:  width of the wings for baseline
@@ -82,9 +85,12 @@ Here a summary of the files that are created:
      SRC_OBSNUM.wf.fits      Waterfall version of SpecFile
      SRC_OBSNUM.wf10.fits    Waterfall version of SpecFile with 10 times binning in time
      SRC_OBSNUM.fits         (flux flat) fits cube
-     SRC_OBSNUM.wt.fits      weights fits map
      SRC_OBSNUM.nf.fits      noise flat fits cube, ready for ADMIT
      SRC_OBSNUM.nfs.fits     noise flat XYZ smoothed fits cube, ready for ADMIT
+     SRC_OBSNUM.wt.fits      weights fits map based on spectra
+     SRC_OBSNUM.wt2.fits     weights fits map based on difference spectra in cube
+     SRC_OBSNUM.wt3.fits     weights fits map based on spectra in b_range
+     SRC_OBSNUM.wtr.fits     ratio of wt3/wt2.  Can get > 1 if bad wavy spectra or extra line emission
 
 If NEMO or ADMIT had been run, a number of other files and directories will be present.
 
@@ -126,6 +132,7 @@ The following scripts are used by the **lmtoy_reduce.sh** pipeline.
 All scripts should self-describe using the **-h** or **--help** flag.
 
 * **lmtinfo.py**:            gathers info what OBSNUM's you have, or for a specific OBSNUM selected, useful info for the pipeline
+* **lmtrc.py**:              edit the (lmtoy) parameter for a set of rc files
 * **process_otf_map2.py**:   converts RAW to SpecFile
 * **process_otf_map.py**:   *deprecated version*
 * **view_spec_file.py**:     make a series of plots summarizing one or a set of pixels
@@ -140,7 +147,7 @@ We now highlight some keywords for a few selected scripts:
 
 The **lmtinfo.py** script makes a summary listing of the OBSNUM's you have, e.g.
 
-      lmtinfo.py /data/lmt_data
+      lmtinfo.py $DATA_LMT
       
       #     DATE           OBSNUM   SOURCE     RESTFRQ VLSR INTTIME
       
@@ -247,7 +254,7 @@ following parameters are all related and pertain to the gridding/convolution fun
       --otf_a               # SLR recommends 1.1
       --otf_b               # SLR recommends 4.75 (should be 1 for a gauss otf_select=2)
       --otf_c               # SLR recommands 2.0
-      --sigma_noise         # should be 1
+      --noise_sigma         # should be 1
       --rmax                # should be 3
 
 and a few filters what spectra to be added to the gridding
@@ -336,7 +343,10 @@ first.
 
 The measured RMS in each spectrum (describe what that is: RMS from the fitted baseline
 in the b_regions?) can also be used to weigh (1/RMS^2) each spectrum when these spectra
-are combined in the gridding process.
+are combined in the gridding process. This is the current default. By setting this to
+0 one can weigh each spectrum the same, so only the
+
+After the pipeline, if NEMO is present, it also computed a "wt2" and "wt3" map.
 
 
 # Advanced concepts:   Combining maps from different OBSNUM
