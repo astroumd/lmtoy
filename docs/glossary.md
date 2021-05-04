@@ -1,4 +1,4 @@
-# An LMT glossary
+# An LMT glossary (now supersesed by glossary.rst)
 
 There are some overloaded and confusing terms in here.
 E.g. *pixel/cell/beam* and *board/band/chassis* are notorious. Currently
