@@ -117,29 +117,33 @@ E.g. *pixel/cell/beam* and *board/band/chassis* are notorious. Currently
       Sub-Observatation Number - see **ObsNum**
 
 
-.. list-table:: overloaded terms
+.. list-table:: **Table of some overloaded terms**
    :header-rows: 1
 
    * - RSR term
      - SLR term
      - code term
-     - other term
+     - comments
+   * - ?pol?
+     - pixel
+     - pixel/beam
+     - multi-beam receiver
    * - n/a
-     - pixel
-     - pixel
-     - beam
+     - cell
+     - cell?
+     - size of a sky pixel in gridding
    * - board
      - n/a
      - ?
-     - IF window
-   * - chassis
+     - spectrometer window
+   * - chassis (pol?)
      - n/a
      - ?
      - ?
    * - n/a
      - bank 
      - ?
-     - special multiple spectrometer bands
+     - spectrometer window
    * - channel
      - channel
      - channel
