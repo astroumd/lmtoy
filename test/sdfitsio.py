@@ -44,6 +44,10 @@ def gen_data(ndim=(256,1,1,1,256)):
 
     # for return
     data = np.random.normal(-0.1,1,ndim)
+    if True:
+        data = np.arange(data.size).reshape(ndim)
+
+    print('data',data)
     return data
 
 
@@ -127,25 +131,29 @@ def my_write_rsr(filename):
     ntile = 2*1*3
     a1t = np.tile(a1,ntile)
     a2t = np.tile(a2,ntile)
+    
 
     print(a1t.shape)
     print(a2t.shape)
+    a3 = a3.ravel()
     print(a3.shape)
 
     # BNUM
     board_numbers = [0, 1]
-    a4 = []
+    a4 = np.array([0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2])
     if_numbers    = [0, 1, 2]
     # IFNUM
-    a5 = []
+    a5 = np.array([0,0,0,1,1,1,0,0,0,1,1,1,0,0,0,1,1,1])
     
     
     col1 = fits.Column(name='DATA-OBS', format='D',  array=a1t)
     col2 = fits.Column(name='TSYS',     format='E',  array=a2t)
-    col3 = fits.Column(name='DATA',     format='4E', array=a3)
+    col3 = fits.Column(name='DATA',     format='4E', array=a3)    # 3,4 ->  3,24
+    col4 = fits.Column(name='BNUM',     format='I',  array=a4)
+    col5 = fits.Column(name='IFNUM',    format='I',  array=a5)        
 
 
-    cols = fits.ColDefs([col1,col2,col3])
+    cols = fits.ColDefs([col1,col2,col4,col5,col3])
     hdu = fits.BinTableHDU.from_columns(cols)
     # mark it as 'SINGLE DISH'
     hdu.header['EXTNAME']  = 'SINGLE DISH'
@@ -159,4 +167,4 @@ def my_write_rsr(filename):
     hdu.writeto(filename, overwrite=True)
 
 my_write_slr('slr.sdfits')
-my_write_rsr('rsr.sffits')
+my_write_rsr('rsr.sdfits')
