@@ -14,9 +14,12 @@ import copy
 import time
 
 def gen_data(ndim=(256,1,1,1,256)):
+    """
+    generate fake data so we can fill an SDFITS file from scratch
+    """
     # need to agree on what axis is what
     axis_time  = 0
-    axis_board = 1
+    axis_board = 1   # board and pixel interchangeable ?
     axis_pol   = 2
     axis_band  = 3
     axis_chan  = 4
@@ -54,7 +57,11 @@ def gen_data(ndim=(256,1,1,1,256)):
 
 
 def my_read(filename):
+    """
+    example that can read SDFITS
+    """
     #
+    print("Reading %s" % filename)
     hdu = fits.open(filename)
     header = hdu[0].header   
     bintable = hdu[1]
@@ -63,14 +70,17 @@ def my_read(filename):
     data2    = bintable.data
     # spectra  = data2[:]['DATA']
     # the next command will finally load in the data, the rest were just pointers/references
-    srcs = np.unique(data2[:]['OBJECT'])
-    scan = np.unique(data2[:]['SCAN'])
+    if 'OBJECT' in header2:
+        srcs = [header2['OBJECT']]
+    else:
+        srcs = np.unique(data2[:]['OBJECT'])
+    #scan = np.unique(data2[:]['SCAN'])
     ncols = header2['NAXIS1']
     nrows = len(data2)
     nflds = header2['TFIELDS']
-
     
     hdu.close()
+    
 
 
 
@@ -165,6 +175,12 @@ def my_write_rsr(filename):
     hdu.header['OBJECT']   = 'NGC1234'
     hdu.header['BANDWID']  = 800.0e6    # Hz
     hdu.writeto(filename, overwrite=True)
+    print("Written %s" %  filename)
 
 my_write_slr('slr.sdfits')
 my_write_rsr('rsr.sdfits')
+
+my_read('slr.sdfits')
+my_read('rsr.sdfits')
+
+
