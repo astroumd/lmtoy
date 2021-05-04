@@ -56,6 +56,9 @@ E.g. *pixel/cell/beam* and *board/band/chassis* are notorious. Currently
     ObsNum
       Observatation Number. This is not all, obsnum is part of the (**ObsNum** , **SubObsNum** , **ScanNum**) tuple.
 
+    Project ID
+      Or whatever we are going to call it
+
     ramp
       The ramp is the area where not all beams have
       been. Within the ramp there is thus a uniform coverage.  The
@@ -73,6 +76,13 @@ E.g. *pixel/cell/beam* and *board/band/chassis* are notorious. Currently
       **resolution/pixel** and a different name for resolution
       alltogether.
 
+    roach board
+      The SLR has four (4) roach boards, each of which writes a separate
+      file with its own internal clock that later needs to be sync'd. In
+      a future expansion we get 8 boards (2 pols, 2 IFs) , capable of writing
+      8 files.  ``Rumor``:  for the 1mmRx configuration can be done on one
+      board, hence one file (new IF switching system).
+
     RSR
       (Redshift-Search-Receiver): The single **pixel**
       receiver operating between 70 and 110 GHz in 6 separate bands of
@@ -80,7 +90,10 @@ E.g. *pixel/cell/beam* and *board/band/chassis* are notorious. Currently
       really dual-beam dual-pol.
     
     ScanNum
-      Scan Number - see **ObsNum**    
+      Scan Number - see **ObsNum**
+
+    SDF
+      Single Dish FITS (convention)
 
     SDFITS
       Single Dish **FITS** format, normally used to store
@@ -91,12 +104,15 @@ E.g. *pixel/cell/beam* and *board/band/chassis* are notorious. Currently
     SFL
       Sanson-Flamsteed projection, used in LMT **FITS** files (the GLS - GLobal Sinusoidal is similar to SFL).
 
+    SLR
+      The common name for the (SEQUOIA/1MM/OMAYA) instruments, since they share hardware.
+
     SubObsNum
       Sub-Observatation Number - see **ObsNum**
 
 
 Single Dish Math
-----------------
+~~~~~~~~~~~~~~~~
 
 The meat of Single Dish math is getting the system temperature
 
@@ -114,4 +130,15 @@ assuming there is only sky in the *OFF*:
 
 All of these have values for each channel. How exactly the :math:`T_{sys}` is computed (scalar, vector,
 mean/median) is something we generally leave open.
+
+
+Observing: ObsNum / SubObsNum / ScanNum
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+An observation with a single dish such as LMT is done via proposals, which gets assigned a proposal ID,
+associated with the P.I. name. An example of such is XXX.
+
+An observation is that divided in a set a **ObsNum** 's, which can be devived in **SubObsNum** and **ScanNum**. When
+an observing script executes, each source will gets its own **ObsNum**.
+
 
