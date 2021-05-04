@@ -111,7 +111,9 @@ def main(argv):
             # flag chassis/obsnum/band triples
             for b in blanks:
                 if chassis == b[0] and ObsNum in b[1]:
-                    nc.hdu.blank_frequencies (b[2]) 
+                    nc.hdu.blank_frequencies (b[2])
+                    # rsr_driver blanks the whole band as follows:
+                    # nc.hdu.blank_frequencies ({iband:[(windows[iband][0][0],windows[iband][0][-1]),]})
             if len(windows[0]) > 0:
                 nc.hdu.baseline(order=order1, windows=windows, subtract=True)
             else:
