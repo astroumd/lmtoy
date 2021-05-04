@@ -59,25 +59,38 @@ def gen_data(ndim=(256,1,1,1,256)):
 def my_read(filename):
     """
     example that can read SDFITS
+    In LMT/GTM mode the data can be read as a multi-dimensional (ndarray) object
     """
     #
-    print("Reading %s" % filename)
+    print("\nReading %s" % filename)
     hdu = fits.open(filename)
-    header = hdu[0].header   
+    header = hdu[0].header
+    if len(hdu) == 1:
+        print("Error: only one HDU found. Not SDFITS")
+        return
+    
     bintable = hdu[1]
+    if len(hdu) > 2:
+        print("Warning: skipping unkown HDUs, there are %d" % len(hdu))
 
     header2  = bintable.header
     data2    = bintable.data
+    #
+    ncols = header2['NAXIS1']
+    nrows = len(data2)
+    nflds = header2['TFIELDS']
+
+    if header2['TELESCOP'] == 'LMT/GTM':
+        print("LMT/GTM mode")
+
     # spectra  = data2[:]['DATA']
     # the next command will finally load in the data, the rest were just pointers/references
     if 'OBJECT' in header2:
         srcs = [header2['OBJECT']]
+        #srcs = np.tile(header2['OBJECT'], nrow)
     else:
         srcs = np.unique(data2[:]['OBJECT'])
     #scan = np.unique(data2[:]['SCAN'])
-    ncols = header2['NAXIS1']
-    nrows = len(data2)
-    nflds = header2['TFIELDS']
     
     hdu.close()
     
@@ -116,6 +129,7 @@ def my_write_slr(filename):
     # write the keywords that do not vary
     hdu.header['EXPOSURE'] = 0.1        # sec
     hdu.header['TELESCOP'] = 'LMT/GTM'
+    hdu.header['INSTRUME'] = 'test'
     hdu.header['OBJECT']   = 'NGC1234'
     hdu.header['BANDWID']  = 800.0e6    # Hz
 
@@ -172,15 +186,18 @@ def my_write_rsr(filename):
     # write the keywords that do not vary
     hdu.header['EXPOSURE'] = 0.1        # sec
     hdu.header['TELESCOP'] = 'LMT/GTM'
+    hdu.header['INSTRUME'] = 'test'    
     hdu.header['OBJECT']   = 'NGC1234'
     hdu.header['BANDWID']  = 800.0e6    # Hz
     hdu.writeto(filename, overwrite=True)
     print("Written %s" %  filename)
 
-my_write_slr('slr.sdfits')
-my_write_rsr('rsr.sdfits')
+if __name__ == '__main__':   
 
-my_read('slr.sdfits')
-my_read('rsr.sdfits')
+    my_write_slr('slr.sdfits')
+    my_write_rsr('rsr.sdfits')
+
+    my_read('slr.sdfits')
+    my_read('rsr.sdfits')
 
 
