@@ -13,6 +13,12 @@ E.g. *pixel/cell/beam* and *board/band/chassis* are notorious. Currently
       also uses this keyword, but there is currently only board=0 for
       LSR.
 
+    bank
+      The 16 available spectrometers are set up as a single bank for SEQUOIA
+      observations. Observations with the MSIP 1mm receiver cover two separate lines
+      (currently one in USB and one in LSB) and therefore are currently analyzed in two
+      banks of two spectrometers each.
+
     beam
       in the 4x4 multi-beam. Not to be confused with the
       **FWHM**.  At 115 GHz the **FWHM** is about 16", at 86 GHz about
