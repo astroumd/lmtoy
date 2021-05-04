@@ -21,6 +21,8 @@ URL7  = https://github.com/gopastro/sculpt
 URL8  = https://github.com/LMTdevs/RSR_driver
 URL9a = https://github.com/toltec-astro/dasha
 URL9b = https://github.com/toltec-astro/tollan
+URL10a= https://github.com/astropy/specutils
+URL10b= https://github.com/pyspeckit/pyspeckit
 
 .PHONY:  help install build
 
@@ -112,6 +114,12 @@ dasha:
 tollan:
 	git clone $(URL9b)
 
+specutils:
+	git clone $(URL10a)
+
+pyspeckit:
+	git clone $(URL10b)
+
 
 # step 1 (or skip and use another python)
 #        after this install, the start_python.sh should be sourced in the shell
@@ -173,6 +181,11 @@ install_dasha: dasha tollan
 	@echo python3 dasha
 	(cd tollan; pip3 install -e .)
 	(cd dasha; pip3 install -e .)
+
+install_astropy: specutils pyspeckit
+	@echo specutils pyspeckit
+	(cd specutils; pip3 install -e .)
+	(cd pyspeckit; pip3 install -e .)
 
 # step 4 (optional)
 install_montage:  Montage

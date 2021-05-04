@@ -3,6 +3,7 @@
 #   Example of detailed flagging of RSR data (courtesy Min Yun)
 #   See "make rsr3" how to run this example.
 #
+#   historic:       MSY     Original Version
 #   25-feb-2021:    PJT     added (obslist,blanks,windows) file
 #   25-feb-2021:    PJT     converted from I10565.sum.py to a commandline version
 #

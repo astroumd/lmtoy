@@ -1,0 +1,1039 @@
+# HDU 0 in Parkes_GASS.fits:
+SIMPLE  =                    T / file does conform to FITS standard             
+BITPIX  =                    8 / number of bits per data pixel                  
+NAXIS   =                    0 / number of data axes                            
+EXTEND  =                    T / FITS dataset may contain extensions            
+COMMENT   FITS (Flexible Image Transport System) format is defined in 'Astronomy
+COMMENT   and Astrophysics', volume 376, page 359; bibcode: 2001A&A...376..359H 
+COMMENT                                                                         
+COMMENT This single dish FITS (SDFITS) file has a binary table extension that   
+COMMENT contains data obtained from a telescope run by the Australia Telescope  
+COMMENT National Facility (ATNF).                                               
+COMMENT                                                                         
+DATE    = '2010-06-15T01:56:26' / file creation date (YYYY-MM-DDThh:mm:ss UT)   
+ORIGIN  = 'SDFITSwriter (v20.3, 2010/06/02)' / output class                     
+COMMENT Written by Mark Calabretta (mcalabre@atnf.csiro.au)                     
+COMMENT using cfitsio v3.210.                                                   
+
+# HDU 1 in Parkes_GASS.fits:
+XTENSION= 'BINTABLE'           / binary table extension                         
+BITPIX  =                    8 / 8-bit bytes                                    
+NAXIS   =                    2 / 2-dimensional binary table                     
+NAXIS1  =                20712 / width of table in bytes                        
+NAXIS2  =                   28 / number of rows in table                        
+PCOUNT  =                    0 / size of special data area                      
+GCOUNT  =                    1 / one data group (required keyword)              
+TFIELDS =                   37 / number of fields in each row                   
+EXTNAME = 'SINGLE DISH'        / name of this binary table extension            
+NMATRIX =                    1 / Number of DATA arrays                          
+OBSERVER= 'NM-G,DJP,BG'        / Observer name(s)                               
+PROJID  = '180444-50_327a'     / Project name                                   
+TELESCOP= 'ATPKSMB '           / Telescope name                                 
+OBSGEO-X=   -4554232.087000000 / [m] Antenna ITRF X-coordinate                  
+OBSGEO-Y=    2816759.046000000 / [m] Antenna ITRF Y-coordinate                  
+OBSGEO-Z=   -3454035.950000000 / [m] Antenna ITRF Z-coordinate                  
+TTYPE1  = 'SCAN    '           / label for field                                
+TFORM1  = '1I      '           / format of field                                
+TTYPE2  = 'CYCLE   '           / label for field                                
+TFORM2  = '1J      '           / format of field                                
+TTYPE3  = 'DATE-OBS'           / label for field                                
+TFORM3  = '10A     '           / format of field                                
+TTYPE4  = 'TIME    '           / label for field                                
+TFORM4  = '1D      '           / format of field                                
+TUNIT4  = 's       '           / units of field                                 
+TTYPE5  = 'EXPOSURE'           / label for field                                
+TFORM5  = '1E      '           / format of field                                
+TUNIT5  = 's       '           / units of field                                 
+TTYPE6  = 'OBJECT  '           / label for field                                
+TFORM6  = '16A     '           / format of field                                
+TTYPE7  = 'OBJ-RA  '           / label for field                                
+TFORM7  = '1D      '           / format of field                                
+TUNIT7  = 'deg     '           / units of field                                 
+TTYPE8  = 'OBJ-DEC '           / label for field                                
+TFORM8  = '1D      '           / format of field                                
+TUNIT8  = 'deg     '           / units of field                                 
+TTYPE9  = 'RESTFRQ '           / label for field                                
+TFORM9  = '1D      '           / format of field                                
+TUNIT9  = 'Hz      '           / units of field                                 
+TTYPE10 = 'OBSMODE '           / label for field                                
+TFORM10 = '16A     '           / format of field                                
+TTYPE11 = 'BEAM    '           / label for field                                
+TFORM11 = '1I      '           / format of field                                
+TTYPE12 = 'IF      '           / label for field                                
+TFORM12 = '1I      '           / format of field                                
+TTYPE13 = 'FREQRES '           / label for field                                
+TFORM13 = '1D      '           / format of field                                
+TUNIT13 = 'Hz      '           / units of field                                 
+TTYPE14 = 'BANDWID '           / label for field                                
+TFORM14 = '1D      '           / format of field                                
+TUNIT14 = 'Hz      '           / units of field                                 
+CTYPE1  = 'FREQ    '           / DATA array axis 1: frequency in Hz.            
+TTYPE15 = 'CRPIX1  '           / label for field                                
+TFORM15 = '1E      '           / format of field                                
+TTYPE16 = 'CRVAL1  '           / label for field                                
+TFORM16 = '1D      '           / format of field                                
+TUNIT16 = 'Hz      '           / units of field                                 
+TTYPE17 = 'CDELT1  '           / label for field                                
+TFORM17 = '1D      '           / format of field                                
+TUNIT17 = 'Hz      '           / units of field                                 
+CTYPE2  = 'STOKES  '           / DATA array axis 2: polarization code           
+CRPIX2  =                  1.0 / Polarization code reference pixel              
+CRVAL2  =                 -5.0 / Polarization code at reference pixel (XX)      
+CDELT2  =                 -1.0 / Polarization code axis increment               
+CTYPE3  = 'RA      '           / DATA array axis 3 (degenerate): RA (mid-int)   
+CRPIX3  =                  1.0 / RA reference pixel                             
+TTYPE18 = 'CRVAL3  '           / label for field                                
+TFORM18 = '1D      '           / format of field                                
+TUNIT18 = 'deg     '           / units of field                                 
+CDELT3  =                 -1.0 / RA axis increment                              
+CTYPE4  = 'DEC     '           / DATA array axis 4 (degenerate): Dec (mid-int)  
+CRPIX4  =                  1.0 / Dec reference pixel                            
+TTYPE19 = 'CRVAL4  '           / label for field                                
+TFORM19 = '1D      '           / format of field                                
+TUNIT19 = 'deg     '           / units of field                                 
+CDELT4  =                  1.0 / Dec axis increment                             
+TTYPE20 = 'SCANRATE'           / label for field                                
+TFORM20 = '2E      '           / format of field                                
+TUNIT20 = 'deg/s   '           / units of field                                 
+SPECSYS = 'LSRK    '           / Doppler reference frame (transformed)          
+SSYSOBS = 'TOPOCENT'           / Doppler reference frame of observation         
+EQUINOX =               2000.0 / Equinox of equatorial coordinates              
+RADESYS = 'FK5     '           / Equatorial coordinate frame                    
+TTYPE21 = 'TSYS    '           / label for field                                
+TFORM21 = '2E      '           / format of field                                
+TUNIT21 = 'K       '           / units of field                                 
+TTYPE22 = 'CALFCTR '           / label for field                                
+TFORM22 = '2E      '           / format of field                                
+TTYPE23 = 'DATA    '           / label for field                                
+TFORM23 = '4096E   '           / format of field                                
+TDIM23  = '(2048,2,1,1)'       / size of the multidimensional array             
+TUNIT23 = 'K       '           / units of field                                 
+TTYPE24 = 'FLAGGED '           / label for field                                
+TFORM24 = '4096B   '           / format of field                                
+TDIM24  = '(2048,2,1,1)'       / size of the multidimensional array             
+TTYPE25 = 'TCAL    '           / label for field                                
+TFORM25 = '2E      '           / format of field                                
+TUNIT25 = 'Jy      '           / units of field                                 
+TTYPE26 = 'TCALTIME'           / label for field                                
+TFORM26 = '16A     '           / format of field                                
+TTYPE27 = 'AZIMUTH '           / label for field                                
+TFORM27 = '1E      '           / format of field                                
+TUNIT27 = 'deg     '           / units of field                                 
+TTYPE28 = 'ELEVATIO'           / label for field                                
+TFORM28 = '1E      '           / format of field                                
+TUNIT28 = 'deg     '           / units of field                                 
+TTYPE29 = 'PARANGLE'           / label for field                                
+TFORM29 = '1E      '           / format of field                                
+TUNIT29 = 'deg     '           / units of field                                 
+TTYPE30 = 'FOCUSAXI'           / label for field                                
+TFORM30 = '1E      '           / format of field                                
+TUNIT30 = 'm       '           / units of field                                 
+TTYPE31 = 'FOCUSTAN'           / label for field                                
+TFORM31 = '1E      '           / format of field                                
+TUNIT31 = 'm       '           / units of field                                 
+TTYPE32 = 'FOCUSROT'           / label for field                                
+TFORM32 = '1E      '           / format of field                                
+TUNIT32 = 'deg     '           / units of field                                 
+TTYPE33 = 'TAMBIENT'           / label for field                                
+TFORM33 = '1E      '           / format of field                                
+TUNIT33 = 'C       '           / units of field                                 
+TTYPE34 = 'PRESSURE'           / label for field                                
+TFORM34 = '1E      '           / format of field                                
+TUNIT34 = 'Pa      '           / units of field                                 
+TTYPE35 = 'HUMIDITY'           / label for field                                
+TFORM35 = '1E      '           / format of field                                
+TUNIT35 = '%       '           / units of field                                 
+TTYPE36 = 'WINDSPEE'           / label for field                                
+TFORM36 = '1E      '           / format of field                                
+TUNIT36 = 'm/s     '           / units of field                                 
+TTYPE37 = 'WINDDIRE'           / label for field                                
+TFORM37 = '1E      '           / format of field                                
+TUNIT37 = 'deg     '           / units of field                                 
+HISTORY                                                                         
+HISTORY  reducer: Commencing at 2010/06/15 11:56:07 EST (Tue).                  
+HISTORY  reducer: Executing locally on host grus.                               
+HISTORY   reader:                                                               
+HISTORY   reader: pksreader (v20.4, 2010/06/02) initializing.                   
+HISTORY   reader: Input directory: ./pathology                                  
+HISTORY   reader: Reading MBFITS format data from input file                    
+HISTORY   reader:   2004-09-15_0722_180444-50_327a.mbf                          
+HISTORY   reader: Date of observation: 2004/09/15 (Wed).                        
+HISTORY   reader: Multibeam data, all 7 beams selected for input.               
+HISTORY   reader: Multiple IF data:                                             
+HISTORY   reader:   IF   nChan   nPol                                           
+HISTORY   reader:    1    2048     2   ...selected, channels: ALL               
+HISTORY   reader:    2    2048     2   ...selected, channels: ALL               
+HISTORY   reader:                                                               
+HISTORY   reader: Scan rate staleness test: > 0.5s (warn),                      
+HISTORY   reader:                           >15.0s (reject).                    
+HISTORY   reader: Scan rate validity range:                                     
+HISTORY   reader:   0.0100 to 0.0200 deg/s in fast coordinate                   
+HISTORY   reader:   0.0000 to 0.0015 deg/s in slow coordinate                   
+HISTORY   reader:                                                               
+HISTORY   reader: Tsys flagging disabled.                                       
+HISTORY   reader: No Tsys range check.                                          
+HISTORY   reader: Flux density calibration disabled.                            
+HISTORY   reader: WARNING: 2004-09-15_0722_180444-50_327a.SR.sdfits             
+HISTORY   reader:          not found, no stray radiation correction.            
+HISTORY bandpass:                                                               
+HISTORY bandpass: pksbandpass (v20.12, 2010/06/02) initializing.                
+HISTORY  monitor:                                                               
+HISTORY  monitor: pksmonitor (v20.1, 2010/06/02) initializing.                  
+HISTORY bandpass:    Parameter values:                                          
+HISTORY bandpass:            Smoothing = NONE                                   
+HISTORY bandpass:        Prescale mode = NONE                                   
+HISTORY bandpass:               Method = FREQSW                                 
+HISTORY bandpass:           Max cycles = 250                                    
+HISTORY bandpass:            Estimator = QUOTIENT                               
+HISTORY bandpass:    Grow mask minimum = 1.0 (channel)                          
+HISTORY bandpass:    Grow mask extra   = 1.5 (channel)                          
+HISTORY bandpass:    Grow mask minimum = 2.0 (time)                             
+HISTORY bandpass:    Grow mask extra   = 4.0 (time)                             
+HISTORY bandpass:    GASS corrections applied (gain, extinction and             
+HISTORY bandpass:      stray-radiation); brightness units will be               
+HISTORY bandpass:      scaled to Kelvin and relabelled as such                  
+HISTORY bandpass:     RFI running mean = 21 (channel)                           
+HISTORY bandpass:       RFI threshhold = 6.0 x MAD                              
+HISTORY bandpass:             RFI span = 2 (channel)                            
+HISTORY bandpass:        RFI isolation = 5 (channel)                            
+HISTORY bandpass:    Input channel mask: 590-660,1390-1460                      
+HISTORY bandpass:    Median spectral baseline fit applied                       
+HISTORY bandpass:    Continuum flux discarded                                   
+HISTORY bandpass:        Doppler frame = LSRK                                   
+HISTORY bandpass:    Rescale freq axis = T                                      
+HISTORY bandpass:     Check field name = T                                      
+HISTORY bandpass:           Check time = T                                      
+HISTORY bandpass:                Tjump = 20.0                                   
+HISTORY bandpass:       Check position = T                                      
+HISTORY bandpass:                Djump = 10.0                                   
+HISTORY    stats: pksstats (v20.2, 2010/06/02) initializing.                    
+HISTORY   writer: pkswriter (v20.2, 2010/06/02) initializing.                   
+HISTORY   writer: Output directory: .                                           
+HISTORY   writer: Writing SDFITS format data to output file                     
+HISTORY   writer:   2004-09-15_0722_180444-50_327a.sdfits                       
+HISTORY   reader: Integration time: 4.95992s.                                   
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 1.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 1.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 1.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 1.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 1.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 1.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 1.       
+HISTORY bandpass: Processing frequency switched data.                           
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 2.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 2.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 2.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 2.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 2.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 2.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 2.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 3.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 3.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 3.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 3.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 3.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 3.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 3.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 4.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 4.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 4.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 4.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 4.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 4.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 4.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 5.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 5.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 5.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 5.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 5.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 5.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 5.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 6.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 6.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 6.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 6.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 6.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 6.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 6.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 7.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 7.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 7.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 7.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 7.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 7.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 7.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 8.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 8.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 8.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 8.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 8.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 8.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 8.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 9.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 9.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 9.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 9.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 9.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 9.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 9.       
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 10.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 10.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 10.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 10.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 10.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 10.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 10.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 11.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 11.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 11.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 11.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 11.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 11.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 11.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 12.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 12.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 12.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 12.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 12.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 12.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 12.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 13.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 13.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 13.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 13.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 13.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 13.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 13.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 14.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 14.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 14.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 14.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 14.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 14.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 14.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 15.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 15.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 15.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 15.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 15.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 15.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 15.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 16.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 16.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 16.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 16.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 16.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 16.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 16.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 17.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 17.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 17.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 17.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 17.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 17.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 17.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 18.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 18.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 18.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 18.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 18.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 18.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 18.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 19.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 19.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 19.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 19.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 19.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 19.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 19.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 20.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 20.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 20.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 20.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 20.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 20.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 20.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 21.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 21.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 21.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 21.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 21.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 21.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 21.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 22.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 22.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 22.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 22.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 22.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 22.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 22.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 23.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 23.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 23.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 23.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 23.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 23.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 23.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 24.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 24.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 24.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 24.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 24.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 24.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 24.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 25.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 25.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 25.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 25.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 25.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 25.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 25.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 26.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 26.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 26.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 26.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 26.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 26.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 26.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 27.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 27.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 27.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 27.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 27.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 27.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 27.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 28.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 28.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 28.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 28.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 28.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 28.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 28.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 29.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 29.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 29.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 29.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 29.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 29.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 29.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 30.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 30.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 30.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 30.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 30.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 30.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 30.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 31.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 31.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 31.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 31.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 31.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 31.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 31.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 32.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 32.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 32.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 32.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 32.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 32.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 32.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 33.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 33.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 33.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 33.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 33.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 33.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 33.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 34.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 34.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 34.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 34.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 34.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 34.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 34.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 35.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 35.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 35.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 35.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 35.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 35.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 35.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 36.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 36.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 36.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 36.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 36.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 36.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 36.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 37.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 37.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 37.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 37.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 37.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 37.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 37.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 38.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 38.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 38.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 38.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 38.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 38.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 38.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 39.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 39.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 39.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 39.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 39.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 39.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 39.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 40.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 40.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 40.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 40.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 40.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 40.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 40.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 41.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 41.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 41.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 41.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 41.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 41.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 41.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 42.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 42.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 42.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 42.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 42.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 42.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 42.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 43.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 43.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 43.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 43.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 43.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 43.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 43.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 44.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 44.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 44.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 44.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 44.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 44.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 44.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 45.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 45.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 45.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 45.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 45.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 45.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 45.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 46.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 46.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 46.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 46.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 46.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 46.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 46.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 47.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 47.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 47.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 47.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 47.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 47.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 47.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 48.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 48.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 48.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 48.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 48.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 48.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 48.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 49.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 49.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 49.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 49.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 49.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 49.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 49.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 50.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 50.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 50.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 50.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 50.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 50.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 50.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 51.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 51.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 51.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 51.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 51.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 51.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 51.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 52.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 52.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 52.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 52.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 52.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 52.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 52.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 53.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 53.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 53.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 53.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 53.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 53.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 53.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 54.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 54.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 54.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 54.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 54.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 54.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 54.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 55.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 55.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 55.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 55.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 55.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 55.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 55.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 56.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 56.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 56.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 56.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 56.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 56.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 56.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 57.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 57.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 57.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 57.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 57.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 57.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 57.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 58.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 58.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 58.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 58.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 58.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 58.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 58.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 59.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 59.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 59.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 59.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 59.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 59.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 59.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 60.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 60.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 60.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 60.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 60.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 60.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 60.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 61.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 61.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 61.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 61.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 61.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 61.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 61.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 62.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 62.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 62.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 62.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 62.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 62.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 62.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 63.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 63.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 63.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 63.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 63.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 63.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 63.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 64.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 64.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 64.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 64.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 64.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 64.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 64.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 65.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 65.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 65.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 65.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 65.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 65.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 65.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 66.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 66.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 66.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 66.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 66.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 66.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 66.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 67.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 67.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 67.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 67.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 67.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 67.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 67.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 68.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 68.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 68.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 68.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 68.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 68.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 68.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 69.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 69.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 69.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 69.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 69.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 69.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 69.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 70.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 70.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 70.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 70.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 70.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 70.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 70.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 71.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 71.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 71.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 71.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 71.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 71.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 71.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 72.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 72.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 72.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 72.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 72.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 72.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 72.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 73.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 73.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 73.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 73.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 73.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 73.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 73.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 74.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 74.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 74.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 74.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 74.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 74.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 74.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 75.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 75.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 75.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 75.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 75.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 75.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 75.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 76.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 76.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 76.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 76.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 76.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 76.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 76.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 77.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 77.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 77.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 77.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 77.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 77.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 77.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 78.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 78.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 78.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 78.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 78.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 78.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 78.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 79.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 79.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 79.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 79.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 79.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 79.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 79.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 80.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 80.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 80.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 80.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 80.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 80.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 80.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 81.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 81.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 81.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 81.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 81.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 81.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 81.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 82.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 82.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 82.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 82.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 82.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 82.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 82.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 83.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 83.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 83.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 83.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 83.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 83.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 83.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 84.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 84.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 84.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 84.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 84.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 84.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 84.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 85.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 85.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 85.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 85.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 85.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 85.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 85.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 86.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 86.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 86.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 86.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 86.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 86.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 86.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 87.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 87.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 87.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 87.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 87.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 87.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 87.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 88.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 88.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 88.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 88.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 88.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 88.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 88.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 89.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 89.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 89.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 89.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 89.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 89.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 89.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 90.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 90.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 90.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 90.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 90.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 90.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 90.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 91.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 91.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 91.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 91.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 91.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 91.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 91.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 92.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 92.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 92.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 92.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 92.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 92.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 92.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 93.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 93.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 93.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 93.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 93.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 93.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 93.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 94.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 94.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 94.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 94.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 94.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 94.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 94.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 95.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 95.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 95.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 95.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 95.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 95.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 95.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 96.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 96.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 96.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 96.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 96.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 96.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 96.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 97.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 97.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 97.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 97.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 97.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 97.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 97.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 98.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 98.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 98.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 98.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 98.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 98.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 98.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 99.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 99.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 99.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 99.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 99.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 99.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 99.      
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 100.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 100.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 100.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 100.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 100.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 100.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 100.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 101.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 101.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 101.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 101.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 101.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 101.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 101.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  1, int 102.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  2, int 102.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  3, int 102.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  4, int 102.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  5, int 102.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  6, int 102.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 1, beam  7, int 102.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  1, int 103.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  2, int 103.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  3, int 103.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  4, int 103.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  5, int 103.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  6, int 103.     
+HISTORY bandpass: WARNING: No stray-radiation data, IF 2, beam  7, int 103.     
+HISTORY   reader: WARNING: Cycle 1:104 was completely flagged - dropped.        
+HISTORY   reader: 1 integration was dropped.                                    
+HISTORY   reader: Scan 1, field name "180444-50_327a",                          
+HISTORY   reader:   104 integration cycles.                                     
+HISTORY   reader:                                                               
+HISTORY   reader: Range of scan rates in output data:                           
+HISTORY   reader:   0.0000 to 0.0000 deg/s in right ascension,                  
+HISTORY   reader:   0.0130 to 0.0165 deg/s in declination,                      
+HISTORY   reader:   0.0130 to 0.0165 deg/s in arc.                              
+HISTORY   reader:                                                               
+HISTORY   reader: Scan end-points for beam 1 in output data:                    
+HISTORY   reader:        Arc length:    8.43 deg.                               
+HISTORY   reader:               UTC: 07:22:52  to 07:31:22,  span  00:08:30.    
+HISTORY   reader:   Right ascension: 18h04m43s to 18h04m43s, span -00h00m00s.   
+HISTORY   reader:       Declination:  -45.82 to  -54.26 deg, span  -8.43 deg.   
+HISTORY   reader:      Ecliptic lng:  270.89 to  270.80 deg, span  -0.09 deg.   
+HISTORY   reader:      Ecliptic lat:  -22.39 to  -30.82 deg, span  -8.43 deg.   
+HISTORY   reader:      Galactic lng:  347.10 to  339.32 deg, span  -7.78 deg.   
+HISTORY   reader:      Galactic lat:  -11.62 to  -15.36 deg, span  -3.73 deg.   
+HISTORY   reader:           Azimuth:  139.03 to  157.54 deg, span +18.51 deg.   
+HISTORY   reader:         Elevation:   71.25 to   65.93 deg, span  -5.32 deg.   
+HISTORY   reader: Parallactic angle:  -52.25 to  -33.34 deg, span +18.91 deg.   
+HISTORY   reader:     Feed rotation:   12.10 to   -7.10 deg, span -19.20 deg.   
+HISTORY   reader:    Position angle:  -40.15 to  -40.44 deg, span  -0.29 deg.   
+HISTORY   reader:    Solar distance:   97.48 to   96.87 deg.                    
+HISTORY   reader:   Solar elevation:    6.65 to    4.88 deg.                    
+HISTORY   reader:                                                               
+HISTORY bandpass: Calculating and applying bandpass correction...               
+HISTORY   reader: File closed, 51 complete integration cycles read.             
+HISTORY bandpass: Dropping unpaired integration 103.                            
+HISTORY bandpass: Doing RFI spike detection with parameters                     
+HISTORY bandpass:   base = 21, level = 6.0, span = 2, gap = 5.                  
+HISTORY bandpass: Beam  1, pol 1: RFI flagged in channel     2 ( +6.6)          
+HISTORY bandpass: Beam  1, pol 2: RFI flagged in channels  854 (+12.0),         
+HISTORY bandpass:   1654 (-11.5)                                                
+HISTORY bandpass: Beam  2, pol 1: RFI flagged in channels    1 ( +9.4),         
+HISTORY bandpass:     15 ( -6.3)                                                
+HISTORY bandpass: Beam  2, pol 2: RFI flagged in channels    1 ( +6.2),         
+HISTORY bandpass:    854 (+10.6), 1654 (-11.2)                                  
+HISTORY bandpass: Beam  3, pol 1: RFI flagged in channels    1 ( +7.9),         
+HISTORY bandpass:   1654 ( -7.7)                                                
+HISTORY bandpass: Beam  3, pol 2: RFI flagged in channels  854 (+12.7),         
+HISTORY bandpass:   1654 (-10.5)                                                
+HISTORY bandpass: Beam  4, pol 2: RFI flagged in channels  854 (+13.9),         
+HISTORY bandpass:   1654 (-12.9)                                                
+HISTORY bandpass: Beam  5, pol 1: RFI flagged in channels    1 (+10.3),         
+HISTORY bandpass:      5 ( -6.7),  854 ( +8.1)                                  
+HISTORY bandpass: Beam  5, pol 2: RFI flagged in channels  853 ( +6.0),         
+HISTORY bandpass:    854 (+15.5),  855 ( -6.2), 1321 ( -6.5), 1654 (-16.0)      
+HISTORY bandpass: Beam  6, pol 1: RFI flagged in channels  854 ( +9.1),         
+HISTORY bandpass:   1654 ( -7.2), 2038 ( +6.7)                                  
+HISTORY bandpass: Beam  6, pol 2: RFI flagged in channels    1 ( +8.7),         
+HISTORY bandpass:      4 ( +7.5),   20 ( -7.9),  854 ( +8.9), 1654 (-11.1)      
+HISTORY bandpass: Beam  7, pol 1: RFI flagged in channel   854 ( +6.4)          
+HISTORY bandpass: Beam  7, pol 2: RFI flagged in channels  854 (+10.6),         
+HISTORY bandpass:   1654 ( -8.3)                                                
+HISTORY bandpass: Flushing buffer...                                            
+HISTORY  monitor: Time axis increment set to 5s.                                
+HISTORY  monitor: Channel increment set to 5.                                   
+HISTORY bandpass: Finished processing.                                          
+HISTORY    stats:                                                               
+HISTORY    stats: Tsys statistics for 102 daytime integration cycles:           
+HISTORY    stats:      Avg                                                      
+HISTORY    stats:  Bm nChan   Mean  RMS    Medn  MAD   I4R    Min    Max        
+HISTORY    stats:  1A  2046  31.82  0.43  31.75  0.23  0.26  30.78  32.97+      
+HISTORY    stats:  1B  2044  29.04  0.83  28.88  0.53  0.52  27.55  31.05+      
+HISTORY    stats:  2A  2044  33.44  0.32  33.49  0.23  0.26  32.42  34.14       
+HISTORY    stats:  2B  2042  32.67  0.90  32.73  0.77  0.77  30.94  34.25       
+HISTORY    stats:  3A  2044  34.29  0.42  34.29  0.28  0.29  33.20  35.10       
+HISTORY    stats:  3B  2044  32.90  1.07  32.82  0.78  0.79  31.11  35.10       
+HISTORY    stats:  4A  2048  31.97  0.52  31.98  0.37  0.34  30.85  33.14+      
+HISTORY    stats:  4B  2044  31.19  0.63  31.08  0.41  0.42  29.91  32.68+      
+HISTORY    stats:  5A  2042  34.67  0.40  34.63  0.22  0.25  32.85  35.94+      
+HISTORY    stats:  5B  2040  32.88  0.89  32.75  0.66  0.68  31.31  35.04+      
+HISTORY    stats:  6A  2042  35.56  0.56  35.44  0.40  0.42  34.21  36.97+      
+HISTORY    stats:  6B  2038  35.83  0.79  35.80  0.62  0.62  34.40  37.61       
+HISTORY    stats:  7A  2046  36.21  0.47  36.28  0.32  0.36  35.19  37.32+      
+HISTORY    stats:  7B  2044  31.53  0.57  31.56  0.37  0.38  30.39  32.90+      
+HISTORY    stats:                                                               
+HISTORY    stats: Spectra statistics:                                           
+HISTORY    stats:  Bm   Mean  RMS   RMSq   Medn  MAD   I4R    Min    Max        
+HISTORY    stats:  1A   0.20  4.38  0.46   0.00  0.35  0.36 -24.55  74.68       
+HISTORY    stats:  1B   0.18  3.97  0.41   0.00  0.32  0.32 -22.41  68.06       
+HISTORY    stats:  2A   0.21  4.52  0.49   0.00  0.39  0.39 -26.77  77.50       
+HISTORY    stats:  2B   0.21  4.59  0.48   0.01  0.38  0.38 -26.43  79.78       
+HISTORY    stats:  3A   0.23  5.02  0.55   0.01  0.43  0.43 -27.96  84.76       
+HISTORY    stats:  3B   0.23  4.87  0.50   0.00  0.39  0.39 -26.56  79.97       
+HISTORY    stats:  4A   0.20  4.45  0.10   0.00  0.38  0.38 -25.69  79.82       
+HISTORY    stats:  4B   0.20  4.42  0.47   0.00  0.36  0.36 -25.13  79.92       
+HISTORY    stats:  5A   0.19  4.47  0.53   0.00  0.41  0.41 -27.67  84.12       
+HISTORY    stats:  5B   0.18  4.29  0.50   0.00  0.38  0.38 -26.36  80.54       
+HISTORY    stats:  6A   0.21  4.88  0.55   0.01  0.43  0.43 -29.10  91.76       
+HISTORY    stats:  6B   0.21  4.95  0.56   0.00  0.43  0.43 -28.99  92.62       
+HISTORY    stats:  7A   0.23  5.09  0.55   0.01  0.43  0.43 -29.59  88.43       
+HISTORY    stats:  7B   0.21  4.50  0.48   0.00  0.37  0.37 -25.20  78.00       
+HISTORY    stats:                                                               
+HISTORY    stats: Flag: Tsys max exceeds median by 3(+), 6(*), 9(#) x MAD.      
+HISTORY    stats: RMSq: RMS in central quarter of the channel range.            
+HISTORY    stats:  MAD: Median absolute deviation from the median (Medn).       
+HISTORY    stats:  I4R: Range of 2nd and 3rd quartiles (interquartile range).   
+HISTORY    stats: For spectra, the latter three are computed as the median      
+HISTORY    stats: over all integrations of the statistic for each spectrum.     
+HISTORY    stats:                                                               
