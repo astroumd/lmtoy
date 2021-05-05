@@ -14,10 +14,11 @@ E.g. *pixel/cell/beam* and *board/band/chassis* are notorious. Currently
       LSR.
 
     bank
-      The 16 available spectrometers are set up as a single bank for SEQUOIA
-      observations. Observations with the MSIP 1mm receiver cover two separate lines
-      (currently one in USB and one in LSB) and therefore are currently analyzed in two
-      banks of two spectrometers each.
+      A set of spectrometers that cover the same IF band at the same
+      resolution (and number of channels).
+      There is no side-band restriction.   For SEQUOIA
+      we only use one band currently. For the MSIP 1mm receiver there are
+      two, although they have one in USB and one in LSB.
 
     beam
       in the 4x4 multi-beam. Not to be confused with the
