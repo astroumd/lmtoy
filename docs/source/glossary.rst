@@ -208,24 +208,28 @@ set of spectra:
 
 Taking an inventory of current and known future LMT Spectral Line instruments:
 
-RSR: two beams, two pols, 6 bands, though the term *chassis* is used to point at any
-tuple of (beam,pol). So here we have nbeam=2, nband=6, npol=2, nchan=256 and ntime
-it typically 10-20. Each beam happens to look at the same sky position here.
+* RSR:
+  two beams, two pols, 6 bands, though the term *chassis* is used to point at any
+  tuple of (beam,pol). So here we have nbeam=2, nband=6, npol=2, nchan=256 and ntime
+  it typically 10-20. Each beam happens to look at the same sky position here.
 
 .. note::  If an instrument like RSR would multi-plex the (beam,pol) pairs, this would be a challenge
 	   to the assumption of homogeneity, and the SDFITS model would be more appropriate.
 
-1MMRx: one beam, two pols, two sidebands. So here we have nbeam=1, nband=2, npol=2, nchan=???
+* 1MMRx:
+  one beam, two pols, two sidebands. So here we have nbeam=1, nband=2, npol=2, nchan=???
 
-SEQ: 16 beams (though 4 beams per roach board, and each roach board has its own time) in one
-band (they also call it bank) and one polarization. Thus nbeam=16, nband=1, npol=1
+* SEQ:
+  16 beams (though 4 beams per roach board, and each roach board has its own time) in one
+  band (they also call it bank) and one polarization. Thus nbeam=16, nband=1, npol=1
 
 .. note::  The timestamps for the different roach boards make it impossible to store
 	   the data in a multi-dimensional array, unless (typicall one) integration
 	   is removed. Keeping all data would require ``data[ntime4, nchan]`` for SEQ.
 	   
 
-OMA (B3R): 8 beams, 2 bands (banks), 2 polarizations.
+* OMA (B3R):
+  8 beams, 2 bands (banks), 2 polarizations.
 
 Note that FAST is the only known case that stores data as  ``data[ntime, nchan, npol]``, where
 ``nchan`` is not the fastest running dimension.
@@ -245,8 +249,7 @@ We thus arrive at the following summary:
      - 2
      - 2
      - 6
-     - (pol,beam) tuples are the 4 chassis.
-        6 overlapping bands make one final spectrum
+     - (pol,beam) tuples are the 4 chassis. 6 overlapping bands make one final spectrum
    * - SEQ
      - 16
      - 1
