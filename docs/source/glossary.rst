@@ -15,7 +15,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
     1MMRx
       The 1mm MSIP receiver has one beam on the sky, measuring two polarizations
       in an USB and LSB, thus there are 4 spectra at the same position on the
-      sky.
+      sky. Commisiones April 2018.
 
     band
       A coherent section in frequency space. For **RSR** there
@@ -31,9 +31,10 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       two, although they have one in USB and one in LSB.
 
     beam
-      in the 4x4 multi-beam. Not to be confused with the
+      The footprint of one receiver horn on the sky. Sequioa as a 
+      4x4 multi-beam receiver. Not to be confused with the
       **FWHM**.  At 115 GHz the **FWHM** is about 16", at 86 GHz about
-      21".  The beam separation is 27.8"
+      21".  The beam separation is 27.8" for Sequoia.
 
     board
       for LSR these are the roach boards (4). For RSR they
@@ -71,6 +72,16 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
     ObsNum
       Observatation Number. This is not all, obsnum is part of the (**ObsNum** , **SubObsNum** , **ScanNum**) tuple.
 
+    OMAyA
+      (One Millimeter Array Receiver for Astronomy):  200-280 GHz. 8 "pixels" (beams) on sky, each dual
+      polarization, with two sidebands. IF can be 4-12 GHz in each sideband.
+
+    OMAR
+      something with omaya? Or is this another term for OMAYA
+   
+    PHAMAS
+      (Phased Array Receiver for Millimeter Astronomy): 64 element receiver - prototype.
+   
     pixel
       synonym for **beam** as in multi-beam. The keyword --pix_list= is used to select pixels (0..15) for processing.
 
@@ -104,6 +115,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
     RSR
       (Redshift-Search-Receiver): operates between 70 and 110 GHz
       in 6 separate bands of 256 channels each.  Typical resolution: 100 km/s.
+      (30 MHz)
       The RSR has two beams on the sky, each beam has two polarizations to
       form 4 independent calibrated spectra; the polarization pairs for each 
       beam are collected through the same horn. These 4 are referred to as the
@@ -112,15 +124,16 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
     ScanNum
       Scan Number - see **ObsNum**
 
-    SDF
-      Single Dish FITS (convention)
-
     SDFITS
       Single Dish **FITS** format, normally used to store
       raw or even calibrated spectra in a FITS BINTABLE format.  Each
       row in a BINTABLE has an attached RA,DEC (and other meta-data),
       plus the whole spectrum. This standard was drafted in 1995 (Liszt),
       and has been implemented by many telescopes (Arecibo, FAST, GBT, Parkes, ....)
+
+    SEQUOIA
+      85-115.6 GHz, has a 4x4 multi-beam (pixel) receiver. Can do multiple backend
+      spectrometers tuned indepedently in a 15GHz window.
 
     SFL
       Sanson-Flamsteed projection, used in LMT **FITS** files
@@ -138,8 +151,9 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
     SubObsNum
       Sub-Observatation Number - see **ObsNum**
 
-    Wares
-      The **wares** spectrometer. Each has a roach board?
+    WARES
+      (Wideband Arrayed ROACH Enabled Spectrometer). The spectrometer used
+      for Sequoia.
 
 
 .. _overloaded:
@@ -226,10 +240,12 @@ Taking an inventory of current and known future LMT Spectral Line instruments:
 .. note::  The timestamps for the different roach boards make it impossible to store
 	   the data in a multi-dimensional array, unless (typicall one) integration
 	   is removed. Keeping all data would require ``data[ntime4, nchan]`` for SEQ.
-	   
 
-* OMA (B3R):
+* OMA
   8 beams, 2 bands (banks), 2 polarizations.
+
+* B3R
+  no information yet
 
 Note that FAST is the only known case that stores data as  ``data[ntime, nchan, npol]``, where
 ``nchan`` is not the fastest running dimension.
@@ -244,27 +260,38 @@ We thus arrive at the following summary:
      - beam
      - pol
      - band
+     - channels
      - comment
    * - RSR
      - 2
      - 2
      - 6
+     - 256
      - (pol,beam) tuples are the 4 chassis. 6 overlapping bands make one final spectrum
    * - SEQ
      - 16
      - 1
      - 1
+     - 2k, 4k, 8k
      - beams have time issue, perhaps ntime = ntime * nbeam, and nbeam=1
    * - 1MMRx
      - 1
      - 2
      - 2
+     - 2k
      - band: USB and LSB
-   * - OMA (B3R)
+   * - OMA 
      - 8
      - 2
      - 2
+     - ?
      - Future instrument, with 4 more roach boards
+   * - B3R
+     - ?
+     - ?
+     - ?
+     - ?
+     - Japanese 2mm receiver
 
 Single Dish Math
 ~~~~~~~~~~~~~~~~
