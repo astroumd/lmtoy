@@ -133,6 +133,7 @@ All scripts should self-describe using the **-h** or **--help** flag.
 
 * **lmtinfo.py**:            gathers info what OBSNUM's you have, or for a specific OBSNUM selected, useful info for the pipeline
 * **lmtrc.py**:              edit the (lmtoy) parameter for a set of rc files
+* **lmtls**:                 grep the $DATA_LMT/data_lmt.log file for matches. multiple patterns allowed
 * **process_otf_map2.py**:   converts RAW to SpecFile
 * **process_otf_map.py**:   *deprecated version*
 * **view_spec_file.py**:     make a series of plots summarizing one or a set of pixels
@@ -218,7 +219,6 @@ If multiple spectral lines are present, they could be selected with
 this keyword, but a new keyword --restfreq will be needed to correctly
 set the velocity scale. This might become a future option.
 
-
 ### stype
 
 This controls how the OFFs are combined with the ONs to create a
@@ -239,6 +239,14 @@ the same.
 It is also important to be sure to cull as many pixels as are needed,
 not just to make a smaller SpecFile, but to ensure the
 **lmtoy_combine.sh** script to properly work.
+
+### otf_cal
+
+This peculiar option can be useful for calibration if there are CAL
+measurements within a MAP. Set to 1 if you want to use it.
+setting it to 1 when MAP data has no embedded CALs, it will
+currently crash. The default is 0, because most data have a
+separate CAL preceding the MAP.
 
 
 
@@ -346,7 +354,7 @@ in the b_regions?) can also be used to weigh (1/RMS^2) each spectrum when these 
 are combined in the gridding process. This is the current default. By setting this to
 0 one can weigh each spectrum the same, so only the
 
-After the pipeline, if NEMO is present, it also computed a "wt2" and "wt3" map.
+After the pipeline, if NEMO is present, it also computes a mem"wt2" and "wt3" map.
 
 
 # Advanced concepts:   Combining maps from different OBSNUM
