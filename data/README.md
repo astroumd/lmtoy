@@ -1,7 +1,7 @@
 Some example of data.  For FITS this is just the fits header. For CDF (some of) the output of ncdump
 
-Some notes:
-
+Some SDFITS notes:
+------------------
 1) FAST data use
      TTYPE13 = 'NCHAN   '
      TDIM21  = '(4,65536)'
@@ -13,3 +13,14 @@ Some notes:
    Also note they use a separate equally dimensioned FLAGGED array (4096B)
 
 3) GBT is more simple, only singly dimensioned arrays.
+
+
+netcdf:
+-------
+SEQ_ifproc
+SEQ_roach0 (there are 4)
+
+RSR_RedshiftChassis0 (there are 4)
+
+1MM_ifproc
+1MM_roach0 (there is 1)
