@@ -231,7 +231,7 @@ Taking an inventory of current and known future LMT Spectral Line instruments:
 	   to the assumption of homogeneity, and the SDFITS model would be more appropriate.
 
 * 1MMRx:
-  one beam, two pols, two sidebands. So here we have nbeam=1, nband=2, npol=2, nchan=???
+  one beam, two pols, two sidebands. So here we have nbeam=1, nband=2, npol=2, nchan=2k
 
 * SEQ:
   16 beams (though 4 beams per roach board, and each roach board has its own time) in one
