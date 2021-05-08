@@ -132,6 +132,7 @@ The following scripts are used by the **lmtoy_reduce.sh** pipeline.
 All scripts should self-describe using the **-h** or **--help** flag.
 
 * **lmtinfo.py**:            gathers info what OBSNUM's you have, or for a specific OBSNUM selected, useful info for the pipeline
+* **lmtar.py**:              list which files under $DATA_LMT belong to one or more OBSNUM's
 * **lmtrc.py**:              edit the (lmtoy) parameter for a set of rc files
 * **lmtls**:                 grep the $DATA_LMT/data_lmt.log file for matches. multiple patterns allowed
 * **process_otf_map2.py**:   converts RAW to SpecFile
@@ -171,6 +172,25 @@ The **lmtinfo.py** script makes a summary listing of the OBSNUM's you have, e.g.
 NOTE: Although VLSR -296 agrees with NED, it is the systemic velocity of M31,
 which could throw off current auto-baselining for fields away from the
 minor axis ofr M31. The one used for M51 (463) does not agree with NED (611)
+
+## "lmtar" "lmtls"
+
+The **lmtar.py** script will list all the files belonging to one (or more)
+OBSNUM's. Normally never used by users, but can be useful if you want to
+copy an observation to another computer. For this the shell script **lmtar** may be
+more useful. It's usage would be
+
+      lmtar irc.tar 79447 79448
+
+Since typically an observation is at least two OBSNUM's (cal and map), the
+user is responsible to fine all the correct OBSNUM's.
+
+The command **lmtls** reports a simple pattern matching to find potential
+OBSNUMs's, e.g.
+
+      lmtls Ori-KL 2018
+
+which assumes somebody had built the $DATA_LMT/data_lmt.log file for you.
 
 
 ## "Process"
