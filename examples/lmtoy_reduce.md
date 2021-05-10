@@ -268,6 +268,11 @@ setting it to 1 when MAP data has no embedded CALs, it will
 currently crash. The default is 0, because most data have a
 separate CAL preceding the MAP.
 
+### eliminate_list
+
+Here you can mask out individual channels numbers. Documentation
+not clear, they look like 1-based, not 0-based. TDB.
+
 
 
 ## "Gridding"
