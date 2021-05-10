@@ -115,6 +115,12 @@ v  least one pixel in it. This only works well for convex areas. For
    dumped in channel-0 with the then wrong WCS.  It is meant for debugging, and not for
    users. In theory we can make this a more formal feature via grid_data.py
 
+1. The writing of the specfile suffers from writing dynamic arrays (that grow) into
+   netcdf variables. Behind the scenes this may be just as bad as appending, but it's
+   very slow. The relevant loop over all pixels in _create_nc_data() went from 100" to 37"
+   on one particul benchmark.  The variable fast_nc = True should be used to use the new
+   (slightly more memory consuming) faster version.
+
 # A wishlist
 
 In no particular order, there are some remaining things on the wish
