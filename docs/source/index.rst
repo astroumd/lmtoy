@@ -53,11 +53,12 @@ This is where the API can be found
    dreampy3 <dreampy3.api>
    workflow
 
-Glossary
+Various
 ========
 .. toctree::
    :maxdepth: 2
       
+   sdfits
    glossary
 
 Indices
