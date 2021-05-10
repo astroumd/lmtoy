@@ -51,6 +51,7 @@ This is where the API can be found
    api
    lmtslr <lmtslr.api>
    dreampy3 <dreampy3.api>
+   workflow
 
 Glossary
 ========
