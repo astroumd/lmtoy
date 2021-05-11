@@ -63,16 +63,16 @@ source lmtoy_start.sh
 which python
 cd examples
 
-#                                                SLR bench uses IRC_data
-echo Assuming your ~/LMT/data_lmt has the IRC data
+# SLR bench
+echo Assuming your $DATA_LMT has the IRC data
 if [ -d $DATA_LMT/ifproc ]; then
     lmtinfo.py $DATA_LMT 79448 
     make bench
 else
-    echo Could not find the IRC data for SLR test.
+    echo Could not find the SLR data. Hope your DATA_LMT=$DATA_LMT is good:
 fi
 
-
+# RSR bench
 if [ -d $DATA_LMT/rsr ]; then     
     make rsr1
 else
