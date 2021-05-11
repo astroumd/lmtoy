@@ -15,13 +15,16 @@ AC_SUBST(EDIT_MSG)
 
 dnl Override with:  --with-data-lmt=
 dnl Tested in this order:
+dnl $DATA_LMT
 dnl ~/LMT/data_lmt       Suggested private sandboxes
 dnl /data_lmt            At the UMasss machine "cln"
 dnl /lma1/lmt/data_lmt   At the UMD machine "lma"
 
-if   test -d ~/LMT/data_lmt      ; then
+if   test ! -z $DATA_LMT         ; then
+     DATA_LMT=$DATA_LMT
+elif test -d ~/LMT/data_lmt      ; then
      DATA_LMT=~/LMT/data_lmt
-elif test -d  /data_lmt ; then
+elif test -d  /data_lmt          ; then
      DATA_LMT=/data_lmt
 elif test -d  /lma1/lmt/data_lmt ; then
      DATA_LMT=/lma1/lmt/data_lmt
