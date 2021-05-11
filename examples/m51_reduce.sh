@@ -8,7 +8,7 @@
 
 
 # input parameters (not everything has been put in a parameter here)
-path=M51_data
+path=$DATA_LMT
 src=M51
 obsnum=91112
 makespec=1
