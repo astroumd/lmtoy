@@ -52,6 +52,7 @@ else
 fi
 
 if [ $nemo = 1 ]; then
+    echo Installing NEMO with pgplot=$pgplot
     if [ $pgplot = 1 ] ; then
 	make install_nemo YAPP=pgplot
     else
