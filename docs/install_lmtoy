@@ -5,6 +5,7 @@
 #     4-jan-2021:     try to be smart on finding LMT data; disable montage for now
 #    12-feb-2021:     lmt_data -> data_lmt
 #    23-feb-2021:     new options (venv, nemo)
+#    11-may-2021:     use only $DATA_LMT, no more IRC_data
 
 version="23-feb-2021"
 
@@ -63,34 +64,14 @@ which python
 cd examples
 
 #                                                SLR bench uses IRC_data
-if   [ -d ~/LMT/IRC_data ]; then
-    ln -s ~/LMT/IRC_data
-elif [ -d  /lma1/lmt/data_lmt ]; then
-    ln -s  /lma1/lmt/data_lmt IRC_data
-elif [ -d  /data/LMT/data_lmt ]; then
-    ln -s  /data/LMT/data_lmt IRC_data
-elif [ -e   /n/lmt1/lmt/IRC_data.tar.gz ]; then
-    tar zxf /n/lmt1/lmt/IRC_data.tar.gz
-elif [ -e   /n/chara/teuben/LMT/IRC_data.tar.gz ]; then
-    tar zxf /n/chara/teuben/LMT/IRC_data.tar.gz
-elif [ -e   ../IRC_data.tar.gz ]; then
-    tar zxf ../IRC_data.tar.gz
-elif [ -d ~/LMT/data_lmt ]; then
-    ln -s ~/LMT/data_lmt IRC_data
-    echo Assuming your ~/LMT/data_lmt has the IRC data
-else
-    echo Could not find the IRC_data or data_lmt, skipping benchmark
-fi
-
-if [ -e IRC_data ]; then 
-    ls -ld IRC_data
+echo Assuming your ~/LMT/data_lmt has the IRC data
+if [ -d $DATA_LMT/ifproc ]; then
+    lmtinfo.py $DATA_LMT 79448 
     make bench
 else
-    echo Sorry, no IRC_data found for the SLR benchmark. 
-fi  
+    echo Could not find the IRC data for SLR test.
+fi
 
-
-#                                                 RSR_bench uses I10565
 
 if [ -d $DATA_LMT/rsr ]; then     
     make rsr1
