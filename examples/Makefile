@@ -3,25 +3,13 @@
 
 TIME = /usr/bin/time
 
-#  Directories (or symlinks to) the data, though normally you should point to $DATA_LMT
-#  The named links are for off-site tests with limited disk space
-DATA_DIRS = IRC_data M31_data M51_data
+#  It is assumed your testdata are in $DATA_LMT
 
 help:
-IRC_data:
-	@echo For the IRC benchmark:  The directory IRC_data does not exist yet
-	@echo and needs to manually created or symlinked to where the IRC_data are, e.g.
-	@echo ""
-	@echo '     ln -s $DATA_LMT IRC_data'
-	@echo ""
-	@echo "If @UMD: tar zxf /n/chara/teuben/LMT/IRC_data.tar.gz"
-	@echo "Else:    contact us"
-	@echo ""
-	@echo "The same holds for the other test data, M31_data and M51_data"
+	@echo no help
 
-
-#  takes about 21'
-all:   # $(DATA_DIRS)
+#  takes about 21' in old, and 7' in new
+all:
 	/usr/bin/time ./irc_reduce.sh              > irc_79448.log 2>&1
 	/usr/bin/time ./m31_reduce.sh obsnum=85776 > m31_85776.log 2>&1
 	/usr/bin/time ./m31_reduce.sh obsnum=85778 > m31_85778.log 2>&1
@@ -31,8 +19,8 @@ all:   # $(DATA_DIRS)
 
 new:   bench11 bench31 bench51
 
-# takes about 1'41" on a fast 2021 machine
-bench: # IRC_data
+# takes about 1'41" on a fast 2021 machine, and 0'45 in fast_nc mode (now default)
+bench:
 	@echo "Running benchmark"
 	OMP_NUM_THREADS=1 /usr/bin/time ./irc_reduce.sh > irc_bench.log 2>&1
 	@echo "Result:"
@@ -42,12 +30,12 @@ bench: # IRC_data
 	@tail -2 irc_bench.log
 
 # takes about 14"
-bench1: # IRC_data
+bench1:
 	@echo "Running quick test for 1 pixel"
 	$(TIME) ./irc_reduce.sh pix_list=1 > irc_bench1.log 2>&1
 
 # a plot bench for
-bench2: IRC_data IRC_79448.nc
+bench2: IRC_79448.nc
 	view_spec_point.py -i IRC_79448.nc --pix_list 0,5,10,15 --plots bench2a
 	view_spec_point.py -i IRC_79448.nc --pix_list 0,5,10,15 --plots bench2b -z -3
 	view_spec_point.py -i IRC_79448.nc --pix_list 0,5,10,15 --plots bench2c -z -3 --radius 10
@@ -57,22 +45,23 @@ bench2: IRC_data IRC_79448.nc
 
 EXTRA=viewspec=1 makewf=1
 
-bench11: # IRC_data
+# about 60"
+bench11:
 	$(TIME) ./lmtoy_reduce.sh obsnum=79448 $(EXTRA) > lmtoy_79448.log 2>&1
 
-bench31: # M31_data
+bench31:
 	$(TIME) ./lmtoy_reduce.sh obsnum=85776 $(EXTRA) > lmtoy_85776.log   2>&1
 	$(TIME) ./lmtoy_reduce.sh obsnum=85778 $(EXTRA) > lmtoy_85778.log   2>&1
 	$(TIME) ./lmtoy_reduce.sh obsnum=85824 $(EXTRA) > lmtoy_85824.log   2>&1
 	$(TIME) ./lmtoy_combine.sh  obsnum=85776,85778,85824 > lmtoy_85776_3.log 2>&1
 	$(TIME) ./nemo_combine.sh                        >  lmtoy_85776_nemo.log 2>&1
 
-bench51: # M51_data
+bench51:
 	$(TIME) ./lmtoy_reduce.sh obsnum=90911 $(EXTRA) > lmtoy_90911.log   2>&1
 	$(TIME) ./lmtoy_reduce.sh obsnum=91112 $(EXTRA) > lmtoy_91112.log   2>&1
 	$(TIME) ./lmtoy_combine.sh        obsnum=90911,91112 > lmtoy_90911_2.log 2>&1
 
-bench31a: # M31_data
+bench31a:
 	$(TIME) ./lmtoy_reduce.sh obsnum=85776 noise_sigma=0 > lmtoy_85776.log   2>&1
 	$(TIME) ./lmtoy_reduce.sh obsnum=85778 noise_sigma=0 > lmtoy_85778.log   2>&1
 	$(TIME) ./lmtoy_reduce.sh obsnum=85824 noise_sigma=0 > lmtoy_85824.log   2>&1
@@ -190,3 +179,11 @@ rsr3:
 	@a=$$(grep a= fit3.log); b=$$(grep b= fit3.log); c=$$(grep c= fit3.log); d=$$(grep d= fit3.log); rms=$$(grep rms= fit3.log);\
 	echo  "FIT shows      : $$a $$b $$c $$d $$rms"
 	@echo "FIT should show: a= 0.000179097 0.000118254  b= 0.0466679 0.000536265  c= 110.508 0.000451531 d= 0.0344496 0.000468057 rms= 0.000565537"
+
+
+# to get the test data mentioned in this Makefile, run the following commands on a machine where $DATA_LMT has these
+# and untar them on the where you want them
+data:
+	lmtar irc_2018.tar 79447 79448
+	lmtar m31_2019.tar 85775 85776 85777 85778 85823 85824
+	lmtar m51_2020.tar 91111 91112 90910 90911
