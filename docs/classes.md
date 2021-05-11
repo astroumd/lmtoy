@@ -119,6 +119,29 @@ Parkes stores it second. Similar to the huge confusion that CASA has creates
 
 	data/fast1.head:  TDIM21  = '(4,65536)'          / Dimensions (4,NCHAN) 
 	data/parkes1.head:TDIM23  = '(2048,2,1,1)'       / size of the multidimensional array 
+	
+## Parkes
+
+	CTYPE2  = 'STOKES  '           / DATA array axis 2: polarization code           
+	CRPIX2  =                  1.0 / Polarization code reference pixel              
+	CRVAL2  =                 -5.0 / Polarization code at reference pixel (XX)      
+	CDELT2  =                 -1.0 / Polarization code axis increment               
+
+3 and 4 are RA,DEC
+
+## FAST
+
+	CTYPE1  = 'FREQ    '           / DATA array axis 1: frequency in Hz             
+	CTYPE2  = 'STOKES  '           / DATA array axis 2: polarization code           
+	CRPIX2  =                   1. / Polarization code reference pixel              
+	CRVAL2  =                  -5. / Polarization code at reference pixel (XX)      
+	CDELT2  =                  -1. / Polarization code axis increment               
+
+3 and 4 are RA,DEC
+
+## GBT
+
+GBT stores :   1=freq  2=ra  3=dec   4=pol
 
 # Other codes that use SDFITS:
 
