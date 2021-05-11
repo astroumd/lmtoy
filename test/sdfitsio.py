@@ -3,6 +3,7 @@
 #  read and write an SDFITS file
 #
 #
+#  
 
 
 
@@ -13,9 +14,41 @@ from astropy.io import fits
 import copy
 import time
 
-def gen_data(ndim=(256,1,1,1,256)):
+class Spectra(object):
+    def __init__(self,ndim):
+        data = gen_data(ndim)
+        wtps = get_data(ndim[:-1], 1.0)
+        # for each dim we need a lookup array (or WSC descriptor) of that axis
+        # for a WCS the value = (i-crpix)*cdelt + crval
+        # for a lookup the index into will be C=crval[i]
+
+    def pol_aver(self):
+        #       data[ntime, nbeam, nband, npol, nchan]
+        d1 = (self.data*self*wtps).sum(axis=axis_pol, keepdims=True)
+        d0 = self.wtps.sum(axis=axis_pol, keepdims=True)
+        self.data = d1/d0
+    def time_aver(self):
+        d1 = (self.data*self*wtps).sum(axis=axis_time, keepdims=True)
+        d0 = self.wtps.sum(axis=axis_time, keepdims=True)
+        self.data = d1/d0
+    def band_merge(self, allow_gap=0):
+        # check if the bands can be merged
+        print("n/a")
+        
+        
+                  
+        
+
+def gen_data(ndim=(256,1,1,1,256), value=None):
     """
     generate fake data so we can fill an SDFITS file from scratch
+
+    data[ntime, nbeam, npol, nband, nchan]
+        (ntime,nbeam) are multiplexed for OTF - usually CRVAL3,CRVAL4 - but nbeam can be 1
+                      even though beam can cycle over 16 in the case of SEQ
+        npol usually in CRVAL2 - but npol can be 1
+        (nband,nchan) are both under control of CRVAL1 - but nband can be 1
+    
     """
     # need to agree on what axis is what
     axis_time  = 0
@@ -28,6 +61,9 @@ def gen_data(ndim=(256,1,1,1,256)):
     ndim_rsr = (10,4,1,6,256)
     ndim_slr = (256,1,1,1,256)
     ndim_oma = (128,1,2,1,256)
+    ndim_1mm = (128,1,2,2,256)
+
+                
     
     data_rsr = np.random.normal(-0.1,1,ndim_rsr)
     dims_rsr = data_rsr.shape
@@ -48,11 +84,12 @@ def gen_data(ndim=(256,1,1,1,256)):
     # for return
     data = np.random.normal(-0.1,1,ndim)
     if True:
+        data = ma.masked_invalid(data,copy=False)    
+    if True:
         data = np.arange(data.size).reshape(ndim)
 
     print('data',data)
     return data
-
 
 
 
@@ -94,7 +131,6 @@ def my_read(filename):
     
     hdu.close()
     
-
 
 
 
@@ -191,6 +227,13 @@ def my_write_rsr(filename):
     hdu.header['BANDWID']  = 800.0e6    # Hz
     hdu.writeto(filename, overwrite=True)
     print("Written %s" %  filename)
+
+
+def oper1(data,axis):
+    #       data[ntime, nbeam, nband, npol, nchan]
+    data = dara.mean(axis=axis)
+    
+    return
 
 if __name__ == '__main__':   
 
