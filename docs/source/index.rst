@@ -10,6 +10,9 @@ http://lmtgtm.org/
 This document described the current toy box of LMT tools that you might
 want to use to reduce LMT data.   It will cover most Spectral Line instruments.
 
+The source code is available via https://github.com/astroumd/lmtoy which describes
+how to assemble the toolbox with the help of a number of codes.
+
 LMTSLR
 ======
 
