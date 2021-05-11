@@ -5,3 +5,4 @@ pvextractor
 pyds9
 ephem
 aplpy
+m2r
