@@ -192,9 +192,10 @@ install_montage:  Montage
 	(cd Montage; make)
 	@echo  @todo: install the python interface for Montage
 
-# step 5 (optional)
+# step 5 (optional; pick YAPP=ps or YAPP=pgplot)
+YAPP = ps
 install_nemo:  nemo
-	(cd nemo; ./configure; make build1 build2 build3 MAKELIBS=corelibs)
+	(cd nemo; ./configure --with-yapp=$(YAPP); make build1 build2 build3 MAKELIBS=corelibs)
 
 install_nemo_pgplot:  nemo
 	(cd nemo; ./configure --with-yapp=pgplot; make build1 build2 build3 MAKELIBS=corelibs)

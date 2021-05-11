@@ -12,9 +12,11 @@ version="23-feb-2021"
 # set -x
 
 lmtoy=lmtoy       # root directory name where to install (probably should not change it)
+branch=master     # branch
 wget=wget         # use wgetc if you have my caching version
 venv=0            # set to 1 if you want to bypass a new anaconda2 and use venv
 nemo=1            # set to 0 if you don't need NEMO
+pgplot=1          # set to 1 if you want PGPLOT in NEMO
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -50,7 +52,11 @@ else
 fi
 
 if [ $nemo = 1 ]; then
-  make install_nemo
+    if [ $pgplot = 1] ; then
+	make install_nemo YAPP=pgplot
+    else
+	make install_nemo
+    fi
 fi
 
 # make install_montage
