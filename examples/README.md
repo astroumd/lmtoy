@@ -54,7 +54,7 @@ These amend the examples given in SpectralLineReduction.
 
 
 
-## IRC+10216:   IRC_data
+## IRC+10216:
 
         284 ./ifproc/ifproc_2018-11-16_079447_00_0001.nc
       27872 ./ifproc/ifproc_2018-11-16_079448_01_0000.nc
@@ -79,7 +79,7 @@ as well as a CPU time output. Here are some examples how long the benchmark take
       151.71user 2.12system 2:34.57elapsed 99%CPU    "lma" @UMD; AMD EPYC 7302 16-Core Processor
       110.78user 2.03system 1:52.83elapsed 99%CPU    "xps13", Peter's i5-1135G7 based laptop
       
-## M31:   M31_data
+## M31:
 
         284 ./ifproc/ifproc_2019-10-31_085775_00_0001.nc
       64324 ./ifproc/ifproc_2019-10-31_085776_00_0001.nc
@@ -113,7 +113,7 @@ as well as a CPU time output. Here are some examples how long the benchmark take
      941468 ./spectrometer/roach3/roach3_85824_0_1_Region_J-K_2019-11-01_070938.nc
 
 
-## M51:   M51_data
+## M51:
 
          304 ./ifproc/ifproc_2020-02-20_091111_00_0001.nc
       247476 ./ifproc/ifproc_2020-02-20_091112_00_0001.nc
