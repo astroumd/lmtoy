@@ -7,18 +7,20 @@ data reduction. LMT is a large 50m single dish radio telescope located
 in Mexico (18:59:09N 97:18:53W) operating at mm wavelengths.
 http://lmtgtm.org/
 
+This document described the current toy box of LMT tools that you might
+want to use to reduce LMT data.   It will cover most Spectral Line instruments.
+
 LMTSLR
 ======
 
 LMTSLR (SpectralLine Receiver)
 
-This is for Sequoia and future Omaya
+This is for Sequoia, the msip 1MMRx and future Omaya
 
 RSR
 ===
 
 RSR (Redshift Search Receiver)
-
 
 
 Tolteca
@@ -54,11 +56,12 @@ This is where the API can be found
    workflow
 
 Various
-========
+=======
 .. toctree::
    :maxdepth: 2
       
    sdfits
+   tools
    glossary
 
 Indices
