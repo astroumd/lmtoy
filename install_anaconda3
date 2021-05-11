@@ -20,6 +20,7 @@ set url   = https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.s
 set url   = https://repo.anaconda.com/archive/Anaconda3-2020.07-MacOSX-x86_64.sh
 set url   = https://repo.anaconda.com/archive/Anaconda3-2020.07-Linux-x86_64.sh
 set url   = https://repo.anaconda.com/archive/Anaconda3-2020.11-%s-x86_64.sh
+set url   = https://repo.anaconda.com/archive/Anaconda3-2021.04-%s-x86_64.sh
 
 set dir   = `pwd`/anaconda3
 set opt   = 0

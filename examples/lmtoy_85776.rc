@@ -2,7 +2,7 @@
 # DATE: 2020-12-26T18:49:43.878145779
 # obsnum=85776
 # Using ifproc=M31_data/ifproc/ifproc_2019-10-31_085776_00_0001.nc
-path=M31_data
+# path=M31_data
 src=Region_J-K
 vlsr=-296
 # based on vlsr, dv=100,  dw=250
@@ -15,11 +15,13 @@ x_extent=250
 y_extent=250
 pix_list=0,1,2,4,5,6,7,8,9,10,11,12,13,14,15
 #pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-resolution=12.5
-cell=6.25
+resolution=11
+cell=5.5
 rmax=3
+otf_select=2
 otf_a=1.1
 otf_b=4.75
+otf_b=1
 otf_c=2
 b_order=1
 rms_cut=-4

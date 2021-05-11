@@ -14,7 +14,7 @@
 
 
 # input parameters
-path=IRC_data
+path=$DATA_LMT
 src=IRC
 obsnum=79448
 makespec=1
@@ -27,7 +27,7 @@ cell=6.25
 rmax=3
 noise_sigma=1
 x_axis=VLSR
-
+slice=[-350,350]
 
 
 #             simple keyword=value command line parser for bash - don't make any changing below
@@ -42,7 +42,8 @@ if [ -d $path ]; then
 else
     p_dir=${DATA_LMT}
     echo "Warning: assuming you have $p_dir (or a symlink) where the IRC_data are"
-fi    
+fi
+s_on=${src}_${obsnum}
 s_nc=${src}_${obsnum}.nc
 s_fits=${src}_${obsnum}.fits
 w_fits=${src}_${obsnum}.wt.fits
@@ -50,19 +51,20 @@ w_fits=${src}_${obsnum}.wt.fits
 # bug? tsys 220 vs. 110 seems to make no pdiff
 #  convert RAW to SpecFile
 if [ $makespec = 1 ]; then
-process_otf_map2.py -p $p_dir \
-		    -o $s_nc \
-		    --obsnum $obsnum \
-		    --pix_list $pix_list \
-		    --bank 0 \
-		    --stype 2 \
-		    --use_cal \
-		    --x_axis $x_axis \
-		    --b_order 0 \
-		    --b_regions [[-250,-150],[150,300]] \
-		    --l_region [[-100,100]] \
-		    --slice [-350,350] \
-		    --eliminate_list 0 
+    process_otf_map2.py \
+	-p $p_dir \
+	-o $s_nc \
+	--obsnum $obsnum \
+	--pix_list $pix_list \
+	--bank 0 \
+	--stype 2 \
+	--use_cal \
+	--x_axis $x_axis \
+	--b_order 0 \
+	--b_regions [[-250,-150],[150,300]] \
+	--l_region [[-100,100]] \
+	--slice [-350,350] \
+	--eliminate_list 0 
 fi
 #		    --slice [-1058,1018] \
 
@@ -77,50 +79,51 @@ fi
 # bug:   even if pix_list=10 figure 5 still shows all pixels
 #  pointings:  -240 .. 270    -259 .. 263      510x520
 if [ $viewspec = 1 ]; then
-view_spec_file.py -i $s_nc \
-                  --pix_list $pix_list \
-		  --rms_cut 10.0 \
-		  --plot_range=-1,3
+    view_spec_file.py \
+	-i $s_nc \
+        --pix_list $pix_list \
+	--rms_cut 10.0 \
+	--plot_range=-1,3 \
+	--plots $s_on
 fi
-# --show_all_pixels \
-# --show_pixel 10 \
-
 
 
 #  convert SpecFile to FITScube
-grid_data.py --program_path spec_driver_fits \
-	     -i $s_nc \
-	     -o $s_fits \
-	     -w $w_fits \
-	     --resolution  $resolution \
-	     --cell        $cell \
-             --pix_list    $pix_list \
-	     --rms_cut     $rms_cut \
-	     --x_extent    300 \
-	     --y_extent    300 \
-	     --otf_select  1 \
-	     --rmax        $rmax \
-	     --otf_a       1.1 \
-	     --otf_b       4.75 \
-	     --otf_c       2 \
-	     --n_samples   256 \
-	     --noise_sigma $noise_sigma 
+grid_data.py \
+    --program_path spec_driver_fits \
+    -i $s_nc \
+    -o $s_fits \
+    -w $w_fits \
+    --resolution  $resolution \
+    --cell        $cell \
+    --pix_list    $pix_list \
+    --rms_cut     $rms_cut \
+    --x_extent    300 \
+    --y_extent    300 \
+    --otf_select  1 \
+    --rmax        $rmax \
+    --otf_a       1.1 \
+    --otf_b       4.75 \
+    --otf_c       2 \
+    --n_samples   256 \
+    --noise_sigma $noise_sigma 
 
 
 # bug:  when rmax=5  r=12/c=2.4  malloc(): unsorted double linked list corrupted
 
 # limits controls figure 5, but not figure 3, which is scaled for the whole map
 if [ $viewcube = 1 ]; then
-view_cube.py -i $s_fits \
-	     --v_range=-100.0,100.0 \
-	     --v_scale=1000 \
-	     --location=0.0,0.0 \
-	     --scale=0.000278 \
-	     --limits=-300,300,-300,300 \
-	     --tmax_range=-1,12 \
-	     --tint_range=-1,400 \
-	     --plot_type TMAX \
-	     --interpolation bilinear
+    view_cube.py \
+	-i $s_fits \
+	--v_range=-100.0,100.0 \
+	--v_scale=1000 \
+	--location=0.0,0.0 \
+	--scale=0.000278 \
+	--limits=-300,300,-300,300 \
+	--tmax_range=-1,12 \
+	--tint_range=-1,400 \
+	--plot_type TMAX \
+	--interpolation bilinear
 fi
 
 if [ ! -z $NEMO ]; then

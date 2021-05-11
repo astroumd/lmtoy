@@ -2,7 +2,7 @@
 # DATE: 2021-01-06T09:02:49.404781943
 # obsnum=90911
 # Using ifproc=M51_data/ifproc/ifproc_2020-02-18_090911_00_0001.nc
-path=M51_data
+# path=M51_data
 # <lmtinfo>
 # ifproc="M51_data/ifproc/ifproc_2020-02-18_090911_00_0001.nc"
 vlsr=463
