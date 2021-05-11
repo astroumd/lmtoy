@@ -119,7 +119,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       The RSR has two beams on the sky, each beam has two polarizations to
       form 4 independent calibrated spectra; the polarization pairs for each 
       beam are collected through the same horn. These 4 are referred to as the
-      4 **chassis**.   
+      4 **chassis**.   Salient detail:  RSR does not doppler track.
     
     ScanNum
       Scan Number - see **ObsNum**
@@ -140,7 +140,8 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       (the GLS - GLobal Sinusoidal is similar to SFL).
 
     SLR
-      The common name for the (SEQUOIA/1MM/OMAYA) instruments, since they share hardware.
+      (Spectral Line Receiver) The common name for the (SEQUOIA/1MM/OMAYA) instruments,
+      since they share WARES hardware. Name is also used in ``lmtslr``, the python module.
 
     Spectrum
       A coherent section in frequency space, with its own unique meta-data (such as polarization,
@@ -153,7 +154,8 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 
     WARES
       (Wideband Arrayed ROACH Enabled Spectrometer). The spectrometer used
-      for Sequoia.
+      for Sequoia. To be resolved: is there one, or four? Also used for the name
+      of the computer that receives data from the 4 (future 8) roach boards.
 
 
 .. _overloaded:
@@ -161,50 +163,53 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 Overloaded Terms
 ~~~~~~~~~~~~~~~~
 
+Terms used in the code may not exactly match terms used by the develpers of the instruments.
+Here we clarify those overloaded terms in the form of a table
 
 .. list-table:: **Table of some overloaded terms**
    :header-rows: 1
+   :widths: 15,15,15,45      
 
-   * - RSR term
+   * - code term
+     - RSR term
      - SLR term
-     - code term
      - comments
-   * - ?pol?
+   * - beam
+     - pixel?
      - pixel
-     - pixel/beam
      - multi-beam receiver
-   * - n/a
+   * - cell
+     - n/a
      - cell
-     - cell?
-     - size of a sky pixel in gridding
-   * - board
-     - n/a
-     - ?
+     - size of a sky pixel in gridding, usually 2-3 times smaller than the resolution
+   * - band
+     - board
+     - bank
      - spectrometer window
-   * - chassis (pol?)
-     - n/a
-     - ?
-     - ?
    * - n/a
-     - bank 
-     - ?
-     - spectrometer window
+     - chassis
+     - n/a
+     - tuple of (pol,beam)
    * - channel
      - channel
      - channel
-     - channel
+     - with a simple FREQ WCS{crval,crpix,cdelt}
 
 .. _storage:
 
 Data Storage
 ~~~~~~~~~~~~
 
+This section is not meant to describe either the RAW (netCDF) or SDFITS
+format, but the storage model we have in mind to be encapsulated in a
+Python class.
+
 A unified data storage of LMT spectra would (naturally) break up the
-spectra for different beams, bands, polarizations, such that each spectrum
-is a simple set of sequential channels (described with a single
-*(crval,crpix,cdelt)*) with different meta-data
-(ra,dec,time,beam,polarization, etc).
-In python (row-major) array notation where the most slowly varying dimension comes
+spectra, such that each spectrum has a different
+time, beam, band, polarization, etc.  Each spectrum
+can be described as a set of sequential channels, described with a single
+*(crval,crpix,cdelt)*) WCS.
+In Python row-major array notation where the most slowly varying dimension comes
 first this could be written as an **NDarray**:
 
 .. code-block::
@@ -218,6 +223,18 @@ set of spectra:
 .. code-block::
 
       spectrum[nbeam, nband, npol]
+
+This exactly matches the concepts used in an SDFITS file, although in the general
+definition of SDFITS there is no assumption of the data being able to be stored
+in an **NDarray** type array, where the more general
+
+.. code-block::
+
+       sdfits_data[naxis2, ndata]
+
+where in general ``ndata=nchan``, but dialect with ``ndata = npol * nchan`` are
+seen in the wild (FAST, Parkes). The FITS name ``naxis2`` is the number of rows,
+which is the product of ``time,beam,band,pol`` in our case.
 
 
 Taking an inventory of current and known future LMT Spectral Line instruments:
@@ -239,7 +256,7 @@ Taking an inventory of current and known future LMT Spectral Line instruments:
 
 .. note::  The timestamps for the different roach boards make it impossible to store
 	   the data in a multi-dimensional array, unless (typicall one) integration
-	   is removed. Keeping all data would require ``data[ntime4, nchan]`` for SEQ.
+	   is removed. Keeping all data would require ``data[ntime4, 1, 1, 1, nchan]`` for SEQ.
 
 * OMA
   8 beams, 2 bands (banks), 2 polarizations.
@@ -248,19 +265,21 @@ Taking an inventory of current and known future LMT Spectral Line instruments:
   no information yet
 
 Note that FAST is the only known case that stores data as  ``data[ntime, nchan, npol]``, where
-``nchan`` is not the fastest running dimension.
+``nchan`` is not the fastest running dimension, but ``npol``. Technically this appears to be the
+case such that they can vary ``nchan`` per row.
 
 
 We thus arrive at the following summary:
 
 .. list-table:: **Table of LMT data dimensions**
    :header-rows: 1
+   :widths: 15,10,10,10,10,30
 
    * - data
-     - beam
-     - pol
-     - band
-     - channels
+     - **nbeam**
+     - **npol**
+     - **nband**
+     - **nchan**
      - comment
    * - RSR
      - 2
@@ -274,18 +293,18 @@ We thus arrive at the following summary:
      - 1
      - 2k, 4k, 8k
      - beams have time issue, perhaps ntime = ntime * nbeam, and nbeam=1
-   * - 1MMRx
-     - 1
-     - 2
-     - 2
-     - 2k
-     - band: USB and LSB
    * - OMA 
      - 8
      - 2
      - 2
      - ?
      - Future instrument, with 4 more roach boards
+   * - 1MMRx
+     - 1
+     - 2
+     - 2
+     - 2k
+     - band: USB and LSB
    * - B3R
      - ?
      - ?
