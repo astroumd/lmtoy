@@ -27,10 +27,10 @@ for RSR are LAGS, not a SPECTRUM as for SEQ/SLR.
 In a typical LMT data set the channel based data can be thought of dimensioned, of which some of it we can find
 back in the various data structures. We are using python notation, where the last dimension runs fastest:
 
-     SLR:      DATA[npixel, ntime, nchan]                   e.g. [16, inttime/0.1, 2k - 8k]   ~ 2-20GB
+     SLR:      DATA[ntime, npixel, nchan]                   e.g. [inttime/0.1, 16, 2k - 8k]   ~ 2-20GB
 
-     RSR:      AccData[nchassis,ntime,nboard,nchan]         e.g. [4, inttime/32, 6, 256]      ~ 10 MB
-               RefData[nchassis,ntime,nboard,nchan]
+     RSR:      AccData[ntime,nchassis,nboard,nchan]         e.g. [inttime/32, 4, 6, 256]      ~ 10 MB
+               RefData[ntime,nchassis,nboard,nchan]
 
 For both instruments the data is actually in different files:   4 for SLR (4 pixels per 4 roach boards), and 4 for RSR
 (there are 4 chassis). The various data structures are of course not exactly the simplistic sketch of the
@@ -40,6 +40,17 @@ useful to review this in terms of any potential parallel (e.g. OpenMP) processin
 For Sequioa the ifproc and roach data are sampled at 125 Hz and 10 Hz resp., have different timestamps and thus
 need to be aligned to build the **data[]** for further calibration and analysis. This interpolation process is
 somewhat expensive. Effective processing speed is about 20-40 MB/sec for this *process* step.
+The result of each roach board having its own time is that the ntime dimension in the DATA is not the same, they
+typically differ by 1. It is thus easier to write this in the SDFITS notation: a series of spectra with - in this
+case - (dRA,dDEC) meta data. There is only one band and one polarization:
+
+     SLR:    ra,dec,board,band,pol,pixel,time,data[nchan]
+             NT  NT     1    1   1     1    1     2k-4k
+
+here NT ~ npixel (=16) * ntime (~1e4)
+
+     RSR:    ra,dec,board,band,pol,pixel,time,data[nchan]
+              1   1     4    6   1     1   10      256
 
 Given the SDFITS agreement a spectrum based data structure that could be written as
 
@@ -47,12 +58,12 @@ Given the SDFITS agreement a spectrum based data structure that could be written
 
 where effectively each parameter (but not all at the same time?) can be 1 value. For LMT:
 
-1. SLR/OTF :  ra,dec>1  band=1  pol=1  chan=2k,4k,8k
-1. SLR/BS  :  ra,dec=1  band=1  pol=1  chan=2k,4k,8k
-1. SLR/PS  :  ra,dec=1  band=1  pol=1  chan=2k,4k,8k
-1. SLR/OTF :  ra,dec>1  band=1  pol=1  chan=2k,4k,8k
-2. RSR     :  ra,dec=1  band=6  pol=1  chan=256
-3. OMAYA   :  ra,dec>1  band=1  pol=2  chan=2k,4k,8k
+1. SLR/OTF :  ra,dec>1 board=1 band=1  pol=1  chan=2k,4k,8k
+1. SLR/BS  :  ra,dec=1 board=1 band=1  pol=1  chan=2k,4k,8k
+1. SLR/PS  :  ra,dec=1 board=1 band=1  pol=1  chan=2k,4k,8k
+1. SLR/OTF :  ra,dec>1 board=1 band=1  pol=1  chan=2k,4k,8k
+2. RSR     :  ra,dec=1 board=4 band=6  pol=1  chan=256
+3. OMAYA   :  ra,dec>1 board=1 band=1  pol=2  chan=2k,4k,8k
 
 
 ## OPS
@@ -85,11 +96,12 @@ either Stacking or Gridding.
 
 1. **Stacking**: naively this applies to data such as taken with the RSR. Spectra are all taken at the same sky position,
 and eventually the good spectra will be stacked to gain S/N. This results in a single spectrum, and common
-formats for output are ECSV and 1D FITS.
+formats for output are ECSV and 1D FITS. Another word for **stacking** could be **reduction**, i.e. pure
+1/sqrt(N) averaging.
 
 1. **Gridding**: naively this applies to data such as taken with the LSR. Spectra at different arbitrary sky positions
 in a region of the sky are convolved and gridded on a regular grid. The common output format for this
-is the popular 3D FITS cube.
+is the popular 3D FITS cube. Stitching together the different bands of the RSR is also an example of **Gridding**
 
 Advanced topics such as stacking grids, and using IFU type concepts such as used by the MUSE instrument, can be discussed
 later.
@@ -201,3 +213,4 @@ The step from SpecFile to FITS cube has the following parameters:
 
 ![afigure](figures/Tsys_rsr.png)
 ![afigure](figures/Ta_rsr.png)
+
