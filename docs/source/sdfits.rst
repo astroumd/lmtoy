@@ -24,8 +24,8 @@ current software (lmtslr, dreampy)
 Using SDFITS also gives us a number of advantages:
 
 * Data format matches that of a spreadsheet, closely resembling the mental
-image users will have (and sadly might result in some new NIH data reduction
-code)
+  image users will have (and sadly might result in some new NIH data reduction
+  code)
 
 * Use existing tools in specutils/astropy
 
