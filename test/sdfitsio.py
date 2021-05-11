@@ -1,17 +1,24 @@
 #! /usr/bin/env python
 #
-#  read and write an SDFITS file
+#  write sample SDFITS file
+#  read SDFITS file and report some properties
+#  
 #
-#
 
 
-
+import sys
 import numpy as np
 import numpy.ma as ma
 
 from astropy.io import fits
 import copy
 import time
+
+def dimsize(dim=(2,3,4,5)):
+    s = dim[0]
+    for i in dim[1:]:
+        s = s * i
+    return s
 
 def gen_data(ndim=(256,1,1,1,256)):
     """
@@ -53,16 +60,14 @@ def gen_data(ndim=(256,1,1,1,256)):
     print('data',data)
     return data
 
-
-
-
 def my_read(filename):
     """
     example that can read SDFITS
     In LMT/GTM mode the data can be read as a multi-dimensional (ndarray) object
     """
     #
-    print("\nReading %s" % filename)
+    print("File:      %s" % filename)
+    
     hdu = fits.open(filename)
     header = hdu[0].header
     if len(hdu) == 1:
@@ -76,12 +81,19 @@ def my_read(filename):
     header2  = bintable.header
     data2    = bintable.data
     #
+    extname = header2['EXTNAME']
+    if extname != 'SINGLE DISH':
+        print("Warning: extname=%s, winging it" % extname)
+    #
     ncols = header2['NAXIS1']
     nrows = len(data2)
     nflds = header2['TFIELDS']
 
-    if header2['TELESCOP'] == 'LMT/GTM':
-        print("LMT/GTM mode")
+    print("Size:      %d cols x %d rows" % (nflds,nrows))
+
+
+    telescope = header2['TELESCOP']
+    print("Telescope: %s" % telescope)
 
     # spectra  = data2[:]['DATA']
     # the next command will finally load in the data, the rest were just pointers/references
@@ -90,13 +102,15 @@ def my_read(filename):
         #srcs = np.tile(header2['OBJECT'], nrow)
     else:
         srcs = np.unique(data2[:]['OBJECT'])
+    print("Object:    %s" % str(srcs))
+
+    date_obs = data2[0]['DATE-OBS']
+    print("DateObs:   %s" % str(date_obs))
+        
     #scan = np.unique(data2[:]['SCAN'])
     
     hdu.close()
     
-
-
-
 
 def my_write_slr(filename):
     # the CORE keywords/columns that need to be present
@@ -115,7 +129,7 @@ def my_write_slr(filename):
     print(a1.shape)
     print(a3.shape)
     
-    col1 = fits.Column(name='DATA-OBS', format='D',  array=a1)
+    col1 = fits.Column(name='DATE-OBS', format='D',  array=a1)
     col2 = fits.Column(name='TSYS',     format='E',  array=a2)
     col3 = fits.Column(name='DATA',     format='4E', array=a3)
     col4 = fits.Column(name='FEED',     format='I',  array=a4)
@@ -170,7 +184,7 @@ def my_write_rsr(filename):
     a5 = np.array([0,0,0,1,1,1,0,0,0,1,1,1,0,0,0,1,1,1])
     
     
-    col1 = fits.Column(name='DATA-OBS', format='D',  array=a1t)
+    col1 = fits.Column(name='DATE-OBS', format='D',  array=a1t)
     col2 = fits.Column(name='TSYS',     format='E',  array=a2t)
     col3 = fits.Column(name='DATA',     format='4E', array=a3)    # 3,4 ->  3,24
     col4 = fits.Column(name='BNUM',     format='I',  array=a4)
@@ -192,12 +206,16 @@ def my_write_rsr(filename):
     hdu.writeto(filename, overwrite=True)
     print("Written %s" %  filename)
 
-if __name__ == '__main__':   
+if __name__ == '__main__':
 
-    my_write_slr('slr.sdfits')
-    my_write_rsr('rsr.sdfits')
 
-    my_read('slr.sdfits')
-    my_read('rsr.sdfits')
+    if len(sys.argv) == 1:
+        my_write_slr('slr.sdfits')
+        my_write_rsr('rsr.sdfits')
+
+        my_read('slr.sdfits')
+        my_read('rsr.sdfits')
+    else:
+        my_read(sys.argv[1])
 
 
