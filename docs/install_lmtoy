@@ -40,6 +40,7 @@ rm -rf $lmtoy
 
 git clone https://github.com/astroumd/lmtoy $lmtoy
 cd $lmtoy
+git checkout $branch
 
 if [ $venv = 0 ]; then
   make install_python WGET=$wget
