@@ -18,15 +18,20 @@ The idea for LMT is to take a RAW (netCDF) data from the different
 Spectral Line instruments, and allow a first pass (TSYS and ON/OFF)
 calibration, such that the SDFITS file is a collection of calibrated
 spectra, where inspection, baseline subtraction, binning are all done,
-and optionally gridding.
+and optionally gridding. The conversion from RAW to SDFITS is done with
+current software (lmtslr, dreampy)
 
-Using SDFITS also gives us different paths:
+Using SDFITS also gives us a number of advantages:
 
-* Use tools in specutils
+* Data format matches that of a spreadsheet, closely resembling the mental
+image users will have (and sadly might result in some new NIH data reduction
+code)
+
+* Use existing tools in specutils/astropy
 
 * Use GBTIDL and/or its python successor
 
-* A variety of gridders (but: dialects)
+* A variety of 3rd party gridders (but: dialects)
 
 
 CLASS
