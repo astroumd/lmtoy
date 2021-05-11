@@ -61,20 +61,16 @@ if this worked, activate it in your shell:
       source lmtoy/lmtoy_start.sh
 
 If this failed, follow the steps in the script and find our where/when it failed. At the end of the script it
-will have run the LSR benchmark. This could fail if you don't have the data (or pointer to) in the examples
-directory:
+will have tried to run an SLR and RSR benchmark. This could fail if you don't have the data in the
+$DATA_LMT directory. For example:
 
-      cd $LMTOY/examples
-
-pick the appropriate one for you:
-
-      ln -s /data/LMT/data_lmt  IRC_data
-      ln -s ~/LMT/IRC_data
+      cd $DATA_LMT
       tar zxf /n/chara/teuben/LMT/IRC_data.tar.gz
       lmtinfo.py $DATA_LMT 79488
 
 after which you can run a benchmark to verify if LMTSLR is working
 
+      cd $LMTOY/examples
       make bench
 
 and it will print two lines starting with QAC_STATS that should agree! Another useful
@@ -84,8 +80,6 @@ test is plotting:
 
 This should produce three plots.
 
-If you are one of the standard sites, you should be able to use $DATA_LMT, where all the data is,
-not just IRC_data.
 
 In your own directory you can use the more general **lmtoy_reduce.sh** script
 
