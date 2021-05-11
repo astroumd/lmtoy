@@ -40,6 +40,11 @@ Some example of data.  For FITS this is just the fits header. For CDF (some of) 
 
 3) GBT is more simple, only singly dimensioned arrays.
 
+4) IRAM comes with two examples:
+   - IRAM1:   (single.fits) - a primary HDU with NAXIS1=nchan at fixed RA,DEC
+   - IRAM2:   (index.fits)  - a SDFITS lookalike, called MATRIX, where the data are in column SPECTRA
+   
+
 
 ## Some netcdf notes:
 
