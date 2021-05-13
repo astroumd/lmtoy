@@ -124,11 +124,12 @@ A few words on the **ObsNum** at LMT.  RSR observations are small (few MB), and 
 ObsNum's for the stacking operation. Thus it is not unreasonable, in fact encouraged, that the SDFITS file contains
 all the ObsNum's that should be part of the observation. The ObsNum will thus become an OBSNUM column in the SDFITS
 BINTABLE, so it can be selected on later (as is already common in the two blanking files we discussed before).
-Normally these are simple FITS keywords.
+Normally these are simple FITS keywords. One caveat of course:   all ObsNum's that are combined need to be of the same
+shape, except for the **time** dimension, as it's nothing more than an append operation.
 
-For SLR there is no reason why multiple ObsNum's could not be combined, except these files are large, and it will
-challenge the memory you have on your processor. A more common and sensible solution is to process one ObsNUm per
-SDFITS file, then grid each into a FITS cube, and do a weighted average to produce the final cube.
+For SLR there is no reason why multiple ObsNum's could not be combined, except these files are so large (10GB easily), 
+and it will challenge the memory you have on your workstation. A more common and sensible solution is to process one **ObsNUm** per
+SDFITS file, then grid each into a FITS cube, and do a weighted average to produce the final stacked cube.
 
 ###   Questions
 
@@ -139,16 +140,18 @@ SDFITS file, then grid each into a FITS cube, and do a weighted average to produ
    or should we allow an even number of values,
 
      chan(10,20,50,60)
+	 
+   I prefer the first option
 
-2) how to pick beams (pixels)?
+2) related to this, how to pick beams (pixels)?
 
      beam(1),beam(4)
 
-3) units. for those should we embed, or separate?
+3) when units are used, should we embed, or separate?  Duplication is bad, I probably prefer the last option:
 
      chan(104.1GHz,104.14GHz)
-     chan(104.1,104.14,GHz)
      chan(104.1,104.14)GHz
+     chan(104.1,104.14,GHz)
 
 4) An example of the complex RSR-Yun blanking:
 
@@ -182,7 +185,7 @@ SDFITS file, then grid each into a FITS cube, and do a weighted average to produ
 
 ## GBTIDL
 
-Some examples from the gbtidl manual
+Some examples from the GBTIDL manual
    
      #ID, RECNUM, SCAN, INTNUM, PLNUM, IFNUM, FDNUM, BCHAN, ECHAN, IDSTRING
      0 * 35:37 1,3 * * * 512 514 RFI
@@ -197,7 +200,7 @@ and later to retrieve:
 
       cmd='mask=%s' % str(mask)
 
-In gbtidl there are whole procedures to flag and unflag. By keeping an ascii representation of the mask,
+In GBTIDL there are whole procedures to flag and unflag (as they call it). By keeping an ascii representation of the mask,
 we can mask and unmask in a similar fashion.
 
 
@@ -216,3 +219,18 @@ The two RSR scripts really don't have any options to physically remove data, the
 Obviously for filtering there is no way back, the RAW data will need to be re-ingested into SDFITS.
 
 
+# masking and flagging in other packages
+
+* mask:    python (True means a bad value)
+* mask:    casa (False and 0 marks masked, i.e. excluded, pixels)
+* mask:    miriad (true is a good value, which when the bit in the mask file is 1)
+* C:            0 is false, 1 (non-zero actually) is true
+
+flagging is an easier concept; if you flag, it's bad data.   This seems to be the approach in CASA's uv flagging.   The lingo
+in image masking is far more confusing (and opposite from python)
+
+https://casa.nrao.edu/casadocs/casa-6.1.0/calibration-and-visibility-data/data-examination-and-editing/flagging-measurement-sets-and-calibration-tables
+
+https://casa.nrao.edu/casadocs/casa-6.1.0/imaging/image-analysis/image-masks
+
+https://casa.nrao.edu/casadocs/casa-6.1.0/imaging/image-analysis/lattice-expression-language-lel/lel-masks
