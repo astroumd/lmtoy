@@ -48,7 +48,7 @@ class Spectra(object):
         
         
                   
-def gen_data(dims=(256,1,1,1,256), value=None):
+def gen_data(dims=(256,1,1,1,256), noise=1,  signal=1, width=0.1, seed=None, mask=True):
     """
     generate fake data so we can fill an SDFITS file from scratch
 
@@ -56,9 +56,20 @@ def gen_data(dims=(256,1,1,1,256), value=None):
         (ntime,nbeam) are multiplexed for OTF - usually CRVAL3,CRVAL4 - but nbeam can be 1
                       even though beam can cycle over 16 in the case of SEQ
         npol usually in CRVAL2 - but npol can be 1
-        (nband,nchan) are both under control of CRVAL1 - but nband can be 1
+        (nband,nchan) are both under control of CRVAL1 - but band can be 1
+
+    noise:    gaussian noise level if > 0
+    signal:   peak of (gaussian) line in middle of channel ; 0 will add no line
+    width:    FWHM width of (gaussian) line in fraction of band width
+    seed:     set it to some integer if you want a fixed seed
+    mask:     set to False if you don't need the mask (saves a bit of memory)
     
     """
+
+    if len(dims) != 5:
+        print("We currently only do 5D arrays")
+        return None
+    
     # need to agree on what axis is what
     axis_time  = 0   # ~scan
     axis_beam  = 1   # beam ~ pixel
@@ -66,36 +77,41 @@ def gen_data(dims=(256,1,1,1,256), value=None):
     axis_band  = 3
     axis_chan  = 4
 
-    # examples
-    ndim_rsr = (10,4,1,6,256)
-    ndim_slr = (256,1,1,1,256)
-    ndim_oma = (128,1,2,1,256)
-    ndim_1mm = (128,1,2,2,256)
+    ntime = dims[axis_time]
+    nbeam = dims[axis_beam]
+    npol  = dims[axis_pol]
+    nband = dims[axis_band]
+    nchan = dims[axis_chan]
 
-    data_rsr = np.random.normal(-0.1,1,ndim_rsr)
-    dims_rsr = data_rsr.shape
-    r0 = ma.masked_where(data_rsr < 0, data_rsr)
-    r1 = r0.mean(axis=axis_beam, keepdims=True)
-    r2 = r1.mean(axis=axis_time, keepdims=True)
-    # patch the axis_band and axis_chan
-    # first reshape them in one line
-    r3 = r2.reshape( dims_rsr[axis_band] * dims_rsr[axis_chan])
-    
-    data_slr = np.random.normal(-0.1,1,ndim_slr)
-    s0 = ma.masked_where(data_slr < 0, data_slr)
-    # ready for gridding
-    
+    if noise > 0:
+        if seed != None:
+            np.random.seed(seed)
+        data = np.random.normal(0,noise,dims)
+    else:
+        data = np.zeros(dims)
 
-    d0 = np.arange(3*4).reshape(3,4)
+    if signal != 0:
+        w2 = 11.1 * (nchan*width)**2
+        c = nchan/2.0
+        n2 = dimsize(dims[:-1])
+        data2 = data.reshape(n2,nchan)
+        # add the lines
+        x2 = (np.arange(nchan)-c)**2 / w2
+        g = np.exp(-x2)
+        if True:
+            # counterintuitive; this is a bit faster
+            print("looping data2 + g")            
+            for i in range(n2):
+                data2[i,:] = data2[i,:] + g
+        else:
+            print("single data2 + g")
+            #data2[:,:] = data2[:,:] + g
+            data2 = data2 + g
+                
 
-    # for return
-    data = np.random.normal(-0.1,1,dims)
-    if True:
+    if mask:
         data = ma.masked_invalid(data,copy=False)    
-    if False:
-        data = np.arange(data.size).reshape(dims)
 
-    # print('data',data)
     return data
 
 def my_read(filename):
@@ -183,8 +199,14 @@ def my_write_sdfits(filename, data):
     a1 = np.arange(n1, dtype=np.float64)
     # TSYS
     a2 = np.ones(n1, dtype=float)
-    a3 = ma.copy(data1)
-    np.putmask(a3,a3.mask,np.nan)
+    # DATA:  make a copy, and apply the mask
+    if data1.count() == dimsize(data1.shape):
+        print("All data good, no masking operation needed")
+        a3 = data1
+    else:
+        print("Some data masked, using a copy to write")
+        a3 = ma.copy(data1)
+        np.putmask(a3,a3.mask,np.nan)
     # FEED
     a4 = np.arange(n1, dtype=int)
 
