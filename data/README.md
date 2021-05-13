@@ -17,11 +17,11 @@ exist to process these sample OBSNUM data
 	85775    SEQ  map Region_J-K (M31)    2019-10-31 good example of emission to the field edge
 	91112    SEQ  map NGC5194 (M51)       2020-02-20 (after the doppler fix)
 	
-             SEQ  Ps
-			 SEQ  Bs
-			 SEQ  map 
+                 SEQ  Ps
+		 SEQ  Bs
+		 SEQ  map (the stamp style)
 
-             1MM
+        81716    1MM  map BLLAC
 	
 
 Some example of data.  For FITS this is just the fits header. For CDF (some of) the output of ncdump
