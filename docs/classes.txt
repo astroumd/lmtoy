@@ -1,0 +1,91 @@
+-*- mode: org -*-
+
+# single spectrum, like the old Spectrum1D, has a simple nearly 1:1 match to an SDFITS file
+
+Spectrum   <-> SDFITS
+    data[nchan]
+    crpix3,crval3,cdelt3        # caveat: was doppler tracking set?
+    band         'G'
+    pol          'S/G'
+    board        'S'    (?)
+    time         'S/G'
+    ra, dec      'G'    (npos)
+    calon/caloff        GBT - not used here
+    on/off              GBT - not used here
+
+An observation is a collection of spectra, S.  For some types
+of instruments these Spectra can be organized in a regular
+multi-dimensional array
+
+SLR:   SC[npos]
+OMA:   SC[npos, npol]
+RSR:   SC[ntime, nband, nboard]
+
+but putting multi-dimensionality on a class is somewhat painful,
+though not impossible using dunders (the __ prefix).
+
+It would be more straightforward to use numpy arrays, they should be
+as such inside a new XXX_Spectra class, e.g.
+
+SLR_Spectra
+    data[npos,nchan]             npos folds pixels and time
+    ~data3[npixel,ntime,nchan]   - "waterfall cube" (ntime technically depends on npixel)
+    ~data4[nroach,npixel,ntime,nchan]
+    ra[npos]
+    dec[npos]
+    time[npos]         # keep these, so one can flag on them
+    pixel[npos]        # keep these 
+
+OMA_Spectra
+    data[npos,npol,nchan]
+    pol[npol]
+    ra[npos]
+    dec[npos]
+    time[npos]    # keep
+    pixel[npos]
+
+Rx1mm_Spectra  
+    data[npos, npol, nchan]
+    
+RSR_Spectra
+    data[ntime, nband, nboard, nchan]
+    time[ntime]
+    band[nband]
+    board[nboard]
+
+
+
+Class Operations(object):
+Class Smoothing(Operations):
+
+
+# process_otf_map2.py
+S = process_slr(12345, stype=2)
+S.saves('12345_0.sdfits')
+
+# reload the sdfits
+S = load('12345_0.sdfits')
+z = S.get('z')
+S.mask(sample=range(100,200))
+S.grid(beam=15.0, roc=3.0, filter='jinc', grid=[-100,100,-100,100])
+S.savec('12345.fits','12345.wt.fits')
+
+# RSR
+S = process_rsr(23456, bc_threshold=3.0)
+S.saves('23456_0.sdfits')
+S.shows()
+  # obsnum=23456
+  # source='NGC123'
+  # z=0.123
+  # ntime:    10
+  # nboard:    4
+  # nband:     6
+z = S.get('z')
+S.baseline_mask(115.2712018, z, 250.0)
+S.baseline_mask(110.2013543, z, 250.0)
+S.baseline_fit(order=2)
+S.savec('23456.ecsv')     # could also use (1D) fits
+
+
+
+
