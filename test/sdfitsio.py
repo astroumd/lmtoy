@@ -60,24 +60,22 @@ def gen_data(dims=(256,1,1,1,256), value=None):
     
     """
     # need to agree on what axis is what
-    axis_time  = 0
-    axis_board = 1   # board and pixel interchangeable ?
+    axis_time  = 0   # ~scan
+    axis_beam  = 1   # beam ~ pixel
     axis_pol   = 2
     axis_band  = 3
     axis_chan  = 4
 
-    # examples for di
+    # examples
     ndim_rsr = (10,4,1,6,256)
     ndim_slr = (256,1,1,1,256)
     ndim_oma = (128,1,2,1,256)
     ndim_1mm = (128,1,2,2,256)
 
-                
-    
     data_rsr = np.random.normal(-0.1,1,ndim_rsr)
     dims_rsr = data_rsr.shape
     r0 = ma.masked_where(data_rsr < 0, data_rsr)
-    r1 = r0.mean(axis=axis_board, keepdims=True)
+    r1 = r0.mean(axis=axis_beam, keepdims=True)
     r2 = r1.mean(axis=axis_time, keepdims=True)
     # patch the axis_band and axis_chan
     # first reshape them in one line
@@ -163,6 +161,8 @@ def my_read(filename):
     print("Data.sum() = ", spectra.sum())
     
     hdu.close()
+    spectra2 = ma.masked_invalid(spectra2,copy=False)        
+    return spectra2
     
 def my_write_sdfits(filename, data):
     # the CORE keywords/columns that need to be present
@@ -183,8 +183,8 @@ def my_write_sdfits(filename, data):
     a1 = np.arange(n1, dtype=np.float64)
     # TSYS
     a2 = np.ones(n1, dtype=float)
-    # DATA
-    a3 = data1
+    a3 = ma.copy(data1)
+    np.putmask(a3,a3.mask,np.nan)
     # FEED
     a4 = np.arange(n1, dtype=int)
 
@@ -312,8 +312,8 @@ def my_write_rsr(filename):
     hdu.writeto(filename, overwrite=True)
     print("Written %s" %  filename)
 
-def data_mask(data, mask, value=True):
-    """  Mask a ndarray by slices
+def data_mask(data, mask, value=True, show=False):
+    """  Mask an NDarray by slices along one or more of its dimensions
 
          data[dims]   where dims=(d1,d2,d3,....dN)
          mask = { 0 : s0,  1:s1, .... }
@@ -336,12 +336,17 @@ def data_mask(data, mask, value=True):
             cmd = cmd + '] = %s' % str(value)
     print("CMD:", cmd)
     exec(cmd)
-    if False:
+    if show:
         # this is too expensive 
         fraction = data.count() / dimsize(dims)
-        print("Fraction of data masked: %g" % fraction)
-        
-        
+        print("Fraction of data not masked: %g" % fraction)
+
+def data_masked(data):
+    """  Report how much data was masked
+    """
+    ntot  = dimsize(data.shape)
+    nbad  = ntot - data.count()
+    print("data_masked: %d / %d = %g%%" %  (nbad, ntot, 100.0*nbad/ntot))
     
 
 def oper1(data,axis):
