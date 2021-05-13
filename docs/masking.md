@@ -17,7 +17,7 @@ others to be excluded.  Combinations of both methods are used in RSR,
 though SLR is using all command line options.
 
 These are masking operations: they keep the data, but just mask it. There is also the
-flltering operation, remove data alltogether, to lower the data space. See a later
+flltering operation, remove data alltogether, to lower the data volume. See a later
 section below.
 
 ## RSR-Sanchez
@@ -41,11 +41,12 @@ but allows for a more detailed masking:
 
 in order to decide on their values, detailed inspection of the spectra was required.
 
-Notice this format also sneaks in the baselining parameters.
+Notice this format also sneaks in the baselining parameters, though the order was given via
+the command line.
 
 ## SLR
 
-Current masking is only done via command line flags:
+Current masking is only done via command line flags (some are filters, see below)
 
         --bank	    	        bank to use (0 or 1)       [band in our new terms]
         --pix_list              pixels to use (0..15)      [beam in our new terms]
@@ -53,7 +54,8 @@ Current masking is only done via command line flags:
         --slice                 channel section to keep    [chan, but special]
         --sample                time samples to remove     [time]
 
-As we discussed elsewhere, LMT spectral data can also be seen as dimensioned as follows:
+As we discussed elsewhere, LMT spectral data can be seen as a multi-dimensional array 
+dimensioned as follows:
 
         DATA[time,beam,pol,band,chan]
 
@@ -97,7 +99,7 @@ There are two types of masking:
   should discuss which ones are possibly relevant to us. They are not part of the CORE
   SDFITS agreement.
 
-  Note the preceding minus sign is an explicit way to see this needs to be masked. If they are
+  Note the prepended minus sign is an explicit way to say this selection needs to be masked. If they are
   left off, masking is assumed. But to include it back, an explicit + is needed.
 
 * masking records based on other meta-data (SDFITS columns) being in some range (if numeric)
@@ -122,6 +124,7 @@ A few words on the **ObsNum** at LMT.  RSR observations are small (few MB), and 
 ObsNum's for the stacking operation. Thus it is not unreasonable, in fact encouraged, that the SDFITS file contains
 all the ObsNum's that should be part of the observation. The ObsNum will thus become an OBSNUM column in the SDFITS
 BINTABLE, so it can be selected on later (as is already common in the two blanking files we discussed before).
+Normally these are simple FITS keywords.
 
 For SLR there is no reason why multiple ObsNum's could not be combined, except these files are large, and it will
 challenge the memory you have on your processor. A more common and sensible solution is to process one ObsNUm per
@@ -151,9 +154,16 @@ SDFITS file, then grid each into a FITS cube, and do a weighted average to produ
 
       obsnum chassis bank:[(f1,f2),(f3,f4)]
 
-   could be
+   would be
 
       beam(1),pol(0),band(3),chan(71,71.5,82,83,GHz)
+	  
+	  
+   or
+   
+      beam(1),pol(0),band(3),chan(71,71.5,Ghz),chan(82,83,GHz)
+
+   (see item 1) before)
 
 
 5) For testing we will allow a low level masking file, in the 'raw' format
