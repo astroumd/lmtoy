@@ -8,11 +8,16 @@
 #  (10000,16,1,1,2048)    user 20.1 s, sys: 7.09 s, total: 27.2 s      user 3.03 s, sys: 11.2 s, total: 14.2 s     1.3GB 
 #
 #  A typical large wide-band OTF:
-#  dims=(20000, 16, 1, 1, 2048)    =  3 GB (about 1 hours observing at 0.1" integrations)
+#  dims=(20000, 16, 1, 1, 2048)    =  2.4 GB (about 1 hours observing at 0.1" integrations)
 #
 #  A large RSR contains a large number of OBSNUMS, which we simulate by taking a larger number of ntime's
 #  dims=(1000, 2, 2, 6, 256)       = 25 MB (assumed 100 obsnums of 10 x 30" integrations)
-
+#
+#
+#  @todo  - numpy vs. NDData
+#           parallel operations: OpenMP vs. thread pool
+#           numba / jit
+#           pyston
 
 import sys
 import copy
@@ -24,19 +29,22 @@ import matplotlib.pyplot as plt
 
 from astropy.io import fits
 from astropy.nddata import NDData
+import astropy.units as u
+
+from importlib import reload
+import sdfitsio as sdf
 
 
-
-def dimsize(dim=(2,3,4,5)):
+def dimsize(dims=(2,3,4,5)):
     """ size of a multidimensional array via it's shape
-        typically dim=data.shape
+        typically dims=data.shape
     
         data.size will also give it (faster) but we
         often need sized of hyperspaces, so the shape
         tuple works better
     """
-    s = dim[0]
-    for i in dim[1:]:
+    s = dims[0]
+    for i in dims[1:]:
         s = s * i
     return s
 
@@ -48,11 +56,11 @@ axis_band  = 3
 axis_chan  = 4
 
 class Spectra(object):
-    def __init__(self,ndim=None):
-        if ndim != None:
-            print("gen_data for ",ndim)
-            self.data = gen_data(ndim)
-            self.wtpc = gen_data(ndim, noise=0, signal=1, width=1, mask=False)
+    def __init__(self,dims=None):
+        if dims != None:
+            print("gen_data for ",dims)
+            self.data = gen_data(dims)
+            self.wtpc = gen_data(dims, noise=0, signal=1, width=1, mask=False)
             self.wtps = self.wtpc.mean(axis=axis_chan)
         # for each dim we need a lookup array (or WSC descriptor) of that axis
         # for a WCS the value = (i-crpix)*cdelt + crval
@@ -137,7 +145,7 @@ class Spectra(object):
                   
 def gen_data(dims=(256,1,1,1,256), noise=1,  signal=1, width=0.02, seed=None, mask=True):
     """
-    generate fake data so we can fill an SDFITS file from scratch
+    generate data from scratch so we can fill an SDFITS file from scratch
 
     data[ntime, nbeam, npol, nband, nchan]
         (ntime,nbeam) are multiplexed for OTF - usually CRVAL3,CRVAL4 - but nbeam can be 1
@@ -163,14 +171,25 @@ def gen_data(dims=(256,1,1,1,256), noise=1,  signal=1, width=0.02, seed=None, ma
     nband = dims[axis_band]
     nchan = dims[axis_chan]
 
+    
+    # start by creating an np.float32 multi-dim numpy array
     if noise > 0:
         if seed != None:
             np.random.seed(seed)
+        print("random")
         data = np.random.normal(0,noise,dims)
+        # why on earth we cannot get float32 random numbers
+        print("astype")        
+        data = data.astype(np.float32)
     else:
-        data = np.zeros(dims)
+        data = np.zeros(dims, dtype=np.float32)
+
+    if False:
+        print("Using NDData now")
+        data = NDData(data, unit=u.K)
 
     if signal != 0:
+        print("signal")        
         w2 = 11.1 * (nchan*width)**2
         c = nchan/2.0
         n2 = dimsize(dims[:-1])
@@ -190,8 +209,11 @@ def gen_data(dims=(256,1,1,1,256), noise=1,  signal=1, width=0.02, seed=None, ma
                 
 
     if mask:
-        data = ma.masked_invalid(data,copy=False)    
-
+        # adding a bool mask seems to take up 4bytes per value....????
+        print("mask")        
+        data = ma.masked_invalid(data,copy=False)
+        
+    print("done")
     return data
 
 def my_read(filename):
