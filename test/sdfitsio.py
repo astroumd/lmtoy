@@ -1,12 +1,17 @@
 #! /usr/bin/env python
 #
-#  write sample SDFITS file
-#  read SDFITS file and report some properties
+#  some sample basic SDFITS I/O benchmarking as a baseline for future real work
 #
 #  %time a=sdf.gen_data((1000,16,1,1,2048))    user 1.88 s, sys: 496 ms, total: 2.38 s
 #  %time sdf.my_write_sdfits('junk.fits',a)    user 314 ms, sys: 2.31 s, total: 2.62 s
 #
 #  (10000,16,1,1,2048)    user 20.1 s, sys: 7.09 s, total: 27.2 s      user 3.03 s, sys: 11.2 s, total: 14.2 s     1.3GB 
+#
+#  A typical large wide-band OTF:
+#  dims=(20000, 16, 1, 1, 2048)    =  3 GB (about 1 hours observing at 0.1" integrations)
+#
+#  A large RSR contains a large number of OBSNUMS, which we simulate by taking a larger number of ntime's
+#  dims=(1000, 2, 2, 6, 256)       = 25 MB (assumed 100 obsnums of 10 x 30" integrations)
 
 
 import sys
