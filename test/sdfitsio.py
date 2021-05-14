@@ -10,13 +10,16 @@
 
 
 import sys
+import copy
+import time
+
 import numpy as np
 import numpy.ma as ma
 import matplotlib.pyplot as plt
 
 from astropy.io import fits
-import copy
-import time
+from astropy.nddata import NDData
+
 
 
 def dimsize(dim=(2,3,4,5)):
@@ -73,12 +76,56 @@ class Spectra(object):
         d0 =             self.wtpc.mean(axis=axis_beam, keepdims=True)
         self.data = d1/d0
         self.wtpc = d0
+
+    def aver(self):
+        """ averages everything, one spectrum comes out
+        """
+        d1 = (self.data*self.wtpc).mean(axis=0).mean(axis=0).mean(axis=0).mean(axis=0)
+        d0 =             self.wtpc.mean(axis=0).mean(axis=0).mean(axis=0).mean(axis=0)
+        self.data = d1/d0
+        self.wtpc = d0
         
     def band_merge(self, allow_gap=0):
         dims1 = self.data.shape
         dims2 = (dims1[0], dims1[1], dims1[2], 1, dims1[3]*dims1[4])
         self.data = self.data.reshape(dims2)
         self.wtpc = self.wtpc.reshape(dims2)
+
+    def smooth(self, pars):
+        """smooth channels
+        """
+        print("n/a")
+
+    def rebin(self, pars):
+        """ re-bin channels
+        """
+        print("n/a")
+
+    def baseline(self, pars):
+        """ set baseline fitting
+        """
+        print("n/a")
+
+    def trim(self, pars):
+        """ trim channels to save space
+        """
+        print("n/a")
+
+    def mask(self, pars):
+        """ general masking 
+        """
+        print("n/a")
+
+    def gaussfit(self, pars):
+        """ fit spectral line(s)
+        """
+        print("n/a")
+
+    def stats(self, pars):
+        """ stats 
+        """
+        print("n/a")
+
         
         
         
