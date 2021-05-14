@@ -20,32 +20,66 @@ import time
 
 
 def dimsize(dim=(2,3,4,5)):
+    """ size of a multidimensional array via it's shape
+        typically dim=data.shape
+    
+        data.size will also give it (faster) but we
+        often need sized of hyperspaces, so the shape
+        tuple works better
+    """
     s = dim[0]
     for i in dim[1:]:
         s = s * i
     return s
 
+# need to agree on what axis is what
+axis_time  = 0   # ~scan
+axis_beam  = 1   # beam ~ pixel
+axis_pol   = 2
+axis_band  = 3
+axis_chan  = 4
 
 class Spectra(object):
-    def __init__(self,ndim):
-        data = gen_data(ndim)
-        wtps = get_data(ndim[:-1], 1.0)
+    def __init__(self,ndim=None):
+        if ndim != None:
+            print("gen_data for ",ndim)
+            self.data = gen_data(ndim)
+            self.wtpc = gen_data(ndim, noise=0, signal=1, width=1, mask=False)
+            self.wtps = self.wtpc.mean(axis=axis_chan)
         # for each dim we need a lookup array (or WSC descriptor) of that axis
         # for a WCS the value = (i-crpix)*cdelt + crval
         # for a lookup the index into will be C=crval[i]
 
+    def __len__(self):
+        return self.data.size
+
     def pol_aver(self):
-        #       data[ntime, nbeam, nband, npol, nchan]
-        d1 = (self.data*self*wtps).sum(axis=axis_pol, keepdims=True)
-        d0 = self.wtps.sum(axis=axis_pol, keepdims=True)
+        d1 = (self.data*self.wtpc).mean(axis=axis_pol,  keepdims=True)
+        d0 =             self.wtpc.mean(axis=axis_pol,  keepdims=True)
         self.data = d1/d0
+        self.wtpc = d0        
     def time_aver(self):
-        d1 = (self.data*self*wtps).sum(axis=axis_time, keepdims=True)
-        d0 = self.wtps.sum(axis=axis_time, keepdims=True)
+        d1 = (self.data*self.wtpc).mean(axis=axis_time, keepdims=True)
+        d0 =             self.wtpc.mean(axis=axis_time, keepdims=True)
         self.data = d1/d0
+        self.wtpc = d0        
+    def band_aver(self):
+        d1 = (self.data*self.wtpc).mean(axis=axis_band, keepdims=True)
+        d0 =             self.wtpc.mean(axis=axis_band, keepdims=True)
+        self.data = d1/d0
+        self.wtpc = d0
+    def beam_aver(self):
+        d1 = (self.data*self.wtpc).mean(axis=axis_beam, keepdims=True)
+        d0 =             self.wtpc.mean(axis=axis_beam, keepdims=True)
+        self.data = d1/d0
+        self.wtpc = d0
+        
     def band_merge(self, allow_gap=0):
-        # check if the bands can be merged
-        print("n/a")
+        dims1 = self.data.shape
+        dims2 = (dims1[0], dims1[1], dims1[2], 1, dims1[3]*dims1[4])
+        self.data = self.data.reshape(dims2)
+        self.wtpc = self.wtpc.reshape(dims2)
+        
         
         
                   
@@ -68,16 +102,9 @@ def gen_data(dims=(256,1,1,1,256), noise=1,  signal=1, width=0.02, seed=None, ma
     """
 
     if len(dims) != 5:
-        print("We currently only do 5D arrays")
+        print("We currently only do 5D arrays: ",dims)
         return None
     
-    # need to agree on what axis is what
-    axis_time  = 0   # ~scan
-    axis_beam  = 1   # beam ~ pixel
-    axis_pol   = 2
-    axis_band  = 3
-    axis_chan  = 4
-
     ntime = dims[axis_time]
     nbeam = dims[axis_beam]
     npol  = dims[axis_pol]
@@ -101,11 +128,11 @@ def gen_data(dims=(256,1,1,1,256), noise=1,  signal=1, width=0.02, seed=None, ma
         g = np.exp(-x2)
         if True:
             # counterintuitive; this is a bit faster
-            print("looping data2 + g")            
+            # print("looping data2 + g")            
             for i in range(n2):
                 data2[i,:] = data2[i,:] + g
         else:
-            print("single data2 + g")
+            # print("single data2 + g")
             #data2[:,:] = data2[:,:] + g
             data2 = data2 + g
                 
@@ -175,7 +202,7 @@ def my_read(filename):
     spectra2 = spectra.reshape(dims2)
     print(spectra2.shape)
 
-    print("Data.sum() = ", spectra.sum())
+    print("Data.mean() = ", spectra.mean())
     
     hdu.close()
     spectra2 = ma.masked_invalid(spectra2,copy=False)        
