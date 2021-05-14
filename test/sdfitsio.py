@@ -12,6 +12,7 @@
 import sys
 import numpy as np
 import numpy.ma as ma
+import matplotlib.pyplot as plt
 
 from astropy.io import fits
 import copy
@@ -48,7 +49,7 @@ class Spectra(object):
         
         
                   
-def gen_data(dims=(256,1,1,1,256), noise=1,  signal=1, width=0.1, seed=None, mask=True):
+def gen_data(dims=(256,1,1,1,256), noise=1,  signal=1, width=0.02, seed=None, mask=True):
     """
     generate fake data so we can fill an SDFITS file from scratch
 
