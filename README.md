@@ -1,7 +1,9 @@
 # lmtoy
 
-LMTOY is a toy box for installing and running codes related to LMT data reduction. LMT is a large
-50m single dish radio telescope located in Mexico (18:59:09N 97:18:53W) operating at mm wavelengths.
+LMTOY is a toy box for installing and running codes related to LMT data reduction. 
+LMT is a large 50m single dish radio telescope located in Mexico 
+[(18:59:09N 97:18:53W)](https://www.google.com/maps/place/Large+Millimeter+Telescope/@18.9841105,-97.3258267,6245m/data=!3m1!1e3!4m5!3m4!1s0x85c516fb67a4820f:0xf9b66dcc651fb6e9!8m2!3d18.9857333!4d-97.3148183)
+operating at mm wavelengths.
 
 
 ## DATA
