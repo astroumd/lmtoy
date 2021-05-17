@@ -40,3 +40,12 @@ CLASS
 The path from CLASS to SDFITS (and vice versa?) is not well described,
 or at least I don't know it, and should be described here.
 
+CLASS/30m uses the ``MATRIX`` method, which a the ``SPECTRUM`` column
+is used instead of the ``DATA`` column. Why oh why is there an SDFITS
+standard.
+
+HERA is multi-beam.
+
+.. code-block::
+
+      vector\fits outfile.fits from infile.lmv
