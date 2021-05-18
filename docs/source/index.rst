@@ -36,13 +36,16 @@ into TolTec data reduction.
 For Developers
 ==============
 
-If you plan to tinker with the code, you may want to try this installation method.
+If you plan to tinker with the code, you may want to inspect the *docs/install_lmtoy**
+file in the **lmtoy**
 
 .. code-block:: sh
   
-   git clone https://github.com/astroumd/lmtoy
-   pip install -r requirements.txt
-   more_to_come
+   wget https://astroumd.github.io/lmtoy/install_lmtoy
+   bash install_lmtoy 
+
+this example script is not very long, is fairly self-documenting, should work on most Linux and Mac machines.
+It has a few optional command line parameters.
 
 
 API
