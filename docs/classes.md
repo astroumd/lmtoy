@@ -1,4 +1,4 @@
-#   Sample Classes
+#   Sample Classes notes
 
 The obvious thing would be to store a spectrum in a Spectrum1D class (we used that in GBTOY, and it's 
 also a class in astropy's specutils); This **Spectrum** class has a near 1:1 relationship with a row
@@ -6,14 +6,21 @@ in an SDFITS bintable:
 
 	Spectrum   <-> SDFITS
 		data[nchan]
-		crpix1,crval1,cdelt1
-		band	         'G'
-		pol          'S/G'
-		board        'S'    (?)
-		time         'S/G'
-		ra, dec      'G'    (npos)
-		calon/caloff        GBT - not used here
-		on/off              GBT - not used here
+		crpix1,crval1,cdelt1   (crpix1 is based on the pre-sliced spectrum!!)
+		                       GBT is also using ZEROCHAN
+		band	         'G'   (typically enumerated  0,1,2,,,)
+		pol              'S/G' (typically enumerated via FITS convention)
+		beam             'S/G' (typically enumerated  0,1,2,,,15)
+		time             'S/G' (ISO FITS notation)
+		ra, dec           'G'
+		xpos,ypos
+		dra,ddec
+		calon/caloff      GBT - not used here
+		on/off            GBT - not used here
+
+
+if slice=-100,100,km/s and this results in channels 300,700 to be saved,
+the crpix1 be -300 (or so) , so this WCS refers to the original spectrum.
 
 An observation is a collection of spectra, S.  For some types
 of instruments these Spectra can be organized in a regular
