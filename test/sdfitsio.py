@@ -488,7 +488,11 @@ if __name__ == '__main__':
 
         my_read('slr.sdfits')
         my_read('rsr.sdfits')
-    else:
+    elif len(sys.argv) == 2:
         my_read(sys.argv[1])
-
-
+    else:
+        # RSR: 1000,2,2,6,256
+        # SLR: 10000,1,1,1,2048
+        dims = tuple(map(int,sys.argv[2].split(',')))
+        data = gen_data(dims, mask=True)
+        my_write_sdfits(sys.argv[1], data)
