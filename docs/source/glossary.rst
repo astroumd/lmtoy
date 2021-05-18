@@ -278,13 +278,19 @@ Note that FAST is the only known case that stores data as  ``data[ntime, nchan, 
 case such that they can vary ``nchan`` per row.
 
 
-We thus arrive at the following summary:
+We thus arrive at the following summary for
 
-.. list-table:: **Table of LMT data dimensions**
+.. code-block::
+
+      data[ntime, nbeam, npol, nband, nchan]
+
+but leaving out the ``ntime`` dimension    
+
+.. list-table:: **Table of data dimensions of LMT SLR instruments**
    :header-rows: 1
    :widths: 15,10,10,10,10,30
 
-   * - data
+   * - **data**
      - **nbeam**
      - **npol**
      - **nband**
@@ -301,7 +307,7 @@ We thus arrive at the following summary:
      - 1
      - 1 (2)
      - 2k, 4k, 8k
-     - beams have time issue, perhaps ntime = ntime * nbeam, and nbeam=1
+     - beams have time issue, perhaps ntime ~ ntime * nbeam, and nbeam=1
    * - OMA 
      - 8
      - 2
