@@ -54,7 +54,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       A python frontend to dash, currently used by TolTeca
 
     ECSV
-      (Enhanced Character Separated Values) a popular self-describing ascii table format popularized by astropy
+      (Enhanced Character Separated Values) a self-describing ascii table format popularized by astropy
 
     FITS
       (Flexible Image Transport System): the export format
@@ -253,7 +253,7 @@ Taking an inventory of current and known future LMT Spectral Line instruments:
   tuple of (beam,pol). So here we have nbeam=2, nband=6, npol=2, nchan=256 and ntime
   it typically 10-20. Each beam happens to look at the same sky position here.
 
-.. note::  If an instrument like RSR would multi-plex the (beam,pol) pairs, this would be a challenge
+.. note::  If an instrument like RSR would multiplex the (beam,pol) pairs, this would be a challenge
 	   to the assumption of homogeneity, and the SDFITS model would be more appropriate.
 
 * 1MMRx:
@@ -299,17 +299,17 @@ We thus arrive at the following summary:
    * - SEQ
      - 16
      - 1
-     - 1
+     - 1 (2)
      - 2k, 4k, 8k
      - beams have time issue, perhaps ntime = ntime * nbeam, and nbeam=1
    * - OMA 
      - 8
      - 2
      - 2
-     - ?
+     - 2k (?)
      - Future instrument, with 4 more roach boards
    * - 1MMRx
-     - 1
+     - 1 (4?)
      - 2
      - 2
      - 2k
