@@ -47,11 +47,11 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       use --cell=
 
     chassis
-      for **RSR** there are 4 chassis boards, which are tuples of different beams and polarizations
+      for **RSR** there are 4 chassis boards, which are tuples of two beams and two polarizations
       (though the beams look at the same sky position here)
 
     dasha
-      A python frontend to dash.
+      A python frontend to dash, currently used by TolTeca
 
     ECSV
       (Enhanced Character Separated Values) a popular self-describing ascii table format popularized by astropy
@@ -149,11 +149,17 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
     Spectrum
       A coherent section in frequency space, with its own unique meta-data (such as polarization,
       ra, dec, time). Normally the smallest portion of data we can assign. A spectrum is
-      defined by its own uniq seting of *(crval, crpix, cdelt)* in the FITS WCS sense.
+      defined by its own seting of *(crval, crpix, cdelt)* in a FITS WCS sense.
       See also :ref:`storage`.
 
     SubObsNum
       Sub-Observatation Number - see **ObsNum**
+
+    TolTec
+      Continuum mapping instrument
+
+    TolTeca
+      Python frontend for the TolTec instrument. Is dasha based.
 
     WARES
       (Wideband Arrayed ROACH Enabled Spectrometer). The spectrometer used
