@@ -1,26 +1,32 @@
 Spectral Line Workflow
 ======================
 
-The current (2021) style workflow requires you to have your RAW files locally present. For LMT data this 
+The current (pre2021) style workflow requires you to have your RAW files locally present. For LMT data this 
 means having them located in your local $DATA_LMT tree.  In the future we expect another workflow, described
-later in this section.
+later in this section. 
 
-In this current workflow, all you need to know is a set of **ObsNum** 's 
-
-RSR data
---------
-
-
+In this current workflow, all you need to know is a set of **ObsNum** 's , which can be obtained by quering
+(some) database. We need an example of this.
 
 SLR data
 --------
 
-This should
+The scripts ``lmtoy_reduce.sh`` and ``lmtoy_combine.sh`` will reduce single and combined OBSNUM's. They
+always work through an intermediate Specfile (equivalent to our future SDFITS file), which gets gridded
+
+RSR data
+--------
+
+The scripts ``rsr_driver.sh`` and ``rsr_sum.sh`` are two methods to reduce RSR raw data. There is
+no SpecFile.
+
+
+
 LMT SLR data reduction
 ======================
 
 Here we describe the workflow in a unified SDFITS based system.  The first step is always the
-low level (lmtsrc or dreampy3) based conversion (*ingestion*) to SDFITS. If you are in an
+RAW (lmtsrc or dreampy3) based conversion (*ingestion*) to SDFITS. If you are in an
 interactive python session, the data will be in memory in a special class, there should be
 no formal reason to save the SDFITS file (formerly called the *SpecFile* in lmtslr), but one
 is well adviced to do this.
@@ -34,25 +40,36 @@ parameters and try again.
 
 An interface should exist (via dasha?) that summarizes the plots the user wants to see on screen.
 Vertically are the various plots the pipeline produces, horizontally are the different attempts to
-run the pipeline. For each pipeline run, user  can download the data.
+run the pipeline. For each pipeline run, user can download the data.
 
 The pipeline will look a little different depending if the observation was a grid (e.g. OTF) 
-a single pointing (e.g. SEQ-Ps or RSR). The former produces a data cube, the latter a spectrum.
+a single pointing (e.g. SEQ-Ps or RSR). The former produces a data cube, the latter a single
+spectrum.
 
 The user should not need to see that behind the scenes our ``data[ntime,nbeam,npol,nband,nchan]``
 type of data, but occasionally this will show up in reminders how to average down the data where
 this could result in a higher Signal/Noise.
 
-Grid
-~~~~
-
-For a grid
-
-
-Pointing
+Gridding
 ~~~~~~~~
 
-For a single pointing
+For a grid individual spectra cannot be inspected, especially with a 10Hz integration time there will
+be over half a million spectra! A waterfall image will give a useful overview:   for each beam a
+time-frequency plot will easily reveal patterns, bad spectra, birdies, etc. A masking file will need
+to be used to mask out areas in the masking cube.
+
+It will also be useful to inspect the RMS (RMS value of a baseline fit per beam) as function of
+time along the OTF track, either plotted as an image (in XPOS,YPOS space),
+or a stacked scatter plot with RMS and TIME as variables.
+
+
+Stacking
+~~~~~~~~
+
+For a single pointing it will become important to inspect individual
+spectra. For example, for RSR with each typical 30 second integration
+time, there are 24 spectra (4 spectra if you would combine the 6 bands
+in the full RSR spectral range).
 
 
 
