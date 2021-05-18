@@ -118,6 +118,13 @@ There are two types of masking:
   If a selected range variable is not a column, but a keyword constant, there will be
   a warning and the masking is applied (or not) to all data!
 
+* user defined masking could be implemented in free form
+
+         user(name, p1, p2, ... pN)
+
+  which requires the user to supply a python function **name.mask** with the specified number of parameters.
+  
+
 * If no + or - is given in front of the specification, a - is assumed, i.e. that slice is masked.
 
 * blank lines, or anything after a '#' is taken as a comment
@@ -223,6 +230,10 @@ which would cause actual data not to be copied to the SDFITS (or SpecFile) file.
 The two RSR scripts really don't have any options to physically remove data, they are all masking operations.
 
 Obviously for filtering there is no way back, the RAW data will need to be re-ingested into SDFITS.
+
+An important feature of filtering is preserving their original values.
+For example, channel numbers and pixel (beam) numbers in the SDFITS
+files should be the same, independent of which ones got filtered.
 
 
 ## masking and flagging in other packages

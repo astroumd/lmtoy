@@ -20,21 +20,23 @@ RSR data
 The scripts ``rsr_driver.sh`` and ``rsr_sum.sh`` are two methods to reduce RSR raw data. There is
 no SpecFile.
 
+Many more details of the old workflow is in ``examples/lmtoy_reduce.md``
 
 
 LMT SLR data reduction
 ======================
 
-Here we describe the workflow in a unified SDFITS based system.  The first step is always the
-RAW (lmtsrc or dreampy3) based conversion (*ingestion*) to SDFITS. If you are in an
-interactive python session, the data will be in memory in a special class, there should be
-no formal reason to save the SDFITS file (formerly called the *SpecFile* in lmtslr), but one
-is well adviced to do this.
+Here we describe the workflow in the future unified SDFITS based
+system.  The first step is always the RAW (lmtsrc or dreampy3) based
+conversion (*ingestion*) to SDFITS. If you are in an interactive
+python session, the data will be in memory in a special class, there
+should be no formal reason to save the SDFITS file (formerly called
+the *SpecFile* in lmtslr), but one is well adviced to do this. 
 
 Load and Go
 -----------
 
-The initial workflow is load-and-go based. A number of parameters are set, a series of plots can be
+The initial workflow is *load-and-go* based. A number of parameters are set, a series of plots can be
 reviewed, including having access to the final Science Ready Data Product (SRDP). User can set new
 parameters and try again.
 
@@ -53,7 +55,7 @@ this could result in a higher Signal/Noise.
 Gridding
 ~~~~~~~~
 
-For a grid individual spectra cannot be inspected, especially with a 10Hz integration time there will
+For a typical OTF grid individual spectra cannot be inspected, especially with a 10Hz integration time there could
 be over half a million spectra! A waterfall image will give a useful overview:   for each beam a
 time-frequency plot will easily reveal patterns, bad spectra, birdies, etc. A masking file will need
 to be used to mask out areas in the masking cube.
@@ -72,11 +74,22 @@ time, there are 24 spectra (4 spectra if you would combine the 6 bands
 in the full RSR spectral range).
 
 
+Masking
+~~~~~~~
+
+A unified masking file format is being designed. Details are still being drafted
+in docs/masking.md, but here is a flavor of what is being considered:
+
+.. code-block::
 
 
-
-
-
+   time(12:05:10,12:30:05),chan(100,103)
+   beam(5,7),pol(XX)
+   select(TSYS, 250.0)
+   select(RMS, 3.0)
+   select(XPOS, 40.0, 50.0), select(YPOS, -30.0, -20.0)
+   beam(1),pol(0),band(3),chan(71,71.5,GHz)
+   user(rsr1, 1.0, 0.01)
 
 
 
