@@ -225,10 +225,10 @@ Obviously for filtering there is no way back, the RAW data will need to be re-in
 
 ## masking and flagging in other packages
 
-* mask:    python (True means a bad value)
-* mask:    casa (False and 0 marks masked, i.e. excluded, pixels)
-* mask:    miriad (true is a good value, which when the bit in the mask file is 1)
-* C:            0 is false, 1 (non-zero actually) is true
+* python mask:    True means a bad value
+* casa mask:      False and 0 marks masked, i.e. excluded, pixels
+* miriad mask:    true is a good value, which when the bit in the mask file is 1
+* C:              0 is false, 1 (non-zero actually) is true
 
 flagging is an easier concept; if you flag, it's bad data.   This seems to be the approach in CASA's uv flagging.   The lingo
 in image masking is far more confusing (and opposite from python)
@@ -243,10 +243,11 @@ https://casa.nrao.edu/casadocs/casa-6.1.0/imaging/image-analysis/lattice-express
 
 During stacking we normally weight the data by TSYS.
 
-For gridding we can weight by TSYS (a mostly time-independant spectrum),
-or a more pragmatic RMS, based on the RMS from a baseline fit in the
-selected line free regions.  This is normally part of the filtering step
-that creates the SDFITS file, and for each spectrum this is stored in
-the RMS field, a scalar. 
+For gridding we can weight by TSYS (a mostly time-independant
+spectrum, but we could consider a scalar), or a more pragmatic RMS,
+based on the RMS from a baseline fit in the selected line free
+regions.  This is normally part of the filtering step that creates the
+SDFITS file, and for each spectrum this is stored in the RMS field, a
+scalar.
 
 

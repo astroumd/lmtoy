@@ -69,6 +69,7 @@ Various
    sdfits
    tools
    glossary
+   FAQ	      
 
 Indices
 =======

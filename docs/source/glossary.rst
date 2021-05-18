@@ -50,6 +50,9 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       for **RSR** there are 4 chassis boards, which are tuples of different beams and polarizations
       (though the beams look at the same sky position here)
 
+    dasha
+      A python frontend to dash.
+
     ECSV
       (Enhanced Character Separated Values) a popular self-describing ascii table format popularized by astropy
 

@@ -24,6 +24,15 @@ A simple way to get at the raw LMT data is the following snippet of python code:
 where **rawdata** is now a 2D array, shaped (ntime,nchan) in the python sense (nchan runs fastest).
 The LMT software will typically calibrate and convert these data to the more common FITS format.
 
+What is SDFITS format.
+----------------------
+
+SDFITS is a legal FITS file, but it has a BINTABLE (a spreadsheet) extension.  This BINTABLE stores
+data in rows and columns. Typically each row is a spectrum with meta-data (e.g. ra,dec,beam,pol,band,etc.)
+and the number of rows are the different observations (different ra,dec,beam,pol,band, etc.).
+
+
+
 What is a typical workflow for OTF data reduction
 -------------------------------------------------
 
