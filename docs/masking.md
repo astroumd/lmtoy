@@ -48,6 +48,8 @@ in order to decide on their values, detailed inspection of the spectra was requi
 Notice this format also sneaks in the baselining parameters, though the order was given via
 the command line.
 
+Example is in examples/I10565.blanking
+
 ## SLR
 
 Current masking is only done via command line flags (some are filters, see below)
@@ -225,9 +227,16 @@ Obviously for filtering there is no way back, the RAW data will need to be re-in
 
 ## masking and flagging in other packages
 
+This can be confusing to newcomers, as each package has different concepts how they 
+deal with masking and flagging.
+
 * python mask:    True means a bad value
 * casa mask:      False and 0 marks masked, i.e. excluded, pixels
 * miriad mask:    true is a good value, which when the bit in the mask file is 1
+* class:          here a window is defined where the polynomial is NOT fit.
+* gipsy:          the BLANK value (a FITS concept) controlled by the user via a task
+* NEMO mask:      0 means a good pixel (in pratice not currently used)
+* AIPS:
 * C:              0 is false, 1 (non-zero actually) is true
 
 flagging is an easier concept; if you flag, it's bad data.   This seems to be the approach in CASA's uv flagging.   The lingo
