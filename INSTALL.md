@@ -67,9 +67,9 @@ Instructions for installing **LMTOY**:
    
    Known native python3 packages for common systems:
 
-   Ubuntu:    python3 python-is-python3 python3-pip python3-numpy python3-matplotlib python3-venv
-   Centos:
-   Mac/Brew:
+    Ubuntu:    python3 python-is-python3 python3-pip python3-numpy python3-matplotlib python3-venv
+    Centos:
+    Mac/Brew:
 
 3) After the install, your shell needs the following command to activate LMTOY:
 
@@ -95,7 +95,24 @@ Instructions for installing **LMTOY**:
    Or if you want to run the challenging M51 data (which needs 16GB memory):
    
         make bench51
+		
+4) To clone a select number of obsnums from a machine that has all raw data to a laptop for faster interaction, use the
+   *lmtar* type script.  Obviously you will need an ssh session on one of those machines, and scp data back to your
+   laptop.   Here's an example:
+	
+	
+	    cln:  source /home/teuben/lmtoy/lmtoy_start.sh
+	    cln:  lmtar.py 79447 79448 
+		
 
+   this will list the files that should go into your local $DATA_LMT tree. For each obsnum there should be one ifproc and 4 roach files
+   for Sequoia data. For RSR there should be 4, for 1MMRx there should be 2.
+   You can use your shell skills to rsync them to your $DATA_LMT, or use the **lmtar** script to make a tar file first:
+	
+	    cln:  lmtar IRC_bench.tar 79447 79448 
+		
+   If you gzip this file, it decreases in size from 1600 to 600 MB. 
+ 
 
 # 1. Installing SpectralLineReduction (old notes)
 
