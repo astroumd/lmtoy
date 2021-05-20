@@ -7,7 +7,9 @@
 
 First we go through a guided install example. Please see the sections
 below if you need more information on the pre-conditions or other
-intermediate steps.
+intermediate steps. The script in **docs/install_lmtoy** provides
+paths to the install described below, and it works in most cases
+on most machines we've tested (Mac, Linux).
 
 ## Install Example
 
@@ -15,15 +17,15 @@ Instructions for installing **LMTOY**:
 
 0) Pre-conditions: We are assuming you have a python3 development like
    anaconda3 already in your path. We also assume you have a C
-   compiler, and that cfitsio and netcdf have been installed (e.g. on
-   a mac via brew).  Things can and will massively and confusingly fail
-   if this is not in tip top shape :-)
+   compiler, and that cfitsio and netcdf libraries have been installed 
+   (e.g. on a mac via brew).  Things can and will massively and confusingly fail
+   if these are not in tip top shape :-)
 
-   We have silently assumed the command python is a python3.
+   We have silently assumed the command python is a python3. Another failure mode.
 
-   More can be found on the pre-conditions below in this document.
 
-1) Make a small shadow tree of the official $DATA_LMT on your laptop
+1) Make a small shadow tree of the official $DATA_LMT on your laptop. If not on
+   an official machine (cln, wares, lma), use the recommended ~/LMT/data_lmt:
 
         mkdir -p ~/LMT/data_lmt
         cd ~/LMT/data_lmt
@@ -32,16 +34,23 @@ Instructions for installing **LMTOY**:
         tar zxf RSR_bench.tar.gz
         rm RSR_bench.tar.gz
 
-        scp cln:/home/teuben/LMT/IRC_data.tar.gz  .
-        tar zxf IRC_data.tar.gz
-        rm IRC_data.tar.gz
+        scp cln:/home/teuben/LMT/IRC_bench.tar.gz  .
+        tar zxf IRC_bench.tar.gz
+        rm IRC_bench.tar.gz
 
    At Umass the machine **cln** has to be used. 
    At UMD the machine **lma** has to be used.
 
-   The IRC data is "big" (600MB), if you don't want to use the SLR software, skip it.
-   The RSR bench is small, 33 MB. Their OBSNUM's are 79448 and 33551 resp.
-
+   The IRC bench is "big" (600MB), if you don't want to use the SLR
+   software, skip it.  The RSR bench is small, 33 MB. Their OBSNUM's
+   are 79448 and 33551 resp. plus the required **data_lmt/rsr**
+   calibration data (also small).
+   
+   Note that the 2018 IRC_bench data are compressed from the old
+   double precision raw data, the uncompressed size will be 1600
+   MB. All data in 2020 and before are double precision, but we expect
+   data in 2021 and beyond to be in single precision, where the
+   compression factor won't be as large.
 
 2) Install LMTOY (e.g. do this within the previously created ~/LMT)
 
@@ -50,11 +59,13 @@ Instructions for installing **LMTOY**:
 
    This would assume you have a proper python3 in your environment. If
    not, then use the default **venv=0**, and it will install anaconda3 for
-   you. This will cost an extra 3.3 GB and a long download.  For now we
+   you. This will cost an extra 3.3 GB and a longer download.  For now we
    recommend using the default **nemo=1**, as it's useful to see benchmark
    results, and fully run the "old" pipeline. If you don't care, use **nemo=0**.
 
    The native python3 might work for you, for which venv=1 should be used
+   
+   Known native python3 packages for common systems:
 
    Ubuntu:    python3 python-is-python3 python3-pip python3-numpy python3-matplotlib python3-venv
    Centos:
@@ -68,11 +79,11 @@ Instructions for installing **LMTOY**:
    
         lmtinfo.py $DATA_LMT
 
-        # Y-M-D   T H:M:S     ObsNum ObsPgm SourceName                     RestFreq  VLSR    TSKY     RA        DEC          AZ    EL
-        2015-01-21T23:12:07    33550  Cal   I10565                             RSR      0      39.5  164.825417  24.542778   74.3  51.6
-        2015-01-21T23:12:07    33551  Bs    I10565                             RSR      0     319.5  164.825417  24.542778   74.3  51.9
-        2018-11-16T06:48:30   079447  Cal   IRC+10216                      115.2712   -20       7.8  146.989192  13.278767  115.0  77.1
-        2018-11-16T06:48:52   079448  Map   IRC+10216                      115.2712   -20     685.8  146.989192  13.278767  115.2  77.2
+        # Y-M-D   T H:M:S     ObsNum ObsPgm SourceName       RestFreq  VLSR    TSKY     RA        DEC          AZ    EL
+        2015-01-21T23:12:07    33550  Cal   I10565               RSR      0      39.5  164.825417  24.542778   74.3  51.6
+        2015-01-21T23:12:07    33551  Bs    I10565               RSR      0     319.5  164.825417  24.542778   74.3  51.9
+        2018-11-16T06:48:30   079447  Cal   IRC+10216        115.2712   -20       7.8  146.989192  13.278767  115.0  77.1
+        2018-11-16T06:48:52   079448  Map   IRC+10216        115.2712   -20     685.8  146.989192  13.278767  115.2  77.2
 
 
    You can now go back in the examples directory, and run the two benchmarks:
@@ -80,7 +91,10 @@ Instructions for installing **LMTOY**:
         cd $LMTOY/examples
         make bench
         make rsr1
-
+		
+   Or if you want to run the challenging M51 data (which needs 16GB memory):
+   
+        make bench51
 
 
 # 1. Installing SpectralLineReduction (old notes)
