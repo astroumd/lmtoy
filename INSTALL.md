@@ -1,8 +1,9 @@
 # LMT software
 
-1. SpectralLineReduction - for Sequoia, Omaya
+1. SpectralLineReduction - for Sequoia, Omaya, 1MMRx
 2. dreampy3 - for RSR
 3. tolteca/citlali - for TolTEC, Muscat and also old Aztec data
+   (not covered here)
 
 First we go through a guided install example. Please see the sections
 below if you need more information on the pre-conditions or other
@@ -22,10 +23,10 @@ Instructions for installing **LMTOY**:
 
    More can be found on the pre-conditions below in this document.
 
-1) Make a small shadow tree of the official $DATA_LMT on your laptop.
+1) Make a small shadow tree of the official $DATA_LMT on your laptop
 
-        mkdir ~/LMT
-        cd ~/LMT
+        mkdir -p ~/LMT/data_lmt
+        cd ~/LMT/data_lmt
 
         scp cln:/home/teuben/LMT/RSR_bench.tar.gz  .
         tar zxf RSR_bench.tar.gz
@@ -42,7 +43,7 @@ Instructions for installing **LMTOY**:
    The RSR bench is small, 33 MB. Their OBSNUM's are 79448 and 33551 resp.
 
 
-2) Install LMTOY (do this within the previously created ~/LMT)
+2) Install LMTOY (e.g. do this within the previously created ~/LMT)
 
         wget https://astroumd.github.io/lmtoy/install_lmtoy
         bash install_lmtoy venv=1 nemo=1
@@ -51,7 +52,13 @@ Instructions for installing **LMTOY**:
    not, then use the default **venv=0**, and it will install anaconda3 for
    you. This will cost an extra 3.3 GB and a long download.  For now we
    recommend using the default **nemo=1**, as it's useful to see benchmark
-   results. If you don't care, use **nemo=0**.
+   results, and fully run the "old" pipeline. If you don't care, use **nemo=0**.
+
+   The native python3 might work for you, for which venv=1 should be used
+
+   Ubuntu:    python3 python-is-python3 python3-pip python3-numpy python3-matplotlib python3-venv
+   Centos:
+   Mac/Brew:
 
 3) After the install, your shell needs the following command to activate LMTOY:
 
