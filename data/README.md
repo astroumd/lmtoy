@@ -19,7 +19,7 @@ exist to process these sample OBSNUM data
 	
                  SEQ  Ps
 		 SEQ  Bs
-		 SEQ  map (the stamp style)
+		 SEQ  map (the stamp style, or point map, not the OTF style)
 
         81716    1MM  map BLLAC
 	
@@ -40,7 +40,7 @@ Some example of data.  For FITS this is just the fits header. For CDF (some of) 
 
 3) GBT is more simple, only singly dimensioned arrays.
 
-4) IRAM comes with two examples:
+4) IRAM comes with two examples:  (see also comments in https://www.iram.fr/IRAMFR/GILDAS/doc/html/class-html/node15.html)
    - IRAM1:   (single.fits) - a primary HDU with NAXIS1=nchan at fixed RA,DEC
    - IRAM2:   (index.fits)  - a SDFITS lookalike, called MATRIX, where the data are in column SPECTRA
    
@@ -55,3 +55,10 @@ Some example of data.  For FITS this is just the fits header. For CDF (some of) 
 
 * 1MM_ifproc
 * 1MM_roach0 (there is 1)
+
+
+## Other Notes
+
+gbfits2.list     old Unipops GBT data - see https://www.cv.nrao.edu/fits/data/samples/singledish/gbfits2.list
+
+
