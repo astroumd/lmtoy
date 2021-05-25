@@ -4,7 +4,7 @@
 
 # Masking
 
-Masking (blanking, flagging) is the operation by which we can remove data
+Masking (or blanking, or flagging) is the operation by which we can remove data
 from any subsequent operations, leading to the final gridding or
 stacking. We do this by setting a mask in python, so there is an option
 to unset the mask and get the data back. This also includes keeping track
@@ -14,15 +14,15 @@ operations to another observation.
 *there could also be options to interpolate across masked data*.
 
 
-There are two ways to achieve masking: a command line flag and a text
-file with directives (ignoring interactive).  There is also the
+There are two ways to achieve masking: a command line option and a text
+file with directives (ignoring interactive use for now).  There is also the
 confusion that some command line flags cause data to be included,
 others to be excluded.  Combinations of both methods are used in RSR,
 though SLR is using all command line options.
 
-These are masking operations: they keep the data, but just mask it. There is also the
+These are true masking operations: they keep the data, but just mask it. There is also the
 flltering operation, remove data alltogether, to lower the data volume. See a later
-section below.
+section below. 
 
 ## RSR-Sanchez
 
@@ -31,6 +31,7 @@ This is the simplest masking file format, passed to **RSR_driver.py** using the 
 
         obsnum  chassis  band
   
+where these are simple integers.
 
 ## RSR-Yun
 
@@ -41,14 +42,16 @@ but allows for a more detailed masking:
         windows[N] = [(f1,f2),(f3,f4)]             # for baselining
         obsnum                                     # inclusive
         obsnum chassis bank                        # masking a full bank
-        obsnum chassis bank:[(f1,f2),(f3,f4)]      # masking, dictionary for the bank
+        obsnum chassis {bank:[(f1,f2),(f3,f4)]}    # masking, python dictionary for the bank
 
 in order to decide on their values, detailed inspection of the spectra was required.
 
 Notice this format also sneaks in the baselining parameters, though the order was given via
-the command line.
+the command line. Would anybody want to give different orders to different windows?
 
-Example is in examples/I10565.blanking
+Also, obsnum can be comma separated list, or a dashed-range
+
+Example is in $LMTOY/examples/I10565.blanking
 
 ## SLR
 
@@ -57,7 +60,7 @@ Current masking is only done via command line flags (some are filters, see below
         --bank	    	        bank to use (0 or 1)       [band in our new terms]
         --pix_list              pixels to use (0..15)      [beam in our new terms]
         --eliminate_list        remove channels            [chan]
-        --slice                 channel section to keep    [chan, but special]
+        --slice                 channel section to keep    [chan, but special filter]
         --sample                time samples to remove     [time]
 
 As we discussed elsewhere, LMT spectral data can be seen as a multi-dimensional array 
@@ -65,32 +68,32 @@ dimensioned as follows:
 
         DATA[time,beam,pol,band,chan]
 
-though not all dimensions need to be populated.
+though not all dimensions need to be populated, but they are present.
 
 There are two types of masking:
 
 * masking based on a slice in this (time,beam,pol,band,chan) space. On the simplest level
   this can be done using 0-based integers
   with inclusive (min,max) notation, e.g. **time(0,10)**,
-  or using their acceptable WCS designations, e.g.
+  or using their agreed upon WCS designations, e.g.
 
        -time(12:05:10,12:30:05)                         # on the same day
        -time(2021-10-31T23:30,2021-11-01T00:30)         # ISO notation if day boundary is crossed
        -beam(5,7)                                       # beams (pixels for some) 5,6,7
        -pol(XX)                                         # XX if they are labeled (they should)
-       -band(USB)                                       # band, if labeled
+       -band(USB)                                       # band, if labeled, or by 0,1,2...
        -chan(10km/s,20km/s)                             # RESTFREQ is needed here
-       -chan(104.1GHz,104.14GHz)                        # by freq
+       -chan(104.1,104.14,GHz)                          # by freq (unit optional)
        -obsnum(12345)                                   # by obsnum
 
   and combinations can be made to designate higher-dimensional slices, for example
 
        -beam(5,7),pol(XX)
 
-  would mask the XX polarization for bands 5, 6 and 7 (for all times, beams and channels)
+  would mask the XX polarization for bands 5, 6 and 7 (for all times, bands and channels)
 
   Some exceptional names can be used if they have an overloaded meaning. For example, each beam
-  will have an (RA,DEC) associated with it, thus
+  will have an (RA,DEC) associated with it. Here are some possible non-standard cases of masking:
 
        -ra(12.34,12.50),dec(34.2,35.0)
        -glon(120.0,121.0),glat(20,21)
@@ -100,7 +103,7 @@ There are two types of masking:
        -dra(p1,p2)
        -ddec(p1,p2)
        
-  are all acceptable ways to deal with selecting. The current SpecFile does not export some
+  are all acceptable ways to select data for masking. The current SpecFile does not export some
   of these variables, but they are commonly seen in other observatory SDFITS file, so we
   should discuss which ones are possibly relevant to us. They are not part of the CORE
   SDFITS agreement.
@@ -116,33 +119,42 @@ There are two types of masking:
        -select(OBJECT, NGC1234)
 
   If a selected range variable is not a column, but a keyword constant, there will be
-  a warning and the masking is applied (or not) to all data!
+  a warning and the masking is applied (or not) to all data! Probably not the intention.
 
 * user defined masking could be implemented in free form
 
          user(name, p1, p2, ... pN)
 
-  which requires the user to supply a python function **name.mask** with the specified number of parameters.
+  which requires the user to supply a python function **name.mask** with the specified number of
+  parameters.
   
-
 * If no + or - is given in front of the specification, a - is assumed, i.e. that slice is masked.
 
-* blank lines, or anything after a '#' is taken as a comment
+* blank lines, or anything after a '#' are taken as a comment
 
-* A line starting with a '{' is special, it's a raw format for testing (see below)
+* A line starting with a '{' is special, it's a raw format that can be used
+  for testing (see below)
 
 ###   ObsNum
 
-A few words on the **ObsNum** at LMT.  RSR observations are small (few MB), and it is not uncommon to combine many
-ObsNum's for the stacking operation. Thus it is not unreasonable, in fact encouraged, that the SDFITS file contains
-all the ObsNum's that should be part of the observation. The ObsNum will thus become an OBSNUM column in the SDFITS
-BINTABLE, so it can be selected on later (as is already common in the two blanking files we discussed before).
-Normally these are simple FITS keywords. One caveat of course:   all ObsNum's that are combined need to be of the same
-shape, except for the **time** dimension, as it's nothing more than an append operation.
+A few words on the **ObsNum** at LMT.  RSR observations are small (few
+MB), and it is not uncommon to combine many ObsNum's for the stacking
+operation. Thus it is not unreasonable, in fact encouraged, that the
+SDFITS file contains all the ObsNum's that should be part of the
+observation. The ObsNum will thus become an OBSNUM column in the
+SDFITS BINTABLE, so it can be selected on later (as is already common
+in the two blanking files we discussed before).  Normally these are
+simple FITS keywords. One caveat of course: all ObsNum's that are
+combined need to be of the same shape, except for the **time**
+dimension, as it's nothing more than an append operation.
 
-For SLR there is no reason why multiple ObsNum's could not be combined, except these files are so large (10GB easily), 
-and it will challenge the memory you have on your workstation. A more common and sensible solution is to process one **ObsNUm** per
-SDFITS file, then grid each into a FITS cube, and do a weighted average to produce the final stacked cube.
+For SLR there is no reason why multiple ObsNum's could not be
+combined, except these files are so large (10GB easily per ObsNum),
+and it will challenge the memory you have on your workstation. A more
+common and sensible solution is to process one **ObsNUm** per SDFITS
+file, then grid each into a FITS cube, and do a weighted average to
+produce the final stacked cube. Both paths should be possible, but it
+will depend on the available memory.
 
 ###   Questions
 
@@ -160,6 +172,13 @@ SDFITS file, then grid each into a FITS cube, and do a weighted average to produ
 
      beam(1),beam(4)
 
+   since
+   
+     beam(1,4)
+
+   would include 4 beams.
+    
+
 3) when units are used, should we embed, or separate?  Duplication is bad, I probably prefer the last option:
 
      chan(104.1GHz,104.14GHz)
@@ -170,18 +189,11 @@ SDFITS file, then grid each into a FITS cube, and do a weighted average to produ
 
       obsnum chassis bank:[(f1,f2),(f3,f4)]
 
-   would be
-
-      beam(1),pol(0),band(3),chan(71,71.5,82,83,GHz)
-	  
-	  
-   or
+   would become the following
    
       beam(1),pol(0),band(3),chan(71,71.5,Ghz),chan(82,83,GHz)
 
-   (see item 1) before)
-
-
+  
 5) For testing we will allow a low level masking file, in the 'raw' format
 
     {2: '1', 0: '35,37', 4: '512,514', 'id': 'RFI'}
@@ -213,7 +225,8 @@ and later to retrieve:
 
       cmd='mask=%s' % str(mask)
 
-In GBTIDL there are whole procedures to flag and unflag (as they call it). By keeping an ascii representation of the mask,
+In GBTIDL there are whole procedures to flag and unflag (as they call it).
+By keeping an ascii representation of the mask,
 we can mask and unmask in a similar fashion.
 
 
