@@ -5,10 +5,10 @@ for baselines, or fitting lines.
 # Use Case 1: identifying bad data
 
 The traditional way to visually identify and isolate bad data is
-to make a "waterfall" plot and then based in visual inspection find
+to make a "waterfall" plot and then based on visual inspection find
 regions with unusual signal or noise, and flagged them as bad based
 on some combination of time, frequency, and beam. For example, for
-SEQUOIA, we would display a 2-D image ofthe data for one beam with 
+SEQUOIA, we would display a 2-D image of the data for one beam with 
 spectral channel running across the x-axis and time running down 
 the y-axis. 
 
@@ -16,12 +16,13 @@ The user would interact with this image by running a cursor over
 the image to display time and spectral channel. Ideally the user
 would be able to:
 A. use a cursor which reads out the current x and y coordinates
+   and also view the image value
 B. draw a rectangle on the screen which would enclose a region to be
-    designated bad.
+   designated bad.
 
 In both interactions A and B, there would be an action associated
 with the cursor or rectange which would result in a writing of the
-coordinate range to a python structure. This pyton structure would
+coordinate range to a python structure. This python structure would
 then be used to generate a masking statement that is understood
 by the pipeline, and would be utilized in a new running of the
 pipeline by the user.
@@ -39,9 +40,8 @@ Requirements:
 ## dasha/plotly/matplotlib:   range selector
 
 In an X-Y plot we need to select an Xmin and Xmax. For example
-for setting where the fit the baseline.  Or to mask a region
-where a birdy is in the spectrum.
-
+for setting where the fit the baseline.  Or to mask a min and max
+frequency where a birdy is in the spectrum.
 
 
 ## dasha/plotly/matplotlib:   box selector
