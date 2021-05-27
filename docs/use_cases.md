@@ -8,7 +8,7 @@ The traditional way to visually identify and isolate bad data is
 to make a "waterfall" plot and then based in visual inspection find
 regions with unusual signal or noise, and flagged them as bad based
 on some combination of time, frequency, and beam. For example, for
-SEQUOIA, we would display a 2-D image ofthe data for one beam with 
+SEQUOIA, we would display a 2-D image of the data for one beam with 
 spectral channel running across the x-axis and time running down 
 the y-axis. 
 
@@ -36,18 +36,20 @@ Requirements:
      spectral channels and time step with enough resolution to see
      and identify bad data at the level of 1 channel and 1 time step
 
-## dasha/plotly/matplotlib:   range selector
+## User case two
 
-In an X-Y plot we need to select an Xmin and Xmax. For example
-for setting where the fit the baseline.  Or to mask a region
-where a birdy is in the spectrum.
+The user needs to specify channel ranges for a line fit or for 
+channel regions to fit and remove a baseline from the spectrum. The
+user would specify 1 or more channel ranges by moving the cursor
+on the image of the spectrum. In existing reduction programs, the
+selection of a channel range is usually indicated by drawing a rectangle
+which encloses the channel range on the screen.
 
+Requirements:
+1. ability to use cursor to readout channel number
+2. cursor action to allow designation of a start and stop channel for
+     an interval and write those channel numbers to a python structure
+3. ability to draw onto the image on the screen a box, or some other
+     indicator of the selected regions.
 
-
-## dasha/plotly/matplotlib:   box selector
-
-In an X-Y image, for example a waterfall image for a given Sequoia pixel,
-we need to be able to set a box, where data is bad.
-It should also be able to set one of the two dimensions to the max dimension
-in that image (i.e. for all times in a freq range (birdy?), or for all frequencies
-in a time-range. 
+ 
