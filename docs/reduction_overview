@@ -25,7 +25,8 @@ Outline for Data Reduction flow for Spectra Line Receivers:
       to interact with DASHA page for inspection of data in more detail. This stage would also combine
       obsnums if they are pieces of a common observation to create a cumulative data product.
 10. Proposal can change selected parameters in pipeline reduction via web-page interface and create
-      new version(s) of the reduced data. These versions would be kept in their project-number directory. 
+      new version(s) of the reduced data. These versions would be kept in their project-number directory
+      in which there can also be several obsnum's.
 11. Proposer transfers home their final data cubes/spectra with great happiness.
 
 -------------------------------------------------------------------------
