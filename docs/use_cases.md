@@ -20,14 +20,14 @@ B. draw a rectangle on the screen which would enclose a region to be
     designated bad.
 
 In both interactions A and B, there would be an action associated
-with the cursor or rectange which would result in a writing of the
-coordinate range to a python structure. This pyton structure would
+with the cursor or rectangle which would result in a writing of the
+coordinate range to a python structure. This python structure would
 then be used to generate a masking statement that is understood
-by the pipeline, and would be utilized in a new running of the
+by the pipeline, and would be utilized in a subsequent running of the
 pipeline by the user.
 
 Requirements: 
-1. ability to display real coordinates of the cursor position and have
+1. ability to display real (world) coordinates of the cursor position and have
      an associated action which writes them to a python structure.
 2. ability to create and manipulate a rectangle on the displayed image 
      and write the xmin,xmax,ymin,ymax of the rectangle back to a
