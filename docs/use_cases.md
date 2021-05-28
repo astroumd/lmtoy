@@ -48,10 +48,11 @@ selection of a channel range is usually indicated by drawing a rectangle
 which encloses the channel range on the screen.
 
 Requirements:
-1. ability to use cursor to readout channel number
-2. cursor action to allow designation of a start and stop channel for
+1. ability to display a spectrum, possibly an average of many spectra
+2. ability to use cursor to readout channel number
+3. cursor action to allow designation of a start and stop channel for
      an interval and write those channel numbers to a python structure
-3. ability to draw onto the image on the screen a box, or some other
+4. ability to draw onto the image on the screen a box, or some other
      indicator of the selected regions.
 
  
