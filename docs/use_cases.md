@@ -8,8 +8,8 @@ The traditional way to visually identify and isolate bad data is
 to make a "waterfall" plot and then based in visual inspection find
 regions with unusual signal or noise, and flagged them as bad based
 on some combination of time, frequency, and beam. For example, for
-SEQUOIA, we would display a 2-D image of the data for one beam with 
-spectral channel running across the x-axis and time running down 
+SEQUOIA, we would display a 2-D waterfall image of the data for one beam with 
+spectral channel running across the x-axis and time running down (or up)
 the y-axis. 
 
 The user would interact with this image by running a cursor over
