@@ -2,7 +2,7 @@ Outline for Data Reduction flow for Spectra Line Receivers:
 
 1. Observations for an obsnum completed.
 2. data files for just completed obsnum transferred to disk on data reduction
-      copmputer. (Estimate to require 1 minute per 1 hour of SEQUIOA observations and
+      computer. (Estimated to require 1 minute per 1 hour of SEQUIOA observations and
       would stop WARES data collection for that minute(s))
 3. SLR pipeline run on data reduction computer at telescope or base camp. Automated
       with defaults and proposer input from script preparation process. NO user interaction
