@@ -1,4 +1,4 @@
-Outline for Data Reduction flow for Spectra Line Receivers:
+# Outline for Data Reduction flow for Spectra Line Receivers:
 
 1. Observations for an obsnum completed.
 2. data files for just completed obsnum transferred to disk on data reduction
@@ -29,8 +29,8 @@ Outline for Data Reduction flow for Spectra Line Receivers:
       in which there can also be several obsnum's.
 11. Proposer transfers home their final data cubes/spectra with great happiness.
 
--------------------------------------------------------------------------
-List of Steps for Proposer from Grant's email of May 10.
+
+## List of Steps for Proposer from Grant's email of May 10.
 
 Here's the list of steps I was talking about during the telecon.  This was just me thinking out loud, I could be convinced of other approaches.  I initially wrote this list to help identify what software we're missing on the TolTEC side.
 
