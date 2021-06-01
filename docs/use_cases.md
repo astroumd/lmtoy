@@ -29,6 +29,7 @@ by the pipeline, and would be utilized in a subsequent running of the
 pipeline by the user.
 
 Requirements: 
+
 1. ability to display real coordinates of the cursor position and have
      an associated action which writes them to a python structure.
 2. ability to create and manipulate a rectangle on the displayed image 
@@ -38,7 +39,7 @@ Requirements:
      spectral channels and time step with enough resolution to see
      and identify bad data at the level of 1 channel and 1 time step
 
-## User case two
+# Use case 2
 
 The user needs to specify channel ranges for a line fit or for 
 channel regions to fit and remove a baseline from the spectrum. The
@@ -48,6 +49,7 @@ selection of a channel range is usually indicated by drawing a rectangle
 which encloses the channel range on the screen.
 
 Requirements:
+
 1. ability to display a spectrum, possibly an average of many spectra
 2. ability to use cursor to readout channel number
 3. cursor action to allow designation of a start and stop channel for
