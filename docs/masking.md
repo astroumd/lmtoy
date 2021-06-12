@@ -77,31 +77,31 @@ There are two types of masking:
   with inclusive (min,max) notation, e.g. **time(0,10)**,
   or using their agreed upon WCS designations, e.g.
 
-       -time(12:05:10,12:30:05)                         # on the same day
-       -time(2021-10-31T23:30,2021-11-01T00:30)         # ISO notation if day boundary is crossed
-       -beam(5,7)                                       # beams (pixels for some) 5,6,7
-       -pol(XX)                                         # XX if they are labeled (they should)
-       -band(USB)                                       # band, if labeled, or by 0,1,2...
-       -chan(10km/s,20km/s)                             # RESTFREQ is needed here
-       -chan(104.1,104.14,GHz)                          # by freq (unit optional)
-       -obsnum(12345)                                   # by obsnum
+        -time(12:05:10,12:30:05)                         # on the same day
+        -time(2021-10-31T23:30,2021-11-01T00:30)         # ISO notation if day boundary is crossed
+        -beam(5,7)                                       # beams (pixels for some) 5,6,7
+        -pol(XX)                                         # XX if they are labeled (they should)
+        -band(USB)                                       # band, if labeled, or by 0,1,2...
+        -chan(10km/s,20km/s)                             # RESTFREQ is needed here
+        -chan(104.1,104.14,GHz)                          # by freq (unit optional)
+        -obsnum(12345)                                   # by obsnum
 
   and combinations can be made to designate higher-dimensional slices, for example
 
-       -beam(5,7),pol(XX)
+        -beam(5,7),pol(XX)
 
   would mask the XX polarization for bands 5, 6 and 7 (for all times, bands and channels)
 
   Some exceptional names can be used if they have an overloaded meaning. For example, each beam
   will have an (RA,DEC) associated with it. Here are some possible non-standard cases of masking:
 
-       -ra(12.34,12.50),dec(34.2,35.0)
-       -glon(120.0,121.0),glat(20,21)
-       -ha(h1,h2)
-       -lst(lst1,lst2)
-       -elevation(el1,el2)
-       -dra(p1,p2)
-       -ddec(p1,p2)
+        -ra(12.34,12.50),dec(34.2,35.0)
+        -glon(120.0,121.0),glat(20,21)
+        -ha(h1,h2)
+        -lst(lst1,lst2)
+        -elevation(el1,el2)
+        -dra(p1,p2)
+        -ddec(p1,p2)
        
   are all acceptable ways to select data for masking. The current SpecFile does not export some
   of these variables, but they are commonly seen in other observatory SDFITS file, so we
@@ -114,9 +114,9 @@ There are two types of masking:
 * masking records based on other meta-data (SDFITS columns) being in some range (if numeric)
   or matching, if a string
 
-       -select(TSYS, 250.0, 999)
-       -select(RMS, 3.0, inf)
-       -select(OBJECT, NGC1234)
+        -select(TSYS, 250.0, 999)
+        -select(RMS, 3.0, inf)
+        -select(OBJECT, NGC1234)
 
   If a selected range variable is not a column, but a keyword constant, there will be
   a warning and the masking is applied (or not) to all data! Probably not the intention.
@@ -162,21 +162,21 @@ will depend on the available memory.
 
      chan(10,20),chan(50,60)
 
-   or should we allow an even number of values,
+or should we allow an even number of values,
 
      chan(10,20,50,60)
 	 
-   I prefer the first option
+I prefer the first option
 
 2) related to this, how to pick beams (pixels)?
 
      beam(1),beam(4)
 
-   since
+since
    
      beam(1,4)
 
-   would include 4 beams.
+would include 4 beams.
     
 
 3) when units are used, should we embed, or separate?  Duplication is bad, I probably prefer the last option:
@@ -189,19 +189,19 @@ will depend on the available memory.
 
       obsnum chassis bank:[(f1,f2),(f3,f4)]
 
-   would become the following
+would become the following
    
       beam(1),pol(0),band(3),chan(71,71.5,Ghz),chan(82,83,GHz)
 
   
 5) For testing we will allow a low level masking file, in the 'raw' format
 
-    {2: '1', 0: '35,37', 4: '512,514', 'id': 'RFI'}
+      {2: '1', 0: '35,37', 4: '512,514', 'id': 'RFI'}
 
-   since that is what is used under the hood. It will be better to not use integers for the numbers,
-   but the agreed upon mnemonic, viz.  (time,beam,pol,band,chan) so the mask would read
+since that is what is used under the hood. It will be better to not use integers for the numbers,
+but the agreed upon mnemonic, viz.  (time,beam,pol,band,chan) so the mask would read
 
-    { 'time': '35,37', 'pol': '1',  'chan': '512,514', 'id': 'RFI'}
+      { 'time': '35,37', 'pol': '1',  'chan': '512,514', 'id': 'RFI'}
 
 
 6) Is Panda's better than NDarray?   In my GBTOY experiments I noted some terrible deficiency of porting
@@ -212,8 +212,8 @@ will depend on the available memory.
 
 Some examples from the GBTIDL manual
    
-     #ID, RECNUM, SCAN, INTNUM, PLNUM, IFNUM, FDNUM, BCHAN, ECHAN, IDSTRING
-     0 * 35:37 1,3 * * * 512 514 RFI
+      #ID, RECNUM, SCAN, INTNUM, PLNUM, IFNUM, FDNUM, BCHAN, ECHAN, IDSTRING
+      0 * 35:37 1,3 * * * 512 514 RFI
 
 where they label (the IDSTRING) each flag. For us this would look something like
 
