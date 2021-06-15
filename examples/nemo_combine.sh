@@ -4,6 +4,22 @@
 #
 
 obsnum=(85776 85778 85824)
+pdir=""
+
+
+#             simple keyword=value command line parser for bash - don't make any changing below
+for arg in $*; do\
+  export $arg
+done
+
+
+if [ ! -z $pdir ]; then
+    echo Working directory $pdir
+    mkdir -p $pdir
+    cd $pdir
+else
+    echo No PDIR directory used, all work in the current directory
+fi
 
 
 src=Region_J-K_
