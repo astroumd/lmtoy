@@ -56,12 +56,21 @@ bench31:
 	$(TIME) ./lmtoy_combine.sh  obsnum=85776,85778,85824 > lmtoy_85776_3.log 2>&1
 	$(TIME) ./nemo_combine.sh                        >  lmtoy_85776_nemo.log 2>&1
 
+# needs 5.2GB
+bench31a:
+	mkdir -p M31a
+	$(TIME) ./lmtoy_reduce.sh  obsnum=85776 $(EXTRA)      pdir=M31a > M31a/lmtoy_85776.log   2>&1
+	$(TIME) ./lmtoy_reduce.sh  obsnum=85778 $(EXTRA)      pdir=M31a > M31a/lmtoy_85778.log   2>&1
+	$(TIME) ./lmtoy_reduce.sh  obsnum=85824 $(EXTRA)      pdir=M31a > M31a/lmtoy_85824.log   2>&1
+	$(TIME) ./lmtoy_combine.sh obsnum=85776,85778,85824   pdir=M31a > M31a/lmtoy_85776_3.log 2>&1
+	$(TIME) ./nemo_combine.sh                             pdir=M31a > M31a/lmtoy_85776_n.log 2>&1
+
 bench51:
 	$(TIME) ./lmtoy_reduce.sh obsnum=90911 $(EXTRA) > lmtoy_90911.log   2>&1
 	$(TIME) ./lmtoy_reduce.sh obsnum=91112 $(EXTRA) > lmtoy_91112.log   2>&1
 	$(TIME) ./lmtoy_combine.sh        obsnum=90911,91112 > lmtoy_90911_2.log 2>&1
 
-bench31a:
+bench31b:
 	$(TIME) ./lmtoy_reduce.sh obsnum=85776 noise_sigma=0 > lmtoy_85776.log   2>&1
 	$(TIME) ./lmtoy_reduce.sh obsnum=85778 noise_sigma=0 > lmtoy_85778.log   2>&1
 	$(TIME) ./lmtoy_reduce.sh obsnum=85824 noise_sigma=0 > lmtoy_85824.log   2>&1
