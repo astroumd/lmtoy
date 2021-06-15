@@ -33,6 +33,7 @@ is optional:
 	    obsnum=91112                # always required
 	    path=data_lmt               # optional via $DATA_LMT
 	    obsid=                      # optional on first run [not yet implemented]
+		pdir=                       # optional:  directory where work is done 
 	    dv=100                      # optional:  width around spectral line (vlsr) 
 	    dw=250                      # optional:  width of the wings for baseline
 	    rc=0                        # optional:  force a new rc file (i.e. new run)
@@ -93,6 +94,11 @@ Here a summary of the files that are created:
      SRC_OBSNUM.wtr.fits     ratio of wt3/wt2.  Can get > 1 if bad wavy spectra or extra line emission
 
 If NEMO or ADMIT had been run, a number of other files and directories will be present.
+
+The **pdir** directory, if it was set, is the directory where all the work is done. By default it is the
+current working directory. This may be OK for a PI reducing data locally, but when the **LMTpipeline** is
+handling a lot of data, the convention is to create a directory hierarchy that contains the **ProjectId**,
+the **ObsNum**, and a reduction date **Rdate**.
 
 ## An experiment
 
