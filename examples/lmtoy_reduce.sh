@@ -7,13 +7,14 @@
 #          in the current directory, parameters will be read from it.
 #          If it does not exist, it will be created on the first run and you can edit it
 #          for subsequent runs
+#          If projectid is set, this is the subdirectory, within which obsnum is set
 #
 # There is no good mechanism here to make a new variable depend on re-running a certain task on which it depends
 # that's perhaps for a more advanced pipeline
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="lmtoy_reduce: 10-mar-2021"
+version="lmtoy_reduce: 8-jun-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -35,6 +36,7 @@ path=${DATA_LMT:-data_lmt}
 obsnum=79448
 obsid=""
 newrc=0
+pdir=""
 #            - procedural
 makespec=1
 makecube=1
@@ -74,6 +76,16 @@ done
 if [ $debug = 1 ]; then
     set -x
 fi
+
+#             see if pdir working directory needs to be used
+if [ ! -z $pdir ]; then
+    echo Working directory $pdir
+    mkdir -p $pdir
+    cd $pdir
+else
+    echo No PDIR directory used, all work in the current directory
+fi
+
 
 #             process the parameter file (or force new one with newrc=1)
 rc=lmtoy_${obsnum}.rc
@@ -116,7 +128,7 @@ if [ $newrc = 1 ]; then
     if [ -z $ifproc ]; then
 	rm -f $rc
 	echo No matching obsnum=$obsnum and path=$path
-	echo The following rc files are present:
+	echo The following rc files are present here:
 	ls lmtoy_*.rc | sed s/lmtoy_// | sed s/.rc//
 	exit 0
     fi
