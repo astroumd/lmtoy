@@ -10,7 +10,7 @@
 #
 
 
-version="lmtoy_combine: 2-mar-2021"
+version="lmtoy_combine: 8-jun-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=ON1,ON2,..."
@@ -33,6 +33,7 @@ debug=0
 # input parameters
 #            - start or restart
 obsnum=85776,85778,85824
+pdir=""
 #            - procedural
 makecube=1
 viewcube=0
@@ -63,6 +64,16 @@ done
 if [ $debug = 1 ]; then
     set -x
 fi
+
+#             see if pdir working directory needs to be used
+if [ ! -z $pdir ]; then
+    echo Working directory $pdir
+    mkdir -p $pdir
+    cd $pdir
+else
+    echo No PDIR directory used, all work in the current directory
+fi
+
 
 
 #             figure out the first obsnum, to inherit basic gridding pars
