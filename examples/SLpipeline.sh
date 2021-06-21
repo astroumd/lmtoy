@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          htaccess
 
-version="SLpipeline: 15-jun-2021"
+version="SLpipeline: 21-jun-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=OBSNUM ..."
@@ -49,9 +49,14 @@ lmtinfo.py $path $obsnum > $rc
 
 source $rc
 
+if [ $obspgm = "cal" ]; then
+    echo "Cannot process a 'cal' obsnum, pick a better obsnum"
+    exit 1
+fi
+
 if [ $instrument = "SEQ" ]; then
     echo Processing SEQ for $ProjectId $obsnum
-    ./lmtoy_reduce.sh pdir=$ProjectId/$obsnum obsnum=$obsnum
+    ./lmtoy_reduce.sh pdir=$ProjectId/$obsnum obsnum=$obsnum viewspec=1 viewcube=1 makewf=1
     # ADMIT processing done by lmtoy_reduce.sh
 elif [ $instrument = "RSR" ]; then
     echo Processing RSR for $ProjectId $obsnum
