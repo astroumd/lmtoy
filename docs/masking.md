@@ -51,7 +51,7 @@ the command line. Would anybody want to give different orders to different windo
 
 Also, obsnum can be comma separated list, or a dashed-range
 
-Example is in $LMTOY/examples/I10565.blanking
+Example is in [$LMTOY/examples/I10565.blanking](../examples/I10565.blanking)
 
 ## SLR
 
