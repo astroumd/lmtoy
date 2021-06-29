@@ -23,6 +23,7 @@ URL9a = https://github.com/toltec-astro/dasha
 URL9b = https://github.com/toltec-astro/tollan
 URL10a= https://github.com/astropy/specutils
 URL10b= https://github.com/pyspeckit/pyspeckit
+URL11 = https://github.com/astroumd/admit
 
 .PHONY:  help install build
 
@@ -119,6 +120,10 @@ specutils:
 
 pyspeckit:
 	git clone $(URL10b)
+
+admit:
+	git clone $(URL11)
+	(cd admit; git checkout python3)
 
 
 # step 1 (or skip and use another python)
