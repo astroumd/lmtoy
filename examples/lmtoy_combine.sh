@@ -10,7 +10,7 @@
 #
 
 
-version="lmtoy_combine: 8-jun-2021"
+version="lmtoy_combine: 29-jun-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=ON1,ON2,..."
@@ -89,6 +89,17 @@ if [ -e $rc ] ; then
     for arg in $*; do\
        export $arg
     done
+    depth=0
+fi
+rc=${on0}/lmtoy_${on0}.rc
+if [ -e $rc ] ; then
+    echo "LMTOY>> reading $rc"
+    source $rc
+    # read cmdline again to override the old rc values
+    for arg in $*; do\
+       export $arg
+    done
+    depth=1    
 else
     echo No $rc found
     exit 1
@@ -100,11 +111,20 @@ fi
 ons=""
 for on in $(echo $obsnum | sed 's/,/ /g'); do
     # echo OBSNUM: $on
-    fon=${src}_${on}.nc
-    if [ -e $fon ]; then
-	ons="$ons ${src}_${on}.nc"
+    if [ $depth = 1 ]; then
+	fon=$on/${src}_${on}.nc
+	if [ -e $fon ]; then
+	    ons="$ons ${on}/${src}_${on}.nc"
+	else
+	    echo Warning $fon not found
+	fi
     else
-	echo Warning $fon not found
+	fon=${src}_${on}.nc
+	if [ -e $fon ]; then
+	    ons="$ons ${src}_${on}.nc"
+	else
+	    echo Warning $fon not found
+	fi
     fi
 done
 s_ons=$(echo $ons | sed 's/ /,/g')
