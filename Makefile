@@ -24,6 +24,9 @@ URL9b = https://github.com/toltec-astro/tollan
 URL10a= https://github.com/astropy/specutils
 URL10b= https://github.com/pyspeckit/pyspeckit
 URL11 = https://github.com/astroumd/admit
+URL12a= https://github.com/b4r-dev/pipeline
+URL12b= https://github.com/b4r-dev/notebooks
+URL12c= https://github.com/b4r-dev/devtools
 
 .PHONY:  help install build
 
@@ -47,7 +50,7 @@ help install:
 
 # git directories we should have here
 
-GIT_DIRS = SpectralLineReduction dreampy3 maskmoment RSR_driver nemo Montage
+GIT_DIRS = SpectralLineReduction dreampy3 maskmoment RSR_driver nemo Montage b4r
 
 git:  $(GIT_DIRS)
 	@echo Last git: `date` >> git.log
@@ -124,6 +127,12 @@ pyspeckit:
 admit:
 	git clone $(URL11)
 	(cd admit; git checkout python3)
+
+b4r:
+	mkdir -p b4r
+	(cd b4r; git clone $(URL12a))
+	(cd b4r; git clone $(URL12b))
+	(cd b4r; git clone $(URL12c))
 
 
 # step 1 (or skip and use another python)
