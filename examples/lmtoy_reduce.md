@@ -452,3 +452,60 @@ after which you can either re-run all single cubes, or just run for example
 
       lmtoy_combine.sh obsnum=91111,91113,91115,91117
 
+
+# The M31 benchmark using SLpipeline.sh
+
+Here we are re-running the three maps of the M31 benchmark via the SLpipeline,
+inspecting them, rerunning and combining in a final cube.
+
+      ./SLpipeline.sh  obsnum=85776 
+      ./SLpipeline.sh  obsnum=85778
+      ./SLpipeline.sh  obsnum=85824 
+
+this created a 2018-S1-MU-46 directory with sub-directories: 85776 85778 85824
+
+1. review the specviews.3.png plots to review the RMS as function of time
+   if a pixel is bad, edit the lmtoy_OBSNUM.rc file, and remove the bad pixel
+   from the pix_list= 
+   
+   For 85776 and 85778 pixel 3 is bad, for 85824 acceptable
+   
+   Another way to inspect the data is via the  waterfall cube, viz.
+   
+           ds9 2018-S1-MU-46/85776/Region_J-K_85776.wf10.fits
+
+2. review the SRC_OBSNUM.fits or the smoothed OBJECT_OBSNUM.nfs.fits 
+   using ds9 or any fits cube viewer.
+   Inspect profiles if the settings in the lmtoy_OBSNUM.rc file is .   Suspect are:
+
+           b_order=0
+	   
+   which in this case should be 
+   
+           b_order=1
+
+   carefully look at the 
+
+           b_regions=[[-646,-396],[-196,54]]
+           l_regions=[[-396,-196]]
+
+   if they need reset, in particular if multiple lines are present. In this case they 
+   are ok.
+
+3. You can then safely re-run the series:
+
+          ./SLpipeline.sh  obsnum=85776 
+          ./SLpipeline.sh  obsnum=85778
+          ./SLpipeline.sh  obsnum=85824 
+
+    as it will re-use the edited *.rc files.
+	
+4. If you think all obsnums are now ok, combine them:
+
+          cd 2018-S1-MU-46
+          ../lmtoy_combine.sh obsnum=85776,85778,85824
+	  
+   This will create a final smoothed fits cube for inspection
+
+          ds9 Region_J-K_85776_85824.nfs.fits
+

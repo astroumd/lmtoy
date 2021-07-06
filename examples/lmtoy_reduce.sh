@@ -14,7 +14,7 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="lmtoy_reduce: 8-jun-2021"
+version="lmtoy_reduce: 5-jul-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -40,8 +40,8 @@ pdir=""
 #            - procedural
 makespec=1
 makecube=1
-makewf=0
-viewspec=0
+makewf=1
+viewspec=1
 viewcube=0
 #            - meta parameters that will compute other parameters for SLR scripts
 extent=400
@@ -387,7 +387,7 @@ if [ ! -z $NEMO ]; then
 fi
 
 if [ ! -z $ADMIT ]; then
-    echo "LMTOY>> Some ADMIT post-processing"
+    echo "LMTOY>> ADMIT post-processing"
     if [ -e $s_on.nf.fits ]; then
 	runa1 $s_on.nf.fits
     else
