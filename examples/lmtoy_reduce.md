@@ -79,7 +79,6 @@ different gridding settings (see also Appendix C in the SLR manual).
 ##  List of files
 
 Here a summary of the files that are created:
-
    
      lmtoy_OBSNUM.rc         parameter (bash style) file
      SRC_OBSNUM.nc           SpecFile  (netcdf format)
@@ -92,6 +91,17 @@ Here a summary of the files that are created:
      SRC_OBSNUM.wt2.fits     weights fits map based on difference spectra in cube
      SRC_OBSNUM.wt3.fits     weights fits map based on spectra in b_range
      SRC_OBSNUM.wtr.fits     ratio of wt3/wt2.  Can get > 1 if bad wavy spectra or extra line emission
+	 
+	 SRC_OBSNUM_specpoint.1.png    Spectra per pixel co-added over the whole field
+	 SRC_OBSNUM_specpoint.2.png    Spectra per pixel co-added over the central pixel
+	 
+	 SRC_OBSNUM_specviews.1.png    X-Y (usually RA-DEC) plot of all 0.1s integrations
+	 SRC_OBSNUM_specviews.2.png    Waterfall image plot (sample vs. VLSR)
+	 SRC_OBSNUM_specviews.3.png    RMS plot (sample vs. RMS)
+	 SRC_OBSNUM_specviews.4.png    RMS histogram
+	 SRC_OBSNUM_specviews.5.png    Mean spectrum plot
+	 SRC_OBSNUM_specviews.6.png    Tsys 
+	 
 
 If NEMO or ADMIT had been run, a number of other files and directories will be present.
 
@@ -466,16 +476,18 @@ this created a 2018-S1-MU-46 directory with sub-directories: 85776 85778 85824
 
 1. review the specviews.3.png plots to review the RMS as function of time
    if a pixel is bad, edit the lmtoy_OBSNUM.rc file, and remove the bad pixel
-   from the pix_list= 
+   from the pix_list.  
    
-   For 85776 and 85778 pixel 3 is bad, for 85824 acceptable
+   For 85776 and 85778 pixel 3 is bad, for 85824 all pixels seem acceptable.
+   Thus you should have pix_list=0,1,2,4,5,6,7,8,9,10,11,12,13,14,15 
+   for the first two obsnum's.
    
    Another way to inspect the data is via the  waterfall cube, viz.
    
            ds9 2018-S1-MU-46/85776/Region_J-K_85776.wf10.fits
 
-2. review the SRC_OBSNUM.fits or the smoothed OBJECT_OBSNUM.nfs.fits 
-   using ds9 or any fits cube viewer.
+2. review the SRC_OBSNUM.fits (or better, the smoothed OBJECT_OBSNUM.nfs.fits)
+   using ds9 or any fits cube viewer. 
    Inspect profiles if the settings in the lmtoy_OBSNUM.rc file is .   Suspect are:
 
            b_order=0
@@ -489,23 +501,27 @@ this created a 2018-S1-MU-46 directory with sub-directories: 85776 85778 85824
            b_regions=[[-646,-396],[-196,54]]
            l_regions=[[-396,-196]]
 
-   if they need reset, in particular if multiple lines are present. In this case they 
-   are ok.
+   if they need reset, in particular if multiple lines are present. In this case of
+   M31 they are ok.
 
-3. You can then safely re-run the series:
+3. After editing the "rc" files, you can now safely re-run the series:
 
           ./SLpipeline.sh  obsnum=85776 
           ./SLpipeline.sh  obsnum=85778
           ./SLpipeline.sh  obsnum=85824 
 
-    as it will re-use the edited *.rc files.
+    as it will re-use "rc" files.
 	
 4. If you think all obsnums are now ok, combine them:
 
           cd 2018-S1-MU-46
           ../lmtoy_combine.sh obsnum=85776,85778,85824
+		
+   For gridding it will use the first rc file, i.e. lmtoy_85776.rc
 	  
    This will create a final smoothed fits cube for inspection
 
           ds9 Region_J-K_85776_85824.nfs.fits
+		
+   and this should be ready for ADMIT as well. 
 
