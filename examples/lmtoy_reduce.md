@@ -96,7 +96,7 @@ Here a summary of the files that are created:
 If NEMO or ADMIT had been run, a number of other files and directories will be present.
 
 The **pdir** directory, if it was set, is the directory where all the work is done. By default it is the
-current working directory. This may be OK for a PI reducing data locally, but when the **LMTpipeline** is
+current working directory. This may be OK for a PI reducing data locally, but when the **SLpipeline** is
 handling a lot of data, the convention is to create a directory hierarchy that contains the **ProjectId**,
 the **ObsNum**, and a reduction date **Rdate**.
 
