@@ -510,7 +510,14 @@ this created a 2018-S1-MU-46 directory with sub-directories: 85776 85778 85824
           ./SLpipeline.sh  obsnum=85778
           ./SLpipeline.sh  obsnum=85824 
 
-    as it will re-use "rc" files.
+    as it will re-use "rc" files.  
+	
+	There is nothing special about the SLpipeline.sh command,
+	you can also do something like
+	
+	      cd 2018-S1-MU-46/85776 
+		  ../../lmtoy_reduce.sh obsnum=85776 
+	      
 	
 4. If you think all obsnums are now ok, combine them:
 
