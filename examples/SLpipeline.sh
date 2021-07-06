@@ -56,7 +56,7 @@ fi
 
 if [ $instrument = "SEQ" ]; then
     echo Processing SEQ for $ProjectId $obsnum
-    ./lmtoy_reduce.sh pdir=$ProjectId/$obsnum obsnum=$obsnum viewspec=1 viewcube=1 makewf=1
+    ./lmtoy_reduce.sh pdir=$ProjectId/$obsnum obsnum=$obsnum viewspec=1 viewcube=0 makewf=1
     # ADMIT processing done by lmtoy_reduce.sh
 elif [ $instrument = "RSR" ]; then
     echo Processing RSR for $ProjectId $obsnum
