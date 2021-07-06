@@ -1,0 +1,16 @@
+# Codes on pipeline Comments
+br = baseline ripple
+p  = pixel bad
+pp = pixel partially bad, potentially salvagable
+
+
+# Source      ObsNum    Comments
+
+IRC+10216      79448    br, but strong signal
+
+Region_J-K     85776    p(3)
+Region_J-K     85778    p(3)
+Region_J-K     85824
+
+NGC5194        90911    br
+NGC5194        91112    p(0)  pp(5)
