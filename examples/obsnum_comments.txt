@@ -1,16 +1,39 @@
 # Codes on pipeline Comments
+
 br = baseline ripple
-p  = pixel bad
-pp = pixel partially bad, potentially salvagable
+bt = birdie in tsys plot
+f  = focus issue
+p  = pixel bad, needs pix_list=
+pp = pixel partially bad, potentially salvagable with sample= ?
 
 
+#--------------------------------------------------------------
 # Source      ObsNum    Comments
 
+
+# 2018S1SEQUOIACommissioning
+
+Ori-KL         79273    skewed scan in LatLon?
 IRC+10216      79448    br, but strong signal
+# 81716 bllac  1MM
+RT-Oph         82865    bt(10,11; others weaker) - no signal
+
+# 2018-S1-MU-45
+
+L1157-B1       84475    pp(0)
+
+# 2018-S1-MU-46/
 
 Region_J-K     85776    p(3)
 Region_J-K     85778    p(3)
 Region_J-K     85824
 
+
+# 2018-S1-MU-8
+
 NGC5194        90911    br
+NGC5194        91037    f
 NGC5194        91112    p(0)  pp(5)
+
+NGC5194_south  92626    pp(5) - very weak signal in PV 
+
