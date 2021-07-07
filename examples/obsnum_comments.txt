@@ -1,4 +1,4 @@
-# Codes on pipeline Comments
+# Abbreviatons used in Comments
 
 br = baseline ripple
 bt = birdie in tsys plot
@@ -7,9 +7,9 @@ p  = pixel bad, needs pix_list=
 pp = pixel partially bad, potentially salvagable with sample= ?
 
 
-#--------------------------------------------------------------
+#-----------------------------------------------------------------
 # Source      ObsNum    Comments
-
+#-----------------------------------------------------------------
 
 # 2018S1SEQUOIACommissioning
 
@@ -22,14 +22,14 @@ RT-Oph         82865    bt(10,11; others weaker) - no signal
 
 L1157-B1       84475    pp(0)
 
-# 2018-S1-MU-46/
+# 2018-S1-MU-46 (M31)
 
 Region_J-K     85776    p(3)
 Region_J-K     85778    p(3)
 Region_J-K     85824
 
 
-# 2018-S1-MU-8
+# 2018-S1-MU-8 (M51)
 
 NGC5194        90911    br
 NGC5194        91037    f
