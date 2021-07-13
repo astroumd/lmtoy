@@ -14,7 +14,7 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="lmtoy_reduce: 5-jul-2021"
+version="lmtoy_reduce: 13-jul-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -43,6 +43,7 @@ makecube=1
 makewf=1
 viewspec=1
 viewcube=0
+viewnemo=1
 #            - meta parameters that will compute other parameters for SLR scripts
 extent=400
 dv=100
@@ -357,7 +358,8 @@ if [ ! -z $NEMO ]; then
 	echo SLABS: $b_regions == $zslabs
 	ccdslice $s_on.ccd - zslabs=$zslabs zscale=1000 | ccdmom - - mom=-2  | ccdmath - $s_on.wt3.ccd "ifne(%1,0,1/(%1*%1),0)"
 	ccdfits $s_on.wt3.ccd $s_on.wt3.fits fitshead=$w_fits
-	ccdmath $s_on.wt2.ccd,$s_on.wt3.ccd - %2/%1 | ccdfits - $s_on.wtr.fits fitshead=$w_fits
+	ccdmath $s_on.wt2.ccd,$s_on.wt3.ccd $s_on.wtr.ccd %2/%1
+	ccdfits $s_on.wtr.ccd $s_on.wtr.fits fitshead=$w_fits
 
 	scanfits $s_fits $s_on.head1 select=header
 	ccdfits $s_on.n.ccd  $s_on.n.fits
@@ -375,8 +377,20 @@ if [ ! -z $NEMO ]; then
 	echo -n "spectab : ";  tail -1  $s_on.spectab
 	echo -n "specstab: ";  tail -1  $s_on.specstab
 
+	# NEMO plotting ?
+	if [ $viewnemo = 1 ]; then
+	    ccdplot $s_on.mom0.ccd yapp=$s_on.mom0.png/png
+	    ccdplot $s_on.mom1.ccd yapp=$s_on.mom1.png/png
+	    ccdplot $s_on.mom2.ccd yapp=$s_on.mom2.png/png
+	    ccdplot $s_on.wt.ccd   yapp=$s_on.wt.png/png	    
+	    ccdplot $s_on.wt2.ccd  yapp=$s_on.wt2.png/png	    
+	    ccdplot $s_on.wt3.ccd  yapp=$s_on.wt3.png/png	    
+	    ccdplot $s_on.wtn.ccd  yapp=$s_on.wtn.png/png	    
+	    ccdplot $s_on.wtr.ccd  yapp=$s_on.wtr.png/png	    
+	fi
+
 	# remove useless files
-	rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd $s_on.wt2.ccd  $s_on.wt3.ccd $s_on.n.ccd
+	rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd $s_on.wt2.ccd  $s_on.wt3.ccd $s_on.n.ccd $s_on.wtr.ccd
 
 	echo "LMTOY>> Created $s_on.nf.fits and $s_on.nfs.fits"
 
@@ -386,14 +400,16 @@ if [ ! -z $NEMO ]; then
     
 fi
 
-if [ ! -z $ADMIT ]; then
-    echo "LMTOY>> ADMIT post-processing"
-    if [ -e $s_on.nf.fits ]; then
-	runa1 $s_on.nf.fits
-    else
-	runa1 $s_fits
-    fi
+echo "LMTOY>> ADMIT post-processing"
+if [ -e $s_on.nfs.fits ]; then
+    lmtoy_admit.sh $s_on.nfs.fits
 fi
+if [ -e $s_on.nf.fits ]; then
+    lmtoy_admit.sh $s_on.nf.fits
+else
+    lmtoy_admit.sh $s_fits
+fi
+
 
 echo "LMTOY>> Created $s_fits and $w_fits"
 echo "LMTOY>> Parameter file used: $rc"
