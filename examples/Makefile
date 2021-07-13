@@ -10,11 +10,11 @@ help:
 
 #  takes about 21' in old, and 7' in new
 all:
-	/usr/bin/time ./irc_reduce.sh              > irc_79448.log 2>&1
-	/usr/bin/time ./m31_reduce.sh obsnum=85776 > m31_85776.log 2>&1
-	/usr/bin/time ./m31_reduce.sh obsnum=85778 > m31_85778.log 2>&1
-	/usr/bin/time ./m31_reduce.sh obsnum=85824 > m31_85824.log 2>&1
-	/usr/bin/time ./m51_reduce.sh              > m51_91112.log 2>&1
+	/usr/bin/time irc_reduce.sh              > irc_79448.log 2>&1
+	/usr/bin/time m31_reduce.sh obsnum=85776 > m31_85776.log 2>&1
+	/usr/bin/time m31_reduce.sh obsnum=85778 > m31_85778.log 2>&1
+	/usr/bin/time m31_reduce.sh obsnum=85824 > m31_85824.log 2>&1
+	/usr/bin/time m51_reduce.sh              > m51_91112.log 2>&1
 
 
 new:   bench11 bench31 bench51
@@ -22,7 +22,7 @@ new:   bench11 bench31 bench51
 # takes about 1'41" on a fast 2021 machine, and 0'45 in fast_nc mode (now default)
 bench:
 	@echo "Running benchmark"
-	OMP_NUM_THREADS=1 /usr/bin/time ./irc_reduce.sh > irc_bench.log 2>&1
+	OMP_NUM_THREADS=1 /usr/bin/time irc_reduce.sh > irc_bench.log 2>&1
 	@echo "Result:"
 	@grep QAC_STATS irc_bench.log
 	@echo "Should see, With the new edge blanking"
@@ -32,7 +32,7 @@ bench:
 # takes about 14"
 bench1:
 	@echo "Running quick test for 1 pixel"
-	$(TIME) ./irc_reduce.sh pix_list=1 > irc_bench1.log 2>&1
+	$(TIME) irc_reduce.sh pix_list=1 > irc_bench1.log 2>&1
 
 # a plot bench for
 bench2: IRC_79448.nc
@@ -47,63 +47,63 @@ EXTRA=viewspec=1 makewf=1
 
 # about 60"
 bench11:
-	$(TIME) ./lmtoy_reduce.sh obsnum=79448 $(EXTRA) > lmtoy_79448.log 2>&1
+	$(TIME) lmtoy_reduce.sh obsnum=79448 $(EXTRA) > lmtoy_79448.log 2>&1
 
 bench31:
-	$(TIME) ./lmtoy_reduce.sh obsnum=85776 $(EXTRA) > lmtoy_85776.log   2>&1
-	$(TIME) ./lmtoy_reduce.sh obsnum=85778 $(EXTRA) > lmtoy_85778.log   2>&1
-	$(TIME) ./lmtoy_reduce.sh obsnum=85824 $(EXTRA) > lmtoy_85824.log   2>&1
-	$(TIME) ./lmtoy_combine.sh  obsnum=85776,85778,85824 > lmtoy_85776_3.log 2>&1
-	$(TIME) ./nemo_combine.sh                        >  lmtoy_85776_nemo.log 2>&1
+	$(TIME) lmtoy_reduce.sh obsnum=85776 $(EXTRA) > lmtoy_85776.log   2>&1
+	$(TIME) lmtoy_reduce.sh obsnum=85778 $(EXTRA) > lmtoy_85778.log   2>&1
+	$(TIME) lmtoy_reduce.sh obsnum=85824 $(EXTRA) > lmtoy_85824.log   2>&1
+	$(TIME) lmtoy_combine.sh  obsnum=85776,85778,85824 > lmtoy_85776_3.log 2>&1
+	$(TIME) nemo_combine.sh                        >  lmtoy_85776_nemo.log 2>&1
 
 # needs 5.2GB
 bench31a:
 	mkdir -p M31a
-	$(TIME) ./lmtoy_reduce.sh  obsnum=85776 $(EXTRA)      pdir=M31a > M31a/lmtoy_85776.log   2>&1
-	$(TIME) ./lmtoy_reduce.sh  obsnum=85778 $(EXTRA)      pdir=M31a > M31a/lmtoy_85778.log   2>&1
-	$(TIME) ./lmtoy_reduce.sh  obsnum=85824 $(EXTRA)      pdir=M31a > M31a/lmtoy_85824.log   2>&1
-	$(TIME) ./lmtoy_combine.sh obsnum=85776,85778,85824   pdir=M31a > M31a/lmtoy_85776_3.log 2>&1
-	$(TIME) ./nemo_combine.sh                             pdir=M31a > M31a/lmtoy_85776_n.log 2>&1
+	$(TIME) lmtoy_reduce.sh  obsnum=85776 $(EXTRA)      pdir=M31a > M31a/lmtoy_85776.log   2>&1
+	$(TIME) lmtoy_reduce.sh  obsnum=85778 $(EXTRA)      pdir=M31a > M31a/lmtoy_85778.log   2>&1
+	$(TIME) lmtoy_reduce.sh  obsnum=85824 $(EXTRA)      pdir=M31a > M31a/lmtoy_85824.log   2>&1
+	$(TIME) lmtoy_combine.sh obsnum=85776,85778,85824   pdir=M31a > M31a/lmtoy_85776_3.log 2>&1
+	$(TIME) nemo_combine.sh                             pdir=M31a > M31a/lmtoy_85776_n.log 2>&1
 
 bench31b:
-	$(TIME) ./SLpipeline.sh  obsnum=85776 
-	$(TIME) ./SLpipeline.sh  obsnum=85778
-	$(TIME) ./SLpipeline.sh  obsnum=85824 
+	$(TIME) SLpipeline.sh  obsnum=85776 
+	$(TIME) SLpipeline.sh  obsnum=85778
+	$(TIME) SLpipeline.sh  obsnum=85824 
 
 
 bench51:
-	$(TIME) ./lmtoy_reduce.sh obsnum=90911 $(EXTRA) > lmtoy_90911.log   2>&1
-	$(TIME) ./lmtoy_reduce.sh obsnum=91112 $(EXTRA) > lmtoy_91112.log   2>&1
-	$(TIME) ./lmtoy_combine.sh        obsnum=90911,91112 > lmtoy_90911_2.log 2>&1
+	$(TIME) lmtoy_reduce.sh obsnum=90911 $(EXTRA) > lmtoy_90911.log   2>&1
+	$(TIME) lmtoy_reduce.sh obsnum=91112 $(EXTRA) > lmtoy_91112.log   2>&1
+	$(TIME) lmtoy_combine.sh        obsnum=90911,91112 > lmtoy_90911_2.log 2>&1
 
 bench31c:
-	$(TIME) ./lmtoy_reduce.sh obsnum=85776 noise_sigma=0 > lmtoy_85776.log   2>&1
-	$(TIME) ./lmtoy_reduce.sh obsnum=85778 noise_sigma=0 > lmtoy_85778.log   2>&1
-	$(TIME) ./lmtoy_reduce.sh obsnum=85824 noise_sigma=0 > lmtoy_85824.log   2>&1
-	$(TIME) ./lmtoy_combine.sh obsnum=85776,85778,85824 noise_sigma=0 > lmtoy_85776_3.log 2>&1
-	$(TIME) ./nemo_combine.sh                        >  lmtoy_85776_nemo.log 2>&1
+	$(TIME) lmtoy_reduce.sh obsnum=85776 noise_sigma=0 > lmtoy_85776.log   2>&1
+	$(TIME) lmtoy_reduce.sh obsnum=85778 noise_sigma=0 > lmtoy_85778.log   2>&1
+	$(TIME) lmtoy_reduce.sh obsnum=85824 noise_sigma=0 > lmtoy_85824.log   2>&1
+	$(TIME) lmtoy_combine.sh obsnum=85776,85778,85824 noise_sigma=0 > lmtoy_85776_3.log 2>&1
+	$(TIME) nemo_combine.sh                        >  lmtoy_85776_nemo.log 2>&1
 
 
 ONT=1 2 4
 bench4:
 	@echo ONT=$(ONT)
 	-@for i in $(ONT); do\
-	(echo -n "$$i ";OMP_NUM_THREADS=$$i $(TIME) ./irc_reduce.sh > irc$$i.log 2>&1); done
+	(echo -n "$$i ";OMP_NUM_THREADS=$$i $(TIME) irc_reduce.sh > irc$$i.log 2>&1); done
 	-@for i in $(ONT); do\
 	(echo -n "$$i ";grep CPU irc$$i.log); done
 
 
 test1:
-	echo ./irc_reduce.sh > test1.log 2>&1
-	./irc_reduce.sh makespec=0 pix_list=0,1,2,3     > test1a.log 2>&1; mv IRC_79448.fits test1a.fits
-	./irc_reduce.sh makespec=0 pix_list=4,5,6,7     > test1b.log 2>&1; mv IRC_79448.fits test1b.fits
-	./irc_reduce.sh makespec=0 pix_list=8,9,10,11   > test1c.log 2>&1; mv IRC_79448.fits test1c.fits
-	./irc_reduce.sh makespec=0 pix_list=12,13,14,15 > test1d.log 2>&1; mv IRC_79448.fits test1d.fits
+	echo irc_reduce.sh > test1.log 2>&1
+	irc_reduce.sh makespec=0 pix_list=0,1,2,3     > test1a.log 2>&1; mv IRC_79448.fits test1a.fits
+	irc_reduce.sh makespec=0 pix_list=4,5,6,7     > test1b.log 2>&1; mv IRC_79448.fits test1b.fits
+	irc_reduce.sh makespec=0 pix_list=8,9,10,11   > test1c.log 2>&1; mv IRC_79448.fits test1c.fits
+	irc_reduce.sh makespec=0 pix_list=12,13,14,15 > test1d.log 2>&1; mv IRC_79448.fits test1d.fits
 
-	./irc_reduce.sh makespec=0 pix_list=0,4,8,12    > test1e.log 2>&1; mv IRC_79448.fits test1e.fits
-	./irc_reduce.sh makespec=0 pix_list=1,5,9,13    > test1f.log 2>&1; mv IRC_79448.fits test1f.fits
-	./irc_reduce.sh makespec=0 pix_list=2,6,10,14   > test1g.log 2>&1; mv IRC_79448.fits test1g.fits
-	./irc_reduce.sh makespec=0 pix_list=3,7,11,15   > test1h.log 2>&1; mv IRC_79448.fits test1h.fits
+	irc_reduce.sh makespec=0 pix_list=0,4,8,12    > test1e.log 2>&1; mv IRC_79448.fits test1e.fits
+	irc_reduce.sh makespec=0 pix_list=1,5,9,13    > test1f.log 2>&1; mv IRC_79448.fits test1f.fits
+	irc_reduce.sh makespec=0 pix_list=2,6,10,14   > test1g.log 2>&1; mv IRC_79448.fits test1g.fits
+	irc_reduce.sh makespec=0 pix_list=3,7,11,15   > test1h.log 2>&1; mv IRC_79448.fits test1h.fits
 
 
 # RSR benchmark - in progress
