@@ -10,7 +10,7 @@
 #
 
 
-version="lmtoy_combine: 1-jul-2021"
+version="lmtoy_combine: 13-jul-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=ON1,ON2,..."
@@ -37,6 +37,7 @@ pdir=""
 #            - procedural
 makecube=1
 viewcube=0
+viewnemo=1
 #            - parameters that directly match the SLR scripts
 unset pix_list
 rms_cut=4
@@ -212,8 +213,9 @@ if [ ! -z $NEMO ]; then
 	echo SLABS: $b_regions == $zslabs
 	ccdslice $s_on.ccd - zslabs=$zslabs zscale=1000 | ccdmom - - mom=-2  | ccdmath - $s_on.wt3.ccd "ifne(%1,0,1/(%1*%1),0)"
 	ccdfits $s_on.wt3.ccd $s_on.wt3.fits fitshead=$w_fits
-	ccdmath $s_on.wt2.ccd,$s_on.wt3.ccd - %2/%1 | ccdfits - $s_on.wtr.fits fitshead=$w_fits
-	
+        ccdmath $s_on.wt2.ccd,$s_on.wt3.ccd $s_on.wtr.ccd %2/%1
+        ccdfits $s_on.wtr.ccd $s_on.wtr.fits fitshead=$w_fits
+
 	scanfits $s_fits $s_on.head1 select=header
 	ccdfits $s_on.n.ccd  $s_on.n.fits
 
@@ -227,8 +229,21 @@ if [ ! -z $NEMO ]; then
 	echo -n "spectab : ";  tail -1  $s_on.spectab
 	echo -n "specstab: ";  tail -1  $s_on.specstab
 	
+	# NEMO plotting ?
+        if [ $viewnemo = 1 ]; then
+            ccdplot $s_on.mom0.ccd yapp=$s_on.mom0.png/png
+            ccdplot $s_on.mom1.ccd yapp=$s_on.mom1.png/png
+            ccdplot $s_on.mom2.ccd yapp=$s_on.mom2.png/png
+            ccdplot $s_on.wt.ccd   yapp=$s_on.wt.png/png            
+            ccdplot $s_on.wt2.ccd  yapp=$s_on.wt2.png/png           
+            ccdplot $s_on.wt3.ccd  yapp=$s_on.wt3.png/png           
+            ccdplot $s_on.wtn.ccd  yapp=$s_on.wtn.png/png           
+            ccdplot $s_on.wtr.ccd  yapp=$s_on.wtr.png/png           
+        fi
+
 	# remove useless files
-	rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd $s_on.wt2.ccd  $s_on.wt3.ccd $s_on.n.ccd
+	rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd $s_on.wt2.ccd  $s_on.wt3.ccd $s_on.n.ccd $s_on.wtr.ccd
+
 
 	echo "LMTOY>> Created $s_on.nf.fits and $s_on.nfs.fits"
 
