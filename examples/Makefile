@@ -49,6 +49,9 @@ EXTRA=viewspec=1 makewf=1
 bench11:
 	$(TIME) ./lmtoy_reduce.sh obsnum=79448 $(EXTRA) > lmtoy_79448.log 2>&1
 
+bench11b:
+	$(TIME) ./SLpipeline.sh  obsnum=79448
+
 bench31:
 	$(TIME) ./lmtoy_reduce.sh obsnum=85776 $(EXTRA) > lmtoy_85776.log   2>&1
 	$(TIME) ./lmtoy_reduce.sh obsnum=85778 $(EXTRA) > lmtoy_85778.log   2>&1
@@ -68,7 +71,8 @@ bench31a:
 bench31b:
 	$(TIME) ./SLpipeline.sh  obsnum=85776 
 	$(TIME) ./SLpipeline.sh  obsnum=85778
-	$(TIME) ./SLpipeline.sh  obsnum=85824 
+	$(TIME) ./SLpipeline.sh  obsnum=85824
+	$(TIME) ./lmtoy_combine.sh obsnum=85776,85778,85824 pdir=2018-S1-MU-46
 
 
 bench51:
