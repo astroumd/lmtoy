@@ -49,8 +49,8 @@ lmtinfo.py $path $obsnum > $rc
 
 source $rc
 
-if [ $obspgm = "cal" ]; then
-    echo "Cannot process a 'cal' obsnum, pick a better obsnum"
+if [ $obspgm = "Cal" ]; then
+    echo "Cannot process a 'Cal' obsnum, pick a better obsnum"
     exit 1
 fi
 
