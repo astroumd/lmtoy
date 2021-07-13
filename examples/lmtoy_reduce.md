@@ -29,15 +29,15 @@ The commandline parser is a very simple one, and does not check if you spelled
 the parameters correctly.  Only **obsnum=** is required for each run, the rest
 is optional:
 
-      $LMTOY/examples/lmtoy_reduce.sh \
+    lmtoy_reduce.sh \
 	    obsnum=91112                # always required
-	    path=data_lmt               # optional via $DATA_LMT
+	    path=data_lmt               # optional, default is $DATA_LMT
 	    obsid=                      # optional on first run [not yet implemented]
-		pdir=                       # optional:  directory where work is done 
+	    pdir=                       # optional:  directory where work is done 
 	    dv=100                      # optional:  width around spectral line (vlsr) 
 	    dw=250                      # optional:  width of the wings for baseline
 	    rc=0                        # optional:  force a new rc file (i.e. new run)
-            makespec=1                  # optional:  make the specfile
+	    makespec=1                  # optional:  make the specfile
 	    makewf=1                    # optional:  make a fits waterfall cube from specfile
 	    makecube=1                  # optional:  grid fits cube from specfile
 	    viewspec=0                  # optional:  view specfile
@@ -468,9 +468,9 @@ after which you can either re-run all single cubes, or just run for example
 Here we are re-running the three maps of the M31 benchmark via the SLpipeline,
 inspecting them, rerunning and combining in a final cube.
 
-      ./SLpipeline.sh  obsnum=85776 
-      ./SLpipeline.sh  obsnum=85778
-      ./SLpipeline.sh  obsnum=85824 
+      SLpipeline.sh  obsnum=85776 
+      SLpipeline.sh  obsnum=85778
+      SLpipeline.sh  obsnum=85824 
 
 this created a 2018-S1-MU-46 directory with sub-directories: 85776 85778 85824
 
@@ -503,12 +503,14 @@ this created a 2018-S1-MU-46 directory with sub-directories: 85776 85778 85824
 
    if they need reset, in particular if multiple lines are present. In this case of
    M31 they are ok.
+   One potential reason for strange looking patterns that change in portions of time
+   can be a bad OFF position.
 
 3. After editing the "rc" files, you can now safely re-run the series:
 
-          ./SLpipeline.sh  obsnum=85776 
-          ./SLpipeline.sh  obsnum=85778
-          ./SLpipeline.sh  obsnum=85824 
+          SLpipeline.sh  obsnum=85776 
+          SLpipeline.sh  obsnum=85778
+          SLpipeline.sh  obsnum=85824 
 
     as it will re-use "rc" files.  
 	
@@ -516,13 +518,13 @@ this created a 2018-S1-MU-46 directory with sub-directories: 85776 85778 85824
 	you can also do something like
 	
 	      cd 2018-S1-MU-46/85776 
-		  ../../lmtoy_reduce.sh obsnum=85776 
+		  lmtoy_reduce.sh obsnum=85776 
 	      
 	
 4. If you think all obsnums are now ok, combine them:
 
           cd 2018-S1-MU-46
-          ../lmtoy_combine.sh obsnum=85776,85778,85824
+          lmtoy_combine.sh obsnum=85776,85778,85824
 		
    For gridding it will use the first rc file, i.e. lmtoy_85776.rc
 	  
