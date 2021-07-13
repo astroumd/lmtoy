@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          htaccess
 
-version="SLpipeline: 5-jul-2021"
+version="SLpipeline: 13-jul-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=OBSNUM ..."
@@ -58,7 +58,7 @@ if [ $instrument = "SEQ" ]; then
     pdir=$ProjectId/$obsnum
     mkdir -p $pdir
     echo Processing SEQ in $ProjectId/$obsnum for $src
-    ./lmtoy_reduce.sh pdir=$ProjectId/$obsnum obsnum=$obsnum viewspec=1 viewcube=0 makewf=1 > $pdir/lmtoy_$obsnum.log 2>&1
+    lmtoy_reduce.sh pdir=$ProjectId/$obsnum obsnum=$obsnum viewspec=1 viewcube=0 makewf=1 > $pdir/lmtoy_$obsnum.log 2>&1
     # ADMIT processing done by lmtoy_reduce.sh
 elif [ $instrument = "RSR" ]; then
     echo Processing RSR for $ProjectId $obsnum
