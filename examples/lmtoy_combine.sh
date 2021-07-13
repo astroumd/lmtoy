@@ -10,7 +10,7 @@
 #
 
 
-version="lmtoy_combine: 8-jun-2021"
+version="lmtoy_combine: 1-jul-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=ON1,ON2,..."
@@ -82,6 +82,7 @@ on1=$(echo $obsnum | awk -F, '{print $NF}')
 
 #             process the parameter file (or force new one with newrc=1)
 rc=lmtoy_${on0}.rc
+rc1=${on0}/lmtoy_${on0}.rc
 if [ -e $rc ] ; then
     echo "LMTOY>> reading $rc"
     source $rc
@@ -89,10 +90,21 @@ if [ -e $rc ] ; then
     for arg in $*; do\
        export $arg
     done
+    depth=0
+elif [ -e $rc1 ] ; then
+    echo "LMTOY>> reading $rc1"
+    source $rc1
+    # read cmdline again to override the old rc values
+    for arg in $*; do\
+       export $arg
+    done
+    depth=1
+    rc=$rc1
 else
-    echo No $rc found
+    echo No $rc or $rc1 found
     exit 1
 fi
+echo "LMTOY>> depth=$depth"
 
 #             derived parameters (you should not have to edit these)
 
@@ -100,11 +112,20 @@ fi
 ons=""
 for on in $(echo $obsnum | sed 's/,/ /g'); do
     # echo OBSNUM: $on
-    fon=${src}_${on}.nc
-    if [ -e $fon ]; then
-	ons="$ons ${src}_${on}.nc"
+    if [ $depth = 1 ]; then
+	fon=$on/${src}_${on}.nc
+	if [ -e $fon ]; then
+	    ons="$ons ${on}/${src}_${on}.nc"
+	else
+	    echo Warning $fon not found
+	fi
     else
-	echo Warning $fon not found
+	fon=${src}_${on}.nc
+	if [ -e $fon ]; then
+	    ons="$ons ${src}_${on}.nc"
+	else
+	    echo Warning $fon not found
+	fi
     fi
 done
 s_ons=$(echo $ons | sed 's/ /,/g')

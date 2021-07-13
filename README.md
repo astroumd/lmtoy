@@ -43,6 +43,9 @@ LMT software is very instrument specific:
   * TolTecA
   * CitLali
   * Dash
+  
+* B4R (2mm = ALMA band 4) 
+  * [B4R](https://github.com/b4r-dev)
 
 * MUSCAT: 1mm camera (Mexico-UK)
   *  4' FOV with 5.5" resolution

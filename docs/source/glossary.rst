@@ -15,7 +15,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
     1MMRx
       The 1mm MSIP receiver has one beam on the sky, measuring two polarizations
       in an USB and LSB, thus there are 4 spectra at the same position on the
-      sky. Commisiones April 2018.
+      sky. Commisioned April 2018.
 
     band
       A coherent section in frequency space. For **RSR** there
@@ -270,8 +270,8 @@ Taking an inventory of current and known future LMT Spectral Line instruments:
 * OMA
   8 beams, 2 bands (banks), 2 polarizations.
 
-* B3R
-  no information yet
+* B4R
+  4 XFFTS boards, 2.5 GHz/board:  1 beam, 2 bands (USB and LSB), 2 polarizations (XX and YY)
 
 Note that FAST is the only known case that stores data as  ``data[ntime, nchan, npol]``, where
 ``nchan`` is not the fastest running dimension, but ``npol``. Technically this appears to be the
@@ -320,11 +320,11 @@ but leaving out the ``ntime`` dimension
      - 2
      - 2k
      - band: USB and LSB
-   * - B3R
-     - ?
-     - ?
-     - ?
-     - ?
+   * - B4R
+     - 1
+     - 2
+     - 2
+     - 32k
      - Japanese 2mm receiver
 
 Single Dish Math
