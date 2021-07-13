@@ -60,9 +60,10 @@ if [ $instrument = "SEQ" ]; then
     echo Processing SEQ in $ProjectId/$obsnum for $src
     lmtoy_reduce.sh pdir=$ProjectId/$obsnum obsnum=$obsnum viewspec=1 viewcube=0 makewf=1 > $pdir/lmtoy_$obsnum.log 2>&1
     # ADMIT processing done by lmtoy_reduce.sh
+    echo Logfile in: $pdir/lmtoy_$obsnum.log
 elif [ $instrument = "RSR" ]; then
     echo Processing RSR for $ProjectId $obsnum
-    
+    echo Not Implemented yet
 else
     echo Unknown instrument $instrument
 fi
