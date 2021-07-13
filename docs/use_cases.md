@@ -39,7 +39,7 @@ Requirements:
      spectral channels and time step with enough resolution to see
      and identify bad data at the level of 1 channel and 1 time step
 
-# Use case 2
+# Use Case 2: 
 
 The user needs to specify channel ranges for a line fit or for 
 channel regions to fit and remove a baseline from the spectrum. The
@@ -58,3 +58,9 @@ Requirements:
      indicator of the selected regions.
 
  
+# Use Case 3: Profile Fit
+
+This is an advanced case where the initial conditions for a line fit
+need to be given.
+By drawing a box, the baseline level, the peak, mean velocity and width
+are thus given. 
