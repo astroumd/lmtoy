@@ -1,4 +1,4 @@
-# Abbreviatons used in Comments
+# Abbreviations used in Comments
 
 br = baseline ripple
 bt = birdie in tsys plot
@@ -7,6 +7,7 @@ p  = pixel bad, needs pix_list=
 pp = pixel partially bad, potentially salvagable with sample= ?
 
 
+# ProjectId
 #-----------------------------------------------------------------
 # Source      ObsNum    Comments
 #-----------------------------------------------------------------
