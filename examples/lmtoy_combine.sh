@@ -235,14 +235,15 @@ if [ ! -z $NEMO ]; then
 	
 	# NEMO plotting ?
         if [ $viewnemo = 1 ]; then
-            ccdplot $s_on.mom0.ccd yapp=$s_on.mom0.png/png
-            ccdplot $s_on.mom1.ccd yapp=$s_on.mom1.png/png
-            ccdplot $s_on.mom2.ccd yapp=$s_on.mom2.png/png
-            ccdplot $s_on.wt.ccd   yapp=$s_on.wt.png/png            
-            ccdplot $s_on.wt2.ccd  yapp=$s_on.wt2.png/png           
-            ccdplot $s_on.wt3.ccd  yapp=$s_on.wt3.png/png           
-            ccdplot $s_on.wtn.ccd  yapp=$s_on.wtn.png/png           
-            ccdplot $s_on.wtr.ccd  yapp=$s_on.wtr.png/png           
+	    dev=$(yapp_query png ps)
+            ccdplot $s_on.mom0.ccd yapp=$s_on.mom0.$dev/$dev
+            ccdplot $s_on.mom1.ccd yapp=$s_on.mom1.$dev/$dev
+            ccdplot $s_on.mom2.ccd yapp=$s_on.mom2.$dev/$dev
+            ccdplot $s_on.wt.ccd   yapp=$s_on.wt.$dev/$dev
+            ccdplot $s_on.wt2.ccd  yapp=$s_on.wt2.$dev/$dev
+            ccdplot $s_on.wt3.ccd  yapp=$s_on.wt3.$dev/$dev
+            ccdplot $s_on.wtn.ccd  yapp=$s_on.wtn.$dev/$dev
+            ccdplot $s_on.wtr.ccd  yapp=$s_on.wtr.$dev/$dev
         fi
 
 	# remove useless files

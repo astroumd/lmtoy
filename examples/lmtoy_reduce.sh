@@ -378,7 +378,7 @@ if [ ! -z $NEMO ]; then
 
 	# NEMO plotting ?
 	if [ $viewnemo = 1 ]; then
-	    dev=$(yapp_query ps png ps)
+	    dev=$(yapp_query png ps)
 	    ccdplot $s_on.mom0.ccd yapp=$s_on.mom0.$dev/$dev
 	    ccdplot $s_on.mom1.ccd yapp=$s_on.mom1.$dev/$dev
 	    ccdplot $s_on.mom2.ccd yapp=$s_on.mom2.$dev/$dev
