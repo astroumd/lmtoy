@@ -34,6 +34,7 @@ debug=0
 #            - start or restart
 obsnum=85776,85778,85824
 pdir=""
+output=""
 #            - procedural
 makecube=1
 viewcube=0
@@ -132,6 +133,9 @@ done
 s_ons=$(echo $ons | sed 's/ /,/g')
 
 s_on=${src}_${on0}_${on1}
+if [ ! -z $output ]; then
+    s_on=$output
+fi
 s_fits=${s_on}.fits
 w_fits=${s_on}.wt.fits
 
