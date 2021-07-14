@@ -45,7 +45,7 @@ viewspec=1
 viewcube=0
 viewnemo=1
 #            - meta parameters that will compute other parameters for SLR scripts
-extent=400
+extent=0
 dv=100
 dw=250
 #            - parameters that directly match the SLR scripts
@@ -151,8 +151,6 @@ if [ $newrc = 1 ]; then
     l_regions=[[$v0,$v1]]
     slice=[$w0,$w1]
     v_range=$v0,$v1
-    x_extent=$extent
-    y_extent=$extent
 
     echo "# based on vlsr=$vlsr, dv=$dv,  dw=$dw" >> $rc
     echo b_order=$b_order           >> $rc
@@ -160,9 +158,10 @@ if [ $newrc = 1 ]; then
     echo l_regions=$l_regions       >> $rc
     echo slice=$slice               >> $rc
     echo v_range=$v_range           >> $rc
-
-    echo x_extent=$x_extent         >> $rc
-    echo y_extent=$y_extent         >> $rc
+    if [ $extent == 0 ]; then
+	echo x_extent=$x_extent     >> $rc
+	echo y_extent=$y_extent     >> $rc
+    fi
     
     echo pix_list=$pix_list         >> $rc
     
