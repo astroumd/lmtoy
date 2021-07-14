@@ -16,7 +16,7 @@ f = aplpy.FITSFigure(ff,slices=[0])
 f.set_title("IRC_79448")
 f.show_grayscale()
 f.show_colorscale(aspect='auto')
-f.show_contour(ff, colors='white', levels=[24.0], smooth=3)
+f.show_contour(ff, colors='white', levels=[0,12,24,36], smooth=3)
 
 rpd = 57.2958
 #f.show_circles(146.9892/rpd,13.27877/rpd,0.003993056/rpd)
