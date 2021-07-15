@@ -134,7 +134,7 @@ if [ $newrc = 1 ]; then
 	exit 0
     fi
     echo "# Using ifproc=$ifproc" >> $rc
-    echo "path=$path"             >> $rc
+    echo "# path=$path"           >> $rc
 
     # lmtinfo grabs some useful parameters from the ifproc file
     lmtinfo.py $path $obsnum | tee -a $rc
