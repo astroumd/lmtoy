@@ -69,8 +69,8 @@ otf_cal=0
 unset vlsr
 
 #             simple keyword=value command line parser for bash - don't make any changing below
-for arg in $*; do\
-  export $arg
+for arg in $*; do
+    export $arg
 done
 
 #             put in bash debug mode
@@ -92,12 +92,12 @@ fi
 rc=lmtoy_${obsnum}.rc
 if [ -e $rc ] && [ $newrc = 0 ]; then
     echo "LMTOY>> reading $rc"
-    source $rc
-    newrc=0
-    # read cmdline again to override the old rc values
-    for arg in $*; do\
-       export $arg
+    echo "# DATE: `date +%Y-%m-%dT%H:%M:%S.%N`" >> $rc
+    for arg in $*; do
+        echo "$arg" >> $rc
     done
+    source ./$rc
+    newrc=0
 else
     newrc=1
 fi
@@ -138,7 +138,7 @@ if [ $newrc = 1 ]; then
 
     # lmtinfo grabs some useful parameters from the ifproc file
     lmtinfo.py $path $obsnum | tee -a $rc
-    source $rc
+    source ./$rc
     
     #   w0   v0   v1     w1
     v0=$(echo $vlsr - $dv | bc -l)
@@ -177,6 +177,8 @@ if [ $newrc = 1 ]; then
     cat $rc
     echo "LMTOY>> Sleeping for 5 seconds, you can  abort, edit $rc, then continuing"
     sleep 5
+else
+    echo "LMTOY>> updating"
 fi
 
 #             derived parameters (you should not have to edit these)
