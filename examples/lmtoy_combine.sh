@@ -10,7 +10,7 @@
 #
 
 
-version="lmtoy_combine: 13-jul-2021"
+version="lmtoy_combine: 14-jul-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=ON1,ON2,..."
@@ -87,7 +87,7 @@ rc=lmtoy_${on0}.rc
 rc1=${on0}/lmtoy_${on0}.rc
 if [ -e $rc ] ; then
     echo "LMTOY>> reading $rc"
-    source $rc
+    source ./$rc
     # read cmdline again to override the old rc values
     for arg in $*; do\
        export $arg
