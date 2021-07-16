@@ -194,9 +194,9 @@ minor axis ofr M31. The one used for M51 (463) does not agree with NED (611)
 The **lmtar.py** script will list all the files belonging to one (or more)
 OBSNUM's. Normally never used by users, but can be useful if you want to
 copy an observation to another computer. For this the shell script **lmtar** may be
-more useful. It's usage would be
+more useful. It's usage would be something like
 
-      lmtar irc.tar 79447 79448
+      lmtar /tmp/irc.tar 79447 79448
 
 Since typically an observation is at least two OBSNUM's (cal and map), the
 user is responsible to fine all the correct OBSNUM's.
