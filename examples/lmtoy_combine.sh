@@ -10,7 +10,7 @@
 #
 
 
-version="lmtoy_combine: 14-jul-2021"
+version="lmtoy_combine: 20-jul-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=ON1,ON2,..."
@@ -258,13 +258,14 @@ if [ ! -z $NEMO ]; then
     
 fi
 
-if [ ! -z $ADMIT ]; then
-    echo "LMTOY>> Some ADMIT post-processing"
-    if [ -e $s_on.nf.fits ]; then
-	runa1 $s_on.nf.fits
-    else
-	runa1 $s_fits
-    fi
+echo "LMTOY>> Some ADMIT post-processing"
+if [ -e $s_on.nfs.fits ]; then
+    lmtoy_admit.sh $s_on.nfs.fits
+fi
+if [ -e $s_on.nf.fits ]; then
+    lmtoy_admit.sh $s_on.nf.fits
+else
+    lmtoy_admit.sh $s_fits
 fi
 
 echo "LMTOY>> Created $s_fits and $w_fits"

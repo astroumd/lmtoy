@@ -79,6 +79,11 @@ bench51:
 	$(TIME) lmtoy_reduce.sh obsnum=91112 $(EXTRA) > lmtoy_91112.log   2>&1
 	$(TIME) lmtoy_combine.sh        obsnum=90911,91112 > lmtoy_90911_2.log 2>&1
 
+bench51b:
+	$(TIME) SLpipeline.sh obsnum=90911 
+	$(TIME) SLpipeline.sh obsnum=91112 
+	$(TIME) lmtoy_combine.sh  obsnum=90911,91112 pdir=2018-S1-MU-8
+
 bench31c:
 	$(TIME) lmtoy_reduce.sh obsnum=85776 noise_sigma=0 > lmtoy_85776.log   2>&1
 	$(TIME) lmtoy_reduce.sh obsnum=85778 noise_sigma=0 > lmtoy_85778.log   2>&1
