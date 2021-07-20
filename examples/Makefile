@@ -69,7 +69,7 @@ bench31a:
 	$(TIME) nemo_combine.sh                             pdir=M31a > M31a/lmtoy_85776_n.log 2>&1
 
 bench31b:
-	$(TIME) SLpipeline.sh  obsnum=85776 
+	$(TIME) SLpipeline.sh  obsnum=85776
 	$(TIME) SLpipeline.sh  obsnum=85778
 	$(TIME) SLpipeline.sh  obsnum=85824
 	$(TIME) lmtoy_combine.sh obsnum=85776,85778,85824 pdir=2018-S1-MU-46
@@ -78,6 +78,11 @@ bench51:
 	$(TIME) lmtoy_reduce.sh obsnum=90911 $(EXTRA) > lmtoy_90911.log   2>&1
 	$(TIME) lmtoy_reduce.sh obsnum=91112 $(EXTRA) > lmtoy_91112.log   2>&1
 	$(TIME) lmtoy_combine.sh        obsnum=90911,91112 > lmtoy_90911_2.log 2>&1
+
+bench51b:
+	$(TIME) SLpipeline.sh obsnum=90911 
+	$(TIME) SLpipeline.sh obsnum=91112 
+	$(TIME) lmtoy_combine.sh  obsnum=90911,91112 pdir=2018-S1-MU-8/
 
 bench31c:
 	$(TIME) lmtoy_reduce.sh obsnum=85776 noise_sigma=0 > lmtoy_85776.log   2>&1
