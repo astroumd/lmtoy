@@ -69,9 +69,9 @@ bench31a:
 	$(TIME) nemo_combine.sh                             pdir=M31a > M31a/lmtoy_85776_n.log 2>&1
 
 bench31b:
-	$(TIME) SLpipeline.sh  obsnum=85776 
-	$(TIME) SLpipeline.sh  obsnum=85778
-	$(TIME) SLpipeline.sh  obsnum=85824
+	$(TIME) SLpipeline.sh  obsnum=85776 b_order=1 pix_list=0,1,2,4,5,6,7,8,9,10,11,12,13,14,15
+	$(TIME) SLpipeline.sh  obsnum=85778 b_order=1 pix_list=0,1,2,4,5,6,7,8,9,10,11,12,13,14,15
+	$(TIME) SLpipeline.sh  obsnum=85824 b_order=1
 	$(TIME) lmtoy_combine.sh obsnum=85776,85778,85824 pdir=2018-S1-MU-46
 
 bench51:
