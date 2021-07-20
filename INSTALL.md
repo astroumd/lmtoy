@@ -244,8 +244,10 @@ to reduce any OTF data. There are now also some RSR data reduction methods.
 A few popular 3rd party tools for cube analysis
 
 * MIRIAD
-* karma
-* casa
+* karma (viz)
+* ds9 (viz)
+* carta (viz)
+* casa 
 * radio astro tools
   * pip install spectral-cube pyds9 pvextractor
 * bettermoments
