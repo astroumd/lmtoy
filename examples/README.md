@@ -2,6 +2,8 @@
 
 There are several processing paths for Sequoia data:  OTF, MAP, BS and PS.
 
+See the Makefile of examples how to run a number of regressions/tests/benchmarks
+
 ## lmtoy_reduce.sh
 
 See [lmtoy_reduce.md](lmtoy_reduce.md) on using the new experimental pipeline
@@ -9,8 +11,8 @@ See [lmtoy_reduce.md](lmtoy_reduce.md) on using the new experimental pipeline
 ## A typical OTF run
 
 1. Convert the raw (spectra) data to a calibrated spectrum file.   Some selections, e.g. by pixel,
-  Cannot select by time yet. Although all spectra are read (this costs memory), the output can
-  be trimmed by whatever slice is selected
+   Cannot select by time yet. Although all spectra are read (this costs memory), the output can
+   be trimmed by whatever slice is selected
 
 2. Plot the spectra of all or one pixel. View coverage, etc
 
