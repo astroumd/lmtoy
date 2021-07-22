@@ -69,6 +69,9 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       beam if normally given in **FITS** keywords BMAJ,BMIN,BPA.  The
       term **resolution**
 
+    horn
+      Another term used for beam or pixel.
+
     LSR
       (Spectral Line Reduction):  the software reduction Sequoia (3mm) data, and presumably in the future, Omaya (1mm)
 
