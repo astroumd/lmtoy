@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          htaccess
 
-version="SLpipeline: 20-jul-2021"
+version="SLpipeline: 22-jul-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=OBSNUM ..."
@@ -19,15 +19,11 @@ else
     echo "LMTOY>> $version"
 fi
 
-
-# debug
-# set -x
-debug=0
-
-# input parameters
-#            - start or restart
+# default input parameters
 path=${DATA_LMT:-data_lmt}
+work=${WORK_LMT:-.}
 obsnum=0
+debug=0
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -44,9 +40,9 @@ if [ $obsnum = 0 ]; then
     exit 1
 fi
 
+#             bootstrap
 rc=/tmp/lmtoy_${obsnum}.rc
 lmtinfo.py $path $obsnum > $rc
-
 source $rc
 
 if [ $obspgm = "Cal" ]; then
@@ -55,14 +51,13 @@ if [ $obspgm = "Cal" ]; then
 fi
 
 if [ $instrument = "SEQ" ]; then
-    pdir=$ProjectId/$obsnum
+    pdir=$work/$ProjectId/$obsnum
     if [ -d $pdir ]; then
 	echo Re-Processing SEQ in $ProjectId/$obsnum for $src
     else
 	echo Processing SEQ in $ProjectId/$obsnum for $src
     fi
     mkdir -p $pdir
-    #lmtoy_reduce.sh pdir=$ProjectId/$obsnum obsnum=$obsnum viewspec=1 viewcube=0 makewf=1 > $pdir/lmtoy_$obsnum.log 2>1&
     lmtoy_reduce.sh pdir=$ProjectId/$obsnum $* > $pdir/lmtoy_$obsnum.log 2>&1    
     echo Logfile in: $pdir/lmtoy_$obsnum.log
 elif [ $instrument = "RSR" ]; then
