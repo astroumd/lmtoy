@@ -1,23 +1,25 @@
 # A Spectral Line Pipeline
 
-When an observing script finishes, there is a unique **obsnum**,
+When an LMT observing script finishes, there is a unique **obsnum**,
 which records the instrument, observing mode, and possibly
-other obsnum's for calibration.
+other obsnum's needed for calibration. The raw data is a set
+of netcdf files identified by one or more obsnum's.
 
-These can be passed on to a pipeline
-executor, which can then decide what tasks to run to run a "quick-look" pipeline
-and provide a summary of the results, including some standard QA figures and log files.
+
+The obsnum can be passed on to a pipeline executor, which can then
+decide what tasks to run a "quick-look" pipeline and provide a summary
+of the results, including some standard QA figures and log files.
 
 
 ## Where is the work done
 
 When observing concludes, raw data will show up in $DATA_LMT, and some signal
 will be given to some database that a given obsnum is available. There is a lot more
-behind this statement, as this depends on whether one  at LMT, or at basecamp, or
+behind this statement, as this depends on whether one is at LMT,  at basecamp, 
 at UMass, or even ones' laptop (where only manual mode is supported). For now, imagine
 a new obsnum is available.
 
-The pipeline will reduce thne data in $WORK_LMT and create a directory tree
+The pipeline will reduce the data in $WORK_LMT and create a directory tree
 starting with **$ProjectId/$obsnum**.  If $WORK_LMT is not set, it will be interpreted
 as the current directory.
 
@@ -29,7 +31,8 @@ is that the script only needs an **obsnum**, and will figure out which instrumen
 is used, and run the reduction via the instrument specific reduction scripts.
 
 There will also be optional *PI Parameters*, which are under discussion, but we will 
-assume they are a series of *keyword=value* pairs.
+assume they are a series of *keyword=value* pairs. It is assumed they will be available
+in the netcdf file.
 
 ### Sequoia
 
