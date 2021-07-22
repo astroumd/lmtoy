@@ -19,6 +19,7 @@ venv=0            # set to 1 if you want to bypass a new anaconda3 and use venv
 nemo=1            # set to 0 if you don't need NEMO
 pgplot=1          # set to 1 if you want PGPLOT in NEMO, instead of simple PS driver
 data_lmt=${DATA_LMT:-data_lmt}    # give sensible default for $DATA_LMT
+bench=0                           # set to the tar.gz file for bootstrapping IRC benchmark data
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -63,12 +64,19 @@ if [ $nemo = 1 ]; then
     fi
 fi
 
-./configure --with-data=$data_lmt
+./configure --with-data=$(realpath $data_lmt)
 
 #  activate LMTOY and run benchmark, but unless you made preparations
 #  on finding the data, the benchmark will not run here.
 
+
 source lmtoy_start.sh
+
+if [ $bench != 0 ]; then
+    mkdir -p $DATA_LMT
+    (cd $DATA_LMT; tar zxf $bench)
+fi
+
 which python
 cd examples
 
