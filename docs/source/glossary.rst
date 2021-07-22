@@ -70,7 +70,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       term **resolution**
 
     horn
-      Another term used for beam or pixel.
+      Another term used for :term:`beam` or :term:`pixel`.
 
     LSR
       (Spectral Line Reduction):  the software reduction Sequoia (3mm) data, and presumably in the future, Omaya (1mm)
@@ -91,8 +91,8 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
     pixel
       synonym for **beam** as in multi-beam. The keyword --pix_list= is used to select pixels (0..15) for processing.
 
-    Project ID
-      Or whatever we are going to call it
+    ProjectId
+      Each LMT observing proposal has a unique proposal ID assigned. An example is **2018-S1-MU-46**
 
     ramp
       The ramp is the area where not all beams have
@@ -281,13 +281,13 @@ Note that FAST is the only known case that stores data as  ``data[ntime, nchan, 
 case such that they can vary ``nchan`` per row.
 
 
-We thus arrive at the following summary for
+We thus arrive at the following summary for the multi-dimensional data[] array:
 
 .. code-block::
 
       data[ntime, nbeam, npol, nband, nchan]
 
-but leaving out the ``ntime`` dimension    
+in the table we leave out the ``ntime`` dimension    
 
 .. list-table:: **Table of data dimensions of LMT SLR instruments**
    :header-rows: 1
@@ -355,9 +355,11 @@ Observing: ObsNum / SubObsNum / ScanNum
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 An observation with a single dish such as LMT is done via proposals, which gets assigned a proposal ID,
-associated with the P.I. name. An example of such is XXX.
+associated with the P.I. name. An example of such is **2018-S1-MU-46**
 
-An observation is that divided in a set a **ObsNum** 's, which can be devived in **SubObsNum** and **ScanNum**. When
-an observing script executes, each source will gets its own **ObsNum**.
+An observation is that divided in a set a **ObsNum** 's, which can be hierchically
+divided up in **SubObsNum**'s and **ScanNum**'s. When
+an observing script executes, each source will gets its own **ObsNum**, though
+calibration data often gets another **ObsNum**.
 
 

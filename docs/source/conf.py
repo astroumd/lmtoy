@@ -33,7 +33,9 @@ author = "Peter Teuben"
 copyright = year+" "+author
 
 
-source_suffix = '.rst'
+# https://github.com/miyakogi/m2r#sphinx-integration
+#source_suffix = '.rst'
+source_suffix = ['.rst', '.md']
 master_doc = 'index'
 
 # -- General configuration ---------------------------------------------------
@@ -50,6 +52,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
     'numpydoc',
+    # 'm2r'         # does not work yet
 ]
 numpydoc_show_class_members = True
 #autosummary_generate = True
