@@ -20,38 +20,18 @@ how to assemble the toolbox with the help of a number of codes. We also use the
 related to the toolbox.
 
 
-LMTSLR
-======
-
-LMTSLR (SpectralLine Receiver)
-
-This is for Sequoia, the msip 1MMRx and future Omaya
-
-RSR
-===
-
-RSR (Redshift Search Receiver)
-
-
-Tolteca
-=======
-
-Tolteca (and the low level Citlali C++ library) provide users with an interface
-into TolTec data reduction.
-
-
 For Developers
 ==============
 
-If you plan to tinker with the code, you may want to inspect the ``docs/install_lmtoy``
-file from the **lmtoy** github repo. Here's an example how to install it.
+If you plan to try out the code, you may want to inspect the ``docs/install_lmtoy``
+file from the **lmtoy** github repo. Here's an example how to install using it:
 
 .. code-block:: sh
   
    wget https://astroumd.github.io/lmtoy/install_lmtoy
    bash install_lmtoy 
 
-this example script is not very long, is fairly self-documenting, should work on most Linux and Mac machines.
+This example script is not very long, is fairly self-documenting, should work on most Linux and Mac machines.
 It has a few optional command line parameters.  Here is an example of installing it on a laptop with a local
 version of ``$DATA_LMT``:
 
@@ -96,12 +76,22 @@ Various
 Markdowns	      
 =========
 
+Some of the documentation is still in markdown format
+
 .. toctree::
    :maxdepth: 2
 
    masking
    wishlist
-	      
+
+LMTOY_REDUCE
+============
+
+.. toctree::
+   :maxdepth: 3
+
+   reduce
+
 Indices
 =======
 
