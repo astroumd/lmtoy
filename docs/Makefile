@@ -18,3 +18,9 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+pjt: lastmod html
+	rsync -av build/html chara:public_html/LMT/lmtoy
+
+lastmod:
+	echo "Last modified `date`" > source/lastmod.rst
