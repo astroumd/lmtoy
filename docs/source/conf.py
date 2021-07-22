@@ -52,6 +52,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
     'numpydoc',
+    'm2r2',
     # 'm2r'         # does not work yet
 ]
 numpydoc_show_class_members = True

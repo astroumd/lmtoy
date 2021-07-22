@@ -1,4 +1,4 @@
-# Overview of changes to LMTSLR
+## Overview of changes to LMTSLR
 
 This list also contains the suggestions  Mark Heyer sent around earlier, but
 not all the ones from the 8-jan-2021 list.
@@ -39,7 +39,7 @@ not all the ones from the 8-jan-2021 list.
   differences. Need a more detailed analysis like in SLR Appendix C?
 
 1. by default, now only cells will be given a value if there was at
-v  least one pixel in it. This only works well for convex areas. For
+  least one pixel in it. This only works well for convex areas. For
   small cell size there can be empty cells surrounded by filled
   cells. In these circumstances it would be useful to turn this option
   to the old default, based on weight from the convolution.
@@ -121,7 +121,7 @@ v  least one pixel in it. This only works well for convex areas. For
    on one particul benchmark.  The variable fast_nc = True should be used to use the new
    (slightly more memory consuming) faster version.
 
-# A wishlist
+## A wishlist
 
 In no particular order, there are some remaining things on the wish
 list, the important ones are tracked in our [github
@@ -264,7 +264,7 @@ added a few that Mark Heyer listed in his reports.
       ./lmtoy_reduce.sh  obsnum=79448_ZZ
 
 
-## Keyword Sanitation:
+### Keyword Sanitation:
 
 Keyword names should make sense, have sensible defaults.
 
@@ -284,7 +284,7 @@ Keyword names should make sense, have sensible defaults.
   via a NaN. I had a --min_neighbors idea.
 
 
-# Procedure: Adding a variable from RAW -> SPECFILE ->  FITS
+## Procedure: Adding a variable from RAW -> SPECFILE ->  FITS
 
 string handling in particular is just out of this world, even in python.
 is that a netcdf oddity? It's nuts.
@@ -298,7 +298,7 @@ is that a netcdf oddity? It's nuts.
 
 
 
-# Procedure: Adding another parameter to the gridding program
+## Procedure: Adding another parameter to the gridding program
 
 
 grid_map is probably the worst, it requires 8 times a similar
@@ -325,13 +325,13 @@ should be a better way to pass parameters and provide help.
 
 
 
-# Masking / Blanking file
+## Masking / Blanking file
 
 Any such ascii files should allow comments in the form that python/bash allow:
 a line starting with '#' is preferred, but we should also allow a '# comment'
 after any legal commands/directives.
 
-## RSR
+### RSR
 
 For RSR there are already two formats for a masking/blanking file. They are closely
 related, and how a rather fine grained approach to masking:
@@ -361,12 +361,12 @@ related, and how a rather fine grained approach to masking:
 Question:   in RSR data typically there are a number of repetitions, each of order 30". But in either
 flaggings a selection of chassis/band seems to be applied to all repetitions.
     
-## SLR
+### SLR
 
 There is no blanking file for SLR. A few keywords allow blanking by pixel/beam (--pix_list), by rms value (--rms_cut)
 and some hard to determine list of sample ranges per pixel (--sample).
 
-## Live Stream netCDF/RAW data
+### Live Stream netCDF/RAW data
 
 Given that the procedure to read live stream data is something like the following:
 

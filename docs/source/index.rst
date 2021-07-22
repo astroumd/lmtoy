@@ -91,8 +91,17 @@ Various
    sdfits
    tools
    glossary
-   FAQ	      
+   FAQ
 
+Markdowns	      
+=========
+
+.. toctree::
+   :maxdepth: 2
+
+   masking
+   wishlist
+	      
 Indices
 =======
 

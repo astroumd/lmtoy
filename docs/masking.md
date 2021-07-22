@@ -1,8 +1,8 @@
-# Filtering, Masking and Weighting of LMT data
+## Filtering, Masking and Weighting of LMT data
 
 
 
-# Masking
+## Masking
 
 Masking (or blanking, or flagging) is the operation by which we can remove data
 from any subsequent operations, leading to the final gridding or
@@ -230,7 +230,7 @@ By keeping an ascii representation of the mask,
 we can mask and unmask in a similar fashion.
 
 
-# Filtering
+## Filtering
 
 Some options are to narrow down the data. In the SLR pipeline those are
 
@@ -272,7 +272,7 @@ https://casa.nrao.edu/casadocs/casa-6.1.0/imaging/image-analysis/image-masks
 
 https://casa.nrao.edu/casadocs/casa-6.1.0/imaging/image-analysis/lattice-expression-language-lel/lel-masks
 
-# Weighting
+## Weighting
 
 During stacking we normally weight the data by TSYS.
 
