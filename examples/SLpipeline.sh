@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          htaccess
 
-version="SLpipeline: 22-jul-2021"
+version="SLpipeline: 27-jul-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=OBSNUM ..."
@@ -41,9 +41,10 @@ if [ $obsnum = 0 ]; then
 fi
 
 #             bootstrap
-rc=/tmp/lmtoy_${obsnum}.rc
+rc=/tmp/lmtoy_${obsnum}.$$.rc
 lmtinfo.py $path $obsnum > $rc
 source $rc
+rm -f $rc
 
 if [ $obspgm = "Cal" ]; then
     echo "Cannot process a 'Cal' obsnum, pick a better obsnum"
