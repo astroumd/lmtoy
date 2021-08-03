@@ -19,8 +19,17 @@ help:
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-pjt: lastmod html
+pjt: nbs lastmod html
 	rsync -av build/html chara:public_html/LMT/lmtoy
+	echo See also: https://www.astro.umd.edu/~teuben/LMT/lmtoy/html
 
 lastmod:
 	echo "Last modified `date`" > source/lastmod.rst
+
+nbs:
+	(cd source; make all)
+
+# https://github.com/spatialaudio/nbsphinx/issues/170
+#   Include notebooks from outside the root directory
+# https://github.com/sphinx-doc/sphinx/issues/701
+#   relative links in toctree 
