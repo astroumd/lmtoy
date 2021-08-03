@@ -19,8 +19,11 @@ help:
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
+
+PJT = chara.astro.umd.edu:public_html/LMT/lmtoy
+
 pjt: nbs lastmod html
-	rsync -av build/html chara:public_html/LMT/lmtoy
+	rsync -av build/html $(PJT)
 	echo See also: https://www.astro.umd.edu/~teuben/LMT/lmtoy/html
 
 lastmod:
