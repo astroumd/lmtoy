@@ -21,12 +21,15 @@ URL7  = https://github.com/gopastro/sculpt
 URL8  = https://github.com/LMTdevs/RSR_driver
 URL9a = https://github.com/toltec-astro/dasha
 URL9b = https://github.com/toltec-astro/tollan
+URL9c = https://github.com/toltec-astro/tolteca
 URL10a= https://github.com/astropy/specutils
 URL10b= https://github.com/pyspeckit/pyspeckit
 URL11 = https://github.com/astroumd/admit
 URL12a= https://github.com/b4r-dev/pipeline
 URL12b= https://github.com/b4r-dev/notebooks
 URL12c= https://github.com/b4r-dev/devtools
+URL13a= https://github.com/gopastro/cubevis
+URL13b= https://github.com/gopastro/sculpt
 
 .PHONY:  help install build
 
@@ -117,6 +120,9 @@ dasha:
 
 tollan:
 	git clone $(URL9b)
+
+tolteca:
+	git clone $(URL9c)
 
 specutils:
 	git clone $(URL10a)
