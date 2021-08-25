@@ -1,6 +1,6 @@
 # lmtoy
 
-LMTOY is a toy box for installing and running codes related to LMT data reduction. 
+LMTOY is a toy toolbox for installing and running codes related to LMT data reduction. 
 LMT is a large 50m single dish radio telescope located in Mexico 
 [(18:59:09N 97:18:53W)](https://www.google.com/maps/place/Large+Millimeter+Telescope/@18.9841105,-97.3258267,6245m/data=!3m1!1e3!4m5!3m4!1s0x85c516fb67a4820f:0xf9b66dcc651fb6e9!8m2!3d18.9857333!4d-97.3148183)
 operating at mm wavelengths. See also http://lmtgtm.org/
@@ -10,9 +10,9 @@ operating at mm wavelengths. See also http://lmtgtm.org/
 
 LMT raw telescope data are (mostly) in netCDF-3 format (extension: .nc), which stores
 data hierarchically, name and type tagged.
-A typical LSR observation consists of a number of netCDF files in a specific directory hierarchy, starting at
+A typical SLR observation consists of a number of netCDF files in a specific directory hierarchy, starting at
 $DATA_LMT, and all identified via a 7 digit OBSNUM.  Different instruments
-use a different number of datasets, for example, RSR uses up to 9, LSR uses 10.
+use a different number of datasets, for example, RSR uses up to 9, SLR uses 10.
 
 Tools like **ncdump** display structure and contents (as CDL).
 
@@ -78,12 +78,7 @@ after which you can run a benchmark to verify if LMTSLR is working
       cd $LMTOY/examples
       make bench
 
-and it will print two lines starting with QAC_STATS that should agree! Another useful
-test is plotting:
-
-      make bench2
-
-This should produce three plots.
+and it will print two lines starting with QAC_STATS that should agree! 
 
 
 In your own directory you can use the more general **lmtoy_reduce.sh** script
