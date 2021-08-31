@@ -10,13 +10,12 @@
 #  @todo   optional PI parameters
 #          htaccess
 
-version="SLpipeline: 27-jul-2021"
+version="SLpipeline: 17-aug-2021"
 
+echo "LMTOY>> $version"
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=OBSNUM ..."
     exit 0
-else
-    echo "LMTOY>> $version"
 fi
 
 # default input parameters
@@ -24,6 +23,8 @@ path=${DATA_LMT:-data_lmt}
 work=${WORK_LMT:-.}
 obsnum=0
 debug=0
+restart=0
+tar=0
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -51,8 +52,15 @@ if [ $obspgm = "Cal" ]; then
     exit 1
 fi
 
+pdir=$work/$ProjectId/$obsnum
+if [ $restart != 0 ]; then
+    echo Cleaning $pdir
+    sleep 2
+    rm -rf $pdir
+fi
+
+
 if [ $instrument = "SEQ" ]; then
-    pdir=$work/$ProjectId/$obsnum
     if [ -d $pdir ]; then
 	echo Re-Processing SEQ in $ProjectId/$obsnum for $src
     else
@@ -63,7 +71,22 @@ if [ $instrument = "SEQ" ]; then
     echo Logfile in: $pdir/lmtoy_$obsnum.log
 elif [ $instrument = "RSR" ]; then
     echo Processing RSR for $ProjectId $obsnum
-    echo Not Implemented yet
+    mkdir -p $pdir
+    echo $obsnum > $pdir/rsr.obsnum
+    python $LMTOY/RSR_driver/rsr_driver.py $pdir/rsr.obsnum   -w  $pdir/rsr.wf.pdf -p -b 3 
+    # python ../RSR_driver/rsr_driver.py rsr1.obsnum -w rsr1.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 
+    # python ../RSR_driver/rsr_driver.py rsr2.obsnum -w rsr2.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 85.2 0.4 > rsr2.log
 else
     echo Unknown instrument $instrument
+fi
+
+
+if [ $tar != 0 ]; then
+    echo Processing tar for $pdir
+    rm -f $pdir/tar.log
+    touch $pdir/tar.log
+    for ext in rc tab txt log apar html png pdf cubestat; do
+	find $pdir -name \*$ext  >> $pdir/tar.log
+    done
+    tar zcf $pdir.tar `cat $pdir/tar.log>`
 fi
