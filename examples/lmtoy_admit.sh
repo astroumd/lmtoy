@@ -60,7 +60,7 @@ elif [ ! -z $ADMIT ]; then
     echo Found no attached $LMTOY/admit, but found $ADMIT, so winging it.
     admit    
 else    
-    echo Warning: ADMIT was not attached to LMTOY
+    echo 'Warning: ADMIT was not attached to LMTOY, there was no $LMTOY/admit symlink'
     exit 0
 fi
 
@@ -68,8 +68,10 @@ if [ ! -z $ADMIT ]; then
     echo "LMTOY>> ADMIT post-processing"
     # hacking the admit run:
     apar=$ffile.apar
-    touch $apar
-    echo 'usePV = False'  >> $apar
+    if [ ! -e $apar ]; then
+        touch $apar
+        echo 'usePV = False'  >> $apar
+    fi
     
     runa1 $ffile
 fi
