@@ -88,5 +88,5 @@ if [ $tar != 0 ]; then
     for ext in rc tab txt log apar html png pdf cubestat; do
 	find $pdir -name \*$ext  >> $pdir/tar.log
     done
-    tar zcf $pdir.tar `cat $pdir/tar.log>`
+    tar zcf $pdir.tar `cat $pdir/tar.log`
 fi
