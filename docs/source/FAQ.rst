@@ -96,6 +96,40 @@ pixel (the -u flag), although this is not essential, and inspect the
 
 CAVEAT:   this option is still under development.
 
+Cubes in RA-DEC or GLON-GLAT
+----------------------------
+
+The default mode of OTF observing is a scan in Alt-Az with with a known parallactic angle
+gets converted into RA-DEC space. You will find the WCS of the FITS to be in ``RA---SFL`` and
+``DEC--SFL``.
+
+In MIRIAD the task ``cotra`` will transform coordinate values between coordinate systems,
+whereas the ``regrid`` task can, using a template, convert between equatorial and galactic
+coordinates.
+
+In CASA use the ``imregrid`` task. For example converting from equatorial to galactic
+
+.. code-block::
+
+      imregrid(imagename="input.im", output="output.im", template="GALACTIC")
+
+though if the input image has the ``SFL`` projection, CASA cannot reliably handle this.   
+The tool ``cs.setprojection()`` can be used temporarely to allow rotation of the image.
+
+.. todo:: example needed of cs.setprojection()
+
+A better approach is to obtain the correct Glon-Glat value for each sample, and let the
+regridder convolve them correctly using the SFL projection method. This option has not been
+added to ``spec_driver_fits`` yet.
+
+Conversion of intensity units from K to Jy/beam
+-----------------------------------------------
+
+By default the intensity units at the LMT are Kelvin, but another common unit system is
+Jy/beam.
+
+.. todo:: example needed.  
+
 Cubes in VLSR or FREQ
 ---------------------
 
@@ -161,7 +195,7 @@ but the following one does not work
      exportfits('irc.mir.fits.im','irc.mir.fits.im.fits',velocity=True,overwrite=True,optical=True)
 
 
-Miriad also differtiates between CELLSCAL='CONSTANT' and CELLSCAL='1/F'
+Miriad also differentiates between CELLSCAL='CONSTANT' and CELLSCAL='1/F'
 
 in CASA:
 
@@ -180,3 +214,13 @@ The reference pixel is 350.303, but in exportfits I see ALTRVAL=349.894
 It works fine of CTYPE3 is VRAD, and not the current VELO-LSR, but VELO_LSR
 is not a recognized axis name, so it sticks to the (correct) m/s, but doesn't
 know about FREQ.
+
+Baseline subtraction
+--------------------
+
+Normally spectral data will need to be baseline subtracted before conversion
+to a SpecFile or SDFITS file. In particular for an SDFITS file this is not
+strictly needed, if you take the data to another package that can also do
+this more flexibly.
+
+.. todo:: example needed.  flag not implemented yet.
