@@ -139,7 +139,7 @@ If in a bind, e.g. on a system where you don't have admin privilages, you
 can always Install from source. E.g. borrow NEMO's $NEO/src/scripts/mknemo.d scripts
 
      mkdir local
-     ./cfitsio wget=wget NEMO=`pwd
+     ./cfitsio wget=wget NEMO=`pwd`
      ./netcdf4 wget=wget NEMO=`pwd`
 
 this will place sources in lmtoy/local, and installed with --prefix=lmtoy/opt
@@ -148,6 +148,10 @@ Then
 
       cd C
       make CFITSIO_PATH=../../lmtoy/opt NETCDF_PATH=../../lmtoy/opt
+
+or if these were installed within NEMO:
+
+      make CFITSIO_PATH=$NEMO/opt NETCDF_PATH=$NEMO/opt
 
 but the Makefile currently also needs
 
