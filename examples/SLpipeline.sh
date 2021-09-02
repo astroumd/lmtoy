@@ -9,8 +9,9 @@
 #
 #  @todo   optional PI parameters
 #          htaccess
+#          option to have a data+time ID in the name, by default it should be blank
 
-version="SLpipeline: 17-aug-2021"
+version="SLpipeline: 2-sep-2021"
 
 echo "LMTOY>> $version"
 if [ -z $1 ]; then
@@ -47,7 +48,7 @@ lmtinfo.py $path $obsnum > $rc
 source $rc
 rm -f $rc
 
-if [ $obspgm = "Cal" ]; then
+if [ "$obspgm" = "Cal" ]; then
     echo "Cannot process a 'Cal' obsnum, pick a better obsnum"
     exit 1
 fi
@@ -62,12 +63,12 @@ fi
 
 if [ $instrument = "SEQ" ]; then
     if [ -d $pdir ]; then
-	echo Re-Processing SEQ in $ProjectId/$obsnum for $src
+	echo Re-Processing SEQ in $pdir for $src
     else
-	echo Processing SEQ in $ProjectId/$obsnum for $src
+	echo Processing SEQ in $pdir for $src
     fi
     mkdir -p $pdir
-    lmtoy_reduce.sh pdir=$ProjectId/$obsnum $* > $pdir/lmtoy_$obsnum.log 2>&1    
+    lmtoy_reduce.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1    
     echo Logfile in: $pdir/lmtoy_$obsnum.log
 elif [ $instrument = "RSR" ]; then
     echo Processing RSR for $ProjectId $obsnum
@@ -80,6 +81,8 @@ else
     echo Unknown instrument $instrument
 fi
 
+
+# produce Quick-Look tar file
 
 if [ $tar != 0 ]; then
     echo Processing tar for $pdir
