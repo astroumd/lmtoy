@@ -48,6 +48,12 @@ lmtinfo.py $path $obsnum > $rc
 source $rc
 rm -f $rc
 
+if [ $obsnum = 0 ]; then
+    echo No valid obsnum found
+    exit 1
+fi
+
+
 if [ "$obspgm" = "Cal" ]; then
     echo "Cannot process a 'Cal' obsnum, pick a better obsnum"
     exit 1
@@ -63,9 +69,9 @@ fi
 
 if [ $instrument = "SEQ" ]; then
     if [ -d $pdir ]; then
-	echo Re-Processing SEQ in $pdir for $src
+	echo "Re-Processing SEQ in $pdir for $src (use restart=1 if you need a fresh start)"
     else
-	echo Processing SEQ in $pdir for $src
+	echo "Processing SEQ in $pdir for $src"
     fi
     mkdir -p $pdir
     lmtoy_reduce.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1    
