@@ -80,8 +80,9 @@ as well as a CPU time output. Here are some examples how long the benchmark take
       179.97user  4.61system 3:09.17elapsed 97%CPU    "cln" @UMass; Xeon E5-1630 v3 @ 3.70GHz
       151.71user  2.12system 2:34.57elapsed 99%CPU    "lma" @UMD; AMD EPYC 7302 16-Core Processor
       110.78user  2.03system 1:52.83elapsed 99%CPU    "xps13", Peter's i5-1135G7 based laptop
-	  113.05user 13.59system 2:12.28elapsed 95%CPU    "unity" @UMass; Xeon Silver 4110 CPU @ 2.10GHz
-      
+      113.05user 13.59system 2:12.28elapsed 95%CPU    "unity/login" @UMass; Xeon Silver 4110 CPU @ 2.10GHz
+       66.69user  5.47system 1:20.29elapsed 89%CPU    "unity/node99" @UMass; Xeon Gold 5218 CPU @ 2.30GHz
+
 ## M31:
 
         284 ./ifproc/ifproc_2019-10-31_085775_00_0001.nc
