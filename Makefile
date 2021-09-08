@@ -25,6 +25,7 @@ URL9c = https://github.com/toltec-astro/tolteca
 URL10a= https://github.com/astropy/specutils
 URL10b= https://github.com/pyspeckit/pyspeckit
 URL11 = https://github.com/astroumd/admit
+URL11a= https://casa.nrao.edu/download/distro/casa/release/el7/casa-release-5.8.0-109.el7.tar.gz
 URL12a= https://github.com/b4r-dev/pipeline
 URL12b= https://github.com/b4r-dev/notebooks
 URL12c= https://github.com/b4r-dev/devtools
@@ -130,9 +131,17 @@ specutils:
 pyspeckit:
 	git clone $(URL10b)
 
+
+# hack for Linux  (@todo Mac)
 admit:
 	git clone $(URL11)
-	(cd admit; git checkout python3)
+	(cd admit; git checkout python3; autoconf)
+	(cd admit; wget -O - $(URL11a) | tar zxf -)
+	(cd admit; ln -s casa-release-5.8.0-109.el7 casa)
+	(cd admit; ./configure --with-casa-root=`pwd`/casa)
+
+# to test admit:
+#     source admit_start.sh; make testdata; cd testdata; runa1 test0.fits
 
 b4r:
 	mkdir -p b4r
