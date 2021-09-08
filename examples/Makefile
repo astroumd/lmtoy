@@ -50,8 +50,10 @@ bench11:
 	$(TIME) lmtoy_reduce.sh obsnum=79448 $(EXTRA) > lmtoy_79448.log 2>&1
 
 bench11b:
-	$(TIME) ./SLpipeline.sh  obsnum=79448
-
+	$(TIME) ./SLpipeline.sh obsnum=79448
+	grep REGRESSION 2018S1SEQUOIACommissioning/79448/IRC+10216_79448.nf.fits.log   | grep CO_115
+	@echo "REGRESSION from ADMIT should show as:"
+	@echo "REGRESSION : MOM0FLUX: x.CO_115.27120 52328.9 22475.1 0.0330578 -19.6361 -19.6361 0.361693"
 bench31:
 	$(TIME) lmtoy_reduce.sh obsnum=85776 $(EXTRA) > lmtoy_85776.log   2>&1
 	$(TIME) lmtoy_reduce.sh obsnum=85778 $(EXTRA) > lmtoy_85778.log   2>&1
