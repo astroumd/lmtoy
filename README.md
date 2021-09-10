@@ -92,7 +92,7 @@ can be combined (stacked) using **lmtoy_combine.sh**. A description of these
 steps can be seen in 
 [lmtoy_reduce.md](examples/lmtoy_reduce.md).
 
-A more advanced approach is the (instrument independant) SLpipeline.sh, which if ADMIT
+A more advanced approach is the (instrument independant) **SLpipeline.sh**, which if ADMIT
 is installed, will also followup an ADMIT run. The benchmark on IRC+10216 is now:
 
       cd $LMTOY/examples
