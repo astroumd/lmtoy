@@ -113,7 +113,7 @@ is installed, will also followup an ADMIT run. The benchmark on IRC+10216 is now
   * [destriper](https://github.com/low-sky/destriper)
   * [sdpy](https://github.com/keflavich/sdpy) - Ginsburg
   * [otfmap](https://github.com/low-sky/otfmap) - Rosolowsky
-  * pyInterpolate - an example generic krieging method
+  * pyInterpolate - an example generic kriging method
 * VO links:
   * [2019 radio hackathon](https://www.asterics2020.eu/dokuwiki/doku.php?id=open:wp4:wp4techforum5:radiointhevo) - has several VO presentations and links to VO standards
   * IVOA meetings (spring 2020 onwards)
