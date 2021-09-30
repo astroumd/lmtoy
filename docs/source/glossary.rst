@@ -209,8 +209,8 @@ Here we clarify those overloaded terms in the form of a table
 
 .. _storage:
 
-Data Storage
-~~~~~~~~~~~~
+Data Dimensions
+~~~~~~~~~~~~~~~
 
 This section is not meant to describe either the RAW (netCDF) or SDFITS
 format, but the storage model we have in mind to be encapsulated in a
@@ -229,8 +229,22 @@ first this could be written as an **NDarray**:
       data[ntime, nbeam, nband, npol, nchan]
 
 where we added the ``ntime`` and ``nchan`` as the slowest resp. fastest running dimension
-in this row-major (python/C) notation. Taking out those an observation can be seen as a
-set of spectra:
+in this row-major (python/C) notation.
+
+
+.. note:: For those used to GBTIDL **plnum** = **npol**, **ifnum** = **nband**, and
+   **fdnum** = **nband**.  Arguably different scans can act as as **ntime**, although
+   each scan will often have several snapshots inside of them. ?? **intnum**
+
+.. code-block::
+
+      Overloaded words, including GBT lingo:
+
+      plnum   pol
+      fdnum   feed     beam    pixel
+      ifnum   window   band
+
+Taking out those an observation can be seen as a set of spectra:
 
 .. code-block::
 
@@ -310,18 +324,18 @@ in the table we leave out the ``ntime`` dimension
      - 1
      - 1 (2)
      - 2k, 4k, 8k
-     - beams have time issue, perhaps ntime ~ ntime * nbeam, and nbeam=1
+     - beams have time issue, perhaps ntime ~ ntime * nbeam, and nbeam=1. Future will have 2 bands
    * - OMA 
      - 8
      - 2
      - 2
-     - 2k (?)
-     - Future instrument, with 4 more roach boards
+     - 2k, 4k, 8k
+     - Future instrument, with 4 more roach boards (USB+LSB)
    * - 1MMRx
-     - 1 (4?)
+     - 1
      - 2
-     - 2
-     - 2k
+     - 4
+     - 2k, 4k, 8k
      - band: USB and LSB
    * - B4R
      - 1
