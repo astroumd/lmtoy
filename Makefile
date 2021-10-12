@@ -31,6 +31,7 @@ URL12b= https://github.com/b4r-dev/notebooks
 URL12c= https://github.com/b4r-dev/devtools
 URL13a= https://github.com/gopastro/cubevis
 URL13b= https://github.com/gopastro/sculpt
+URL14 = https://github.com/teuben/gbtgridder
 
 .PHONY:  help install build
 
@@ -130,6 +131,9 @@ specutils:
 
 pyspeckit:
 	git clone $(URL10b)
+
+gbtgridder:
+	git clone -b python3 $(URL14)
 
 
 # hack for Linux  (@todo Mac)
