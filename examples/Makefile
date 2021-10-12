@@ -205,6 +205,9 @@ rsr3:
 	echo  "FIT shows      : $$a $$b $$c $$d $$rms"
 	@echo "FIT should show: a= 0.000179097 0.000118254  b= 0.0466679 0.000536265  c= 110.508 0.000451531 d= 0.0344496 0.000468057 rms= 0.000565537"
 
+1mm:
+	$(TIME) process_ps.py --obs_list 82480 --pix_list 2 --bank 0 -p $(DATA_LMT) --x_axis VSRC
+
 
 # to get the test data mentioned in this Makefile, run the following commands on a machine where $DATA_LMT has these
 # and untar them on the where you want them
@@ -212,3 +215,4 @@ data:
 	lmtar irc_2018.tar 79447 79448
 	lmtar m31_2019.tar 85775 85776 85777 85778 85823 85824
 	lmtar m51_2020.tar 91111 91112 90910 90911
+	lmtar 1mm_2018.tar 82479 82480
