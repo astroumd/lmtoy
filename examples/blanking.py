@@ -3,6 +3,15 @@
 #
 # parses an ascii blanking file with obsvlist
 #
+# See also the --rfile in the rsr_driver.py, of which the format is
+# very close to the one used here, but simpler:
+#
+#       obsnum  chassis  band
+#
+# whereas here we have
+#
+#       obsnum  chassis   band:[(f1,f2),(f3,f4]
+#
 #   
 
 def blanking(filename, debug=False):
