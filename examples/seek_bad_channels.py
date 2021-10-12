@@ -7,6 +7,11 @@
 #
 # Revision 2014-03-04: Fixed problem with variable for number of channels.  Now always do 256 channels
 #          2021-02-23: Converted for dreampy3/python3
+#
+#
+# Possible CLI:
+#
+#    seed_bad_channels [-f obslist] [-p plot_max] [-b bc_threshold] [obsnum ....]
 
 import os
 import sys
@@ -49,7 +54,7 @@ bc_threshold = 3.0
 # now ready to process.  First read in the data from the file or commandline
 
 if True:
-    # simply a list of obsnum via commandline
+    # simply a list of obsnum via commandline, dates are not needed
     o_list = []
     for arg in sys.argv[1:]:
         o_list.append(int(arg))
