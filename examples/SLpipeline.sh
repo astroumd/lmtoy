@@ -8,10 +8,10 @@
 #  Note:   this will currently only reduce one OBSNUM
 #
 #  @todo   optional PI parameters
-#          htaccess
+#          htaccess control ?
 #          option to have a data+time ID in the name, by default it should be blank
 
-version="SLpipeline: 2-sep-2021"
+version="SLpipeline: 11-oct-2021"
 
 echo "LMTOY>> $version"
 if [ -z $1 ]; then
@@ -83,6 +83,9 @@ elif [ $instrument = "RSR" ]; then
     python $LMTOY/RSR_driver/rsr_driver.py $pdir/rsr.obsnum   -w  $pdir/rsr.wf.pdf -p -b 3 
     # python ../RSR_driver/rsr_driver.py rsr1.obsnum -w rsr1.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 
     # python ../RSR_driver/rsr_driver.py rsr2.obsnum -w rsr2.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 85.2 0.4 > rsr2.log
+elif [ $instrument = "1MM" ]; then
+    # 
+    process_ps.py --obs_list $obsnum --pix_list 2 --bank 0 -p $DATA_LMT 
 else
     echo Unknown instrument $instrument
 fi
