@@ -11,7 +11,7 @@
 #          htaccess control ?
 #          option to have a data+time ID in the name, by default it should be blank
 
-version="SLpipeline: 11-oct-2021"
+version="SLpipeline: 18-oct-2021"
 
 echo "LMTOY>> $version"
 if [ -z $1 ]; then
@@ -25,7 +25,7 @@ work=${WORK_LMT:-.}
 obsnum=0
 debug=0
 restart=0
-tar=0
+tar=1
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -73,6 +73,7 @@ if [ $instrument = "SEQ" ]; then
     else
 	echo "Processing SEQ in $pdir for $src"
     fi
+    sleep 2
     mkdir -p $pdir
     lmtoy_reduce.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1    
     echo Logfile in: $pdir/lmtoy_$obsnum.log
