@@ -23,6 +23,7 @@ echo "<H1> $ProjectId/$obsnum for $src </H1>"                              > $ht
 echo "<H2>  <A HREF=index_pipeline.html>SL Pipeline summary</A> </H2>"    >> $html
 echo "<H2>  <A HREF=index_admit.html>ADMIT summary</A>          </H2>"    >> $html
 echo "<H2>  <A HREF=index_pars.html>parameters</A>              </H2>"    >> $html
+echo "<H2>  <A HREF=index_log.html>log files</A>                </H2>"    >> $html
 echo "Last updated $(date)"                                               >> $html
 
 
@@ -71,3 +72,12 @@ echo "<pre>"                                                              >> $ht
 cat lmtoy_*.rc                                                            >> $html
 echo "</pre>"                                                             >> $html
 
+
+html=index_log.html
+echo Writing $html # in $pwd
+echo "<H1> Logfiles for $ProjectId/$obsnum for $src </H1>"                 > $html
+echo "<OL>"                                                               >> $html
+for log in *.log; do
+    echo "<LI> <A HREF=$log>$log</A>"                                     >> $html
+done
+echo "</OL>"                                                              >> $html
