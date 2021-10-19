@@ -38,3 +38,10 @@ NGC5194        91112    p(0)  pp(5)
 
 NGC5194_south  92626    pp(5) - very weak signal in PV 
 
+# 2018-S1-MU-64 (SEXTANS-A)
+  There are 49 obsnum's where there is a non-zero offset:
+
+SEXTANS-A      92431
+...
+SEXTANS-A      92787
+
