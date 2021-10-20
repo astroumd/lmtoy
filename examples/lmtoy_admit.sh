@@ -7,7 +7,7 @@
 #
 
 
-version="lmtoy_admit: 13-jul-2021"
+version="lmtoy_admit: 19-oct-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: fits_file(s)"
@@ -72,6 +72,9 @@ if [ ! -z $ADMIT ]; then
         touch $apar
         echo 'usePV = False'  >> $apar
     fi
+    
+    # make sure Xvfb has been cleaned up
+    casaclean
     
     runa1 $ffile
 fi
