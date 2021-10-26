@@ -119,13 +119,13 @@ test1:
 # RSR benchmark - in progress
 
 # RSR script example for obnum=33551  IRAS 10565+2448
-#  https://iopscience.iop.org/article/10.1088/0004-6256/138/3/858/pdf
+#  https://iopscience.iop.org/article/10.1088/0004-6256/138/3/858/pdf (Chung et al. 2009)
 #  RA 10 59 18.1 DEC  24 32 34 ;  tint 1.4h   rms 0.60 mK
 #     -p doesn't seem to do anything
 # Without the -o you get the default:
 #     I10565_rsr_spectrum_bandspec.txt   (this is the -o file)
 #     I10565_rsr_spectrum.txt            (not created if -o absent)
-# 5 bands, of which band 4: [(104.30771875, 112.27646875)] where the CO line is
+# 6 bands, of which band 4: [(104.30771875, 112.27646875)] where the CO line is
 
 rsr1:
 	cat rsr1.obsnum
@@ -154,6 +154,13 @@ rsr1a:
 	echo  "FIT shows      : $$a $$b $$c $$d $$rms"
 	@echo "FIT should show: a= -0.00218228 0.000231047  b= 0.049534 0.0010418  c= 110.514 0.000834269 d= 0.0347996 0.000866358 rms= 0.00110362"
 
+rsr1b:
+	$(TIME) python rsr_sum.py -b rsr1.blanking > rsr1b.log 2>&1
+	tabplot rsr1.blanking.sum.txt 1 2 line=1,1 ycoord=0 yapp=1/xs
+	-grep -v 0.000000 rsr1.blanking.sum.txt | tabtrend - 2 | tabhist - 1  -16 16   scale=1000 robust=t bins=32 yapp=2/xs
+
+rsr1c:
+	$(TIME) python seek_bad_channels.py 33551
 
 # typical timing for 300 obsnums (one still bad)
 # all procs:    2206.00user 123.86system 15:19.56elapsed 253%CPU
@@ -216,3 +223,4 @@ data:
 	lmtar m31_2019.tar 85775 85776 85777 85778 85823 85824
 	lmtar m51_2020.tar 91111 91112 90910 90911
 	lmtar 1mm_2018.tar 82479 82480
+	lmtar rsr_2018.tar 33550 33551
