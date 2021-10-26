@@ -85,8 +85,8 @@ elif [ $instrument = "RSR" ]; then
 	echo "Processing RSR for $ProjectId $obsnum $src"
 	mkdir -p $pdir
 	echo $obsnum > $pdir/rsr.obsnum
-	echo $obsnum > $pdir/rsr.blanking
 	lmtinfo.py $DATA_LMT $obsnum > $pdir/lmtoy_$obsnum.rc
+	rsr_blanking $obsnum > $pdir/rsr.blanking
     fi
     sleep $sleep
     pushd $pdir
