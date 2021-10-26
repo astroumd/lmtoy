@@ -11,7 +11,7 @@
 #
 # Possible CLI:
 #
-#    seed_bad_channels [-f obslist] [-p plot_max] [-b bc_threshold] [obsnum ....]
+#    seek_bad_channels [-f obslist] [-p plot_max] [-b bc_threshold] [obsnum ....]
 
 import os
 import sys
@@ -150,4 +150,4 @@ print('-----------------------')
 
 pl.savefig('sbc.png')
 print("Wrote sbc.png")
-pl.show()
+# pl.show()
