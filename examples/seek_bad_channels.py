@@ -131,15 +131,27 @@ print('-----------------------')
 print(' c  b  ch   scan metric')
 print('-----------------------')
 
+
+# fix the colors so they correspond to the colors as ordered by band in waterfall plot
+# @todo alternatively, order the columns so they are in the correct order
+
+c = pl.rcParams['axes.prop_cycle'].by_key()['color']
+b2b = [0, 2, 1, 3, 5, 4]
+colors = [c[b2b[0]], c[b2b[1]], c[b2b[2]], c[b2b[3]], c[b2b[4]], c[b2b[5]]]
+
+
 # for each chassis and each board, we plot maximum standard deviations found for all channels
 for ic in range(nchassis):
-    for ib in range(nboards):
+    for ib1 in range(nboards):
+        #ib = board2band[ib1]
+        ib = ib1
         plot_index = nboards*ic+ib+1
         ax = pl.subplot(nchassis,nboards,plot_index)
         #ax.tick_params(axis='both',which='major',labelsize=6)
         #ax.tick_params(axis='both',which='minor',labelsize=6)
-        pl.plot(findmax[ic,ib,:])
-        pl.title('chassis=%d board=%d'%(chassis_list[ic],board_list[ib]),fontsize=6)
+        pl.plot(findmax[ic,ib,:], c=colors[ib])
+        # pl.title('chassis=%d board=%d'%(chassis_list[ic],board_list[ib]),fontsize=6)
+        pl.title('chassis=%d band=%d'%(chassis_list[ic],board_list[b2b[ib]]),fontsize=6)        
         pl.axis([-10,265,0,plot_max])
         for chan in range(256):
             # check the value of the standard deviation against threshold and print if above threshold
