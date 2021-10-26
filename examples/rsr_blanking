@@ -1,0 +1,29 @@
+#! /usr/bin/env bash
+#
+
+set -e
+
+obsnum=$1
+
+source lmtoy_$obsnum.rc
+
+echo '#blanking file for rsr_sum.py'
+echo ''
+echo '#         this is the obsnum being used'
+echo "$obsnum"
+echo ''
+echo '# windows where baseline is computed'
+echo 'windows[0] = [(73.5,79.3)]'
+echo 'windows[1] = [(87.0,91.5)]'
+echo 'windows[2] = [(80.0,83.3),(83.8,84.6)]'
+echo 'windows[3] = [(92.5,98.0)]'
+echo 'windows[4] = [(104.0,105.3),(105.8,108.0),(109.0,109.9)]'
+echo 'windows[5] = [(98.1,104.5)]'
+echo ''
+echo '# example of blanking a chassis'
+echo '#33551  0'
+echo ''
+echo '# examples of blanking a chassis and various band combinations'
+echo '#33551  1 {2: [(80,90)]'
+echo '#40608,40609      0       {0: [(65.,100.)]}'
+echo '#51800-62000      0       {0: [(70.,100.)]}   {1: [(70.,100.)]}'
