@@ -130,6 +130,7 @@ print('Bad Channel Threshold = %6.1f'%(bc_threshold))
 print('-----------------------')
 print(' c  b  ch   scan metric')
 print('-----------------------')
+ftab = open('rsr.lags.bad','w')
 
 
 # fix the colors so they correspond to the colors as ordered by band in waterfall plot
@@ -156,9 +157,12 @@ for ic in range(nchassis):
         for chan in range(256):
             # check the value of the standard deviation against threshold and print if above threshold
             if findmax[ic,ib,chan] > bc_threshold:
-                print('%2d %2d %3d %6d %6.1f'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmax[ic,ib,chan]))
+                msg = '%2d %2d %3d %6d %6.1f'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmax[ic,ib,chan])
+                print(msg)
+                ftab.write("%s\n" % msg)
 
 print('-----------------------')
+ftab.close()
 
 pl.savefig('sbc.png')
 print("Wrote sbc.png")
