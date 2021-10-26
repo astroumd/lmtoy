@@ -226,7 +226,7 @@ first this could be written as an **NDarray**:
 
 .. code-block::
 
-      data[ntime, nbeam, nband, npol, nchan]
+      data[ntime, nbeam, npol, nband, nchan]
 
 where we added the ``ntime`` and ``nchan`` as the slowest resp. fastest running dimension
 in this row-major (python/C) notation.
@@ -248,7 +248,7 @@ Taking out those an observation can be seen as a set of spectra:
 
 .. code-block::
 
-      spectrum[nbeam, nband, npol]
+      spectrum[nbeam, npol, nband]
 
 This exactly matches the concepts used in an SDFITS file, although in the general
 definition of SDFITS there is no assumption of the data being able to be stored
@@ -267,18 +267,18 @@ Taking an inventory of current and known future LMT Spectral Line instruments:
 
 * RSR:
   two beams, two pols, 6 bands, though the term *chassis* is used to point at any
-  tuple of (beam,pol). So here we have nbeam=2, nband=6, npol=2, nchan=256 and ntime
+  tuple of (beam,pol). So here we have nbeam=2, npol=2,nband=6, nchan=256 and ntime
   it typically 10-20. Each beam happens to look at the same sky position here.
 
 .. note::  If an instrument like RSR would multiplex the (beam,pol) pairs, this would be a challenge
 	   to the assumption of homogeneity, and the SDFITS model would be more appropriate.
 
 * 1MMRx:
-  one beam, two pols, two sidebands. So here we have nbeam=1, nband=2, npol=2, nchan=2k
+  one beam, two pols, two sidebands. So here we have nbeam=1, bpol=2, nband=2, nchan=2k
 
 * SEQ:
   16 beams (though 4 beams per roach board, and each roach board has its own time) in one
-  band (they also call it bank) and one polarization. Thus nbeam=16, nband=1, npol=1
+  band (they also call it bank) and one polarization. Thus nbeam=16, npol=1, nband=1
 
 .. note::  The timestamps for the different roach boards make it impossible to store
 	   the data in a multi-dimensional array, unless (typicall one) integration
@@ -334,9 +334,9 @@ in the table we leave out the ``ntime`` dimension
    * - 1MMRx
      - 1
      - 2
-     - 4
+     - 2
      - 2k, 4k, 8k
-     - band: USB and LSB
+     - band: 2 IF's in USB/LSB
    * - B4R
      - 1
      - 2
