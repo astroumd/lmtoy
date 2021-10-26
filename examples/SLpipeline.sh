@@ -11,7 +11,7 @@
 #          htaccess control ?
 #          option to have a data+time ID in the name, by default it should be blank
 
-version="SLpipeline: 18-oct-2021"
+version="SLpipeline: 26-oct-2021"
 
 echo "LMTOY>> $version"
 if [ -z $1 ]; then
@@ -26,6 +26,7 @@ obsnum=0
 debug=0
 restart=0
 tar=1
+sleep=2
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -62,7 +63,7 @@ fi
 pdir=$work/$ProjectId/$obsnum
 if [ $restart != 0 ]; then
     echo Cleaning $pdir
-    sleep 2
+    sleep $sleep
     rm -rf $pdir
 fi
 
@@ -73,20 +74,46 @@ if [ $instrument = "SEQ" ]; then
     else
 	echo "Processing SEQ in $pdir for $src"
     fi
-    sleep 2
+    sleep $sleep
     mkdir -p $pdir
     lmtoy_reduce.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1    
     echo Logfile in: $pdir/lmtoy_$obsnum.log
 elif [ $instrument = "RSR" ]; then
-    echo Processing RSR for $ProjectId $obsnum
-    mkdir -p $pdir
-    echo $obsnum > $pdir/rsr.obsnum
-    python $LMTOY/RSR_driver/rsr_driver.py $pdir/rsr.obsnum   -w  $pdir/rsr.wf.pdf -p -b 3 
-    # python ../RSR_driver/rsr_driver.py rsr1.obsnum -w rsr1.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 
-    # python ../RSR_driver/rsr_driver.py rsr2.obsnum -w rsr2.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 85.2 0.4 > rsr2.log
+    if [ -d $pdir ]; then
+	echo "Re-Processing RSR in $pdir for $src (use restart=1 if you need a fresh start)"
+    else
+	echo "Processing RSR for $ProjectId $obsnum $src"
+	mkdir -p $pdir
+	echo $obsnum > $pdir/rsr.obsnum
+	echo $obsnum > $pdir/rsr.blanking
+	lmtinfo.py $DATA_LMT $obsnum > $pdir/lmtoy_$obsnum.rc
+    fi
+    sleep $sleep
+    pushd $pdir
+    # output: $src_rsr_spectrum.txt
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum   -w rsr.wf.pdf -p -b 3     > rsr1.log 2>&1
+    
+    # output: rsr.obsnum.sum.txt
+    python $LMTOY/examples/rsr_sum.py -b rsr.obsnum                               > rsr2.log 2>&1
+
+    # output: rsr.blanking.sum.txt
+    python $LMTOY/examples/rsr_sum.py -b rsr.blanking                             > rsr3.log 2>&1
+    
+    # output: sbc.png
+    python $LMTOY/examples/seek_bad_channels.py $obsnum                           > rsr4.log 2>&1
+    #
+    rsr_readme > README
+    popd
 elif [ $instrument = "1MM" ]; then
     # 
-    process_ps.py --obs_list $obsnum --pix_list 2 --bank 0 -p $DATA_LMT 
+    if [ -d $pdir ]; then
+	echo "Re-Processing 1MM in $pdir for $src"
+    else
+	echo "Processing 1MM in $pdir for $src"
+    fi
+    sleep $sleep
+    mkdir -p $pdir
+    (cd $pdir; process_ps.py --obs_list $obsnum --pix_list 2 --bank 0 -p $DATA_LMT )
 else
     echo Unknown instrument $instrument
 fi
