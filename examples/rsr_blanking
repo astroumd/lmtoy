@@ -5,7 +5,7 @@ set -e
 
 obsnum=$1
 
-source lmtoy_$obsnum.rc
+# source lmtoy_$obsnum.rc
 
 echo '#blanking file for rsr_sum.py'
 echo ''
