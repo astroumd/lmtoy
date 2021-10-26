@@ -1,6 +1,7 @@
 #! /usr/bin/env bash
 #
 
+echo "<pre>"
 echo "In this directory you will find data products of a single RSR obsnum"
 echo "resulting from (currently) running three scripts"
 echo "rsr1.log:  rsr_driver.py "
@@ -12,3 +13,4 @@ echo "rsr3.log:  rsr_sum.py with optional blanking (edit rsr.blanking for now)"
 echo "              -> rsr.blanking.sum.txt"
 echo "rsr4.log:  seek_bad_channels.py"
 echo "              -> sbc.png"
+echo "</pre>"

@@ -102,7 +102,7 @@ elif [ $instrument = "RSR" ]; then
     # output: sbc.png
     python $LMTOY/examples/seek_bad_channels.py $obsnum                           > rsr4.log 2>&1
     #
-    rsr_readme > README
+    rsr_readme > README.html
     popd
 elif [ $instrument = "1MM" ]; then
     # 
