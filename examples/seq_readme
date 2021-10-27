@@ -1,0 +1,19 @@
+#! /usr/bin/env bash
+#
+
+
+
+echo "<B>Some background on <A HREF=http://lmtgtm.org/telescope/instrumentation/instruments/sequoia/>SEQUOIA</A> and the information you see here:</B>"
+echo "<OL> "
+echo "<LI> 16 pixels, or beams, at the sky in a 4x4 pattern "
+echo "<LI> 2k, 4k or 8k channels"
+echo "<LI> Usually observed in OTF mode"
+echo "<LI> "
+echo "<LI> "
+echo "<LI> "
+echo "</OL>"
+echo ""
+echo "In this directory you will find data products of a single SEQ obsnum"
+echo "as well as a followup run with ADMIT on the originally sampled and a smoothed cube."
+echo "</pre>"
+
