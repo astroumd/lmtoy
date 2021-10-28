@@ -158,9 +158,9 @@ ftab = open('rsr.lags.bad','w')
 # fix the colors so they correspond to the colors as ordered by band in waterfall plot
 # @todo alternatively, order the columns so they are in the correct order band order, not board order
 
-c = pl.rcParams['axes.prop_cycle'].by_key()['color']
+colors = pl.rcParams['axes.prop_cycle'].by_key()['color']
 b2b = [0, 2, 1, 3, 5, 4]
-colors = [c[b2b[0]], c[b2b[1]], c[b2b[2]], c[b2b[3]], c[b2b[4]], c[b2b[5]]]
+#colors = [c[b2b[0]], c[b2b[1]], c[b2b[2]], c[b2b[3]], c[b2b[4]], c[b2b[5]]]
 
 peaks = []
 for ic in range(nchassis):
@@ -175,8 +175,8 @@ for ic in range(nchassis):
                 ftab.write("%s\n" % msg)
                 peaks.append((ic,ib,chan))
 
-
-if debug:
+#  patch away the bad lags
+if False:
     for p in peaks:
         ic = p[0]
         ib = p[1]
