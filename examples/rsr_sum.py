@@ -12,6 +12,7 @@
 
 -b BLANKING_FILE              Input ASCII blanking file. No default.
 -t THRESHOLD_SIGMA            Threshold sigma in spectrum needed for averaging [Default: 0.01]
+--badlags BADLAGS_FILE        Input rsr.lags.bad file. Optional.
 --o1 ORDER1 -1 ORDER1         Baseline order fit for individual spectra [Default: 1]
 --o2 ORDER2 -2 ORDER2         Baseline order fit for final combined spectrum [Default: -1]
                               Use -1 to skip another fit
@@ -36,7 +37,13 @@ The format of this blanking file is currently as follows (subject to change):
        65432
        # list of obsnums where blanking is needed.
        12345,12346  0
-       30001-30100  2    {4: [(95.,111.)]}   {5: [(95.,111.)]} 
+       30001-30100  2    {4: [(95.,111.)]}   {5: [(95.,111.)]}
+
+A badlags file can be optionally passed in. It will be a file where the first 3 columns
+are tuples of Chassis,Board,LagChannel that is deemed bad. seek_bad_channels.py is a program
+that can create it.
+
+
 
 
 """
@@ -53,6 +60,37 @@ from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 from dreampy3.redshift.plots import RedshiftPlot
 # import gain
 from blanking import blanking
+
+def pjt_badlags(badlag_file=None, debug=False):
+    """
+       reset all badlags and inherit them from the (chassis,board,channel) list
+    """
+    import dreampy3 as dreampy
+    # awkward:  blank the bad_lags from the ~/.dreampy/dreampyrc file
+    for c in range(4):
+        dreampy.dreampyParams['redshiftchassis']['bad_lags%d' % c] = ['', '', '', '', '', '']
+
+    if badlag_file == None:
+        return
+
+    with open(badlag_file) as blfile:
+        for line in blfile.readlines():
+            if line[0]=='#': continue
+            words = line.split()
+            bad_c = int(words[0])
+            bad_b = int(words[1])
+            bad_l = int(words[2])
+            dp = dreampy.dreampyParams['redshiftchassis']['bad_lags%d' % bad_c][bad_b]
+            if len(dp) == 0:
+                # print("PJT0",bad_c,bad_b,bad_l)
+                dreampy.dreampyParams['redshiftchassis']['bad_lags%d' % bad_c][bad_b] = '%d' % bad_l
+            else:
+                # print("PJT1",bad_c,bad_b,bad_l,dp)
+                dreampy.dreampyParams['redshiftchassis']['bad_lags%d' % bad_c][bad_b] = dp + '/%d' % bad_l
+    if debug:
+        print('BAD LAGS:')
+        print(dreampy.dreampyParams['redshiftchassis'])
+
 
 
 def main(argv):
@@ -78,6 +116,10 @@ def main(argv):
     order1 = int(av['--o1'])
     order2 = int(av['--o2'])
 
+    # --badlags
+    if av['--badlags'] != None:
+        pjt_badlags(av['--badlags'])
+    
     sourceobs = blanking_file + '.sum'
     (obslist,blanks,windows)  = blanking(blanking_file)
     hdulist=[]
