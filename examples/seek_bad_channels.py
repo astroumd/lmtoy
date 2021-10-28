@@ -59,6 +59,8 @@ plot_max = 10
 # set the threshold for a bad channel (3 is not bad, but look at plot and experiment!)
 bc_threshold = 3.0
 
+# more debugging output ?
+debug = True
 
 # now ready to process.  First read in the data from the file or commandline
 
@@ -128,6 +130,13 @@ for iobs in range(len(o_list)):
                 if sigma>findmax[ic,ib,chan]:
                     scanmax[ic,ib,chan] = o_list[iobs]
                     findmax[ic,ib,chan] = sigma
+            if debug:
+                for chan in range(nchan):
+                    if findmax[ic,ib,chan] > bc_threshold:
+                        print("#    ",ic,ib,chan)
+                        print('CHAN-',numpy.std(acf_diff[:,chan-1]), acf_diff[:,chan-1])
+                        print('CHAN.',numpy.std(acf_diff[:,chan+0]), acf_diff[:,chan+0])
+                        print('CHAN+',numpy.std(acf_diff[:,chan+1]), acf_diff[:,chan+1])
         # close the data file for this chassis
         nc.sync()
         nc.close()
@@ -167,7 +176,7 @@ for ic in range(nchassis):
                 peaks.append((ic,ib,chan))
 
 
-if False:
+if debug:
     for p in peaks:
         ic = p[0]
         ib = p[1]
@@ -176,9 +185,10 @@ if False:
 plot_max = bc_threshold
 
 
-for ic in range(nchassis):
-    for ib in range(nboards):
-        print('RMS_diff %2d %2d  %.3f' % (ic,ib,rmsdiff(findmax[ic,ib,:])))
+if debug:
+    for ic in range(nchassis):
+        for ib in range(nboards):
+            print('RMS_diff %2d %2d  %.3f' % (ic,ib,rmsdiff(findmax[ic,ib,:])))
 
 
 # for each chassis and each board, we plot maximum standard deviations found for all channels
