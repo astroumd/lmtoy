@@ -7,11 +7,13 @@
 #
 
 
-version="lmtoy_admit: 19-oct-2021"
+version="lmtoy_admit: 31-oct-2021"
 
 if [ -z $1 ]; then
-    echo "LMTOY>> Usage: fits_file(s)"
+    echo "LMTOY>> Usage: [.fits | .txt]"
     echo ""
+    echo "   .fits files are assumed to be cubes and 'admit1' will be used"
+    echo "   .txt  files are assumed to be spectra and 'admit4' will be used"
     exit 0
 else
     echo "LMTOY>> $version"
@@ -38,7 +40,7 @@ fi
 
 #  exists?
 if [ ! -e $ffile ]; then
-    echo Warning: fits file $ffile does not exist, no ADMIT processing
+    echo Warning: file $ffile does not exist, no ADMIT processing
     exit 0
 fi    
 
@@ -75,7 +77,13 @@ if [ ! -z $ADMIT ]; then
     
     # make sure Xvfb has been cleaned up
     casaclean
-    
-    runa1 $ffile
+
+    if [[ $ffile == *.fits ]] ; then
+	runa1 $ffile
+    elif [[ $ffile == *.txt ]] ; then
+	runa4 $ffile
+    else
+	echo "Unknown file extension in $ffile (.fits and .txt are currently supported)"
+    fi
 fi
 
