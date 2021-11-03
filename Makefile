@@ -32,6 +32,8 @@ URL12c= https://github.com/b4r-dev/devtools
 URL13a= https://github.com/gopastro/cubevis
 URL13b= https://github.com/gopastro/sculpt
 URL14 = https://github.com/teuben/gbtgridder
+URL15 = https://github.com/lmt-heterodyne/RedshiftPointing
+URL16 = https://github.com/lmt-heterodyne/LinePointing
 
 .PHONY:  help install build
 
@@ -55,7 +57,8 @@ help install:
 
 # git directories we should have here
 
-GIT_DIRS = SpectralLineReduction dreampy3 maskmoment RSR_driver nemo Montage b4r
+GIT_DIRS = SpectralLineReduction dreampy3 maskmoment RSR_driver nemo Montage b4r \
+           RedshiftPointing LinePointing
 
 git:  $(GIT_DIRS)
 	@echo Last git: `date` >> git.log
@@ -134,6 +137,12 @@ pyspeckit:
 
 gbtgridder:
 	git clone -b python3 $(URL14)
+
+RedshiftPointing:
+	git clone $(URL15)
+
+LinePointing:
+	git clone $(URL16)
 
 
 # hack for Linux  (@todo Mac)
