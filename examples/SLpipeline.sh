@@ -11,7 +11,7 @@
 #          htaccess control ?
 #          option to have a data+time ID in the name, by default it should be blank
 
-version="SLpipeline: 26-oct-2021"
+version="SLpipeline: 1-nov-2021"
 
 echo "LMTOY>> $version"
 if [ -z $1 ]; then
@@ -89,18 +89,27 @@ elif [ $instrument = "RSR" ]; then
 	rsr_blanking $obsnum > $pdir/rsr.blanking
     fi
     sleep $sleep
+
+    # rsr_pipeline.sh pdir=$pdir $*
+    
     pushd $pdir
+
+    # output: rsr.lags.bad sbc.png 
+    python $LMTOY/examples/seek_bad_channels.py $obsnum                           > rsr4.log 2>&1
+    
     # output: $src_rsr_spectrum.txt
     python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum   -w rsr.wf.pdf -p -b 3     > rsr1.log 2>&1
     
     # output: rsr.obsnum.sum.txt
-    python $LMTOY/examples/rsr_sum.py -b rsr.obsnum                               > rsr2.log 2>&1
+    python $LMTOY/examples/rsr_sum.py -b rsr.obsnum  --badlags rsr.lags.bad       > rsr2.log 2>&1
 
     # output: rsr.blanking.sum.txt
-    python $LMTOY/examples/rsr_sum.py -b rsr.blanking                             > rsr3.log 2>&1
+    python $LMTOY/examples/rsr_sum.py -b rsr.blanking  --badlags rsr.lags.bad     > rsr3.log 2>&1
+
+    #
+    lmtoy_admit.sh rsr.blanking.sum.txt
+    lmtoy_admit.sh ${src}_rsr_spectrum.txt
     
-    # output: sbc.png
-    python $LMTOY/examples/seek_bad_channels.py $obsnum                           > rsr4.log 2>&1
     #
     rsr_readme > README.html
     popd

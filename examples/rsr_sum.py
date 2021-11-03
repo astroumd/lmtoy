@@ -40,9 +40,8 @@ The format of this blanking file is currently as follows (subject to change):
        30001-30100  2    {4: [(95.,111.)]}   {5: [(95.,111.)]}
 
 A badlags file can be optionally passed in. It will be a file where the first 3 columns
-are tuples of Chassis,Board,LagChannel that is deemed bad. seek_bad_channels.py is a program
-that can create it.
-
+are tuples of Chassis,Board,Channel that is deemed a bad channel.
+seek_bad_channels.py is a program that can create it.
 
 
 
@@ -55,6 +54,7 @@ import numpy as np
 import glob
 from docopt import docopt
 
+import dreampy3
 from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 # from dreampy3.utils.filterscans import FilterScans
 from dreampy3.redshift.plots import RedshiftPlot
@@ -64,6 +64,10 @@ from blanking import blanking
 def pjt_badlags(badlag_file=None, debug=False):
     """
        reset all badlags and inherit them from the (chassis,board,channel) list
+    
+       Note this will leave badlags settings in the dreampyParams (see ~/.dreampy/dreampyrc)
+       so if a program does not use badlags, it still needs to be called with no argument
+       to reset them!
     """
     import dreampy3 as dreampy
     # awkward:  blank the bad_lags from the ~/.dreampy/dreampyrc file
@@ -118,7 +122,9 @@ def main(argv):
 
     # --badlags
     if av['--badlags'] != None:
-        pjt_badlags(av['--badlags'])
+        dreampy3.badlags(av['--badlags'])
+    else:
+        dreampy3.badlags()
     
     sourceobs = blanking_file + '.sum'
     (obslist,blanks,windows)  = blanking(blanking_file)
