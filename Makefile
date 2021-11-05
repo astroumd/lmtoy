@@ -19,6 +19,7 @@ URL5  = https://github.com/teuben/nemo
 URL6  = https://github.com/teuben/maskmoment
 URL7  = https://github.com/gopastro/sculpt
 URL8  = https://github.com/LMTdevs/RSR_driver
+URL8a = https://github.com/teuben/RSR_driver
 URL9a = https://github.com/toltec-astro/dasha
 URL9b = https://github.com/toltec-astro/tollan
 URL9c = https://github.com/toltec-astro/tolteca
@@ -115,7 +116,7 @@ sculpt:
 	git clone $(URL7)
 
 RSR_driver:
-	git clone $(URL8)
+	git clone --branch teuben1 $(URL8a)
 
 dasha:
 	git clone $(URL9a)
