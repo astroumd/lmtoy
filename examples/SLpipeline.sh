@@ -11,7 +11,7 @@
 #          htaccess control ?
 #          option to have a data+time ID in the name, by default it should be blank
 
-version="SLpipeline: 1-nov-2021"
+version="SLpipeline: 5-nov-2021"
 
 echo "LMTOY>> $version"
 if [ -z $1 ]; then
@@ -76,7 +76,8 @@ if [ $instrument = "SEQ" ]; then
     fi
     sleep $sleep
     mkdir -p $pdir
-    lmtoy_reduce.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1    
+    lmtoy_reduce.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1
+    readme_seq > $pdir/README.html
     echo Logfile in: $pdir/lmtoy_$obsnum.log
 elif [ $instrument = "RSR" ]; then
     if [ -d $pdir ]; then
@@ -101,15 +102,23 @@ elif [ $instrument = "RSR" ]; then
     # output: $src_rsr_spectrum.txt
     b=""
     b="--badlags rsr.lags.bad"
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum   -w rsr.wf.pdf -p -b 3 $b  > rsr1.log 2>&1
-    
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b -w rsr.wf.pdf -p -b 3  > rsr1.log 2>&1    
     # output: rsr.obsnum.sum.txt
-    python $LMTOY/examples/rsr_sum.py -b rsr.obsnum  --badlags rsr.lags.bad       > rsr2.log 2>&1
+    python $LMTOY/examples/rsr_sum.py -b rsr.obsnum    $b                        > rsr2.log 2>&1
 
     # output: rsr.blanking.sum.txt
-    python $LMTOY/examples/rsr_sum.py -b rsr.blanking  --badlags rsr.lags.bad     > rsr3.log 2>&1
+    python $LMTOY/examples/rsr_sum.py -b rsr.blanking  $b                        > rsr3.log 2>&1
 
-    #
+    # NEMO summary spectra
+    dev=$(yapp_query png ps)
+    tabplot ${src}_rsr_spectrum.txt    line=1,1 color=2 ycoord=0      yapp=${src}_rsr_spectrum.sp.$dev/$dev  debug=-1
+    tabplot rsr.obsnum.sum.txt         line=1,1 color=2 ycoord=0      yapp=rsr.obsnum.sum.sp.$dev/$dev       debug=-1
+    tabplot rsr.blanking.sum.txt       line=1,1 color=2 ycoord=0      yapp=rsr.blanking.sum.sp.$dev/$dev     debug=-1
+    tabtrend ${src}_rsr_spectrum.txt 2 | tabhist - robust=t xcoord=0  yapp=${src}_rsr_spectrum.rms.$dev/$dev debug=0
+    tabtrend rsr.obsnum.sum.txt      2 | tabhist - robust=t xcoord=0  yapp=rsr.obsnum.sum.rms.$dev/$dev      debug=0
+    tabtrend rsr.blanking.sum.txt    2 | tabhist - robust=t xcoord=0  yapp=rsr.blanking.sum.rms.$dev/$dev    debug=0
+
+    # ADMIT
     lmtoy_admit.sh rsr.blanking.sum.txt
     lmtoy_admit.sh ${src}_rsr_spectrum.txt
     
