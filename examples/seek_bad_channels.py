@@ -18,13 +18,11 @@
 
 -b THRESHOLD                  Threshold sigma in spectrum needed for averaging [Default: 0.01]
 -p PLOT_MAX                   Plot max. If not given, the THRESHOLD is used
---badlags BADLAGS_FILE        Input rsr.lags.bad file. Optional.
-
--p PATH                       Data path to data_lmt for the raw RedshiftChassis files.
-                              By default $DATA_LMT will be used else '/data_lmt'.
+-f OBSLIST                    List of OBSNUM's. Not used.
+-B --badlags BADLAGS_FILE     Output rsr.lags.bad file. If not provided, it will not be written
+-d                            Add more debug output
 
 -h --help                     show this help
-
 
 
 A badlags file can be optionally passed in. It will be a file where the first 3 columns
@@ -72,10 +70,10 @@ else:
 # Here is the list of chassis and boards to review
 # You can specify any number with chassis and board id's in a list
 nchassis = 4
-nchan = 256
-chassis_list = (0,1,2,3) # CHASSIS IDENTIFIERS
-nboards = 6
-board_list = (0,1,2,3,4,5) # BOARD (NOT FREQUENCY BAND) IDENTIFIERS 
+nboards  = 6
+nchan    = 256
+chassis_list = (0,1,2,3)     # CHASSIS IDENTIFIERS
+board_list   = (0,1,2,3,4,5) # BOARD (NOT FREQUENCY BAND) IDENTIFIERS 
 
 # The program produces a plot showing the maximum value of the standard deviation
 # for each channel.  You can set the maximum for the y axis in the plots (10 is good) 
@@ -200,15 +198,8 @@ for ic in range(nchassis):
                 ftab.write("%s\n" % msg)
                 peaks.append((ic,ib,chan))
 
-#  patch away the bad lags
-if False:
-    for p in peaks:
-        ic = p[0]
-        ib = p[1]
-        chan = p[2]
-        findmax[ic,ib,chan] =  (findmax[ic,ib,chan-1] +   findmax[ic,ib,chan-1])/2
-plot_max = bc_threshold
-
+if True:        
+    plot_max = bc_threshold
 
 if debug:
     for ic in range(nchassis):
