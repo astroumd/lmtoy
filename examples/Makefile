@@ -116,9 +116,10 @@ test1:
 	irc_reduce.sh makespec=0 pix_list=3,7,11,15   > test1h.log 2>&1; mv IRC_79448.fits test1h.fits
 
 
-# RSR benchmark - in progress
+# RSR benchmark
 
-# RSR script example for obnum=33551  IRAS 10565+2448
+# RSR script example for obnum=33551  IRAS 10565+2448   cz=12921 km/s
+ 
 #  https://iopscience.iop.org/article/10.1088/0004-6256/138/3/858/pdf (Chung et al. 2009)
 #  RA 10 59 18.1 DEC  24 32 34 ;  tint 1.4h   rms 0.60 mK
 #     -p doesn't seem to do anything
@@ -127,9 +128,11 @@ test1:
 #     I10565_rsr_spectrum.txt            (not created if -o absent)
 # 6 bands, of which band 4: [(104.30771875, 112.27646875)] where the CO line is
 
+BADLAGS = --badlags rsr.lags.bad
+
 rsr1:
 	cat rsr1.obsnum
-	$(TIME) python ../RSR_driver/rsr_driver.py rsr1.obsnum -w rsr1.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 > rsr1.log 2>&1
+	$(TIME) python ../RSR_driver/rsr_driver.py rsr1.obsnum -w rsr1.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 $(BADLAGS) > rsr1.log 2>&1
 	cp I10565_rsr_spectrum.txt I10565_rsr1_spectrum.txt
 	@echo The following two plots should be "identical", but first one peaks at 46mK, second at 50mK.
 	-tabplot I10565_rsr1_spectrum.txt         xcol=1 ycol=2  xmin=104 xmax=112 ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
@@ -145,7 +148,7 @@ rsr1:
 	@echo "FIT should show: a= -4.68656e-05 0.000227127  b= 0.0504297 0.00101759  c= 110.514 0.000808871 d= 0.0351696 0.00084017 rms= 0.00108359"
 
 rsr1a:
-	$(TIME) python rsr_sum.py -b rsr1.obsnum  > rsr1a.log 2>&1
+	$(TIME) python rsr_sum.py -b rsr1.obsnum $(BADLAGS)  > rsr1a.log 2>&1
 	@echo "Determine the RMS*sqrt(2) in mK"
 	-grep -v nan rsr1.obsnum.sum.txt | tabtrend - 2 | tabhist - 1  -4 4     scale=1000 robust=t yapp=I10565_rsr1a_rms.png/png
 	@echo "Example fit of the 12CO line"
@@ -155,7 +158,7 @@ rsr1a:
 	@echo "FIT should show: a= -0.00218228 0.000231047  b= 0.049534 0.0010418  c= 110.514 0.000834269 d= 0.0347996 0.000866358 rms= 0.00110362"
 
 rsr1b:
-	$(TIME) python rsr_sum.py -b rsr1.blanking > rsr1b.log 2>&1
+	$(TIME) python rsr_sum.py -b rsr1.blanking $(BADLAGS) > rsr1b.log 2>&1
 	tabplot rsr1.blanking.sum.txt 1 2 line=1,1 ycoord=0 yapp=1/xs
 	-grep -v 0.000000 rsr1.blanking.sum.txt | tabtrend - 2 | tabhist - 1  -16 16   scale=1000 robust=t bins=32 yapp=2/xs
 
