@@ -7,16 +7,41 @@
 #
 # Revision 2014-03-04: Fixed problem with variable for number of channels.  Now always do 256 channels
 #          2021-02-23: Converted for dreampy3/python3
+#          2021-10-28: write badlags file. use docopt for CLI parsing
 #
 #
 # Possible CLI:
 #
 #    seek_bad_channels [-f obslist] [-p plot_max] [-b bc_threshold] [obsnum ....]
 
+"""Usage: seek_bad_channels.py [-f obslist] [-p plot_max] [-b bc_threshold] [obsnum ....]
+
+-b THRESHOLD                  Threshold sigma in spectrum needed for averaging [Default: 0.01]
+-p PLOT_MAX                   Plot max. If not given, the THRESHOLD is used
+--badlags BADLAGS_FILE        Input rsr.lags.bad file. Optional.
+
+-p PATH                       Data path to data_lmt for the raw RedshiftChassis files.
+                              By default $DATA_LMT will be used else '/data_lmt'.
+
+-h --help                     show this help
+
+
+
+A badlags file can be optionally passed in. It will be a file where the first 3 columns
+are tuples of Chassis,Board,Channel that is deemed a bad channel.
+seek_bad_channels.py is a program that can create it.
+
+
+
+"""
+
+
+
 import os
 import sys
 import glob
 import numpy
+from docopt import docopt
 from matplotlib import pyplot as pl
 from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 
@@ -131,7 +156,7 @@ for iobs in range(len(o_list)):
                     scanmax[ic,ib,chan] = o_list[iobs]
                     findmax[ic,ib,chan] = sigma
             if debug:
-                for chan in range(nchan):
+                for chan in range(1,nchan-1):
                     if findmax[ic,ib,chan] > bc_threshold:
                         print("#    ",ic,ib,chan)
                         print('CHAN-',numpy.std(acf_diff[:,chan-1]), acf_diff[:,chan-1])
