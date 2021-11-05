@@ -94,11 +94,14 @@ elif [ $instrument = "RSR" ]; then
     
     pushd $pdir
 
+    
     # output: rsr.lags.bad sbc.png 
     python $LMTOY/examples/seek_bad_channels.py $obsnum                           > rsr4.log 2>&1
     
     # output: $src_rsr_spectrum.txt
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum   -w rsr.wf.pdf -p -b 3     > rsr1.log 2>&1
+    b=""
+    b="--badlags rsr.lags.bad"
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum   -w rsr.wf.pdf -p -b 3 $b  > rsr1.log 2>&1
     
     # output: rsr.obsnum.sum.txt
     python $LMTOY/examples/rsr_sum.py -b rsr.obsnum  --badlags rsr.lags.bad       > rsr2.log 2>&1
