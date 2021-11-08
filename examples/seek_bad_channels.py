@@ -19,7 +19,7 @@
 -b THRESHOLD                  Threshold sigma in spectrum needed for averaging [Default: 0.01]
 -p PLOT_MAX                   Plot max. If not given, the THRESHOLD is used
 -f OBSLIST                    List of OBSNUM's. Not used.
--B --badlags BADLAGS_FILE     Output rsr.lags.bad file. If not provided, it will not be written
+-B --badlags BADLAGS_FILE     Output rsr.badlags file. If not provided, it will not be written
 -d                            Add more debug output
 
 -h --help                     show this help
@@ -175,7 +175,7 @@ print('Bad Channel Threshold = %6.1f'%(bc_threshold))
 print('-----------------------')
 print(' c  b  ch   scan metric')
 print('-----------------------')
-ftab = open('rsr.lags.bad','w')
+ftab = open('rsr.badlags','w')
 
 
 # fix the colors so they correspond to the colors as ordered by band in waterfall plot
