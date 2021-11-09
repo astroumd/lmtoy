@@ -88,6 +88,8 @@ elif [ $instrument = "RSR" ]; then
 	echo $obsnum > $pdir/rsr.obsnum
 	lmtinfo.py $DATA_LMT $obsnum > $pdir/lmtoy_$obsnum.rc
 	rsr_blanking $obsnum > $pdir/rsr.blanking
+	echo '#   for rsr_driver'      > $pdir/rsr.rfile
+	echo '#  obsnum,chassis,band' >> $pdir/rsr.rfile
     fi
     sleep $sleep
 
@@ -96,18 +98,20 @@ elif [ $instrument = "RSR" ]; then
     pushd $pdir
 
     
-    # output: rsr.lags.bad sbc.png 
-    python $LMTOY/examples/seek_bad_channels.py $obsnum                           > rsr4.log 2>&1
-    
+    # output: rsr.badlags sbc.png
+    if [ ! -e rsr.badlags ]; then
+        python $LMTOY/examples/seek_bad_channels.py $obsnum                      > rsr4.log 2>&1
+    fi
     # output: $src_rsr_spectrum.txt
     b=""
-    b="--badlags rsr.lags.bad"
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b -w rsr.wf.pdf -p -b 3  > rsr1.log 2>&1    
+    b="--badlags rsr.badlags"
+    r="--rfile rsr.rfile"
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r -w rsr.wf.pdf -p -b 3  > rsr1.log 2>&1    
     # output: rsr.obsnum.sum.txt
-    python $LMTOY/examples/rsr_sum.py -b rsr.obsnum    $b                        > rsr2.log 2>&1
+    python $LMTOY/examples/rsr_sum.py -b rsr.obsnum    $b                           > rsr2.log 2>&1
 
     # output: rsr.blanking.sum.txt
-    python $LMTOY/examples/rsr_sum.py -b rsr.blanking  $b                        > rsr3.log 2>&1
+    python $LMTOY/examples/rsr_sum.py -b rsr.blanking  $b                           > rsr3.log 2>&1
 
     # NEMO summary spectra
     dev=$(yapp_query png ps)
