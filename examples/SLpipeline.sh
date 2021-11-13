@@ -105,11 +105,6 @@ elif [ $instrument = "RSR" ]; then
 	mkdir -p $pdir
 	echo $obsnum > $pdir/rsr.obsnum
 	lmtinfo.py $DATA_LMT $obsnum > $pdir/lmtoy_$obsnum.rc
-	rsr_blanking $obsnum > $pdir/rsr.blanking
-	echo '#   for rsr_driver'      > $pdir/rsr.rfile
-	echo '#  obsnum,chassis,band' >> $pdir/rsr.rfile
-	echo "#e.g. $obsnum,0,0"      >> $pdir/rsr.rfile
-	echo "#e.g. $obsnum,3,5"      >> $pdir/rsr.rfile
 	date > $pdir/date.log	
     fi
     sleep $sleep

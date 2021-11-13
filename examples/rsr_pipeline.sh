@@ -106,26 +106,37 @@ else
     first=1
 fi
 
+blanking=rsr.$obsnum.blanking
+rfile=rsr.$obsnum.rfile
+badlags=rsr.$obsnum.badlags
+
+if [ $first == 1 ]; then
+    rsr_blanking $obsnum     > $blanking
+    rsr_rfile    $obsnum     > $rfile
+    # note $badlags is created by seed_bad_channels
+fi
+
 # first time, do a run with no badlags or rfile
 if [ $first == 1 ]; then
     python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  -w rsr.wf0.pdf -p -b 3   > rsr0.log 2>&1	
 fi
     
-# output: rsr.badlags sbc.png
-if [ ! -e rsr.badlags ]; then
+# output: rsr.$obsnum.badlags sbc.png
+if [ ! -e $badlags ]; then
     python $LMTOY/examples/seek_bad_channels.py $obsnum                         > rsr4.log 2>&1
+    mv rsr.badlags $badlags
 fi
     
 # output: $src_rsr_spectrum.txt
-b="--badlags rsr.badlags"
-r="--rfile rsr.rfile"
+b="--badlags $badlags"
+r="--rfile $rfile"
 python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r -w rsr.wf.pdf -p -b 3  > rsr1.log 2>&1
 
 # output: rsr.obsnum.sum.txt
 python $LMTOY/examples/rsr_sum.py -b rsr.obsnum    $b                           > rsr2.log 2>&1
 
 # output: rsr.blanking.sum.txt
-python $LMTOY/examples/rsr_sum.py -b rsr.blanking  $b                           > rsr3.log 2>&1
+python $LMTOY/examples/rsr_sum.py -b $blanking  $b                              > rsr3.log 2>&1
 
 # NEMO summary spectra
 if [ ! -z $NEMO ]; then
@@ -133,10 +144,10 @@ if [ ! -z $NEMO ]; then
     dev=$(yapp_query png ps)
     tabplot ${src}_rsr_spectrum.txt    line=1,1 color=2 ycoord=0      yapp=${src}_rsr_spectrum.sp.$dev/$dev  debug=-1
     tabplot rsr.obsnum.sum.txt         line=1,1 color=2 ycoord=0      yapp=rsr.obsnum.sum.sp.$dev/$dev       debug=-1
-    tabplot rsr.blanking.sum.txt       line=1,1 color=2 ycoord=0      yapp=rsr.blanking.sum.sp.$dev/$dev     debug=-1
+    tabplot ${blanking}.sum.txt        line=1,1 color=2 ycoord=0      yapp=${blanking}.sum.sp.$dev/$dev      debug=-1
     tabtrend ${src}_rsr_spectrum.txt 2 | tabhist - robust=t xcoord=0  yapp=${src}_rsr_spectrum.rms.$dev/$dev debug=0
     tabtrend rsr.obsnum.sum.txt      2 | tabhist - robust=t xcoord=0  yapp=rsr.obsnum.sum.rms.$dev/$dev      debug=0
-    tabtrend rsr.blanking.sum.txt    2 | tabhist - robust=t xcoord=0  yapp=rsr.blanking.sum.rms.$dev/$dev    debug=0
+    tabtrend ${blanking}.sum.txt     2 | tabhist - robust=t xcoord=0  yapp=${blanking}.sum.rms.$dev/$dev     debug=0
 else
     echo "LMTOY>> Skipping NEMO"
 fi
