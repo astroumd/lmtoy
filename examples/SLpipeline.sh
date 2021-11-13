@@ -92,7 +92,6 @@ if [ $instrument = "SEQ" ]; then
     fi
     sleep $sleep
     seq_pipeline.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1
-    readme_seq > $pdir/README.html
     date >> $pdir/date.log	
     echo Logfile in: $pdir/lmtoy_$obsnum.log
 elif [ $instrument = "RSR" ]; then
