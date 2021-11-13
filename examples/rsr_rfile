@@ -1,0 +1,14 @@
+#! /usr/bin/env bash
+#
+
+set -e
+
+obsnum=$1
+
+# source lmtoy_$obsnum.rc
+
+echo '# rfile for rsr_driver'
+echo '#   for rsr_driver' 
+echo '#  obsnum,chassis,band' 
+echo "#e.g. $obsnum,0,0" 
+echo "#e.g. $obsnum,3,5"
