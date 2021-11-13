@@ -10,6 +10,13 @@ WGET = wget
 # use python3 or anaconda3
 PYTHON = anaconda3
 
+# git directories we should have here
+
+GIT_DIRS = SpectralLineReduction dreampy3 maskmoment RSR_driver nemo Montage b4r \
+           RedshiftPointing LinePointing
+
+# URLs that we'll need
+
 URL1  = https://github.com/teuben/SpectralLineReduction
 URL1a = https://github.com/teuben/SpectralLineReduction
 URL2  = https://github.com/lmt-heterodyne/dreampy3
@@ -55,11 +62,6 @@ help install:
 	@echo "    make pull                  update all git repos"
 	@echo "    make status                view git status in all repos"
 	@echo ""
-
-# git directories we should have here
-
-GIT_DIRS = SpectralLineReduction dreampy3 maskmoment RSR_driver nemo Montage b4r \
-           RedshiftPointing LinePointing
 
 git:  $(GIT_DIRS)
 	@echo Last git: `date` >> git.log
