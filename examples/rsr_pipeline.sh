@@ -144,22 +144,19 @@ fi
 
 # ADMIT
 if [ $admit == 1 ]; then
+    echo "LMTOY>> ADMIT post-processing"
     lmtoy_admit.sh rsr.blanking.sum.txt
     lmtoy_admit.sh ${src}_rsr_spectrum.txt
 fi
     
-#
-rsr_readme > README.html
-
 # first time?
 if [ $first == 1 ]; then
     echo "RSR: first time run, preserving a few first run figures"
 fi
 
-echo "LMTOY>> ADMIT post-processing"
-lmtoy_admit.sh
-
 echo "LMTOY>> Parameter file used: $rc"
+
+rsr_readme > README.html
 
 #echo "LMTOY>> Making summary index.html:"
 #mk_index.sh
