@@ -43,6 +43,7 @@ makewf=1
 viewspec=1
 viewcube=0
 viewnemo=1
+admit=1
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do
