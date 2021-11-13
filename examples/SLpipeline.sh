@@ -11,7 +11,7 @@
 #          htaccess control ?
 #          option to have a data+time ID in the name, by default it should be blank
 
-version="SLpipeline: 5-nov-2021"
+version="SLpipeline: 12-nov-2021"
 
 echo "LMTOY>> $version"
 if [ -z $1 ]; then
@@ -26,6 +26,7 @@ obsnum=0
 debug=0
 restart=0
 tar=1
+admit=1
 sleep=2
 
 #             simple keyword=value command line parser for bash - don't make any changing below
@@ -60,11 +61,17 @@ if [ "$obspgm" = "Cal" ]; then
     exit 1
 fi
 
-pdir=$work/$ProjectId/$obsnum
+pidir=$work/$ProjectId
+pdir=$pidir/$obsnum
 if [ $restart != 0 ]; then
     echo Cleaning $pdir
     sleep $sleep
     rm -rf $pdir
+fi
+
+if [ -e $pidir/PI_pars.rc ]; then
+    echo "Found PI parameters in $pidir/PI_pars.rc"
+    source $pidir/PI_pars.rc
 fi
 
 
@@ -78,18 +85,25 @@ if [ $instrument = "SEQ" ]; then
     mkdir -p $pdir
     lmtoy_reduce.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1
     readme_seq > $pdir/README.html
+    date >> $pdir/date.log	
     echo Logfile in: $pdir/lmtoy_$obsnum.log
 elif [ $instrument = "RSR" ]; then
     if [ -d $pdir ]; then
 	echo "Re-Processing RSR in $pdir for $src (use restart=1 if you need a fresh start)"
+	first=0
+	date > $pdir/date.log
     else
 	echo "Processing RSR for $ProjectId $obsnum $src"
+	first=1
 	mkdir -p $pdir
 	echo $obsnum > $pdir/rsr.obsnum
 	lmtinfo.py $DATA_LMT $obsnum > $pdir/lmtoy_$obsnum.rc
 	rsr_blanking $obsnum > $pdir/rsr.blanking
 	echo '#   for rsr_driver'      > $pdir/rsr.rfile
 	echo '#  obsnum,chassis,band' >> $pdir/rsr.rfile
+	echo "#e.g. $obsnum,0,0"      >> $pdir/rsr.rfile
+	echo "#e.g. $obsnum,3,5"      >> $pdir/rsr.rfile
+	date >> $pdir/date.log	
     fi
     sleep $sleep
 
@@ -102,11 +116,15 @@ elif [ $instrument = "RSR" ]; then
     if [ ! -e rsr.badlags ]; then
         python $LMTOY/examples/seek_bad_channels.py $obsnum                      > rsr4.log 2>&1
     fi
+    if [ $first == 1 ]; then
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  -w rsr.wf0.pdf -p -b 3   > rsr0.log 2>&1	
+    fi
     # output: $src_rsr_spectrum.txt
     b=""
     b="--badlags rsr.badlags"
     r="--rfile rsr.rfile"
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r -w rsr.wf.pdf -p -b 3  > rsr1.log 2>&1    
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r -w rsr.wf.pdf -p -b 3  > rsr1.log 2>&1
+
     # output: rsr.obsnum.sum.txt
     python $LMTOY/examples/rsr_sum.py -b rsr.obsnum    $b                           > rsr2.log 2>&1
 
@@ -123,11 +141,19 @@ elif [ $instrument = "RSR" ]; then
     tabtrend rsr.blanking.sum.txt    2 | tabhist - robust=t xcoord=0  yapp=rsr.blanking.sum.rms.$dev/$dev    debug=0
 
     # ADMIT
-    lmtoy_admit.sh rsr.blanking.sum.txt
-    lmtoy_admit.sh ${src}_rsr_spectrum.txt
+    if [ $admit == 1 ]; then
+	lmtoy_admit.sh rsr.blanking.sum.txt
+	lmtoy_admit.sh ${src}_rsr_spectrum.txt
+    fi
     
     #
     rsr_readme > README.html
+
+    # first time?
+    if [ $first == 1 ]; then
+	echo "RSR: first time run, preserving a few first run figures"
+    fi
+
     popd
 elif [ $instrument = "1MM" ]; then
     # 
