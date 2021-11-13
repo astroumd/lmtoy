@@ -419,5 +419,7 @@ fi
 echo "LMTOY>> Created $s_fits and $w_fits"
 echo "LMTOY>> Parameter file used: $rc"
 
+seq_readme > $pdir/README.html
+
 echo "LMTOY>> Making summary index.html:"
 mk_index.sh
