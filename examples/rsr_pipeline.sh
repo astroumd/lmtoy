@@ -161,5 +161,5 @@ lmtoy_admit.sh
 
 echo "LMTOY>> Parameter file used: $rc"
 
-echo "LMTOY>> Making summary index.html:"
-mk_index.sh
+#echo "LMTOY>> Making summary index.html:"
+#mk_index.sh
