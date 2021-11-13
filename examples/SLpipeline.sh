@@ -28,6 +28,7 @@ restart=0
 tar=1
 admit=1
 sleep=2
+nproc=1
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -42,6 +43,10 @@ fi
 if [ $obsnum = 0 ]; then
     echo No valid obsnum= given
     exit 1
+fi
+
+if [ $nproc -gt 0 ]; then
+    export OMP_NUM_THREADS=$nproc
 fi
 
 #             bootstrap
@@ -78,12 +83,15 @@ fi
 if [ $instrument = "SEQ" ]; then
     if [ -d $pdir ]; then
 	echo "Re-Processing SEQ in $pdir for $src (use restart=1 if you need a fresh start)"
+	first=0
+	date >> $pdir/date.log
     else
 	echo "Processing SEQ in $pdir for $src"
+	first=1
+	mkdir -p $pdir
     fi
     sleep $sleep
-    mkdir -p $pdir
-    lmtoy_reduce.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1
+    seq_pipeline.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1
     readme_seq > $pdir/README.html
     date >> $pdir/date.log	
     echo Logfile in: $pdir/lmtoy_$obsnum.log
@@ -91,7 +99,7 @@ elif [ $instrument = "RSR" ]; then
     if [ -d $pdir ]; then
 	echo "Re-Processing RSR in $pdir for $src (use restart=1 if you need a fresh start)"
 	first=0
-	date > $pdir/date.log
+	date >> $pdir/date.log
     else
 	echo "Processing RSR for $ProjectId $obsnum $src"
 	first=1
@@ -103,58 +111,11 @@ elif [ $instrument = "RSR" ]; then
 	echo '#  obsnum,chassis,band' >> $pdir/rsr.rfile
 	echo "#e.g. $obsnum,0,0"      >> $pdir/rsr.rfile
 	echo "#e.g. $obsnum,3,5"      >> $pdir/rsr.rfile
-	date >> $pdir/date.log	
+	date > $pdir/date.log	
     fi
     sleep $sleep
-
-    # rsr_pipeline.sh pdir=$pdir $*
-    
-    pushd $pdir
-
-    
-    # output: rsr.badlags sbc.png
-    if [ ! -e rsr.badlags ]; then
-        python $LMTOY/examples/seek_bad_channels.py $obsnum                      > rsr4.log 2>&1
-    fi
-    if [ $first == 1 ]; then
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  -w rsr.wf0.pdf -p -b 3   > rsr0.log 2>&1	
-    fi
-    # output: $src_rsr_spectrum.txt
-    b=""
-    b="--badlags rsr.badlags"
-    r="--rfile rsr.rfile"
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r -w rsr.wf.pdf -p -b 3  > rsr1.log 2>&1
-
-    # output: rsr.obsnum.sum.txt
-    python $LMTOY/examples/rsr_sum.py -b rsr.obsnum    $b                           > rsr2.log 2>&1
-
-    # output: rsr.blanking.sum.txt
-    python $LMTOY/examples/rsr_sum.py -b rsr.blanking  $b                           > rsr3.log 2>&1
-
-    # NEMO summary spectra
-    dev=$(yapp_query png ps)
-    tabplot ${src}_rsr_spectrum.txt    line=1,1 color=2 ycoord=0      yapp=${src}_rsr_spectrum.sp.$dev/$dev  debug=-1
-    tabplot rsr.obsnum.sum.txt         line=1,1 color=2 ycoord=0      yapp=rsr.obsnum.sum.sp.$dev/$dev       debug=-1
-    tabplot rsr.blanking.sum.txt       line=1,1 color=2 ycoord=0      yapp=rsr.blanking.sum.sp.$dev/$dev     debug=-1
-    tabtrend ${src}_rsr_spectrum.txt 2 | tabhist - robust=t xcoord=0  yapp=${src}_rsr_spectrum.rms.$dev/$dev debug=0
-    tabtrend rsr.obsnum.sum.txt      2 | tabhist - robust=t xcoord=0  yapp=rsr.obsnum.sum.rms.$dev/$dev      debug=0
-    tabtrend rsr.blanking.sum.txt    2 | tabhist - robust=t xcoord=0  yapp=rsr.blanking.sum.rms.$dev/$dev    debug=0
-
-    # ADMIT
-    if [ $admit == 1 ]; then
-	lmtoy_admit.sh rsr.blanking.sum.txt
-	lmtoy_admit.sh ${src}_rsr_spectrum.txt
-    fi
-    
-    #
-    rsr_readme > README.html
-
-    # first time?
-    if [ $first == 1 ]; then
-	echo "RSR: first time run, preserving a few first run figures"
-    fi
-
-    popd
+    rsr_pipeline.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1
+    echo Logfile in: $pdir/lmtoy_$obsnum.log
 elif [ $instrument = "1MM" ]; then
     # 
     if [ -d $pdir ]; then
