@@ -92,6 +92,7 @@ if [ $instrument = "SEQ" ]; then
     fi
     sleep $sleep
     seq_pipeline.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1
+    seq_summary.sh $pdir/lmtoy_$obsnum.log
     date >> $pdir/date.log	
     echo Logfile in: $pdir/lmtoy_$obsnum.log
 elif [ $instrument = "RSR" ]; then
@@ -109,6 +110,7 @@ elif [ $instrument = "RSR" ]; then
     fi
     sleep $sleep
     rsr_pipeline.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1
+    rsr_summary.sh $pdir/lmtoy_$obsnum.log
     echo Logfile in: $pdir/lmtoy_$obsnum.log
 elif [ $instrument = "1MM" ]; then
     # 
