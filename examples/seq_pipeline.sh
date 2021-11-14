@@ -14,7 +14,7 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="lmtoy_reduce: 9-nov-2021"
+version="lmtoy_reduce: 13-nov-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -45,6 +45,7 @@ viewspec=1
 viewcube=0
 viewnemo=1
 admit=1
+clean=1
 #            - meta parameters that will compute other parameters for SLR scripts
 extent=0
 dv=100
@@ -392,8 +393,22 @@ if [ ! -z $NEMO ]; then
 	    ccdplot $s_on.wtr.ccd  yapp=$s_on.wtr.$dev/$dev
 	fi
 
+	# testing 
+	if [ $obsnum -eq 0 ]; then
+	    fitsplot.py $s_on.mom0.fits
+	    fitsplot.py $s_on.mom1.fits
+	    fitsplot.py $s_on.mom2.fits
+	    fitsplot.py $s_on.wt.fits
+	    fitsplot.py $s_on.wt2.fits
+	    fitsplot.py $s_on.wt3.fits
+	    fitsplot.py $s_on.wtn.fits
+	    fitsplot.py $s_on.wtr.fits
+	fi
 	# remove useless files
-	rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd $s_on.wt2.ccd  $s_on.wt3.ccd $s_on.n.ccd $s_on.wtr.ccd
+	if [ $clean -eq 1 ]; then
+	    rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd $s_on.wt2.ccd  $s_on.wt3.ccd \
+	          $s_on.n.ccd $s_on.wtr.ccd
+	fi
 
 	echo "LMTOY>> Created $s_on.nf.fits and $s_on.nfs.fits"
 
