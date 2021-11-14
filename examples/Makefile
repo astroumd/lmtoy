@@ -10,11 +10,11 @@ help:
 
 #  takes about 21' in old, and 7' in new
 all:
-	/usr/bin/time irc_reduce.sh              > irc_79448.log 2>&1
-	/usr/bin/time m31_reduce.sh obsnum=85776 > m31_85776.log 2>&1
-	/usr/bin/time m31_reduce.sh obsnum=85778 > m31_85778.log 2>&1
-	/usr/bin/time m31_reduce.sh obsnum=85824 > m31_85824.log 2>&1
-	/usr/bin/time m51_reduce.sh              > m51_91112.log 2>&1
+	$(TIME) irc_reduce.sh              > irc_79448.log 2>&1
+	$(TIME) m31_reduce.sh obsnum=85776 > m31_85776.log 2>&1
+	$(TIME) m31_reduce.sh obsnum=85778 > m31_85778.log 2>&1
+	$(TIME) m31_reduce.sh obsnum=85824 > m31_85824.log 2>&1
+	$(TIME) m51_reduce.sh              > m51_91112.log 2>&1
 
 
 new:   bench11 bench31 bench51
@@ -22,7 +22,7 @@ new:   bench11 bench31 bench51
 # takes about 1'41" on a fast 2021 machine, and 0'45 in fast_nc mode (now default)
 bench:
 	@echo "Running benchmark"
-	OMP_NUM_THREADS=1 /usr/bin/time irc_reduce.sh > irc_bench.log 2>&1
+	OMP_NUM_THREADS=1 $(TIME) irc_reduce.sh > irc_bench.log 2>&1
 	@echo "Result:"
 	@grep QAC_STATS irc_bench.log
 	@echo "Should see, With the new edge blanking"
@@ -43,6 +43,7 @@ bench2: IRC_79448.nc
 	@echo xdg-open bench2b.1.png
 	@echo xdg-open bench2c.1.png
 
+#  extra parameters for lmtoy_reduce (now: seq_pipeline)
 EXTRA=viewspec=1 makewf=1
 
 # about 60"
@@ -54,6 +55,7 @@ bench11b:
 	grep REGRESSION 2018S1SEQUOIACommissioning/79448/IRC+10216_79448.nf.fits.log   | grep CO_115
 	@echo "REGRESSION from ADMIT should show as:"
 	@echo "REGRESSION : MOM0FLUX: x.CO_115.27120 52328.9 22475.1 0.0330578 -19.6361 -19.6361 0.361693"
+
 bench31:
 	$(TIME) lmtoy_reduce.sh obsnum=85776 $(EXTRA) > lmtoy_85776.log   2>&1
 	$(TIME) lmtoy_reduce.sh obsnum=85778 $(EXTRA) > lmtoy_85778.log   2>&1
