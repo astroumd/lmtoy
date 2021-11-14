@@ -145,9 +145,9 @@ if [ ! -z $NEMO ]; then
     tabplot ${src}_rsr_spectrum.txt    line=1,1 color=2 ycoord=0      yapp=${src}_rsr_spectrum.sp.$dev/$dev  debug=-1
     tabplot rsr.obsnum.sum.txt         line=1,1 color=2 ycoord=0      yapp=rsr.obsnum.sum.sp.$dev/$dev       debug=-1
     tabplot ${blanking}.sum.txt        line=1,1 color=2 ycoord=0      yapp=${blanking}.sum.sp.$dev/$dev      debug=-1
-    tabtrend ${src}_rsr_spectrum.txt 2 | tabhist - robust=t xcoord=0  yapp=${src}_rsr_spectrum.rms.$dev/$dev debug=0
-    tabtrend rsr.obsnum.sum.txt      2 | tabhist - robust=t xcoord=0  yapp=rsr.obsnum.sum.rms.$dev/$dev      debug=0
-    tabtrend ${blanking}.sum.txt     2 | tabhist - robust=t xcoord=0  yapp=${blanking}.sum.rms.$dev/$dev     debug=0
+    tabtrend ${src}_rsr_spectrum.txt 2 | tabhist - robust=t xcoord=0  yapp=${src}_rsr_spectrum.rms.$dev/$dev debug=0 qac=t
+    tabtrend rsr.obsnum.sum.txt      2 | tabhist - robust=t xcoord=0  yapp=rsr.obsnum.sum.rms.$dev/$dev      debug=0 qac=t
+    tabtrend ${blanking}.sum.txt     2 | tabhist - robust=t xcoord=0  yapp=${blanking}.sum.rms.$dev/$dev     debug=0 qac=t
 else
     echo "LMTOY>> Skipping NEMO"
 fi
