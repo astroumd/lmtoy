@@ -156,9 +156,12 @@ fi
 
 # ADMIT
 if [ $admit == 1 ]; then
-    echo "LMTOY>> ADMIT post-processing"
-    lmtoy_admit.sh rsr.blanking.sum.txt
+    echo "LMTOY>> ADMIT post-processing" 
     lmtoy_admit.sh ${src}_rsr_spectrum.txt
+    lmtoy_admit.sh rsr.obsnum.sum.txt
+    lmtoy_admit.sh ${blanking}.sum.txt
+else
+    echo "LMTOY>> skipping ADMIT post-processing"
 fi
     
 # first time?
