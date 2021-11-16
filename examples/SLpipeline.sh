@@ -52,6 +52,7 @@ if [ -z OMP_NUM_THREADS ]; then
 	export OMP_NUM_THREADS=$nproc
     fi
 fi
+echo OMP_NUM_THREADS=$OMP_NUM_THREADS
 
 #             bootstrap
 rc=/tmp/lmtoy_${obsnum}.$$.rc
