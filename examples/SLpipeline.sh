@@ -11,7 +11,7 @@
 #          htaccess control ?
 #          option to have a data+time ID in the name, by default it should be blank
 
-version="SLpipeline: 12-nov-2021"
+version="SLpipeline: 15-nov-2021"
 
 echo "LMTOY>> $version"
 if [ -z $1 ]; then
@@ -40,13 +40,17 @@ if [ $debug = 1 ]; then
     set -x
 fi
 
+#             ensure we do have a non-zero obsnum, the only required keyword
 if [ $obsnum = 0 ]; then
     echo No valid obsnum= given
     exit 1
 fi
 
-if [ $nproc -gt 0 ]; then
-    export OMP_NUM_THREADS=$nproc
+#             set number of processors
+if [ -z OMP_NUM_THREADS ]; then
+    if [ $nproc -gt 0 ]; then
+	export OMP_NUM_THREADS=$nproc
+    fi
 fi
 
 #             bootstrap
@@ -55,12 +59,13 @@ lmtinfo.py $path $obsnum > $rc
 source $rc
 rm -f $rc
 
+#             ensure again....just in case
 if [ $obsnum = 0 ]; then
-    echo No valid obsnum found
+    echo No valid obsnum found, 2nd time.
     exit 1
 fi
 
-
+#             cannot handle Cal observations here
 if [ "$obspgm" = "Cal" ]; then
     echo "Cannot process a 'Cal' obsnum, pick a better obsnum"
     exit 1
@@ -99,21 +104,21 @@ elif [ $instrument = "RSR" ]; then
     if [ -d $pdir ]; then
 	echo "Re-Processing RSR in $pdir for $src (use restart=1 if you need a fresh start)"
 	first=0
-	date >> $pdir/date.log
+	date                        >> $pdir/date.log
     else
 	echo "Processing RSR for $ProjectId $obsnum $src"
 	first=1
 	mkdir -p $pdir
-	echo $obsnum > $pdir/rsr.obsnum
+	echo $obsnum                 > $pdir/rsr.obsnum
 	lmtinfo.py $DATA_LMT $obsnum > $pdir/lmtoy_$obsnum.rc
-	date > $pdir/date.log	
+	date                         > $pdir/date.log	
     fi
     sleep $sleep
     rsr_pipeline.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1
     rsr_summary.sh $pdir/lmtoy_$obsnum.log
     echo Logfile in: $pdir/lmtoy_$obsnum.log
 elif [ $instrument = "1MM" ]; then
-    # 
+    # @todo   only tested for one case
     if [ -d $pdir ]; then
 	echo "Re-Processing 1MM in $pdir for $src"
     else
@@ -133,7 +138,7 @@ if [ $tar != 0 ]; then
     echo Processing tar for $pdir
     rm -f $pdir/tar.log
     touch $pdir/tar.log
-    for ext in rc tab txt log apar html png pdf cubestat; do
+    for ext in rc tab txt log apar html png pdf cubestat rfile obsnum  badlags blanking; do
 	find $pdir -name \*$ext  >> $pdir/tar.log
     done
     tar zcf $pdir.tar `cat $pdir/tar.log`
