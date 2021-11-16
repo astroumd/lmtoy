@@ -428,6 +428,8 @@ if [ $admit == 1 ]; then
     else
 	lmtoy_admit.sh $s_fits
     fi
+else
+    echo "LMTOY>> skipping ADMIT post-processing"
 fi
 
 
