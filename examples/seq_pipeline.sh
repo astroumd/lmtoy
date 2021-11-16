@@ -14,7 +14,7 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="lmtoy_reduce: 13-nov-2021"
+version="lmtoy_reduce: 16-nov-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -441,3 +441,5 @@ seq_readme > $pdir/README.html
 
 echo "LMTOY>> Making summary index.html:"
 mk_index.sh
+# cheat and rename it for all files access
+mv index.html README.html
