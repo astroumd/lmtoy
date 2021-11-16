@@ -374,6 +374,7 @@ if [ ! -z $NEMO ]; then
 
 	# QAC_STATS:
 	ccdstat $s_on.ccd bad=0 qac=t
+	ccdsub  $s_on.ccd -  centerbox=0.5,0.5 | ccdstat - bad=0 qac=t
 
 	# hack
 	fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.specstab
