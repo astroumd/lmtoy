@@ -5,13 +5,13 @@
 #                   $ADMIT allowed to be present.
 #
 #
-#  Note:   this will currently only reduce one OBSNUM
+#  Note:   this will currently only reduce one OBSNUM, combinations done elsewhere
 #
 #  @todo   optional PI parameters
 #          htaccess control ?
-#          option to have a data+time ID in the name, by default it should be blank
+#          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 15-nov-2021"
+version="SLpipeline: 16-nov-2021"
 
 echo "LMTOY>> $version"
 if [ -z $1 ]; then
@@ -130,17 +130,18 @@ elif [ $instrument = "1MM" ]; then
     (cd $pdir; process_ps.py --obs_list $obsnum --pix_list 2 --bank 0 -p $DATA_LMT )
 else
     echo Unknown instrument $instrument
+    tar=0
 fi
 
 
-# produce Quick-Look tar file
+# produce Timely Analysis (tar) file
 
 if [ $tar != 0 ]; then
-    echo Processing tar for $pdir
+    echo "Creating Timely Analysis (TA) tar for $pdir"
     rm -f $pdir/tar.log
     touch $pdir/tar.log
     for ext in rc tab txt log apar html png pdf cubestat rfile obsnum  badlags blanking; do
 	find $pdir -name \*$ext  >> $pdir/tar.log
     done
-    tar zcf $pdir.tar `cat $pdir/tar.log`
+    tar zcf ${pdir}_TA.tar `cat $pdir/tar.log`
 fi
