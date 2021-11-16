@@ -47,12 +47,12 @@ if [ $obsnum = 0 ]; then
 fi
 
 #             set number of processors
-if [ -z OMP_NUM_THREADS ]; then
+if [ -z $OMP_NUM_THREADS ]; then
     if [ $nproc -gt 0 ]; then
 	export OMP_NUM_THREADS=$nproc
     fi
 fi
-echo OMP_NUM_THREADS=$OMP_NUM_THREADS
+echo "OMP_NUM_THREADS=$OMP_NUM_THREADS"
 
 #             bootstrap
 rc=/tmp/lmtoy_${obsnum}.$$.rc
