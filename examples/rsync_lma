@@ -1,0 +1,21 @@
+#! /usr/bin/env bash
+#
+# given a list of obsnum' , it will rsync LMT RAW files to a destination
+#
+# relies on the lmtar.py tool
+# 
+
+dest=teuben@lma.astro.umd.edu:/lma1/lmt/data_lmt
+
+
+for obsnum in $* ; do
+  lmtinfo.py $DATA_LMT $obsnum > /tmp/$obsnum.rc
+  source /tmp/$obsnum.rc
+  rm /tmp/$obsnum.rc
+  echo "-------------------------------------------------------------"
+  echo "$ProjectId   $obsnum $calobsnum    $src"
+  lmtar.py $calobsnum $obsnum
+  echo "Now starting rsync:"
+  rsync -Rav $(lmtar.py $calobsnum $obsnum) $dest
+done
+  
