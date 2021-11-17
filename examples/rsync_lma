@@ -23,8 +23,9 @@ done
   
 # other more static data also need to be rsync'd but they are less often
 # updated, and not associated with an obsnum.
+# @todo   symlinks not handled well...    -k works, and then doesn't work
 
-other=rsr lmttpm
+other="rsr lmttpm"
 
 for o in $other ; do
     echo Rsync $o
