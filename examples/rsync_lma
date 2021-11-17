@@ -1,12 +1,14 @@
 #! /usr/bin/env bash
 #
 # given a list of obsnum' , it will rsync LMT RAW files to a destination
+# needs to be run from the $DATA_LMT directory
 #
 # relies on the lmtar.py tool
 # 
 
 dest=teuben@lma.astro.umd.edu:/lma1/lmt/data_lmt
 
+cd $DATA_LMT
 
 for obsnum in $* ; do
   lmtinfo.py $DATA_LMT $obsnum > /tmp/$obsnum.rc
@@ -19,3 +21,14 @@ for obsnum in $* ; do
   rsync -Rav $(lmtar.py $calobsnum $obsnum) $dest
 done
   
+# other more static data also need to be rsync'd but they are less often
+# updated, and not associated with an obsnum.
+# @todo   symlinks not handled well...    -k works, and then doesn't work
+
+other="rsr lmttpm"
+
+for o in $other ; do
+    echo Rsync $o
+    rsync -Rav $o $dest
+done
+

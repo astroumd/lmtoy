@@ -11,7 +11,7 @@
 #          htaccess control ?
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 16-nov-2021"
+version="SLpipeline: 17-nov-2021"
 
 echo "LMTOY>> $version"
 if [ -z $1 ]; then
@@ -25,7 +25,8 @@ work=${WORK_LMT:-.}
 obsnum=0
 debug=0
 restart=0
-tar=1
+tap=1
+srdp=0
 admit=1
 sleep=2
 nproc=1
@@ -134,14 +135,25 @@ else
 fi
 
 
-# produce Timely Analysis (tar) file
+# produce Timely Analysis Products (_TAP.tar) file
 
-if [ $tar != 0 ]; then
-    echo "Creating Timely Analysis (TA) tar for $pdir"
+if [ $tap != 0 ]; then
+    echo "Creating Timely Analysis Products (TAP) tar for $pdir"
+    products="rc tab txt png pdf log apar html cubestat rfile obsnum badlags blanking"
     rm -f $pdir/tar.log
     touch $pdir/tar.log
-    for ext in rc tab txt log apar html png pdf cubestat rfile obsnum  badlags blanking; do
+    for ext in $products; do
 	find $pdir -name \*$ext  >> $pdir/tar.log
     done
-    tar zcf ${pdir}_TA.tar `cat $pdir/tar.log`
+    tar cf ${pdir}_TAP.tar `cat $pdir/tar.log`
+fi
+
+if [ $srdp != 0 ]; then
+    echo "Creating Scientific Ready Data Producs (SRDP) tar for $pdir"
+    (cd $pidir; tar cf ${obsnum}_SRDP.tar $obsnum)
+fi
+
+if [ $raw != 0 ]; then
+    echo "Creating raw (RAW) tar for $pdir for obsnums: $obsnum $calobsnum"
+    (cd $pidir; lmtar ${obsnum}_RAW.tar $calobsnum $obsnum)
 fi
