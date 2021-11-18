@@ -1,14 +1,13 @@
 #! /bin/bash
 #
-#  SLpipeline:      give an obsnum, figure out what kind of observation it is
+#  SLpipeline:      given an obsnum, figure out what kind of observation it is
 #                   and delegate the work to whoever it can do
-#                   $ADMIT allowed to be present.
+#                   $ADMIT allowed to be present. Various tar files can be created as well.
 #
 #
 #  Note:   this will currently only reduce one OBSNUM, combinations done elsewhere
 #
 #  @todo   optional PI parameters
-#          htaccess control ?
 #          option to have a data+time ID in the name, by default it will be blank?
 
 version="SLpipeline: 17-nov-2021"
@@ -22,14 +21,16 @@ fi
 # default input parameters
 path=${DATA_LMT:-data_lmt}
 work=${WORK_LMT:-.}
-obsnum=0
 debug=0
 restart=0
 tap=1
 srdp=0
+raw=0
 admit=1
 sleep=2
 nproc=1
+obsnum=0      # obsnum is the only required keyword
+
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -76,7 +77,7 @@ fi
 pidir=$work/$ProjectId
 pdir=$pidir/$obsnum
 if [ $restart != 0 ]; then
-    echo Cleaning $pdir
+    echo Cleaning $pdir in $sleep seconds....
     sleep $sleep
     rm -rf $pdir
 fi
@@ -135,7 +136,7 @@ else
 fi
 
 
-# produce Timely Analysis Products (_TAP.tar) file
+# produce TAP, RSRP, RAW tar files, whichever are requested.
 
 if [ $tap != 0 ]; then
     echo "Creating Timely Analysis Products (TAP) tar for $pdir"
