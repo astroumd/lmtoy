@@ -76,7 +76,7 @@ if [ ! -z $ADMIT ]; then
     fi
     
     # make sure Xvfb has been cleaned up
-    casaclean
+    casaclean x
 
     if [[ $ffile == *.fits ]] ; then
 	runa1 $ffile
