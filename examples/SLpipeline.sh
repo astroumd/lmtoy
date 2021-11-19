@@ -18,6 +18,8 @@ if [ -z $1 ]; then
     exit 0
 fi
 
+source lmtoy_functions.sh
+
 # default input parameters
 path=${DATA_LMT:-data_lmt}
 work=${WORK_LMT:-.}
@@ -29,8 +31,8 @@ raw=0
 admit=1
 sleep=2
 nproc=1
-obsnum=0      # obsnum is the only required keyword
-obsnums=0     # combinations will be a future option
+obsnum=0      # obsnum or obsnums can be used for single 
+obsnums=0     # or combinations of existing obsnums
 
 
 #             simple keyword=value command line parser for bash - don't make any changing below
@@ -43,15 +45,10 @@ if [ $debug = 1 ]; then
     set -x
 fi
 
-# not yet
-if [ $obsnums != 0 ]; then
-    echo This feature will be implemented soon:  obsnums=$obsnums
-    exit 1
-fi
+lmtoy_decipher_obsnums
 
-#             ensure we do have a non-zero obsnum, the only required keyword
 if [ $obsnum = 0 ]; then
-    echo No valid obsnum= given
+    echo No valid obsnum= or obsnums= given
     exit 1
 fi
 
@@ -71,7 +68,7 @@ rm -f $rc
 
 #             ensure again....just in case
 if [ $obsnum = 0 ]; then
-    echo No valid obsnum found, 2nd time.
+    echo No valid obsnum found, 2nd time. Should never happen
     exit 1
 fi
 
@@ -82,13 +79,18 @@ if [ "$obspgm" = "Cal" ]; then
 fi
 
 pidir=$work/$ProjectId
-pdir=$pidir/$obsnum
+if [ $obsnums = 0 ]; then
+    pdir=$pidir/$obsnum
+else
+    pdir=$pidir/${on0}_${on1}
+fi
 if [ $restart != 0 ]; then
     echo Cleaning $pdir in $sleep seconds....
     sleep $sleep
     rm -rf $pdir
 fi
 
+# ?
 if [ -e $pidir/PI_pars.rc ]; then
     echo "Found PI parameters in $pidir/PI_pars.rc"
     source $pidir/PI_pars.rc
@@ -119,12 +121,19 @@ elif [ $instrument = "RSR" ]; then
 	echo "Processing RSR for $ProjectId $obsnum $src"
 	first=1
 	mkdir -p $pdir
-	echo $obsnum                 > $pdir/rsr.obsnum
-	lmtinfo.py $DATA_LMT $obsnum > $pdir/lmtoy_$obsnum.rc
-	date                         > $pdir/date.log	
+	if [ $obsnums = 0 ]; then
+	    echo $obsnum                 > $pdir/rsr.obsnum
+	    lmtinfo.py $DATA_LMT $obsnum > $pdir/lmtoy_$obsnum.rc
+	fi
+	date                             > $pdir/date.log
     fi
     sleep $sleep
-    rsr_pipeline.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1
+    if [ $obsnums = 0 ]; then
+	rsr_pipeline.sh pdir=$pdir $*       > $pdir/lmtoy_$obsnum.log 2>&1
+    else
+	obsnum=${on0}_${on1}
+	rsr_combine.sh obsnums=$obsnumsc $* > $pdir/lmtoy_$obsnum.log 2>&1
+    fi
     rsr_summary.sh $pdir/lmtoy_$obsnum.log
     echo Logfile in: $pdir/lmtoy_$obsnum.log
 elif [ $instrument = "1MM" ]; then
@@ -146,7 +155,7 @@ fi
 # produce TAP, RSRP, RAW tar files, whichever are requested.
 
 if [ $tap != 0 ]; then
-    echo "Creating Timely Analysis Products (TAP) tar for $pdir"
+    echo "Creating Timely Analysis Products (TAP) with admit=$admit in ${pdir}_TAP.tar"
     products="rc tab txt png pdf log apar html cubestat rfile obsnum badlags blanking"
     rm -f $pdir/tar.log
     touch $pdir/tar.log
@@ -157,11 +166,11 @@ if [ $tap != 0 ]; then
 fi
 
 if [ $srdp != 0 ]; then
-    echo "Creating Scientific Ready Data Producs (SRDP) tar for $pdir"
+    echo "Creating Scientific Ready Data Producs (SRDP) in $pidir/${obsnum}_SRDP.tar"
     (cd $pidir; tar cf ${obsnum}_SRDP.tar $obsnum)
 fi
 
 if [ $raw != 0 ]; then
-    echo "Creating raw (RAW) tar for $pdir for obsnums: $obsnum $calobsnum"
+    echo "Creating raw (RAW) tar for $pdir for $obsnum $calobsnum in $pidir/${obsnum}_RAW.tar"
     (cd $pidir; lmtar ${obsnum}_RAW.tar $calobsnum $obsnum)
 fi
