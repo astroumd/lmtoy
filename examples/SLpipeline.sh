@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 17-nov-2021"
+version="SLpipeline: 19-nov-2021"
 
 echo "LMTOY>> $version"
 if [ -z $1 ]; then
@@ -30,6 +30,7 @@ admit=1
 sleep=2
 nproc=1
 obsnum=0      # obsnum is the only required keyword
+obsnums=0     # combinations will be a future option
 
 
 #             simple keyword=value command line parser for bash - don't make any changing below
@@ -40,6 +41,12 @@ done
 #             put in bash debug mode
 if [ $debug = 1 ]; then
     set -x
+fi
+
+# not yet
+if [ $obsnums != 0 ]; then
+    echo This feature will be implemented soon:  obsnums=$obsnums
+    exit 1
 fi
 
 #             ensure we do have a non-zero obsnum, the only required keyword
