@@ -10,7 +10,7 @@
 #
 
 
-version="lmtoy_combine: 20-jul-2021"
+version="lmtoy_combine: 17-nov-2021 deprecated"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=ON1,ON2,..."
