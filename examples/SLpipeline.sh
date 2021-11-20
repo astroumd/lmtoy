@@ -108,7 +108,12 @@ if [ $instrument = "SEQ" ]; then
 	mkdir -p $pdir
     fi
     sleep $sleep
-    seq_pipeline.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1
+    if [ $obsnums = 0 ]; then
+	seq_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
+    else
+	obsnum=${on0}_${on1}
+	seq_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
+    fi
     seq_summary.sh $pdir/lmtoy_$obsnum.log
     date >> $pdir/date.log	
     echo Logfile in: $pdir/lmtoy_$obsnum.log
@@ -132,7 +137,7 @@ elif [ $instrument = "RSR" ]; then
 	rsr_pipeline.sh pdir=$pdir $*       > $pdir/lmtoy_$obsnum.log 2>&1
     else
 	obsnum=${on0}_${on1}
-	rsr_combine.sh obsnums=$obsnumsc $* > $pdir/lmtoy_$obsnum.log 2>&1
+	rsr_combine.sh             $*       > $pdir/lmtoy_$obsnum.log 2>&1
     fi
     rsr_summary.sh $pdir/lmtoy_$obsnum.log
     echo Logfile in: $pdir/lmtoy_$obsnum.log
