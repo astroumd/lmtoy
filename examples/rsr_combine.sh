@@ -97,6 +97,8 @@ for on in $obsnums1; do
     cat */$on/rsr.$on.blanking >> $pdir/rsr.${on0}_${on1}.blanking
     cat */$on/rsr.obsnum       >> $pdir/rsr.obsnum
 done
+cp $rc $pdir/lmtoy_${on0}_${on1}.rc
+echo "obsnum=${on0}_${on1}" >> $pdir/lmtoy_${on0}_${on1}.rc
 
 cd $pdir
 
