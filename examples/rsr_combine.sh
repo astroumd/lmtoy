@@ -66,7 +66,6 @@ if [ $obsnums = 0 ]; then
     echo obsnums= not given
     exit 0
 fi
-
 lmtoy_decipher_obsnums
 
 rc=0
