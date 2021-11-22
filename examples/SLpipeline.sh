@@ -109,9 +109,11 @@ if [ $instrument = "SEQ" ]; then
     fi
     sleep $sleep
     if [ $obsnums = 0 ]; then
+	echo "LMTOY>> seq_pipeline.sh pdir=$pdir $*"
 	seq_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
     else
 	obsnum=${on0}_${on1}
+	echo "LMTOY>> seq_combine.sh             $*"
 	seq_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
     fi
     seq_summary.sh $pdir/lmtoy_$obsnum.log
@@ -134,9 +136,11 @@ elif [ $instrument = "RSR" ]; then
     fi
     sleep $sleep
     if [ $obsnums = 0 ]; then
+	echo "LMTOY>> rsr_pipeline.sh pdir=$pdir $*"
 	rsr_pipeline.sh pdir=$pdir $*       > $pdir/lmtoy_$obsnum.log 2>&1
     else
 	obsnum=${on0}_${on1}
+	echo "LMTOY>> rsr_combine.sh             $*"
 	rsr_combine.sh             $*       > $pdir/lmtoy_$obsnum.log 2>&1
     fi
     rsr_summary.sh $pdir/lmtoy_$obsnum.log
