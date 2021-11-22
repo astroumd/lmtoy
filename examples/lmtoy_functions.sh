@@ -2,7 +2,7 @@
 #
 #   some functions to share for lmtoy pipeline operations
 
-lmtoy_version="19-nov-2021"
+lmtoy_version="21-nov-2021"
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version from $0"
 
 function lmtoy_decipher_obsnums {
@@ -59,6 +59,11 @@ function lmtoy_rsr1 {
 
     # output: rsr.blanking.sum.txt
     python $LMTOY/examples/rsr_sum.py -b $blanking  $b                              > rsr3.log 2>&1
+
+    # simple overlapping spectra : full range, and a narrower "CO" range
+    python $LMTOY/examples/rsr_spectra.py -co ${src}_rsr_spectrum.txt rsr.obsnum.sum.txt ${blanking}.sum.txt
+    mv rsr.spectra.png rsr.spectra_co.png
+    python $LMTOY/examples/rsr_spectra.py     ${src}_rsr_spectrum.txt rsr.obsnum.sum.txt ${blanking}.sum.txt 
 
     
     # NEMO summary spectra
