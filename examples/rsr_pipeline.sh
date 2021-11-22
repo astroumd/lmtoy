@@ -13,7 +13,7 @@
 # that's perhaps for a more advanced pipeline
 #
 
-version="rsr_pipeline: 19-nov-2021"
+version="rsr_pipeline: 22-nov-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=OBSNUM ..."
@@ -37,6 +37,7 @@ obsnum=0
 obsid=""
 newrc=0
 pdir=""
+badboard=-1     # set to -1 if no board is bad, or pick one 0..5
 #            - procedural
 admit=1
 
@@ -108,7 +109,16 @@ badlags=rsr.$obsnum.badlags
 if [ $first == 1 ]; then
     rsr_blanking $obsnum     > $blanking
     rsr_rfile    $obsnum     > $rfile
+    # special case when board0 is bad
+    if [ $badboard = 0 ]; then
+	for c in 0 1 2 3; do
+	    echo "$obsnum $c {0: [(70,80)]}" >> $blanking
+	    echo "$obsnum,$c,0"              >> $rfile
+	done
+    fi
+
     # note $badlags is created by seed_bad_channels
+    
 fi
 
 
