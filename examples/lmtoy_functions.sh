@@ -38,6 +38,8 @@ function lmtoy_rsr1 {
     # input:  first, obsnum, badlags, blanking, ....
     
 
+    #  @todo    use -t flag ?
+    
     # first time, do a run with no badlags or rfile
     if [ $first == 1 ]; then
 	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  -w rsr.wf0.pdf -p -b 3   > rsr0.log 2>&1	
@@ -97,7 +99,7 @@ function lmtoy_rsr1 {
 
     echo "LMTOY>> Parameter file used: $rc"
     
-    rsr_readme > README.html
+    rsr_readme $obsnum $src > README.html
 
 
 } # function rsr1
