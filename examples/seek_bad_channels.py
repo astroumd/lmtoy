@@ -85,12 +85,22 @@ bc_threshold = 3.0
 # more debugging output ?
 debug = True
 
+# showing interactive?
+Qshow = False
+
+#  filenames
+badlags = "rsr.badlags"
+lagsplot = 'lags.png'
+
 # now ready to process.  First read in the data from the file or commandline
 
 if True:
     # simply a list of obsnum via commandline, dates are not needed
     o_list = []
     for arg in sys.argv[1:]:
+        if arg == '-s':
+            Qshow = True
+            continue
         o_list.append(int(arg))
     if len(o_list) == 0:
         print("ERROR: provide an obsnum list on the commandline, e.g. 33551")
@@ -227,8 +237,9 @@ for ic in range(nchassis):
 print('-----------------------')
 ftab.close()
 
-
-pl.savefig('sbc.png')
-print("Wrote sbc.png")
-# pl.show()
+if Qshow:
+    pl.show()
+else:
+    pl.savefig(lagsplot)
+    print("Wrote %s" % lagsplot)
 
