@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 # plt.style.use("grayscale")
 
-Qshow = False
+Qshow = True
 pout  = 'rsr.spectra.png'
 n     = 0
 
@@ -22,7 +22,7 @@ for f in sys.argv[1:]:
         print("-h      this help")
         continue
     if f == '-s':
-        Qshow = True
+        Qshow = False
         continue
     if f == "-co":
         plt.xlim([106,112])
@@ -39,6 +39,9 @@ plt.ylabel('Ta (K)')
 #plt.ylim([0,1])
 plt.title('RSR spectra')
 plt.legend()
-plt.savefig(pout)
 if Qshow:
     plt.show()
+else:
+    plt.savefig(pout)
+    print("%s writtten" % pout)
+
