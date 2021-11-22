@@ -134,6 +134,7 @@ scanmax = numpy.zeros((nchassis,nboards,nchan))
 for iobs in range(len(o_list)):
     #print('%2d %s %6d'%(iobs+1,date_list[iobs],o_list[iobs]))
     print('%2d %6d'%(iobs+1,o_list[iobs]))
+    valid_chassis = []
     for ic in range(nchassis):
         chassis = chassis_list[ic]
         # open the data file for this chassis
@@ -142,8 +143,10 @@ for iobs in range(len(o_list)):
         fn = glob.glob(globs)
         print("Found ",fn)
         if len(fn) != 1:
-            print("Unexpected obsnum %06d " % o_list[iobs])
-            sys.exit(0)
+            print("Skipping missing chassis %d for obsnum %06d" % (chassis,o_list[iobs]))
+            continue
+            # sys.exit(0)
+        valid_chassis.append(chassis)        
         nc = RedshiftNetCDFFile(fn[0])
         # nc = RedshiftNetCDFFile(data_lmt + '/RedshiftChassis%d/RedshiftChassis%d_*_%06d_00_0001.nc' % (chassis, chassis, date_list[iobs],o_list[iobs]))
         nons,nb,nch = numpy.shape(nc.hdu.data.AccData)
