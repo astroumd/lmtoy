@@ -5,12 +5,14 @@ LMT
 .. note:: A local version of this documentation can be found on
    https://www.astro.umd.edu/~teuben/LMT/lmtoy/html
 
-LMTOY is a toy box for installing and running codes related to LMT
+LMTOY is a toy box for installing and running codes related to LMT 
 data reduction. LMT is a large 50m single dish radio telescope located
-in Mexico (18:59:09N 97:18:53W) operating at mm wavelengths.
+in Mexico
+`(18:59:09N 97:18:53W) <https://www.google.com/maps/place/Large+Millimeter+Telescope/@18.9857201,-97.315979,1233m/data=!3m1!1e3!4m5!3m4!1s0x85c516fb67a4820f:0xf9b66dcc651fb6e9!8m2!3d18.9857333!4d-97.3148183>`_
+operating at mm wavelengths.
 http://lmtgtm.org/
 
-This document described the current toy box of LMT tools that you might
+This document describes the current toy box of LMT tools that you might
 want to use to reduce LMT data.   It will cover most Spectral Line instruments
 (Sequioa, RSR, 1MM, B4R), but does not discuss continuum instruments.
 
@@ -76,7 +78,8 @@ Various
 Markdowns	      
 =========
 
-Some of the documentation is still in markdown format
+Some of the documentation is still in markdown format, and
+often contain just notes.
 
 .. toctree::
    :maxdepth: 2
@@ -84,13 +87,23 @@ Some of the documentation is still in markdown format
    masking
    wishlist
 
-LMTOY_REDUCE
-============
+Pipeline
+========
 
 .. toctree::
    :maxdepth: 3
 
    reduce
+   rsr
+
+Notebook: SLR_example
+=====================
+
+.. toctree::
+   :maxdepth: 2
+
+   SLR_example
+
 
 Indices
 =======
@@ -104,5 +117,7 @@ Credits
 ``lmtoy`` is developed by ...
 
 This project is supported by NSF ...
+
+.. if this last file is missing, that's ok
 
 .. include:: lastmod.rst
