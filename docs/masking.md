@@ -102,6 +102,7 @@ There are two types of masking:
         -elevation(el1,el2)
         -dra(p1,p2)
         -ddec(p1,p2)
+		-birdie(88.1234,GHz),time(12:05:10,12:30:05)
        
   are all acceptable ways to select data for masking. The current SpecFile does not export some
   of these variables, but they are commonly seen in other observatory SDFITS file, so we
