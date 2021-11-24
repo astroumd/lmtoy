@@ -1,0 +1,4 @@
+These are crontabs that run at a number of machines to schedule tasks.
+
+1. @LMT they run the first SLpipeline.sh, and scp the TAP file to Unity
+2. @Unity they run the second SLpipeline.sh and prepare an SRDP file for the PI

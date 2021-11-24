@@ -1,17 +1,16 @@
 #! /bin/bash
 #
-#  SLpipeline:      give an obsnum, figure out what kind of observation it is
+#  SLpipeline:      given an obsnum, figure out what kind of observation it is
 #                   and delegate the work to whoever it can do
-#                   $ADMIT allowed to be present.
+#                   $ADMIT allowed to be present. Various tar files can be created as well.
 #
 #
-#  Note:   this will currently only reduce one OBSNUM
+#  Note:   this will currently only reduce one OBSNUM, combinations done elsewhere
 #
 #  @todo   optional PI parameters
-#          htaccess control ?
-#          option to have a data+time ID in the name, by default it should be blank
+#          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 12-nov-2021"
+version="SLpipeline: 19-nov-2021"
 
 echo "LMTOY>> $version"
 if [ -z $1 ]; then
@@ -19,16 +18,22 @@ if [ -z $1 ]; then
     exit 0
 fi
 
+source lmtoy_functions.sh
+
 # default input parameters
 path=${DATA_LMT:-data_lmt}
 work=${WORK_LMT:-.}
-obsnum=0
 debug=0
 restart=0
-tar=1
+tap=1
+srdp=0
+raw=0
 admit=1
 sleep=2
 nproc=1
+obsnum=0      # obsnum or obsnums can be used for single 
+obsnums=0     # or combinations of existing obsnums
+
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -40,14 +45,20 @@ if [ $debug = 1 ]; then
     set -x
 fi
 
+lmtoy_decipher_obsnums
+
 if [ $obsnum = 0 ]; then
-    echo No valid obsnum= given
+    echo No valid obsnum= or obsnums= given
     exit 1
 fi
 
-if [ $nproc -gt 0 ]; then
-    export OMP_NUM_THREADS=$nproc
+#             set number of processors
+if [ -z $OMP_NUM_THREADS ]; then
+    if [ $nproc -gt 0 ]; then
+	export OMP_NUM_THREADS=$nproc
+    fi
 fi
+echo "OMP_NUM_THREADS=$OMP_NUM_THREADS"
 
 #             bootstrap
 rc=/tmp/lmtoy_${obsnum}.$$.rc
@@ -55,25 +66,31 @@ lmtinfo.py $path $obsnum > $rc
 source $rc
 rm -f $rc
 
+#             ensure again....just in case
 if [ $obsnum = 0 ]; then
-    echo No valid obsnum found
+    echo No valid obsnum found, 2nd time. Should never happen
     exit 1
 fi
 
-
+#             cannot handle Cal observations here
 if [ "$obspgm" = "Cal" ]; then
     echo "Cannot process a 'Cal' obsnum, pick a better obsnum"
     exit 1
 fi
 
 pidir=$work/$ProjectId
-pdir=$pidir/$obsnum
+if [ $obsnums = 0 ]; then
+    pdir=$pidir/$obsnum
+else
+    pdir=$pidir/${on0}_${on1}
+fi
 if [ $restart != 0 ]; then
-    echo Cleaning $pdir
+    echo Cleaning $pdir in $sleep seconds....
     sleep $sleep
     rm -rf $pdir
 fi
 
+# ?
 if [ -e $pidir/PI_pars.rc ]; then
     echo "Found PI parameters in $pidir/PI_pars.rc"
     source $pidir/PI_pars.rc
@@ -91,7 +108,14 @@ if [ $instrument = "SEQ" ]; then
 	mkdir -p $pdir
     fi
     sleep $sleep
-    seq_pipeline.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1
+    if [ $obsnums = 0 ]; then
+	echo "LMTOY>> seq_pipeline.sh pdir=$pdir $*"
+	seq_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
+    else
+	obsnum=${on0}_${on1}
+	echo "LMTOY>> seq_combine.sh             $*"
+	seq_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
+    fi
     seq_summary.sh $pdir/lmtoy_$obsnum.log
     date >> $pdir/date.log	
     echo Logfile in: $pdir/lmtoy_$obsnum.log
@@ -99,21 +123,30 @@ elif [ $instrument = "RSR" ]; then
     if [ -d $pdir ]; then
 	echo "Re-Processing RSR in $pdir for $src (use restart=1 if you need a fresh start)"
 	first=0
-	date >> $pdir/date.log
+	date                        >> $pdir/date.log
     else
 	echo "Processing RSR for $ProjectId $obsnum $src"
 	first=1
 	mkdir -p $pdir
-	echo $obsnum > $pdir/rsr.obsnum
-	lmtinfo.py $DATA_LMT $obsnum > $pdir/lmtoy_$obsnum.rc
-	date > $pdir/date.log	
+	if [ $obsnums = 0 ]; then
+	    echo $obsnum                 > $pdir/rsr.obsnum
+	    lmtinfo.py $DATA_LMT $obsnum > $pdir/lmtoy_$obsnum.rc
+	fi
+	date                             > $pdir/date.log
     fi
     sleep $sleep
-    rsr_pipeline.sh pdir=$pdir $* > $pdir/lmtoy_$obsnum.log 2>&1
+    if [ $obsnums = 0 ]; then
+	echo "LMTOY>> rsr_pipeline.sh pdir=$pdir $*"
+	rsr_pipeline.sh pdir=$pdir $*       > $pdir/lmtoy_$obsnum.log 2>&1
+    else
+	obsnum=${on0}_${on1}
+	echo "LMTOY>> rsr_combine.sh             $*"
+	rsr_combine.sh             $*       > $pdir/lmtoy_$obsnum.log 2>&1
+    fi
     rsr_summary.sh $pdir/lmtoy_$obsnum.log
     echo Logfile in: $pdir/lmtoy_$obsnum.log
 elif [ $instrument = "1MM" ]; then
-    # 
+    # @todo   only tested for one case
     if [ -d $pdir ]; then
 	echo "Re-Processing 1MM in $pdir for $src"
     else
@@ -124,17 +157,29 @@ elif [ $instrument = "1MM" ]; then
     (cd $pdir; process_ps.py --obs_list $obsnum --pix_list 2 --bank 0 -p $DATA_LMT )
 else
     echo Unknown instrument $instrument
+    tar=0
 fi
 
 
-# produce Quick-Look tar file
+# produce TAP, RSRP, RAW tar files, whichever are requested.
 
-if [ $tar != 0 ]; then
-    echo Processing tar for $pdir
+if [ $tap != 0 ]; then
+    echo "Creating Timely Analysis Products (TAP) with admit=$admit in ${pdir}_TAP.tar"
+    products="rc tab txt png pdf log apar html cubestat rfile obsnum badlags blanking"
     rm -f $pdir/tar.log
     touch $pdir/tar.log
-    for ext in rc tab txt log apar html png pdf cubestat; do
+    for ext in $products; do
 	find $pdir -name \*$ext  >> $pdir/tar.log
     done
-    tar zcf $pdir.tar `cat $pdir/tar.log`
+    tar cf ${pdir}_TAP.tar `cat $pdir/tar.log`
+fi
+
+if [ $srdp != 0 ]; then
+    echo "Creating Scientific Ready Data Producs (SRDP) in $pidir/${obsnum}_SRDP.tar"
+    (cd $pidir; tar cf ${obsnum}_SRDP.tar $obsnum)
+fi
+
+if [ $raw != 0 ]; then
+    echo "Creating raw (RAW) tar for $pdir for $obsnum $calobsnum in $pidir/${obsnum}_RAW.tar"
+    (cd $pidir; lmtar ${obsnum}_RAW.tar $calobsnum $obsnum)
 fi

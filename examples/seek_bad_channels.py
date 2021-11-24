@@ -85,12 +85,22 @@ bc_threshold = 3.0
 # more debugging output ?
 debug = True
 
+# showing interactive?
+Qshow = False
+
+#  filenames
+badlags = "rsr.badlags"
+lagsplot = 'lags.png'
+
 # now ready to process.  First read in the data from the file or commandline
 
 if True:
     # simply a list of obsnum via commandline, dates are not needed
     o_list = []
     for arg in sys.argv[1:]:
+        if arg == '-s':
+            Qshow = True
+            continue
         o_list.append(int(arg))
     if len(o_list) == 0:
         print("ERROR: provide an obsnum list on the commandline, e.g. 33551")
@@ -124,6 +134,7 @@ scanmax = numpy.zeros((nchassis,nboards,nchan))
 for iobs in range(len(o_list)):
     #print('%2d %s %6d'%(iobs+1,date_list[iobs],o_list[iobs]))
     print('%2d %6d'%(iobs+1,o_list[iobs]))
+    valid_chassis = []
     for ic in range(nchassis):
         chassis = chassis_list[ic]
         # open the data file for this chassis
@@ -132,8 +143,10 @@ for iobs in range(len(o_list)):
         fn = glob.glob(globs)
         print("Found ",fn)
         if len(fn) != 1:
-            print("Unexpected obsnum %06d " % o_list[iobs])
-            sys.exit(0)
+            print("Skipping missing chassis %d for obsnum %06d" % (chassis,o_list[iobs]))
+            continue
+            # sys.exit(0)
+        valid_chassis.append(chassis)        
         nc = RedshiftNetCDFFile(fn[0])
         # nc = RedshiftNetCDFFile(data_lmt + '/RedshiftChassis%d/RedshiftChassis%d_*_%06d_00_0001.nc' % (chassis, chassis, date_list[iobs],o_list[iobs]))
         nons,nb,nch = numpy.shape(nc.hdu.data.AccData)
@@ -227,8 +240,9 @@ for ic in range(nchassis):
 print('-----------------------')
 ftab.close()
 
-
-pl.savefig('sbc.png')
-print("Wrote sbc.png")
-# pl.show()
+if Qshow:
+    pl.show()
+else:
+    pl.savefig(lagsplot)
+    print("Wrote %s" % lagsplot)
 

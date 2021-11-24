@@ -1,5 +1,10 @@
 #! /usr/bin/env bash
 #
+#
+#    this file contains window portions where strong lines are to avoid in baseline subtractions
+#    this is for the blanking file that rsr_sum.py is using.
+#    Equally so , --exclude is the flag in rsr_driver.py that serves the same purpose.
+#
 
 set -e
 
@@ -12,7 +17,7 @@ echo ''
 echo '#         this is the obsnum being used'
 echo "$obsnum"
 echo ''
-echo '# windows where baseline is computed'
+echo '# windows where baseline is computed - example for I10565 skipping over the stronger lines'
 echo 'windows[0] = [(73.5,79.3)]'
 echo 'windows[1] = [(87.0,91.5)]'
 echo 'windows[2] = [(80.0,83.3),(83.8,84.6)]'

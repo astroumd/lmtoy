@@ -8,9 +8,12 @@ pwd=$(pwd)
 
 # there better be only one....
 source $(ls ./lmtoy_*.rc)
-# hack until it's in the rc file ?
-grep '# obsnum=' $(ls ./lmtoy_*.rc) | sed s'/# //' > obsnum.rc
-source ./obsnum.rc
+if [ -z "$obsnum" ]; then
+    # hack until it's in the rc file ?
+    grep '# obsnum=' $(ls ./lmtoy_*.rc) | sed s'/# //' > obsnum.rc
+    source ./obsnum.rc
+fi
+echo "Making index.html for obsnum=$obsnum"
 
 base1="${src}_${obsnum}"
 base2="${src}_${obsnum}_specviews"

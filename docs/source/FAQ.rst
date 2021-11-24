@@ -114,12 +114,22 @@ In CASA use the ``imregrid`` task. For example converting from equatorial to gal
       imregrid(imagename="input.im", output="output.im", template="GALACTIC")
 
 though if the input image has the ``SFL`` projection, CASA cannot reliably handle this.   
-The tool ``cs.setprojection()`` can be used temporarely to allow rotation of the image.
+The tool ``cs.setprojection()`` can be used temporarely to allow rotation of the image,
+viz.:
 
-.. todo:: example needed of cs.setprojection()
+.. code-block::
+
+      ia.open('input.im')
+      csys = ia.coordsys()
+      csys.setprojection('TAN')
+      im2=ia.regrid('input2.im',csys=csys.torecord(),overwrite=True)
+      im2.close()
+      ia.close()
+      imregrid('input2.im','GALACTIC','output.im',overwrite=True)
+
 
 A better approach is to obtain the correct Glon-Glat value for each sample, and let the
-regridder convolve them correctly using the SFL projection method. This option has not been
+regridder convolve them correctly using the SFL projection method. This option is being
 added to ``spec_driver_fits`` yet.
 
 Conversion of intensity units from K to Jy/beam

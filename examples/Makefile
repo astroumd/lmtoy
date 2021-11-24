@@ -2,6 +2,7 @@
 #
 
 TIME = /usr/bin/time
+RSR_DRIVER = ../RSR_driver/rsr_driver.py
 
 #  It is assumed your testdata are in $DATA_LMT
 
@@ -134,7 +135,7 @@ BADLAGS = --badlags rsr.lags.bad
 
 rsr1:
 	cat rsr1.obsnum
-	$(TIME) python ../RSR_driver/rsr_driver.py rsr1.obsnum -w rsr1.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 $(BADLAGS) > rsr1.log 2>&1
+	$(TIME) python $(RSR_DRIVER) rsr1.obsnum -w rsr1.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 $(BADLAGS) > rsr1.log 2>&1
 	cp I10565_rsr_spectrum.txt I10565_rsr1_spectrum.txt
 	@echo The following two plots should be "identical", but first one peaks at 46mK, second at 50mK.
 	-tabplot I10565_rsr1_spectrum.txt         xcol=1 ycol=2  xmin=104 xmax=112 ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
@@ -177,7 +178,7 @@ rsr1c:
 # These are data between obsum 15161 (2014-01-30) and 92068 (2020-03-04)
 
 rsr2:
-	$(TIME)	python ../RSR_driver/rsr_driver.py rsr2.obsnum -w rsr2.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 85.2 0.4 > rsr2.log 2>&1
+	$(TIME)	python $(RSR_DRIVER) rsr2.obsnum -w rsr2.wf.pdf -p -b 3 --exclude 110.51 0.15 108.65 0.3 85.2 0.4 > rsr2.log 2>&1
 	cp I10565_rsr_spectrum.txt I10565_rsr2_spectrum.txt 
 	-tabplot I10565_rsr2_spectrum.txt  ymin=-10 ymax=50 line=1,1 ycoord=0 point=2,0.05 yscale=1000 \
 		xlab='GHz' ylab='mK (T_A)' headline=obsnum=all yapp=I10565_rsr2_spectrum.png/png
@@ -228,4 +229,4 @@ data:
 	lmtar m31_2019.tar 85775 85776 85777 85778 85823 85824
 	lmtar m51_2020.tar 91111 91112 90910 90911
 	lmtar 1mm_2018.tar 82479 82480
-	lmtar rsr_2018.tar 33550 33551 71609 71610 92067 92068 
+	lmtar rsr_2018.tar 33550 33551 71609 71610 92066 92068 

@@ -19,7 +19,9 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 
     band
       A coherent section in frequency space. For **RSR** there
-      are 6 bands, sometimes the word **board** is used as well.  LSR
+      are 6 bands, sometimes the word **board** is used as well, although
+      the ordering of bands and boards is different. bands are ordered
+      in frequency. LSR
       also uses this keyword, but there is currently only board=0 for
       LSR. See also **bank**
 
@@ -39,7 +41,8 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
     board
       for LSR these are the roach boards (4). For RSR they
       are called **chassis** (4). But in **RSR** board has also been
-      used where **band** is meant.
+      used where **band** is meant, but there is a subtle difference
+      where bands are ordered in frequency.
 
     cell
       (most people would call this a pixel, but at LMT
@@ -54,7 +57,8 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       A python frontend to dash, currently used by TolTeca
 
     ECSV
-      (Enhanced Character Separated Values) a self-describing ascii table format popularized by astropy
+      (Enhanced Character Separated Values) a self-describing ascii table format popularized by astropy.
+      See also https://github.com/astropy/astropy-APEs/blob/main/APE6.rst
 
     FITS
       (Flexible Image Transport System): the export format
@@ -90,6 +94,9 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
    
     pixel
       synonym for **beam** as in multi-beam. The keyword --pix_list= is used to select pixels (0..15) for processing.
+
+    plotly
+      dash uses plotly, which is a data analytics framework working within a browser environment.
 
     ProjectId
       Each LMT observing proposal has a unique proposal ID assigned. An example is **2018-S1-MU-46**
