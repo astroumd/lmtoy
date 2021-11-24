@@ -61,9 +61,11 @@ function lmtoy_rsr1 {
     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 3                         > rsr2.log 2>&1
 
     # simple overlapping spectra : full range, and a narrower "CO" range
+    # the -z version makes an svg file for an alternative way to zoom in
     python $LMTOY/examples/rsr_spectra.py -s -co ${src}_rsr_spectrum.txt ${blanking}.sum.txt
     mv rsr.spectra.png rsr.spectra_co.png
-    python $LMTOY/examples/rsr_spectra.py -s     ${src}_rsr_spectrum.txt ${blanking}.sum.txt 
+    python $LMTOY/examples/rsr_spectra.py -s     ${src}_rsr_spectrum.txt ${blanking}.sum.txt
+    python $LMTOY/examples/rsr_spectra.py -s -z  ${src}_rsr_spectrum.txt ${blanking}.sum.txt
 
     
     # NEMO summary spectra
@@ -83,9 +85,10 @@ function lmtoy_rsr1 {
 
     # ADMIT
     if [ $admit == 1 ]; then
-	echo "LMTOY>> ADMIT post-processing" 
+	echo "LMTOY>> ADMIT post-processing"
+	echo "vlsr = 12387" >> ${src}_rsr_spectrum.txt.apar
+	echo "vlsr = 12387" >> ${blanking}.sum.txt.apar
 	lmtoy_admit.sh ${src}_rsr_spectrum.txt
-	lmtoy_admit.sh rsr.obsnum.sum.txt
 	lmtoy_admit.sh ${blanking}.sum.txt
     else
 	echo "LMTOY>> skipping ADMIT post-processing"
