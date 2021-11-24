@@ -1,5 +1,10 @@
 #! /usr/bin/env bash
 #
+#
+#    this file contains window portions where strong lines are to avoid in baseline subtractions
+#    this is for the blanking file that rsr_sum.py is using.
+#    Equally so , --exclude is the flag in rsr_driver.py that serves the same purpose.
+#
 
 set -e
 
