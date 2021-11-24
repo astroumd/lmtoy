@@ -35,7 +35,7 @@ copyright = year+" "+author
 
 # https://github.com/miyakogi/m2r#sphinx-integration
 #source_suffix = '.rst'
-source_suffix = ['.rst', '.md']
+source_suffix = ['.rst', '.md', '.ipynb']
 master_doc = 'index'
 
 # -- General configuration ---------------------------------------------------
@@ -51,6 +51,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
+    'nbsphinx',
     'numpydoc',
     'm2r2',
     # 'm2r'         # does not work yet
