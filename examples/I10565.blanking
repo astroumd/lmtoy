@@ -5,6 +5,15 @@
 #  for clients to use.
 #
 
+
+# rsr_driver reports these as the windows:
+# {0: [(71.71953125, 79.68828125)],
+#  1: [(85.41171875, 93.38046875)],
+#  2: [(78.01953125, 85.98828125)],
+#  3: [(90.61553125, 98.58428125)],
+#  4: [(104.30771875, 112.27646875)],
+#  5: [(96.91553125, 104.88428125)]}
+
 ###   WINDOWS are the sections in each bank where the baseline is computed, this is a pythonic line
 
 windows[0] = [(73.5,79.3)]
@@ -127,9 +136,14 @@ windows[5] = [(98.1,104.5)]
 #obslist = [61581,61582]# 4/14/16 Tsys=99K 
 #obslist = [61696,61697]# 4/15/16 Tsys=102K 
 #obslist = [61827,61828]# 4/16/16 Tsys=95K 
-#obslist = [61978,61979]# 4/17/16 Tsys=96K 
+#obslist = [61978,61979]# 4/17/16 Tsys=96K
 
 ###  OBSNUM's with full chassis to be ignored
+
+
+# if chassis in(2,3): 
+#                    nc.hdu.blank_frequencies( {3: [(95.5,97.0),]} )
+
 
 36231,36387      2
 36231,36387      3
