@@ -58,7 +58,7 @@ function lmtoy_rsr1 {
     python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l -w rsr.wf.pdf -p -b 3  > rsr1.log 2>&1
     
     # output: rsr.$obsnum.blanking.sum.txt
-    python $LMTOY/examples/rsr_sum.py -b $blanking  $b                                 > rsr2.log 2>&1
+    python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 3                         > rsr2.log 2>&1
 
     # simple overlapping spectra : full range, and a narrower "CO" range
     python $LMTOY/examples/rsr_spectra.py -s -co ${src}_rsr_spectrum.txt ${blanking}.sum.txt
