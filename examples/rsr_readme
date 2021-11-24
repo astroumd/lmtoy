@@ -1,8 +1,11 @@
 #! /usr/bin/env bash
 #
+#    creates the README.html file for a standard RSR "TAP"
+#
 
+#            required:   2 arguments
 obsnum=$1
-src=$2
+   src=$2
 
 echo "<B>Few notes on <A HREF=http://lmtgtm.org/telescope/instrumentation/instruments/rsr/>RSR</A> and the information you see here:</B>"
 echo "<OL>"
@@ -39,11 +42,16 @@ if [ -e rsr4.log ]; then
  echo "             <-> <B>rsr.$obsnum.badlags</B>"
  echo "The raw lag data are dimensioned as followed:    AccData[nchassis; ntime, nboard, nchan] - where each chassis is in a different file"
 fi
+
+cat $LMTOY/examples/template.svg.html | sed s/template.svg/rsr.spectra.svg/g > rsr.spectra.svg.html
+rsync -av $LMTOY/etc/resources .
+
 echo ""
-echo "The 3 spectra are shown in <A HREF=rsr.spectra.png>rsr.spectra.png</A> and a band-6 zoomed version in <A HREF=rsr.spectra_co.png>rsr.spectra_co.png</A>"
+echo "The 2 spectra are shown in <A HREF=rsr.spectra.png>rsr.spectra.png</A>, with a band-6 zoomed version in <A HREF=rsr.spectra_co.png>rsr.spectra_co.png</A>, or an svg version in <A HREF=rsr.spectra.svg.html>rsr.spectra.svg</A>"
 echo ""
 echo "A few admit results are also available, but no information on the VLSR was available, so the LineID is likely bogus"
 echo "</pre>"
 echo "In a next major revision these scripts will be merged into a single script that incoorporates all ideas"
 echo "<hr>"
 echo "Updated: `date`"
+
