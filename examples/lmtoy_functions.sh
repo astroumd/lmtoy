@@ -40,32 +40,30 @@ function lmtoy_rsr1 {
 
     #  @todo    use -t flag ?
     
-    # first time, do a run with no badlags or rfile
+    # first time, do a run with no badlags or rfile and no exlude baseline portions
     if [ $first == 1 ]; then
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  -w rsr.wf0.pdf -p -b 3   > rsr0.log 2>&1	
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  -w rsr.wf0.pdf -p -b 3      > rsr0.log 2>&1	
     fi
     
     # output: rsr.$obsnum.badlags sbc.png
     if [ ! -e $badlags ]; then
-	python $LMTOY/examples/seek_bad_channels.py $obsnum                         > rsr4.log 2>&1
+	python $LMTOY/examples/seek_bad_channels.py $obsnum                            > rsr3.log 2>&1
 	mv rsr.badlags $badlags
     fi
     
     # output: $src_rsr_spectrum.txt
     b="--badlags $badlags"
     r="--rfile $rfile"
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r -w rsr.wf.pdf -p -b 3  > rsr1.log 2>&1
+    l="--exclude 110.51 0.15 108.65 0.3 85.2 0.4"
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l -w rsr.wf.pdf -p -b 3  > rsr1.log 2>&1
     
-    # output: rsr.obsnum.sum.txt
-    python $LMTOY/examples/rsr_sum.py -b rsr.obsnum    $b                           > rsr2.log 2>&1
-
-    # output: rsr.blanking.sum.txt
-    python $LMTOY/examples/rsr_sum.py -b $blanking  $b                              > rsr3.log 2>&1
+    # output: rsr.$obsnum.blanking.sum.txt
+    python $LMTOY/examples/rsr_sum.py -b $blanking  $b                                 > rsr2.log 2>&1
 
     # simple overlapping spectra : full range, and a narrower "CO" range
-    python $LMTOY/examples/rsr_spectra.py -s -co ${src}_rsr_spectrum.txt rsr.obsnum.sum.txt ${blanking}.sum.txt
+    python $LMTOY/examples/rsr_spectra.py -s -co ${src}_rsr_spectrum.txt ${blanking}.sum.txt
     mv rsr.spectra.png rsr.spectra_co.png
-    python $LMTOY/examples/rsr_spectra.py -s     ${src}_rsr_spectrum.txt rsr.obsnum.sum.txt ${blanking}.sum.txt 
+    python $LMTOY/examples/rsr_spectra.py -s     ${src}_rsr_spectrum.txt ${blanking}.sum.txt 
 
     
     # NEMO summary spectra
@@ -73,13 +71,10 @@ function lmtoy_rsr1 {
 	echo "LMTOY>> Some NEMO post-processing"
 	dev=$(yapp_query png ps)
 	tabplot  ${src}_rsr_spectrum.txt    line=1,1 color=2 ycoord=0     yapp=${src}_rsr_spectrum.sp.$dev/$dev  debug=-1
-	tabplot  rsr.obsnum.sum.txt         line=1,1 color=2 ycoord=0     yapp=rsr.obsnum.sum.sp.$dev/$dev       debug=-1
 	tabplot  ${blanking}.sum.txt        line=1,1 color=2 ycoord=0     yapp=${blanking}.sum.sp.$dev/$dev      debug=-1
 	tabtrend ${src}_rsr_spectrum.txt 2 | tabhist - robust=t xcoord=0  yapp=${src}_rsr_spectrum.rms.$dev/$dev debug=-1
-	tabtrend rsr.obsnum.sum.txt      2 | tabhist - robust=t xcoord=0  yapp=rsr.obsnum.sum.rms.$dev/$dev      debug=-1
 	tabtrend ${blanking}.sum.txt     2 | tabhist - robust=t xcoord=0  yapp=${blanking}.sum.rms.$dev/$dev     debug=-1
 	tabstat  ${src}_rsr_spectrum.txt 2 bad=0 robust=t qac=t
-	tabstat  rsr.obsnum.sum.txt      2 bad=0 robust=t qac=t
 	tabstat  ${blanking}.sum.txt     2 bad=0 robust=t qac=t
     else
 	echo "LMTOY>> Skipping NEMO"
