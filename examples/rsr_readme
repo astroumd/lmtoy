@@ -74,7 +74,7 @@ echo "<br> <A HREF=rsr2.log>rsr_sum.py -> rsr2.log</A>"
 
 
 cat $LMTOY/examples/template.svg.html | sed s/template.svg/rsr.spectra.svg/g > rsr.spectra.svg.html
-rsync $LMTOY/etc/resources .
+rsync -a $LMTOY/etc/resources .
 
 echo "<LI>"
 echo " Here is the final two spectra combined in a single plot:"
