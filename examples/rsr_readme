@@ -31,7 +31,7 @@ echo "<LI>"
 if [ -e lags.png ]; then
     echo "The badlags, as identified by large RMS in the "
     echo " channel vs. ACF_sigma for the number of time samples (lag consistency)."
-    echo " Boards are color codes by their board (notice band order is 0,2,1,3,5,4)"
+    echo " Boards are color coded by their board (notice band order is 0,2,1,3,5,4)"
     echo "<br><IMG SRC=lags.png>"
     echo "<br> <A HREF=rsr3.log>seek_bad_channels.py -> rsr3.log</A>"
     echo "Manually edit..."
@@ -56,7 +56,7 @@ echo "<br>"
 echo "  The original one with minimal flagging <A HREF=rsr.wf0.pdf>rsr.wf0.pdf</A>"
 echo "  and the one that has the latest flags applied:"
 echo "              -> <A HREF=rsr.wf.pdf>rsr.wf.pdf</A> "
-echo "  in case the pipeline has been re-executed."
+echo "  in case the pipeline applied badlags and/or has been re-executed."
 
 echo "<br> <A HREF=rsr1.log>rsr_driver.py -> rsr1.log</A>"
 echo "<br>            <-> <B>rsr.$obsnum.rfile</B>"
@@ -73,7 +73,6 @@ echo "<br> <A HREF=rsr2.log>rsr_sum.py -> rsr2.log</A>"
 
 
 
-
 cat $LMTOY/examples/template.svg.html | sed s/template.svg/rsr.spectra.svg/g > rsr.spectra.svg.html
 rsync $LMTOY/etc/resources .
 
@@ -84,6 +83,8 @@ echo "<br><IMG SRC=rsr.spectra.png>"
 
 echo "<br>and a zoomed version in the last band:"
 echo "<br><IMG SRC=rsr.spectra_co.png>"
+echo "If there is a significant difference between the two, there is some subtle difference in how the scripts work".
+
 
 adirs=$(ls -d *.admit) || adir=""
 
