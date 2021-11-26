@@ -38,48 +38,56 @@ function lmtoy_rsr1 {
     # input:  first, obsnum, badlags, blanking, ....
     
 
-    #  @todo    use -t flag ?
-    
-    # first time, do a run with no badlags or rfile and no exlude baseline portions
-    if [ $first == 1 ]; then
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  -w rsr.wf0.pdf -p -b 3      > rsr_driver0.log 2>&1	
-    fi
-    
+    #   first get the badlags - this is a file that can be edited by the user in later re-runs
     # output: rsr.$obsnum.badlags sbc.png
     if [ ! -e $badlags ]; then
 	python $LMTOY/examples/seek_bad_channels.py $obsnum                            > rsr_badlags.log 2>&1
 	mv rsr.badlags $badlags
     fi
+
+    #   We have two similar scripts of difference provenance that produce a final spectrum
+    #   they only differ in the way blanking and baseline subtraction happens, and the idea
+    #   is that this should become one final program.
+    #   On the other hand, it's a good check if the two are producing the same spectrum
     
-    # output: $src_rsr_spectrum.txt
+    # spec1:    output spectrum rsr.$obsnum.driver.txt
+    spec1="rsr.${obsnum}.driver.sum.txt"
     b="--badlags $badlags"
     r="--rfile $rfile"
     l="--exclude 110.51 0.15 108.65 0.3 85.2 0.4"
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l -w rsr.wf.pdf -p -b 3  > rsr_driver.log 2>&1
+    o="-o $spec1"
+    w="-w rsr.wf.pdf"
+    if [ $first == 1 ]; then
+	# first time, do a run with no badlags or rfile and no exlude baseline portions
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b 3    > rsr_driver0.log 2>&1	
+    fi
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b 3          > rsr_driver.log 2>&1
     
-    # output: rsr.$obsnum.blanking.sum.txt
+    # spec2:   output spectrum rsr.$obsnum.blanking.sum.txt
+    spec2=${blanking}.sum.txt
     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 3                         > rsr_sum.log 2>&1
 
-    # simple overlapping spectra : full range, and a narrower "CO" range
-    # the -z version makes an svg file for an alternative way to zoom in
-    python $LMTOY/examples/rsr_spectra.py -s -co ${src}_rsr_spectrum.txt ${blanking}.sum.txt
+    # plot the two in one spectru, one full range, one the last band, closest to "CO"
+    # the -z version makes an svg file for an alternative way to zoom in (TBD)
+    # @todo a more interactive pan&zoom version ala matplotlib for online use
+    python $LMTOY/examples/rsr_spectra.py -s -co $spec1 $spec2
     mv rsr.spectra.png rsr.spectra_co.png
-    python $LMTOY/examples/rsr_spectra.py -s     ${src}_rsr_spectrum.txt ${blanking}.sum.txt
-    python $LMTOY/examples/rsr_spectra.py -s -z  ${src}_rsr_spectrum.txt ${blanking}.sum.txt
+    python $LMTOY/examples/rsr_spectra.py -s     $spec1 $spec2
+    python $LMTOY/examples/rsr_spectra.py -s -z  $spec1 $spec2
 
     
     # NEMO summary spectra
     if [ ! -z $NEMO ]; then
 	echo "LMTOY>> Some NEMO post-processing"
 	dev=$(yapp_query png ps)
-	tabplot  ${src}_rsr_spectrum.txt    line=1,1 color=2 ycoord=0     yapp=${src}_rsr_spectrum.sp.$dev/$dev  debug=-1
-	tabplot  ${blanking}.sum.txt        line=1,1 color=2 ycoord=0     yapp=${blanking}.sum.sp.$dev/$dev      debug=-1
-	tabtrend ${src}_rsr_spectrum.txt 2 | tabhist - robust=t xcoord=0  yapp=${src}_rsr_spectrum.rms.$dev/$dev debug=-1
-	tabtrend ${blanking}.sum.txt     2 | tabhist - robust=t xcoord=0  yapp=${blanking}.sum.rms.$dev/$dev     debug=-1
-	tabstat  ${src}_rsr_spectrum.txt 2 bad=0 robust=t qac=t
-	tabstat  ${blanking}.sum.txt     2 bad=0 robust=t qac=t
+	tabplot  $spec1 line=1,1 color=2 ycoord=0        yapp=${spec1}.$dev/$dev debug=-1
+	tabplot  $spec2 line=1,1 color=2 ycoord=0        yapp=${spec2}.$dev/$dev debug=-1
+	tabtrend $spec1 2 | tabhist - robust=t xcoord=0  yapp=${spec1}.$dev/$dev debug=-1
+	tabtrend $spec2 2 | tabhist - robust=t xcoord=0  yapp=${spec2}.$dev/$dev debug=-1
+	tabstat  $spec1 2 bad=0 robust=t qac=t
+	tabstat  $spec2 2 bad=0 robust=t qac=t
     else
-	echo "LMTOY>> Skipping NEMO"
+	echo "LMTOY>> Skipping NEMO post-processing"
     fi
 
 
@@ -92,12 +100,6 @@ function lmtoy_rsr1 {
 	lmtoy_admit.sh ${blanking}.sum.txt
     else
 	echo "LMTOY>> skipping ADMIT post-processing"
-    fi
-
-
-    # first time?
-    if [ $first == 1 ]; then
-	echo "RSR: first time run, preserving a few first run figures"
     fi
 
     echo "LMTOY>> Parameter file used: $rc"

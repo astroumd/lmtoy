@@ -16,7 +16,8 @@ echo "<LI> a small number of typically 30sec integrations are in each obsnum"
 echo "<LI> often multiple obsnums need to be stacked for a full observation. this can cover several days"
 echo "<LI> the final spectrum is a single band merged spectrum covering the full 73-111 GHz range, averaged in time and chassis"
 echo "<LI> Band edges are at 73.0, 79.7, 86.0, 92.1, 98.6, 104.9, 111.0 GHz, with a small overlap between bands."
-echo "<LI> Channel width is 31.25 MHz or about 100 km/s at the 3mm (W) band"
+echo "<LI> Board ranges: {0: [(71.72, 79.69)], 1: [(85.41, 93.38)], 2: [(78.02, 85.99)], 3: [(90.62, 98.58)], 4: [(104.31, 112.28)], 5: [(96.92, 104.88)]}"
+echo "<LI> Channel width is 31.25 MHz or about 100 km/s in the 3mm (W) band"
 echo "<LI> There is no source doppler tracking, though observations are on a common (helio?)centric frame"
 echo "</OL>"
 echo ""
@@ -29,42 +30,36 @@ echo "<OL>"
 echo "<LI>"
 
 if [ -e badlags.png ]; then
-    echo "The badlags plot, by plotting a time sample based RMS for each channel (i.e. lag consistency)."
-    echo " RMS above the clip level (max in the plot) will be flagged."
+    echo "The badlags plot: shows a time sample based ACF RMS for each channel, board and chassic (i.e. lag consistency)."
+    echo "<br> When the RMS is above a clip level (shown as max in the plot), this channel will be flagged."
     echo " Boards are color coded by their board (notice band order is 0,2,1,3,5,4)"
+    echo "<br> <A HREF=rsr_badlags.log>rsr_badlogs.log</A>"
+    echo "<br> <A HREF=rsr.$obsnum.badlags> <B>rsr.$obsnum.badlags</B></A>"
     echo "<br><IMG SRC=badlags.png>"
-    echo "<br> <A HREF=rsr_badlags.log>seek_bad_channels.py -> rsr3.log</A>"
-    echo "Manually edit..."
-    echo "             <-> <B>rsr.$obsnum.badlags</B>"    
     echo "<hr>"
 else
+    # we don't compute these again when doing combinations, they use the single obsnum badlags files
     echo " In this combined obsnum version we don't re-compute the baglags"
 fi
 
 
-# echo "rsr4.log:  seek_bad_channels.py (Author: P.Schloerb)"
-# echo "              -> <A HREF=lags.png>lags.png</A>  (notice band order 0,2,1,3,5,4 is different from bank order)"
-# echo "                 but the same colors are used for the same band"
-
-
-
 echo "<LI>"
-echo "rsr_driver spectrum: (Author: D. Sanchez)"
+echo "The rsr_driver spectrum: (Author: D. Sanchez)"
 echo "<br>"
-echo "A Waterfall Spectrum: the spectrum for each band, chassis and time sample, color codes by their band:"
+echo "A Waterfall Plot is also produced: a spectrum for each band, chassis and time sample, color coded by their band."
 echo "<br>"
 echo "  We keep an original one with minimal flagging <A HREF=rsr.wf0.pdf>rsr.wf0.pdf</A>"
 echo "  and the one that has the latest flags applied:"
-echo "              -> <A HREF=rsr.wf.pdf>rsr.wf.pdf</A> "
-echo "  in case the pipeline applied badlags and/or has been re-executed."
+echo "              <A HREF=rsr.wf.pdf>rsr.wf.pdf</A> "
+echo "  as the pipeline has been re-run."
 
 echo "<br> <A HREF=rsr_driver.log>rsr_driver.log</A>"
 echo "<br> <A HREF=rsr.$obsnum.rfile> <B>rsr.$obsnum.rfile</B></A>"
-echo "<br>            -> ${src}_rsr_spectrum.txt (final bandmerged spectrum)"
+echo "<br>            -> rsr.$obsnum.driver.sum.txt (final bandmerged spectrum)"
 
 
 echo "<LI>"
-echo "rsr_sum spectrum: (Author: M.Yun)"
+echo "The rsr_sum spectrum: (Author: M.Yun)"
 echo "<br>with optional blanking"
 echo "<br> <A HREF=rsr_sum.log>rsr_sum.log</A>"
 echo "<br> <A HREF=rsr.$obsnum.blanking><B>rsr.$obsnum.blanking</B></A>"
@@ -77,7 +72,7 @@ cat $LMTOY/examples/template.svg.html | sed s/template.svg/rsr.spectra.svg/g > r
 rsync -a $LMTOY/etc/resources .
 
 echo "<LI>"
-echo " Here is the two spectra combined in a single plot:"
+echo " Here are the two spectra combined in a single plot:"
 echo "(or try <A HREF=rsr.spectra.svg.html>rsr.spectra.svg</A>)"
 echo "<br><IMG SRC=rsr.spectra.png>"
 
