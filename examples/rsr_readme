@@ -28,12 +28,12 @@ echo "<OL>"
 
 echo "<LI>"
 
-if [ -e lags.png ]; then
-    echo "The badlags, as identified by large RMS in the "
-    echo " channel vs. ACF_sigma for the number of time samples (lag consistency)."
+if [ -e badlags.png ]; then
+    echo "The badlags plot, by plotting a time sample based RMS for each channel (i.e. lag consistency)."
+    echo " RMS above the clip level (max in the plot) will be flagged."
     echo " Boards are color coded by their board (notice band order is 0,2,1,3,5,4)"
-    echo "<br><IMG SRC=lags.png>"
-    echo "<br> <A HREF=rsr3.log>seek_bad_channels.py -> rsr3.log</A>"
+    echo "<br><IMG SRC=badlags.png>"
+    echo "<br> <A HREF=rsr_badlags.log>seek_bad_channels.py -> rsr3.log</A>"
     echo "Manually edit..."
     echo "             <-> <B>rsr.$obsnum.badlags</B>"    
     echo "<hr>"
@@ -49,27 +49,27 @@ fi
 
 
 echo "<LI>"
-echo "rsr_driver spectrum:"
+echo "rsr_driver spectrum: (Author: D. Sanchez)"
 echo "<br>"
 echo "A Waterfall Spectrum: the spectrum for each band, chassis and time sample, color codes by their band:"
 echo "<br>"
-echo "  The original one with minimal flagging <A HREF=rsr.wf0.pdf>rsr.wf0.pdf</A>"
+echo "  We keep an original one with minimal flagging <A HREF=rsr.wf0.pdf>rsr.wf0.pdf</A>"
 echo "  and the one that has the latest flags applied:"
 echo "              -> <A HREF=rsr.wf.pdf>rsr.wf.pdf</A> "
 echo "  in case the pipeline applied badlags and/or has been re-executed."
 
-echo "<br> <A HREF=rsr1.log>rsr_driver.py -> rsr1.log</A>"
-echo "<br>            <-> <B>rsr.$obsnum.rfile</B>"
-echo "<br>            -> ${src}_rsr_spectrum.txt"
+echo "<br> <A HREF=rsr_driver.log>rsr_driver.log</A>"
+echo "<br> <A HREF=rsr.$obsnum.rfile> <B>rsr.$obsnum.rfile</B></A>"
+echo "<br>            -> ${src}_rsr_spectrum.txt (final bandmerged spectrum)"
 
 
 echo "<LI>"
-echo "rsr_sum spectrum:"
-echo "<br>rsr2.log:  rsr_sum.py (Author: M.Yun) with optional blanking (edit rsr.blanking for now)"
-echo "              -> rsr.$obsnum.blanking.sum.txt"
-echo "             <-> <B>rsr.$obsnum.blanking</B>"
+echo "rsr_sum spectrum: (Author: M.Yun)"
+echo "<br>with optional blanking"
+echo "<br> <A HREF=rsr_sum.log>rsr_sum.log</A>"
+echo "<br> <A HREF=rsr.$obsnum.blanking><B>rsr.$obsnum.blanking</B></A>"
+echo "<br>         -> rsr.$obsnum.blanking.sum.txt  (final bandmerged spectrum)"
 
-echo "<br> <A HREF=rsr2.log>rsr_sum.py -> rsr2.log</A>"
 
 
 
@@ -77,7 +77,7 @@ cat $LMTOY/examples/template.svg.html | sed s/template.svg/rsr.spectra.svg/g > r
 rsync -a $LMTOY/etc/resources .
 
 echo "<LI>"
-echo " Here is the final two spectra combined in a single plot:"
+echo " Here is the two spectra combined in a single plot:"
 echo "(or try <A HREF=rsr.spectra.svg.html>rsr.spectra.svg</A>)"
 echo "<br><IMG SRC=rsr.spectra.png>"
 
@@ -89,7 +89,7 @@ echo "If there is a significant difference between the two, there is some subtle
 adirs=$(ls -d *.admit) || adir=""
 
 echo "<LI>"
-echo "A few admit results are also available, but no information on the VLSR was available, so the LineID is likely bogus:"
+echo "A few admit results are also available:"
 echo "  <OL>"
 for adir in $adirs; do
     echo "<LI> <A HREF=$adir>$adir</A>"
