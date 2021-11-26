@@ -11,5 +11,5 @@ echo '# This is an rfile for rsr_driver'
 echo '#  only full obsnum,chassis,band combinations can be removed from the spectrum sum'
 echo '#  obsnum,chassis,band (the comma is currently required)'
 echo '# Example:'
-echo "# $obsnum,0,0" 
+echo "# $obsnum,0,0      # comments here" 
 echo "# $obsnum,3,5"
