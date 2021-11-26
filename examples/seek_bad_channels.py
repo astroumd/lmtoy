@@ -90,7 +90,7 @@ Qshow = False
 
 #  filenames
 badlags = "rsr.badlags"
-lagsplot = 'lags.png'
+lagsplot = 'badlags.png'
 
 # now ready to process.  First read in the data from the file or commandline
 
@@ -188,7 +188,12 @@ print('Bad Channel Threshold = %6.1f'%(bc_threshold))
 print('-----------------------')
 print(' c  b  ch   scan metric')
 print('-----------------------')
+
 ftab = open('rsr.badlags','w')
+ftab.write('# Bad Channel Threshold = %6.1f\n'%(bc_threshold))
+ftab.write('# -----------------------\n')
+ftab.write('#  c  b  ch   scan metric\n')
+ftab.write('# -----------------------\n')
 
 
 # fix the colors so they correspond to the colors as ordered by band in waterfall plot

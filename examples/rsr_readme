@@ -16,42 +16,80 @@ echo "<LI> a small number of typically 30sec integrations are in each obsnum"
 echo "<LI> often multiple obsnums need to be stacked for a full observation. this can cover several days"
 echo "<LI> the final spectrum is a single band merged spectrum covering the full 73-111 GHz range, averaged in time and chassis"
 echo "<LI> Band edges are at 73.0, 79.7, 86.0, 92.1, 98.6, 104.9, 111.0 GHz, with a small overlap between bands."
-echo "<LI> Channel width is 31.25 MHz or about 100 km/s at the 3mm (W) band"
+echo "<LI> Board ranges: {0: [(71.72, 79.69)], 1: [(85.41, 93.38)], 2: [(78.02, 85.99)], 3: [(90.62, 98.58)], 4: [(104.31, 112.28)], 5: [(96.92, 104.88)]}"
+echo "<LI> Channel width is 31.25 MHz or about 100 km/s in the 3mm (W) band"
 echo "<LI> There is no source doppler tracking, though observations are on a common (helio?)centric frame"
 echo "</OL>"
 echo ""
-echo "In this directory you will find data products of a single RSR obsnum"
-echo "resulting from (currently) running three scripts"
+echo "Here is a summary of the data products of obsnum=$obsnum"
+echo "resulting from running the RSR pipeline."
 echo ""
-echo "<pre>"
-echo "rsr1.log:  rsr_driver.py (Author: D.Sanchez)"
-echo "              -> <A HREF=rsr.wf.pdf>rsr.wf.pdf</A>"
-echo "                 freq vs. T_A* "
-echo "             <-> <B>rsr.$obsnum.rfile</B>"
-echo "              -> ${src}_rsr_spectrum.txt"
-echo "rsr2.log:  rsr_sum.py (Author: M.Yun)"
-echo "              -> rsr.obsnum.sum.txt"
-echo "rsr3.log:  rsr_sum.py with optional blanking (edit rsr.blanking for now)"
-echo "              -> rsr.$obsnum.blanking.sum.txt"
-echo "             <-> <B>rsr.$obsnum.blanking</B>"
-if [ -e rsr4.log ]; then
- echo "rsr4.log:  seek_bad_channels.py (Author: P.Schloerb)"
- echo "              -> <A HREF=lags.png>lags.png</A>  (notice band order 0,2,1,3,5,4 is different from bank order)"
- echo "                 but the same colors are used for the same band"
- echo "                 channel vs. ACF_sigma for the number of time samples (lag consistency)"
- echo "             <-> <B>rsr.$obsnum.badlags</B>"
- echo "The raw lag data are dimensioned as followed:    AccData[nchassis; ntime, nboard, nchan] - where each chassis is in a different file"
+
+echo "<OL>"
+
+echo "<LI>"
+
+if [ -e badlags.png ]; then
+    echo "The badlags plot: shows a time sample based ACF RMS for each channel, board and chassic (i.e. lag consistency)."
+    echo "<br> When the RMS is above a clip level (shown as max in the plot), this channel will be flagged."
+    echo " Boards are color coded by their board (notice band order is 0,2,1,3,5,4)"
+    echo "<br> <A HREF=rsr_badlags.log>rsr_badlogs.log</A>"
+    echo "<br> <A HREF=rsr.$obsnum.badlags> <B>rsr.$obsnum.badlags</B></A>"
+    echo "<br><IMG SRC=badlags.png>"
+    echo "<hr>"
+else
+    # we don't compute these again when doing combinations, they use the single obsnum badlags files
+    echo " In this combined obsnum version we don't re-compute the baglags"
 fi
 
-cat $LMTOY/examples/template.svg.html | sed s/template.svg/rsr.spectra.svg/g > rsr.spectra.svg.html
-rsync -av $LMTOY/etc/resources .
 
-echo ""
-echo "The 2 spectra are shown in <A HREF=rsr.spectra.png>rsr.spectra.png</A>, with a band-6 zoomed version in <A HREF=rsr.spectra_co.png>rsr.spectra_co.png</A>, or an svg version in <A HREF=rsr.spectra.svg.html>rsr.spectra.svg</A>"
-echo ""
-echo "A few admit results are also available, but no information on the VLSR was available, so the LineID is likely bogus"
-echo "</pre>"
-echo "In a next major revision these scripts will be merged into a single script that incoorporates all ideas"
+echo "<LI>"
+echo "The rsr_driver spectrum: (Author: D. Sanchez)"
+echo "<br>"
+echo "A Waterfall Plot is also produced: a spectrum for each band, chassis and time sample, color coded by their band."
+echo "<br>"
+echo "  We keep an original one with minimal flagging <A HREF=rsr.wf0.pdf>rsr.wf0.pdf</A>"
+echo "  and the one that has the latest flags applied:"
+echo "              <A HREF=rsr.wf.pdf>rsr.wf.pdf</A> "
+echo "  as the pipeline has been re-run."
+
+echo "<br> <A HREF=rsr_driver.log>rsr_driver.log</A>"
+echo "<br> <A HREF=rsr.$obsnum.rfile> <B>rsr.$obsnum.rfile</B></A>"
+echo "<br>            -> rsr.$obsnum.driver.sum.txt (final bandmerged spectrum)"
+
+
+echo "<LI>"
+echo "The rsr_sum spectrum: (Author: M.Yun)"
+echo "<br>with optional blanking"
+echo "<br> <A HREF=rsr_sum.log>rsr_sum.log</A>"
+echo "<br> <A HREF=rsr.$obsnum.blanking><B>rsr.$obsnum.blanking</B></A>"
+echo "<br>         -> rsr.$obsnum.blanking.sum.txt  (final bandmerged spectrum)"
+
+
+
+
+cat $LMTOY/examples/template.svg.html | sed s/template.svg/rsr.spectra.svg/g > rsr.spectra.svg.html
+rsync -a $LMTOY/etc/resources .
+
+echo "<LI>"
+echo " Here are the two spectra combined in a single plot:"
+echo "(or try <A HREF=rsr.spectra.svg.html>rsr.spectra.svg</A>)"
+echo "<br><IMG SRC=rsr.spectra.png>"
+
+echo "<br>and a zoomed version in the last band:"
+echo "<br><IMG SRC=rsr.spectra_co.png>"
+echo "If there is a significant difference between the two, there is some subtle difference in how the scripts work".
+
+
+adirs=$(ls -d *.admit) || adir=""
+
+echo "<LI>"
+echo "A few admit results are also available:"
+echo "  <OL>"
+for adir in $adirs; do
+    echo "<LI> <A HREF=$adir>$adir</A>"
+done
+echo "  </OL>"
 echo "<hr>"
 echo "Updated: `date`"
 

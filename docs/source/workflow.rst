@@ -8,6 +8,36 @@ later in this section.
 In this current workflow, all you need to know is a set of **ObsNum** 's , which can be obtained by quering
 (some) database. We need some examples of this.
 
+RSR data
+--------
+
+
+Symmetric to the WARES scripts, two front-end scripts
+``rsr_pipeline.sh`` and ``rsr_combine.sh``  will reduce RSR data. Behind the scenes there
+are two different scripts,
+``rsr_driver.sh`` and ``rsr_sum.sh``, reducing the raw data directly into an ASCII spectrum, there
+is no SpecFile created as there is for WARES data. These two scripts have slightly different
+ways to mask bad data, but should otherwise produce a very similar final spectrum.
+
+two slightly different versions of a spectrum, each with their own command line options and masking
+file:
+
+1. rsr_driver uses the RFILE (a simple obsnum,chassis,board tuple to remove from the data) and ``--exclude`` option
+   to remove sections in frequency space to be removed from the baseline fitting.
+
+2. rsr_sum uses the BLANKING (a more detailed format to exclode certain chassis and board sections from inclusion).
+   a separate **windows[]** list is used to designate sections in frequency space for baselining.
+
+
+The parameter files are:
+
+1. ``lmtoy.${obsnum}.rc`` - general LMTOY parameter file
+2. ``rsr.${obsnum}.badlags`` - triples of chassis,board,chan,obsnum,metric for badlag flagging
+3. ``rsr.${obsnum}.blanking``  - triples of obsnum,chassic,board/freq ranges - for rsr_driver.py
+4. ``rsr.${obsnum}.rfile`` - triples of obsnum,chassis,board - for rsr_sum.py
+
+
+
 WARES data
 ----------
 
@@ -16,26 +46,12 @@ the scripts ``seq_reduce.sh`` and ``seq_combine.sh`` will reduce single and comb
 always work through an intermediate Specfile (equivalent to our future SDFITS file), which gets gridded
 into a FITS cube.
 
-The parameter file is called ``lmtoy_${obsnum}.rc`` and can be edited to re-run the pipeline.
-
-
-RSR data
---------
-
-Symmetric to the WARES scripts, two front-end scripts
-``rsr_pipeline.sh`` and ``rsr_combine.sh``  will reduce RSR data. Behind the scenes there
-are two different scripts,
-``rsr_driver.sh`` and ``rsr_sum.sh``, reducing the raw data directly into an ASCII spectrum, there
-is no SpecFile created as there is for WARES data.
-
-Many more details of the old workflow is in ``examples/lmtoy_reduce.md``
-
 The parameter files are:
 
-1. lmtoy.${obsnum}.rc - general LMTOY parameter file
-2. rsr.${obsnum}.badlags - triples of chassis,board,chan,obsnum,metric for badlag flagging
-3. rsr.${obsnum}.blanking  - triples of obsnum,chassic,board/freq ranges - for rsr_driver.py
-4. rsr.${obsnum}.rfile - triples of obsnum,chassis,board - for rsr_sum.py
+1. ``lmtoy_${obsnum}.rc`` - general LMTOY parameter file
+
+
+Many more details of the old workflow is in ``examples/lmtoy_reduce.md``
 
 
 
@@ -86,7 +102,7 @@ for which we have a script, which works from any directory:
 
 note that this script only needs the main (Map) obsnum, the calibration (Cal) is automatically included.
 
-3. To re-run:   edit settings in **2018S1SEQUOIACommissioning/79448/lmtoy_79448.rc** ,and re-run:
+3. To re-run:   edit settings in ``2018S1SEQUOIACommissioning/79448/lmtoy_79448.rc`` ,and re-run:
 
 .. code-block::
 
