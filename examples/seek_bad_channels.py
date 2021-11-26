@@ -90,7 +90,7 @@ Qshow = False
 
 #  filenames
 badlags = "rsr.badlags"
-lagsplot = 'lags.png'
+lagsplot = 'badlags.png'
 
 # now ready to process.  First read in the data from the file or commandline
 
