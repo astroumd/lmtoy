@@ -42,12 +42,12 @@ function lmtoy_rsr1 {
     
     # first time, do a run with no badlags or rfile and no exlude baseline portions
     if [ $first == 1 ]; then
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  -w rsr.wf0.pdf -p -b 3      > rsr0.log 2>&1	
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  -w rsr.wf0.pdf -p -b 3      > rsr_driver0.log 2>&1	
     fi
     
     # output: rsr.$obsnum.badlags sbc.png
     if [ ! -e $badlags ]; then
-	python $LMTOY/examples/seek_bad_channels.py $obsnum                            > rsr3.log 2>&1
+	python $LMTOY/examples/seek_bad_channels.py $obsnum                            > rsr_badlags.log 2>&1
 	mv rsr.badlags $badlags
     fi
     
@@ -55,10 +55,10 @@ function lmtoy_rsr1 {
     b="--badlags $badlags"
     r="--rfile $rfile"
     l="--exclude 110.51 0.15 108.65 0.3 85.2 0.4"
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l -w rsr.wf.pdf -p -b 3  > rsr1.log 2>&1
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l -w rsr.wf.pdf -p -b 3  > rsr_driver.log 2>&1
     
     # output: rsr.$obsnum.blanking.sum.txt
-    python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 3                         > rsr2.log 2>&1
+    python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 3                         > rsr_sum.log 2>&1
 
     # simple overlapping spectra : full range, and a narrower "CO" range
     # the -z version makes an svg file for an alternative way to zoom in
