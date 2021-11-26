@@ -4,8 +4,10 @@
 import os
 import sys
 import numpy as np
+
+#import matplotlib
+#matplotlib.use('svg')
 import matplotlib.pyplot as plt
-# plt.style.use("grayscale")
 
 Qshow = True
 ext   = 'png'
@@ -44,8 +46,7 @@ for f in sys.argv[1:]:
         continue
     n = n + 1
     data1 = np.loadtxt(f).T
-    # @todo   is the freq at the start or middle of the channel?
-    plt.step(data1[0],data1[1],label=f)
+    plt.step(data1[0],data1[1],label=f, where='mid')
 
 if n==0:
     sys.exit(0)
