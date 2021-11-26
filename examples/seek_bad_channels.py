@@ -190,10 +190,10 @@ print(' c  b  ch   scan metric')
 print('-----------------------')
 
 ftab = open('rsr.badlags','w')
-#ftab.write('# Bad Channel Threshold = %6.1f\n'%(bc_threshold))
-#ftab.write('# -----------------------\n')
-#ftab.write('#  c  b  ch   scan metric\n')
-#ftab.write('# -----------------------\n')
+ftab.write('# Bad Channel Threshold = %6.1f\n'%(bc_threshold))
+ftab.write('# -----------------------\n')
+ftab.write('#  c  b  ch   scan metric\n')
+ftab.write('# -----------------------\n')
 
 
 # fix the colors so they correspond to the colors as ordered by band in waterfall plot
