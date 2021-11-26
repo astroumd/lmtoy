@@ -20,11 +20,18 @@ RSR data
 --------
 
 The scripts ``rsr_driver.sh`` and ``rsr_sum.sh`` are two methods to reduce RSR raw data. There is
-no SpecFile.
+no SpecFile. Wrapper scripts  ``rsr_pipeline.sh`` and ``rsr_combine.sh`` will calll these scripts to make
+two slightly different versions of a spectrum, each with their own command line options and masking
+file:
+
+1. rsr_driver uses the RFILE (a simple obsnum,chassis,board tuple to remove from the data) and ``--exclude`` option
+   to remove sections in frequency space to be removed from the baseline fitting.
+
+2. rsr_sum uses the BLANKING (a more detailed format to exclode certain chassis and board sections from inclusion).
+   a separate **windows[]** list is used to designate sections in frequency space for baselining.
 
 Many more details of the old workflow is in ``examples/lmtoy_reduce.md``
 
-NOTE:  we now have **rsr_pipeline.sh** and **rsr_combine.sh**
 
 
 LMT SLR data reduction
