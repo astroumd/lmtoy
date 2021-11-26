@@ -58,43 +58,12 @@ import dreampy3
 from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 # from dreampy3.utils.filterscans import FilterScans
 from dreampy3.redshift.plots import RedshiftPlot
+from dreampy3.redshift.utils.fileutils import make_generic_filename
 # import gain
 from blanking import blanking
 
-def pjt_badlags(badlag_file=None, debug=False):
-    """
-       reset all badlags and inherit them from the (chassis,board,channel) list
-    
-       Note this will leave badlags settings in the dreampyParams (see ~/.dreampy/dreampyrc)
-       so if a program does not use badlags, it still needs to be called with no argument
-       to reset them!
-    """
-    import dreampy3 as dreampy
-    # awkward:  blank the bad_lags from the ~/.dreampy/dreampyrc file
-    for c in range(4):
-        dreampy.dreampyParams['redshiftchassis']['bad_lags%d' % c] = ['', '', '', '', '', '']
 
-    if badlag_file == None:
-        return
-
-    with open(badlag_file) as blfile:
-        for line in blfile.readlines():
-            if line[0]=='#': continue
-            words = line.split()
-            bad_c = int(words[0])
-            bad_b = int(words[1])
-            bad_l = int(words[2])
-            dp = dreampy.dreampyParams['redshiftchassis']['bad_lags%d' % bad_c][bad_b]
-            if len(dp) == 0:
-                # print("PJT0",bad_c,bad_b,bad_l)
-                dreampy.dreampyParams['redshiftchassis']['bad_lags%d' % bad_c][bad_b] = '%d' % bad_l
-            else:
-                # print("PJT1",bad_c,bad_b,bad_l,dp)
-                dreampy.dreampyParams['redshiftchassis']['bad_lags%d' % bad_c][bad_b] = dp + '/%d' % bad_l
-    if debug:
-        print('BAD LAGS:')
-        print(dreampy.dreampyParams['redshiftchassis'])
-
+script_version ="0.2.0"
 
 
 def main(argv):
@@ -139,19 +108,25 @@ def main(argv):
                     if chassis == b[0] and ObsNum in b[1] and len(b[2]) == 0:
                         print("Skipping ",b)
                         raise
-                # find the chassis file         
-                globs = '%s/RedshiftChassis%d/RedshiftChassis%d_*_0%d_00_0001.nc' % (data_lmt, chassis, chassis, ObsNum)
-                fn = glob.glob(globs)
-                if len(fn) == 1:
-                    fname = fn[0]
+                # find the chassis file
+                if False:
+                    globs = '%s/RedshiftChassis%d/RedshiftChassis%d_*_0%d_00_0001.nc' % (data_lmt, chassis, chassis, ObsNum)
+                    fn = glob.glob(globs)
+                    if len(fn) == 1:
+                        fname = fn[0]
+                        print("Process filename %s" % fname)
+                        nc = RedshiftNetCDFFile(fname)
+                    else:
+                        print("Warning: [%d] failed finding files for %s" % (len(fn),globs))
+                        continue
+                else:
+                    fname = make_generic_filename(ObsNum, chassis)
                     print("Process filename %s" % fname)
                     nc = RedshiftNetCDFFile(fname)
-                else:
-                    print("Warning: [%d] failed finding files for %s" % (len(fn),globs))
-                    continue
             except:
+                print("Skipping %d %d due to an error" % (ObsNum, chassis))
                 continue
-            print(nc.hdu.header.SourceName)
+            print("Found src=",nc.hdu.header.SourceName)
             nc.hdu.process_scan()
 
             #el = nc.hdu.header.ElReq
@@ -195,4 +170,5 @@ def main(argv):
 
 
 if __name__ == "__main__":
+    print("rsr_sum: Version %s" % script_version)
     main(sys.argv[1:]) 
