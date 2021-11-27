@@ -18,3 +18,7 @@ SLR_example.ipynb:
 
 GridMapExample.ipynb:
 	ln -s ../../notebooks/GridMapExample.ipynb
+
+pjt:
+	(cd ..; make pjt) 
+ 
