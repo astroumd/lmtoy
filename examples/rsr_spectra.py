@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 #  template script written by NEMO::pytable
 #
-import os
+
 import sys
 import numpy as np
 
@@ -14,7 +14,9 @@ ext   = 'png'
 base  = 'rsr.spectra'
 n     = 0
 
-def help():
+def my_help():
+    """   usage reminder
+    """
     print("Plot one or more overlayed spectra - X,Y in cols 1,2, comments allowed")
     print("Output basename %s" % base)
     print("-s      show interactive plot as well")
@@ -33,7 +35,7 @@ plt.figure()
 
 for f in sys.argv[1:]:
     if f == '-h':
-        help()
+        my_help()
         continue
     if f == '-s':
         Qshow = False
@@ -61,4 +63,3 @@ else:
     pout = "%s.%s" % (base,ext)
     plt.savefig(pout)
     print("%s writtten" % pout)
-
