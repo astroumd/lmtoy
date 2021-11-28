@@ -2,7 +2,7 @@
 #
 #   some functions to share for lmtoy pipeline operations
 
-lmtoy_version="22-nov-2021"
+lmtoy_version="28-nov-2021"
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version from $0"
 
 function lmtoy_decipher_obsnums {
@@ -80,10 +80,10 @@ function lmtoy_rsr1 {
     if [ ! -z $NEMO ]; then
 	echo "LMTOY>> Some NEMO post-processing"
 	dev=$(yapp_query png ps)
-	tabplot  $spec1 line=1,1 color=2 ycoord=0        yapp=${spec1}.$dev/$dev debug=-1
-	tabplot  $spec2 line=1,1 color=2 ycoord=0        yapp=${spec2}.$dev/$dev debug=-1
-	tabtrend $spec1 2 | tabhist - robust=t xcoord=0  yapp=${spec1}.$dev/$dev debug=-1
-	tabtrend $spec2 2 | tabhist - robust=t xcoord=0  yapp=${spec2}.$dev/$dev debug=-1
+	tabplot  $spec1 line=1,1 color=2 ycoord=0        yapp=${spec1}.sp.$dev/$dev  debug=-1
+	tabplot  $spec2 line=1,1 color=2 ycoord=0        yapp=${spec2}.sp.$dev/$dev  debug=-1
+	tabtrend $spec1 2 | tabhist - robust=t xcoord=0  yapp=${spec1}.rms.$dev/$dev debug=-1
+	tabtrend $spec2 2 | tabhist - robust=t xcoord=0  yapp=${spec2}.rms.$dev/$dev debug=-1
 	tabstat  $spec1 2 bad=0 robust=t qac=t
 	tabstat  $spec2 2 bad=0 robust=t qac=t
     else
