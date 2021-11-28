@@ -94,10 +94,10 @@ function lmtoy_rsr1 {
     # ADMIT
     if [ $admit == 1 ]; then
 	echo "LMTOY>> ADMIT post-processing"
-	echo "vlsr = 12387" >> ${src}_rsr_spectrum.txt.apar
-	echo "vlsr = 12387" >> ${blanking}.sum.txt.apar
-	lmtoy_admit.sh ${src}_rsr_spectrum.txt
-	lmtoy_admit.sh ${blanking}.sum.txt
+	echo "vlsr = 12387" >> ${spec1}.apar
+	echo "vlsr = 12387" >> ${spec2}.apar
+	lmtoy_admit.sh ${spec1}
+	lmtoy_admit.sh ${spec2}
     else
 	echo "LMTOY>> skipping ADMIT post-processing"
     fi
