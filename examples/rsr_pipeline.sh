@@ -37,7 +37,7 @@ obsnum=0
 obsid=""
 newrc=0
 pdir=""
-badboard=-1     # set to -1 if no board is bad, or pick one 0..5
+badboard=""   # set to a comma separate list of bad boards
 #            - procedural
 admit=1
 
@@ -102,24 +102,20 @@ else
     first=1
 fi
 
-blanking=rsr.$obsnum.blanking
-rfile=rsr.$obsnum.rfile
-badlags=rsr.$obsnum.badlags
+blanking=rsr.$obsnum.blanking     # for  rsr_driver
+badlags=rsr.$obsnum.badlags       # for  rsr_driver
+rfile=rsr.$obsnum.rfile           # for  rsr_sum
 
 if [ $first == 1 ]; then
     rsr_blanking $obsnum     > $blanking
     rsr_rfile    $obsnum     > $rfile
-    # special case when board0 is bad
-    if [ $badboard = 0 ]; then
+    for b in $(echo $badboard | sed 's/,/ /g'); do
 	for c in 0 1 2 3; do
-	    echo "$obsnum $c {0: [(70,80)]}" >> $blanking
-	    echo "$obsnum,$c,0"              >> $rfile
+	    echo "$obsnum $c {$b: [(70,115)]}" >> $blanking
+	    echo "$obsnum,$c,$b"               >> $rfile
 	done
-    fi
-
-    # note $badlags is created by seed_bad_channels
-    
+    done
+    # note $badlags is created by seek_bad_channels
 fi
-
 
 lmtoy_rsr1
