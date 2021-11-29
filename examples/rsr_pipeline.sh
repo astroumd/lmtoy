@@ -13,7 +13,7 @@
 # that's perhaps for a more advanced pipeline
 #
 
-version="rsr_pipeline: 22-nov-2021"
+version="rsr_pipeline: 29-nov-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=OBSNUM ..."
@@ -109,12 +109,16 @@ rfile=rsr.$obsnum.rfile           # for  rsr_sum
 if [ $first == 1 ]; then
     rsr_blanking $obsnum     > $blanking
     rsr_rfile    $obsnum     > $rfile
-    for b in $(echo $badboard | sed 's/,/ /g'); do
-	for c in 0 1 2 3; do
-	    echo "$obsnum $c {$b: [(70,115)]}" >> $blanking
-	    echo "$obsnum,$c,$b"               >> $rfile
+    if [[ ! -z "$badboard" ]]; then
+	echo "# setting badboard=$badboard" >> $blanking
+	echo "# setting badboard=$badboard" >> $rfile
+	for b in $(echo $badboard | sed 's/,/ /g'); do
+	    for c in 0 1 2 3; do
+		echo "$obsnum $c {$b: [(70,115)]}" >> $blanking
+		echo "$obsnum,$c,$b"               >> $rfile
+	    done
 	done
-    done
+    fi
     # note $badlags is created by seek_bad_channels
 fi
 
