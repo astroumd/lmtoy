@@ -55,20 +55,23 @@ Many more details of the old workflow is in ``examples/lmtoy_reduce.md``
 
 
 
-Current (nov 2021) Workflow
----------------------------
+Getting at the RAW data
+-----------------------
 
-Here is a working procedure to get LMT data and reduce them
-in your own local workspace, and assuming the full LMTOY toolkit has been installed:
+Here are some examples to get LMT data and reduce them
+in your own local workspace. This assumes the full LMTOY toolkit has been installed:
 
-1.  Find out which **obsnum** covers your observation(s).  This must include calibration ObsNum's as well.
+1.  Find out which **obsnum** covers your observation(s).  Depending on the procedure, you may
+    also need to know the calibration ObsNum's as well, referred to as the **CalObsNum**.
     There are some existing databases and logfiles where a simple **grep** command will probably be sufficient
-    to get the obsnums. The **lmtinfo.py $DATA_LMT** command can also be useful. If you have **Scans.csv**,
-    this might also be useful. If you see a log file inside of $DATA_LMT, this might be useful too.
+    to get the obsnums. The **lmtinfo.py $DATA_LMT** command can also be used. If you have the **Scans.csv**
+    database, this might be faster. If you see a log file in the $DATA_LMT directory, this might be another
+    place were a record of all ObsNum's exists.
     As they say, YMMV.
     
-2.  Get the data from a full $DATA_LMT archive (e.g. at "cln",or at LMT) via the **rsync_lma** script. Obviously
-    only somebody on that archive machine can do this. Here is an example:
+2.  Get the data from a full $DATA_LMT archive (e.g. at "cln", or at LMT) via the **rsync_lma** script. Obviously
+    only somebody on that archive machine can do this, but this is the easiest way. Here is an example of several
+    methods:
 
 .. code-block::
 
@@ -202,17 +205,17 @@ within which various **obsnum**'s will be visible, and possibly some combination
 
 
 Future LMT SLR data reduction
-=============================
+-----------------------------
 
 Here we describe the workflow in the future unified SDFITS based
-system.  The first step is always the RAW (lmtsrc or dreampy3) based
+system.  The first step is always the RAW (lmtslr or dreampy3) based
 conversion (*ingestion*) to SDFITS. If you are in an interactive
 python session, the data will be in memory in a special class, there
 should be no formal reason to save the SDFITS file (formerly called
 the *SpecFile* in lmtslr), but one is well adviced to do this. 
 
 Load and Go
------------
+~~~~~~~~~~~
 
 The initial workflow is *load-and-go* based. A number of parameters are set, a series of plots can be
 reviewed, including having access to the final Science Ready Data Product (SRDP). User can set new
@@ -272,7 +275,7 @@ in docs/masking.md, but here is a flavor of what is being considered:
 
 
 Future Workflow
----------------
+~~~~~~~~~~~~~~~
 
 UMass Server has the data, a web interface will run the new-style pipeline. Data can be inspected.
 New parameters can be set, and re-imaged.

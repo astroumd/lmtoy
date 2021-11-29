@@ -56,6 +56,9 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
     dasha
       A python frontend to dash, currently used by TolTeca
 
+    dreampy, dreampy3
+      The set of python modules that you need to reduce RSR data
+
     ECSV
       (Enhanced Character Separated Values) a self-describing ascii table format popularized by astropy.
       See also https://github.com/astropy/astropy-APEs/blob/main/APE6.rst
@@ -76,6 +79,11 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
     horn
       Another term used for :term:`beam` or :term:`pixel`.
 
+    
+    LMTSLR
+      The LMT Spectral Line Reduction modules you will need to reduce
+      WARES based data.
+    
     LSR
       (Spectral Line Reduction):  the software reduction Sequoia (3mm) data, and presumably in the future, Omaya (1mm)
 
@@ -173,7 +181,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 
     WARES
       (Wideband Arrayed ROACH Enabled Spectrometer). The spectrometer used
-      for Sequoia. To be resolved: is there one, or four? Also used for the name
+      for Sequoia. Also used for the name
       of the computer that receives data from the 4 (future 8) roach boards.
 
 

@@ -60,7 +60,7 @@ API
 This is where the API can be found
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    api
    lmtslr <lmtslr.api>
@@ -81,7 +81,7 @@ Markdowns
 =========
 
 Some of the documentation is still in markdown format, and
-often contain just notes.
+often contain just notes. 
 
 .. toctree::
    :maxdepth: 2
