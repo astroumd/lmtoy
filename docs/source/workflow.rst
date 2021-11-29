@@ -116,9 +116,12 @@ note that this script only needs the main (Map) obsnum, the calibration (Cal) is
 Parallel Processing
 -------------------
 
-Although the SLpipeline consists of single processor code, it is possible to run a whole data-reduction session
-using GNU parallel, since the pipelines are independent.  An example. First the serial code for
-the M31 project, where 3 different correlators settings cover three spectral linesxs
+Although the SLpipeline consists of single processor code, this is
+sufficient for a single ObsNum.  However, to stack a large number of
+ObsNum's it can be useful to run run a whole data-reduction session
+using GNU parallel, since the pipelines are independent. Here is an
+example:  first the serial code for the M31 project, where 3 different
+correlators settings cover three spectral lines:
 
 .. code-block::
 
@@ -139,12 +142,13 @@ the M31 project, where 3 different correlators settings cover three spectral lin
       SLpipeline.sh obsnum=85878
       SLpipeline.sh obsnums=85820,85878
 
-This took about 29 minutes to reduce. However all the single obsnum could be run in
-parallel, followed by the three combinations in parallel, viz.
+This took about 29 minutes to reduce. Now we can split this up by
+first running all eight single obsnum's in parallel, followed by the
+three combinations in parallel, viz.
 
 .. code-block::
 
-      # contruct the single obsnum pipelines job
+      # construct the single obsnum pipelines job
       echo SLpipeline.sh obsnum=85776   > job1
       echo SLpipeline.sh obsnum=85778  >> job1
       echo SLpipeline.sh obsnum=85824  >> job1
