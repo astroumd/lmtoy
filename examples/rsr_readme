@@ -7,7 +7,11 @@
 obsnum=$1
    src=$2
 
-echo "<B>Few notes on <A HREF=http://lmtgtm.org/telescope/instrumentation/instruments/rsr/>RSR</A> and the information you see here:</B>"
+echo "<CENTER>"
+echo "<H1> Timely Analysis Products ($obsnum)</H1>"
+echo "</CENTER>"
+   
+echo "<H2>Few notes on <A HREF=http://lmtgtm.org/telescope/instrumentation/instruments/rsr/>RSR</A> </H2>"
 echo "<OL>"
 echo "<LI> 4 chassis represent the two beams and two polarizations; they are normally averaged to increase S/N"
 echo "<LI> 6 boards, which if taken in the order 0,2,1,3,5,4 are the bands sorted by increasing frequency (color coded in our plots)"
@@ -19,22 +23,25 @@ echo "<LI> Band edges are at 73.0, 79.7, 86.0, 92.1, 98.6, 104.9, 111.0 GHz, wit
 echo "<LI> Board ranges: {0: [(71.72, 79.69)], 1: [(85.41, 93.38)], 2: [(78.02, 85.99)], 3: [(90.62, 98.58)], 4: [(104.31, 112.28)], 5: [(96.92, 104.88)]}"
 echo "<LI> Channel width is 31.25 MHz or about 100 km/s in the 3mm (W) band"
 echo "<LI> There is no source doppler tracking, though observations are on a common (helio?)centric frame"
+
+
 echo "</OL>"
 echo ""
-echo "Here is a summary of the data products of obsnum=$obsnum"
-echo "resulting from running the RSR pipeline."
+echo "<H2> Summary of the data products for obsnum=$obsnum resulting from running the RSR pipeline </H2>"
 echo ""
 
 echo "<OL>"
 
+echo "<LI> Tsys plot (placeholder)"
+
 echo "<LI>"
 
 if [ -e badlags.png ]; then
-    echo "The badlags plot: shows a time sample based ACF RMS for each channel, board and chassic (i.e. lag consistency)."
-    echo "<br> When the RMS is above a clip level (shown as max in the plot), this channel will be flagged."
+    echo "Badlags plot: shows a time sample based ACF RMS for each channel, board and chassic (i.e. lag consistency)."
+    echo "<br> When the RMS is above a clip level (shown as max in the plot), this lag channel will be flagged."
     echo " Boards are color coded by their board (notice band order is 0,2,1,3,5,4)"
     echo "<br> <A HREF=rsr_badlags.log>rsr_badlogs.log</A>"
-    echo "<br> <A HREF=rsr.$obsnum.badlags> <B>rsr.$obsnum.badlags</B></A>"
+    echo "<br> <A HREF=rsr.$obsnum.badlags> <B>rsr.$obsnum.badlags</B></A>  <<< this file can be edited"
     echo "<br><IMG SRC=badlags.png>"
     echo "<hr>"
 else
@@ -44,7 +51,7 @@ fi
 
 
 echo "<LI>"
-echo "The rsr_driver spectrum: (Author: D. Sanchez)"
+echo "Spectrum from rsr_driver: (Author: D. Sanchez)"
 echo "<br>"
 echo "A Waterfall Plot is also produced: a spectrum for each band, chassis and time sample, color coded by their band."
 echo "<br>"
@@ -59,8 +66,8 @@ echo "<br>            -> rsr.$obsnum.driver.sum.txt (final bandmerged spectrum)"
 
 
 echo "<LI>"
-echo "The rsr_sum spectrum: (Author: M.Yun)"
-echo "<br>with optional blanking"
+echo "Spectrum from rsr_sum: (Author: M.Yun)"
+echo "<br>with optional blanking and sections to avoid for baseline fitting"
 echo "<br> <A HREF=rsr_sum.log>rsr_sum.log</A>"
 echo "<br> <A HREF=rsr.$obsnum.blanking><B>rsr.$obsnum.blanking</B></A>"
 echo "<br>         -> rsr.$obsnum.blanking.sum.txt  (final bandmerged spectrum)"
