@@ -131,7 +131,7 @@ test1:
 #     I10565_rsr_spectrum.txt            (not created if -o absent)
 # 6 bands, of which band 4: [(104.30771875, 112.27646875)] where the CO line is
 
-BADLAGS = --badlags rsr.lags.bad
+BADLAGS = --badlags rsr1.badlags
 
 rsr1:
 	cat rsr1.obsnum
