@@ -38,11 +38,14 @@ function lmtoy_rsr1 {
     # input:  first, obsnum, badlags, blanking, ....
     
 
-    #   first get the badlags - this is a file that can be edited by the user in later re-runs
-    # output: rsr.$obsnum.badlags sbc.png
+    # FIRST get the badlags - this is a file that can be edited by the user in later re-runs
+    # output: rsr.$obsnum.badlags badlags.png
+    #         rsr.$obsnum.rfile and rsr.$obsnum.blanking  - can be modified if #BADCB's have been found
     if [[ ! -e $badlags ]]; then
 	python $LMTOY/examples/seek_bad_channels.py -s $obsnum                            > rsr_badlags.log 2>&1
 	mv rsr.badlags $badlags
+	rsr_badcb -r $badlags >> $rfile 
+	rsr_badcb -b $badlags >> $blanking
     fi
 
     #   We have two similar scripts of difference provenance that produce a final spectrum
@@ -57,7 +60,7 @@ function lmtoy_rsr1 {
     l="--exclude 110.51 0.15 108.65 0.3 85.2 0.4"
     o="-o $spec1"
     w="-w rsr.wf.pdf"
-    blo=3
+    blo=0
     if [[ $first == 1 ]]; then
 	# first time, do a run with no badlags or rfile and no exlude baseline portions
 	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo    > rsr_driver0.log 2>&1	
