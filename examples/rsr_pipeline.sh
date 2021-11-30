@@ -37,7 +37,8 @@ obsnum=0
 obsid=""
 newrc=0
 pdir=""
-badboard=""   # set to a comma separate list of bad boards
+badboard=""   # set to a comma separated list of bad boards
+badcb=""      # set to a comma separated list of (chassis,board) combinations
 #            - procedural
 admit=1
 
@@ -117,6 +118,19 @@ if [ $first == 1 ]; then
 		echo "$obsnum $c {$b: [(70,115)]}" >> $blanking
 		echo "$obsnum,$c,$b"               >> $rfile
 	    done
+	done
+    fi
+    if [[ ! -z "$badcb" ]]; then
+	# badcb needs to be c1/b1,c2/b2,.....
+	echo "# setting badcb=$badcb" >> $blanking
+	echo "# setting badcb=$badcb" >> $rfile
+	cbs=$(echo $badcb | sed 's/,/ /g')
+	for cb in $cbs; do
+	    cb0=( $(echo $cb | sed 's./. .'))
+	    c=${cb0[0]}
+	    b=${cb0[1]}
+	    echo "$obsnum $c {$b: [(70,115)]}" >> $blanking
+	    echo "$obsnum,$c,$b"               >> $rfile
 	done
     fi
     # note $badlags is created by seek_bad_channels
