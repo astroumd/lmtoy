@@ -1,0 +1,47 @@
+#! /usr/bin/env bash
+#
+#    transfer the BADCB's found in the badlags file to other formats
+#    -r     rfile format that rsr_sum uses
+#    -b     blanking format that rsr_driver uses
+
+set -e
+tmp=tmp$$
+
+opt=""
+badlags=""
+
+for arg in $*; do
+    if [[ "$arg" = "-r" ]]; then
+	opt="r";
+	continue
+    fi
+    if [[ "$arg" = "-b" ]]; then
+	opt="b";
+	continue
+    fi
+    badlags=$arg
+done
+
+if [[ -z "$badlags" || -z "$opt" ]]; then
+    echo "Usage: $0 [-b|-r] rsr.badlags"
+    exit 0
+fi
+
+grep BADCB $badlags  | awk '{printf("%d %d %d\n",$2,$3,$4)}' > $tmp.1
+if [ -s $tmp.1 ]; then
+    echo "# rsr_badcb: adding $(cat $tmp.1 | wc -l) badcb's"
+    echo "# mode $opt"
+    while read line; do
+	a=($line)
+	obsnum=${a[0]}
+	chassis=${a[1]}
+	board=${a[2]}
+	if [[ $opt == 'r' ]]; then
+	    echo "$obsnum,$chassis,$board"
+	elif [[ $opt == 'b' ]]; then
+	    echo "$obsnum   $chassis  {$board : [(70,120)]}"
+	fi
+    done < $tmp.1
+fi
+
+rm -f $tmp.1
