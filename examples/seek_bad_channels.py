@@ -242,14 +242,15 @@ if debug:
         for ib in range(nboards):
             rms0 = rmsdiff(findmax[ic,ib,:])
             if rms0 < rms_min or rms0 > rms_max:
-                note = '*'
+                note = '*** bad c/b'
             else:
                 note = ''
             print('RMS_diff %2d %2d  %.3f %s' % (ic,ib,rms0,note))
             
 
 # for each chassis and each board, we plot maximum standard deviations found for all channels
-for ic in range(nchassis-1,-1,-1):
+nbadcb = 0
+for ic in range(nchassis):
     for ib1 in range(nboards):
         #ib = board2band[ib1]
         ib = ib1
@@ -259,8 +260,11 @@ for ic in range(nchassis-1,-1,-1):
         #
         rms0 = rmsdiff(findmax[ic,ib,:])
         if rms0 < rms_min or rms0 > rms_max:
+            nbadcb = nbadcb + 1
             pl.plot(findmax[ic,ib,:], c='black')
             pl.title('BAD chassis=%d band=%d'%(chassis_list[ic],board_list[b2b[ib]]),fontsize=6,color='red')
+            ftab.write("#BADCB %d %d %d %g\n" % (obsnum,ic,ib,rms0))
+            
         else:
             pl.plot(findmax[ic,ib,:], c=colors[ib])
             pl.title('chassis=%d band=%d'%(chassis_list[ic],board_list[b2b[ib]]),fontsize=6)                    
@@ -303,6 +307,11 @@ else:
     pl.savefig(lagsplot)
     print("Wrote %s" % lagsplot)
 
+if nbadcb > 0:    
+    print("There were %d bad Chassis/Board's" % nbadcb)
+else:
+    print("There were no bad Chassis/Board's")
+    
 if len(o_list) > 1:
     print("Warning: this program is not meant to be used with multiple obsnums")
 
