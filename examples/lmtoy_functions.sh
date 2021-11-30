@@ -2,14 +2,14 @@
 #
 #   some functions to share for lmtoy pipeline operations
 
-lmtoy_version="28-nov-2021"
+lmtoy_version="29-nov-2021"
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version from $0"
 
 function lmtoy_decipher_obsnums {
     # input:    obsnums
     # output:   on0, on1, obsnum
     
-    if [ $obsnums = 0 ]; then
+    if [[ $obsnums = 0 ]]; then
 	return
     fi
     
@@ -40,8 +40,8 @@ function lmtoy_rsr1 {
 
     #   first get the badlags - this is a file that can be edited by the user in later re-runs
     # output: rsr.$obsnum.badlags sbc.png
-    if [ ! -e $badlags ]; then
-	python $LMTOY/examples/seek_bad_channels.py $obsnum                            > rsr_badlags.log 2>&1
+    if [[ ! -e $badlags ]]; then
+	python $LMTOY/examples/seek_bad_channels.py -s $obsnum                            > rsr_badlags.log 2>&1
 	mv rsr.badlags $badlags
     fi
 
@@ -57,15 +57,16 @@ function lmtoy_rsr1 {
     l="--exclude 110.51 0.15 108.65 0.3 85.2 0.4"
     o="-o $spec1"
     w="-w rsr.wf.pdf"
-    if [ $first == 1 ]; then
+    blo=3
+    if [[ $first == 1 ]]; then
 	# first time, do a run with no badlags or rfile and no exlude baseline portions
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b 3    > rsr_driver0.log 2>&1	
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo    > rsr_driver0.log 2>&1	
     fi
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b 3          > rsr_driver.log 2>&1
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo          > rsr_driver.log 2>&1
     
     # spec2:   output spectrum rsr.$obsnum.blanking.sum.txt
     spec2=${blanking}.sum.txt
-    python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 3                         > rsr_sum.log 2>&1
+    python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo                         > rsr_sum.log 2>&1
 
     # plot the two in one spectru, one full range, one the last band, closest to "CO"
     # the -z version makes an svg file for an alternative way to zoom in (TBD)
@@ -77,7 +78,7 @@ function lmtoy_rsr1 {
 
     
     # NEMO summary spectra
-    if [ ! -z $NEMO ]; then
+    if [[ ! -z $NEMO ]]; then
 	echo "LMTOY>> Some NEMO post-processing"
 	dev=$(yapp_query png ps)
 	tabplot  $spec1 line=1,1 color=2 ycoord=0        yapp=${spec1}.sp.$dev/$dev  debug=-1
@@ -92,7 +93,7 @@ function lmtoy_rsr1 {
 
 
     # ADMIT
-    if [ $admit == 1 ]; then
+    if [[ $admit == 1 ]]; then
 	echo "LMTOY>> ADMIT post-processing"
 	echo "vlsr = 12387" >> ${spec1}.apar
 	echo "vlsr = 12387" >> ${spec2}.apar
