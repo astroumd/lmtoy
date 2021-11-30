@@ -27,7 +27,7 @@ pjt: nbs lastmod html
 	echo See also: https://www.astro.umd.edu/~teuben/LMT/lmtoy/html
 
 lastmod:
-	echo "Last modified `date`" > source/lastmod.rst
+	echo "Last modified `date` on `hostname`" > source/lastmod.rst
 
 nbs:
 	(cd source; make all)
