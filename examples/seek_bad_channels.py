@@ -8,6 +8,7 @@
 # Revision 2014-03-04: Fixed problem with variable for number of channels.  Now always do 256 channels
 #          2021-02-23: Converted for dreampy3/python3
 #          2021-10-28: write badlags file. use docopt for CLI parsing
+#          2021-11-30: better labeling, rms_diff masking ?
 #
 #
 # Possible CLI:
@@ -21,6 +22,7 @@
 -f OBSLIST                    List of OBSNUM's. Not used.
 -B --badlags BADLAGS_FILE     Output rsr.badlags file. If not provided, it will not be written
 -d                            Add more debug output
+-s                            no interactive show (default now is interactive)
 
 -h --help                     show this help
 
@@ -38,7 +40,7 @@ seek_bad_channels.py is a program that can create it.
 import os
 import sys
 import glob
-import numpy
+import numpy as np
 from docopt import docopt
 from matplotlib import pyplot as pl
 from dreampy3.redshift.netcdf import RedshiftNetCDFFile
@@ -47,7 +49,16 @@ from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 def rmsdiff(data):
     """   guess the RMS based on a robust neighbor differences
     """
-    d = data[1:]-data[:-1]
+    if True:
+        factor = 2.0
+        Q1 = np.percentile(data,25)
+        Q3 = np.percentile(data,75)
+        IQR = (Q3-Q1) * factor
+        qs = (Q1 - IQR, Q3 + IQR)
+        data0 = data[np.where((data >= qs[0]) & (data <= qs[1]))]
+        d = data0[1:]-data0[:-1]
+    else:
+        d = data[1:]-data[:-1]
     return d.std()/1.41421
 
 
@@ -82,11 +93,15 @@ plot_max = 10
 # set the threshold for a bad channel (3 is not bad, but look at plot and experiment!)
 bc_threshold = 3.0
 
+# min RMS_diff needed for full acceptance
+rms_min = 0.01
+rms_max = 0.1
+
 # more debugging output ?
 debug = True
 
 # showing interactive?
-Qshow = False
+Qshow = True
 
 #  filenames
 badlags = "rsr.badlags"
@@ -99,7 +114,7 @@ if True:
     o_list = []
     for arg in sys.argv[1:]:
         if arg == '-s':
-            Qshow = True
+            Qshow = False
             continue
         o_list.append(int(arg))
     if len(o_list) == 0:
@@ -126,9 +141,9 @@ else:
     print('read file: %s  %d observations\n'%(the_filename,len(o_list)))
 
 # set up an array to hold the maximum values of std dev for a channel
-findmax = numpy.zeros((nchassis,nboards,nchan))
+findmax = np.zeros((nchassis,nboards,nchan))
 # set up an array to hold obsnum for the maximum value
-scanmax = numpy.zeros((nchassis,nboards,nchan))
+scanmax = np.zeros((nchassis,nboards,nchan))
 
 # now we will go through all the scans and compute rms for each channel
 for iobs in range(len(o_list)):
@@ -149,19 +164,19 @@ for iobs in range(len(o_list)):
         valid_chassis.append(chassis)        
         nc = RedshiftNetCDFFile(fn[0])
         # nc = RedshiftNetCDFFile(data_lmt + '/RedshiftChassis%d/RedshiftChassis%d_*_%06d_00_0001.nc' % (chassis, chassis, date_list[iobs],o_list[iobs]))
-        nons,nb,nch = numpy.shape(nc.hdu.data.AccData)
+        nons,nb,nch = np.shape(nc.hdu.data.AccData)
         if nb != nboards:
             print("WARNING: nb",nb)
         if nch != nchan:
             print("WARNING: nch",nch)
-        acf_diff = numpy.zeros((nons,nchan))
+        acf_diff = np.zeros((nons,nchan))
         for ib in range(nboards):
             board = board_list[ib]
             # we load in the data for each "On" ACF
             for on in range(nons):
                 acf_diff[on,:] = nc.hdu.data.AccData[on,board,:]/nc.hdu.data.AccSamples[on,board]
             for chan in range(nchan):
-                sigma = numpy.std(acf_diff[:,chan])
+                sigma = np.std(acf_diff[:,chan])
                 # if the rms for this channel is bigger than previous maximum, save it
                 if sigma>findmax[ic,ib,chan]:
                     scanmax[ic,ib,chan] = o_list[iobs]
@@ -170,18 +185,21 @@ for iobs in range(len(o_list)):
                 for chan in range(1,nchan-1):
                     if findmax[ic,ib,chan] > bc_threshold:
                         print("#    ",ic,ib,chan)
-                        print('CHAN-',numpy.std(acf_diff[:,chan-1]), acf_diff[:,chan-1])
-                        print('CHAN.',numpy.std(acf_diff[:,chan+0]), acf_diff[:,chan+0])
-                        print('CHAN+',numpy.std(acf_diff[:,chan+1]), acf_diff[:,chan+1])
+                        print('CHAN-',np.std(acf_diff[:,chan-1]), acf_diff[:,chan-1])
+                        print('CHAN.',np.std(acf_diff[:,chan+0]), acf_diff[:,chan+0])
+                        print('CHAN+',np.std(acf_diff[:,chan+1]), acf_diff[:,chan+1])
         # close the data file for this chassis
         nc.sync()
         nc.close()
         del nc
 
+obsnum = o_list[0]        
+
 # make plot and report results
 #pl.ion()
 pl.figure(num=1,figsize=(12,8))
 #pl.clf()
+
 
 print(' ')
 print('Bad Channel Threshold = %6.1f'%(bc_threshold))
@@ -222,25 +240,59 @@ if True:
 if debug:
     for ic in range(nchassis):
         for ib in range(nboards):
-            print('RMS_diff %2d %2d  %.3f' % (ic,ib,rmsdiff(findmax[ic,ib,:])))
-
+            rms0 = rmsdiff(findmax[ic,ib,:])
+            if rms0 < rms_min or rms0 > rms_max:
+                note = '*'
+            else:
+                note = ''
+            print('RMS_diff %2d %2d  %.3f %s' % (ic,ib,rms0,note))
+            
 
 # for each chassis and each board, we plot maximum standard deviations found for all channels
-for ic in range(nchassis):
+for ic in range(nchassis-1,-1,-1):
     for ib1 in range(nboards):
         #ib = board2band[ib1]
         ib = ib1
         plot_index = nboards*ic+ib+1
         ax = pl.subplot(nchassis,nboards,plot_index)
-        #ax.tick_params(axis='both',which='major',labelsize=6)
-        #ax.tick_params(axis='both',which='minor',labelsize=6)
-        pl.plot(findmax[ic,ib,:], c=colors[ib])
+        #
+        #
+        rms0 = rmsdiff(findmax[ic,ib,:])
+        if rms0 < rms_min or rms0 > rms_max:
+            pl.plot(findmax[ic,ib,:], c='black')
+            pl.title('BAD chassis=%d band=%d'%(chassis_list[ic],board_list[b2b[ib]]),fontsize=6,color='red')
+        else:
+            pl.plot(findmax[ic,ib,:], c=colors[ib])
+            pl.title('chassis=%d band=%d'%(chassis_list[ic],board_list[b2b[ib]]),fontsize=6)                    
         # pl.title('chassis=%d board=%d'%(chassis_list[ic],board_list[ib]),fontsize=6)
-        pl.title('chassis=%d band=%d'%(chassis_list[ic],board_list[b2b[ib]]),fontsize=6)        
-        pl.axis([-10,nchan+10,0,plot_max])
-        if ic==nchassis-1 and ib==0:
-            pl.xlabel("Channel")
-            pl.ylabel("ACF_sigma (%d sampled)" % nons)
+        # pl.axis([-10,nchan+10,0,plot_max])
+        ax.set(xlim=(-10, nchan+10), ylim=(0,plot_max))
+        ax.set(xticks=(0,64,128,192,256))
+        if ib==0 and ic==nchassis-1:
+            pl.xlabel("Lag Channel")
+            pl.ylabel("$\sigma_{ACF}$")
+            ax.tick_params(axis='both',which='major',labelsize=6)
+            ax.tick_params(axis='both',which='minor',labelsize=6)
+        elif ib==0 and ic < nchassis-1:
+            ax.tick_params(axis='y',which='major',labelsize=6)
+            ax.tick_params(axis='y',which='minor',labelsize=6)
+            ax.tick_params(axis='x',which='major',labelsize=0)
+            ax.tick_params(axis='x',which='minor',labelsize=0)
+        elif ib>0 and ic==nchassis-1:
+            ax.tick_params(axis='y',which='major',labelsize=0)
+            ax.tick_params(axis='y',which='minor',labelsize=0)
+            ax.tick_params(axis='x',which='major',labelsize=6)
+            ax.tick_params(axis='x',which='minor',labelsize=6)
+        else:
+            ax.tick_params(axis='both',which='major',labelsize=0)
+            ax.tick_params(axis='both',which='minor',labelsize=0)
+
+
+if len(o_list) > 1:
+    omore = "... %d" % o_list[len(o_list)-1]
+else:
+    omore = ""
+pl.suptitle("RMS in Auto Correlation Function as function of lag channels (%d samples) obsnum=%d %s" % (nons,obsnum,omore))
 
 print('-----------------------')
 ftab.close()
@@ -250,4 +302,7 @@ if Qshow:
 else:
     pl.savefig(lagsplot)
     print("Wrote %s" % lagsplot)
+
+if len(o_list) > 1:
+    print("Warning: this program is not meant to be used with multiple obsnums")
 
