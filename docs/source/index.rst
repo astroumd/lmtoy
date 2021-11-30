@@ -57,21 +57,21 @@ after which all the data products can be found in the directory ``2018S1SEQUOIAC
 API
 === 
 
-This is where the API can be found
+This is where the API can eventually be found
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    api
    lmtslr <lmtslr.api>
    dreampy3 <dreampy3.api>
-   workflow
 
 Various
 =======
 .. toctree::
    :maxdepth: 2
       
+   workflow
    sdfits
    tools
    glossary
@@ -92,6 +92,8 @@ often contain just notes.
 Pipeline
 ========
 
+These markdowns will be moved to official rst.
+
 .. toctree::
    :maxdepth: 3
 
@@ -100,6 +102,8 @@ Pipeline
 
 Notebook: SLR_example
 =====================
+
+Here are some jupyter notebooks, automatically included by sphinx.
 
 .. toctree::
    :maxdepth: 2
