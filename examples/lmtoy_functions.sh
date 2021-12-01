@@ -42,7 +42,7 @@ function lmtoy_rsr1 {
     # output: rsr.$obsnum.badlags badlags.png
     #         rsr.$obsnum.rfile and rsr.$obsnum.blanking  - can be modified if #BADCB's have been found
     if [[ ! -e $badlags ]]; then
-	python $LMTOY/examples/seek_bad_channels.py -s $obsnum                            > rsr_badlags.log 2>&1
+	python $LMTOY/examples/badlags.py -s $obsnum   > rsr_badlags.log 2>&1
 	mv rsr.badlags $badlags
 	rsr_badcb -r $badlags >> $rfile 
 	rsr_badcb -b $badlags >> $blanking

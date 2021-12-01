@@ -13,7 +13,7 @@
 # that's perhaps for a more advanced pipeline
 #
 
-version="rsr_pipeline: 29-nov-2021"
+version="rsr_pipeline: 1-dec-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=OBSNUM ..."
@@ -121,7 +121,7 @@ if [ $first == 1 ]; then
 	done
     fi
     if [[ ! -z "$badcb" ]]; then
-	# badcb needs to be c1/b1,c2/b2,.....
+	# badcb needs to be formatted as "c1/b1,c2/b2,....."
 	echo "# setting badcb=$badcb" >> $blanking
 	echo "# setting badcb=$badcb" >> $rfile
 	cbs=$(echo $badcb | sed 's/,/ /g')
@@ -133,7 +133,7 @@ if [ $first == 1 ]; then
 	    echo "$obsnum,$c,$b"               >> $rfile
 	done
     fi
-    # note $badlags is created by seek_bad_channels
+    # note $badlags is created by badlags.py
 fi
 
 lmtoy_rsr1

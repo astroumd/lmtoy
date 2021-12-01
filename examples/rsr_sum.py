@@ -41,7 +41,7 @@ The format of this blanking file is currently as follows (subject to change):
 
 A badlags file can be optionally passed in. It will be a file where the first 3 columns
 are tuples of Chassis,Board,Channel that is deemed a bad channel.
-seek_bad_channels.py is a program that can create it.
+badlags.py is a program that can create it.
 
 
 
