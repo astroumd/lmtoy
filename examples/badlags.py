@@ -1,6 +1,6 @@
 #! /usr/bin/env python
-# seek_bad_channels.py
-# This is the bad channel searcher
+# 
+# This is the bad channel searcher, formerly called seek_bad_channels.py
 #
 # F P Schloerb 
 # March 4, 2014
@@ -9,13 +9,14 @@
 #          2021-02-23: Converted for dreampy3/python3
 #          2021-10-28: write badlags file. use docopt for CLI parsing
 #          2021-11-30: better labeling, rms_diff masking ?
+#          2021-12-01: renamed to badlags.py
 #
 #
 # Possible CLI:
 #
-#    seek_bad_channels [-f obslist] [-p plot_max] [-b bc_threshold] [obsnum ....]
+#    badlags [-f obslist] [-p plot_max] [-b bc_threshold] [obsnum ....]
 
-"""Usage: seek_bad_channels.py [-f obslist] [-p plot_max] [-b bc_threshold] [obsnum ....]
+"""Usage: badlags.py [-f obslist] [-p plot_max] [-b bc_threshold] [obsnum ....]
 
 -b THRESHOLD                  Threshold sigma in spectrum needed for averaging [Default: 0.01]
 -p PLOT_MAX                   Plot max. If not given, the THRESHOLD is used
@@ -29,7 +30,7 @@
 
 A badlags file can be optionally passed in. It will be a file where the first 3 columns
 are tuples of Chassis,Board,Channel that is deemed a bad channel.
-seek_bad_channels.py is a program that can create it.
+badlags.py is a program that can create it.
 
 
 
