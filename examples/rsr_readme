@@ -64,9 +64,15 @@ echo "<br> <A HREF=rsr_driver.log>rsr_driver.log</A>"
 echo "<br> <A HREF=rsr.$obsnum.rfile> <B>rsr.$obsnum.rfile</B></A>"
 echo "<br>            -> rsr.$obsnum.driver.sum.txt (final bandmerged spectrum)"
 echo "<H2><b> Spectra for each integration, board, and chassic (waterfall plot)</b> </H2>"
+
+#   technically, we should do all rsr.wf-?.png and rsr.wf-?? and rsr.wf-???
+#   but this would fill up the page too much, plus one could argue these are already displayed
+#   on the individual obsnum page, so could just be skipped here !!!
 echo "<br> <IMG SRC=rsr.wf-0.png> <IMG SRC=rsr.wf-1.png>"
 echo "<br> <IMG SRC=rsr.wf-2.png> <IMG SRC=rsr.wf-3.png>"
-
+if [ -e rsr.wf-5.png ]; then
+    echo "<br> Skipping remaining plots, see indiviual obsnum pages"
+fi
 
 
 echo "<LI>"
