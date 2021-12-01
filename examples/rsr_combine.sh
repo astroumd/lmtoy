@@ -10,7 +10,7 @@
 #
 #  Example:   rsr_combine.sh obsnum=33551,71610,92068 
 
-version="rsr_combine: 19-nov-2021"
+version="rsr_combine: 30-nov-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnums=ON1,ON2,..."
@@ -22,7 +22,6 @@ if [ -z $1 ]; then
     exit 0
 else
     echo "LMTOY>> $version"
-    echo "##### Warning: this script is under development"
 fi
 
 source lmtoy_functions.sh
@@ -98,7 +97,8 @@ for on in $obsnums1; do
     cat */$on/rsr.obsnum       >> $pdir/rsr.obsnum
 done
 cp $rc $pdir/lmtoy_${on0}_${on1}.rc
-echo "obsnum=${on0}_${on1}" >> $pdir/lmtoy_${on0}_${on1}.rc
+obsnum=${on0}_${on1}
+echo "obsnum=${obsnum}" >> $pdir/lmtoy_${on0}_${on1}.rc
 
 cd $pdir
 
