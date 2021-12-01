@@ -58,11 +58,15 @@ echo "<br>"
 echo "  We keep an original one with minimal flagging <A HREF=rsr.wf0.pdf>rsr.wf0.pdf</A>"
 echo "  and the one that has the latest flags applied:"
 echo "              <A HREF=rsr.wf.pdf>rsr.wf.pdf</A> "
-echo "  as the pipeline has been re-run."
+echo "  as the pipeline has been re-run. See also waterfall plot below"
 
 echo "<br> <A HREF=rsr_driver.log>rsr_driver.log</A>"
 echo "<br> <A HREF=rsr.$obsnum.rfile> <B>rsr.$obsnum.rfile</B></A>"
 echo "<br>            -> rsr.$obsnum.driver.sum.txt (final bandmerged spectrum)"
+echo "<H2><b> Spectra for each integration, board, and chassic (waterfall plot)</b> </H2>"
+echo "<br> <IMG SRC=rsr.wf-0.png> <IMG SRC=rsr.wf-1.png>"
+echo "<br> <IMG SRC=rsr.wf-2.png> <IMG SRC=rsr.wf-3.png>"
+
 
 
 echo "<LI>"
@@ -73,14 +77,16 @@ echo "<br> <A HREF=rsr.$obsnum.blanking><B>rsr.$obsnum.blanking</B></A>"
 echo "<br>         -> rsr.$obsnum.blanking.sum.txt  (final bandmerged spectrum)"
 
 
-
-
 cat $LMTOY/examples/template.svg.html | sed s/template.svg/rsr.spectra.svg/g > rsr.spectra.svg.html
 rsync -a $LMTOY/etc/resources .
 
 echo "<LI>"
 echo " Here are the two spectra combined in a single plot:"
 echo "(or try <A HREF=rsr.spectra.svg.html>rsr.spectra.svg</A>)"
+echo "<pre>"
+grep QAC_STATS lmtoy_${obsnum}.log | awk '{printf("%-30s rms=%.3fmK\n",$2,$4*1000)}'
+echo "</pre>"
+echo "<br>" 
 echo "<br><IMG SRC=rsr.spectra.png>"
 
 echo "<br>and a zoomed version in the last band:"
