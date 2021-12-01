@@ -109,6 +109,7 @@ function lmtoy_rsr1 {
     fi
 
     echo "LMTOY>> Parameter file used: $rc"
+    echo "LMTOY>> obsnum=$obsnum"
     
     rsr_readme $obsnum $src > README.html
 
