@@ -84,7 +84,7 @@ echo "<LI>"
 echo " Here are the two spectra combined in a single plot:"
 echo "(or try <A HREF=rsr.spectra.svg.html>rsr.spectra.svg</A>)"
 echo "<pre>"
-grep QAC_STATS lmtoy_${obsnum}.log | awk '{printf("%-30s rms=%.3fmK\n",$2,$4*1000)}'
+grep QAC_STATS lmtoy_${obsnum}.log | awk '{printf("%-40s rms=%.3fmK\n",$2,$4*1000)}'
 echo "</pre>"
 echo "<br>" 
 echo "<br><IMG SRC=rsr.spectra.png>"
