@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 19-nov-2021"
+version="SLpipeline: 2-dec-2021"
 
 echo "LMTOY>> $version"
 if [ -z $1 ]; then
@@ -43,6 +43,8 @@ done
 #             put in bash debug mode
 if [ $debug = 1 ]; then
     set -x
+    python --version
+    which python
 fi
 
 lmtoy_decipher_obsnums
@@ -123,25 +125,25 @@ elif [ $instrument = "RSR" ]; then
     if [ -d $pdir ]; then
 	echo "Re-Processing RSR in $pdir for $src (use restart=1 if you need a fresh start)"
 	first=0
-	date                        >> $pdir/date.log
+	date                             >> $pdir/date.log
     else
 	echo "Processing RSR for $ProjectId $obsnum $src"
 	first=1
 	mkdir -p $pdir
 	if [ $obsnums = 0 ]; then
-	    echo $obsnum                 > $pdir/rsr.obsnum
-	    lmtinfo.py $DATA_LMT $obsnum > $pdir/lmtoy_$obsnum.rc
+	    echo $obsnum                  > $pdir/rsr.obsnum
+	    lmtinfo.py $DATA_LMT $obsnum  > $pdir/lmtoy_$obsnum.rc
 	fi
-	date                             > $pdir/date.log
+	date                              > $pdir/date.log
     fi
     sleep $sleep
     if [ $obsnums = 0 ]; then
 	echo "LMTOY>> rsr_pipeline.sh pdir=$pdir $*"
-	rsr_pipeline.sh pdir=$pdir $*       > $pdir/lmtoy_$obsnum.log 2>&1
+	rsr_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
     else
 	obsnum=${on0}_${on1}
 	echo "LMTOY>> rsr_combine.sh             $*"
-	rsr_combine.sh             $*       > $pdir/lmtoy_$obsnum.log 2>&1
+	rsr_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
     fi
     rsr_summary.sh $pdir/lmtoy_$obsnum.log
     echo Logfile in: $pdir/lmtoy_$obsnum.log

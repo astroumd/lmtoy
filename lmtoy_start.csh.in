@@ -20,8 +20,9 @@ if ($?ADMIT) then
     echo Warning:  ADMIT=$ADMIT present.  LMTOY will not behave nicely with ADMIT yet.
 endif
 
-# if you want to change this, edit lmtoy_local.csh instead
+# if you want to change this, edit lmtoy_local.csh instead, or use configure correctly
 setenv DATA_LMT     @DATA_LMT@
+setenv WORK_LMT     @WORK_LMT@
 setenv CORR_CAL_DIR $DATA_LMT/rsr/cal
 
 

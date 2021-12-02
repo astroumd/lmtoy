@@ -1,9 +1,10 @@
 #! /usr/bin/env bash
 #
 #   some functions to share for lmtoy pipeline operations
+#   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="29-nov-2021"
-echo "LMTOY>> READING lmtoy_functions $lmtoy_version from $0"
+lmtoy_version="2-dec-2021"
+echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
 function lmtoy_decipher_obsnums {
     # input:    obsnums
