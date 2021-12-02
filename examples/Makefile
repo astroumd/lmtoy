@@ -218,6 +218,16 @@ rsr3:
 	echo  "FIT shows      : $$a $$b $$c $$d $$rms"
 	@echo "FIT should show: a= 0.000179097 0.000118254  b= 0.0466679 0.000536265  c= 110.508 0.000451531 d= 0.0344496 0.000468057 rms= 0.000565537"
 
+#       this is a benchmark to ensure that combinations do not depend on the order of the obsnums
+rsr4:
+	SLpipeline.sh obsnum=33551 restart=1 admit=0
+	SLpipeline.sh obsnum=71610 restart=1 admit=0
+	SLpipeline.sh obsnum=92068 restart=1 admit=0
+	SLpipeline.sh obsnums=33551,71610 restart=1 admit=0
+	SLpipeline.sh obsnums=71610,33551 restart=1 admit=0
+	SLpipeline.sh obsnums=71610,92068 restart=1 admit=0
+	SLpipeline.sh obsnums=92068,71610 restart=1 admit=0
+
 1mm:
 	$(TIME) process_ps.py --obs_list 82480 --pix_list 2 --bank 0 -p $(DATA_LMT) --x_axis VSRC
 
