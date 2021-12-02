@@ -175,7 +175,7 @@ lmtoy_venv:
 	python3 -m venv lmtoy_venv
 
 pip:
-	pip install -r requirements.txt
+	pip3 install -r requirements.txt
 
 
 # I find venv not working for me during development.
@@ -251,9 +251,9 @@ install_maskmoment: maskmoment
 #                 note the current step2 and step3 mean you can only run one of the two
 common: lmtoy_venv
 	(source lmtoy_venv/bin/activate; \
-	pip install -r SpectralLineReduction/requirements_lmtoy.txt; \
-	pip install -r dreampy3/requirements_lmtoy.txt; \
-	pip install -e SpectralLineReduction; \
-	pip install -e dreampy3)
+	pip3 install -r SpectralLineReduction/requirements_lmtoy.txt; \
+	pip3 install -r dreampy3/requirements_lmtoy.txt; \
+	pip3 install -e SpectralLineReduction; \
+	pip3 install -e dreampy3)
 
 
