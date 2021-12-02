@@ -10,8 +10,9 @@
 #    23-feb-2021:     new options (venv, nemo)
 #    11-may-2021:     use only $DATA_LMT, no more IRC_data
 #    22-jul-2021:     better bootstrap on missing DATA_LMT
+#     2-dec-2021:     add admit
 
-version="8-nov-2021"
+version="29-nov-2021"
 
 # set -x
 
@@ -22,7 +23,11 @@ venv=0            # set to 1 if you want to bypass a new anaconda3 and use venv
 nemo=1            # set to 0 if you don't need NEMO
 pgplot=1          # set to 1 if you want PGPLOT in NEMO, instead of simple PS driver
 data_lmt=${DATA_LMT:-data_lmt}    # give sensible default for $DATA_LMT
+work_lmt=${WORK_LMT:-work_lmt}    # give sensible default for $WORK_LMT
 bench=0                           # set to the tar.gz file for bootstrapping IRC benchmark data
+admit=1                           # install ADMIT ?
+pipeline=1                        # full pipeline run on bench files? 
+docs=0                            # make docs?
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
@@ -35,10 +40,10 @@ echo LMTOY install script version $version
 # this takes about 4-5 minutes to run, including the benchmark, and takes 4.3GB
 
 if [ -z $LMTOY ]; then
-    echo Warning, installing a new LMTOY in $lmtoy, removing the old one, if present
+    echo "Warning, installing a new LMTOY in $lmtoy, removing the old one, if present"
     sleep 5
 else
-    echo Warning, you have LMTOY=$LMTOY loaded, this could be dangerous.
+    echo "Warning, you have (an old?) LMTOY=$LMTOY loaded, this could be dangerous. Continuing at your own risk"
     sleep 5
 fi
 
@@ -70,17 +75,32 @@ if [ $nemo = 1 ]; then
     fi
 fi
 
-./configure --with-data=$(realpath $data_lmt)
+if [ $admit = 1 ]; then
+    # for now, also install casa. sorry, linux only folks
+    git clone -b python3 https://github.com/astroumd/admit
+    pushd admit
+    wget -O - https://casa.nrao.edu/download/distro/casa/release/el7/casa-release-5.8.0-109.el7.tar.gz | tar zxf -
+    ln -s casa-release-5.8.0-109.el7 casa
+    autoconf
+    ./configure --with-casa-root=`pwd`/casa
+    popd
+fi
+
+
+./configure --with-data=$(realpath $data_lmt) --with-work=$(realpath $work_lmt)
 
 #  activate LMTOY and run benchmark, but unless you made preparations
 #  on finding the data, the benchmark will not run here.
-
 
 source lmtoy_start.sh
 
 if [ $bench != 0 ]; then
     mkdir -p $DATA_LMT
     (cd $DATA_LMT; tar zxf $bench)
+fi
+
+if [ $docs = 1 ]; then
+    (cd docs; pip install -r requirements.txt; make nbs lastmod html)
 fi
 
 which python
@@ -102,5 +122,15 @@ if [ -d $DATA_LMT/rsr ]; then
 else
     echo Could not find the RSR data. Hope your DATA_LMT=$DATA_LMT is good:
     ls -l $DATA_LMT
+    echo Attempting to download the RSR cal files
+    (cd $DATA_LMT; make -f $LMTOY/data_lmt/Makefile rsr)
 fi    
 
+# full pipeline bench for RSR and SEQ (if you pick this, the bench=1 is really not needed anymore)
+if [ $pipeline = 1 ]; then
+    cd $WORK_LMT
+    SLpipeline.sh obsnum=33551 restart=1
+    echo "QAC_STATS: rsr.33551.driver.sum.txt 2.36888e-05 0.000943648 -0.00407884 0.0459238  0 0.157781  1185 [expected]"
+    SLpipeline.sh obsnum=79448 restart=1
+    echo "QAC_STATS: - 0.0242549 0.33463 -2.42886 15.3425  0 0.123691 [expected]"
+fi
