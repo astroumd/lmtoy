@@ -57,6 +57,11 @@ Instructions for installing **LMTOY**:
         wget https://astroumd.github.io/lmtoy/install_lmtoy
         bash install_lmtoy venv=1 nemo=1
 
+   If you are using your own $DATA_LMT, make sure the environment variable
+   is set before running the bash above or use, e.g.
+
+        bash install_lmtoy venv=1 nemo=1 data_lmt=/your/data_lmt
+
    This would assume you have a proper python3 in your environment. If
    not, then use the default **venv=0**, and it will install anaconda3 for
    you. This will cost an extra 3.3 GB and a longer download.  For now we
