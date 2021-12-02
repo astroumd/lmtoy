@@ -32,7 +32,8 @@ echo ""
 
 echo "<OL>"
 
-echo "<LI> Tsys plot (placeholder)"
+echo "<LI> Tsys plot"
+echo "<br><IMG SRC=rsr.tsys.png>"
 
 echo "<LI>"
 
@@ -97,7 +98,7 @@ echo "<br><IMG SRC=rsr.spectra.png>"
 
 echo "<br>and a zoomed version in the last band:"
 echo "<br><IMG SRC=rsr.spectra_co.png>"
-echo "If there is a significant difference between the two, there is some subtle difference in how the scripts work".
+echo "<br>If there is a significant difference between the two, there is some subtle difference in how the scripts work".
 
 
 adirs=$(ls -d *.admit) || adir=""
