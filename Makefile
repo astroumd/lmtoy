@@ -185,7 +185,6 @@ install_lmtslr_venv: SpectralLineReduction lmtoy_venv
 	@echo python3 SLR
 	(cd SpectralLineReduction; \
 	source ../lmtoy_venv/bin/activate; \
-	awk -F= '{print $$1}'  requirements.txt > requirements_lmtoy.txt ; \
 	pip3 install --upgrade pip ; \
 	pip3 install -r requirements_lmtoy.txt; \
 	pip3 install -e .)
@@ -195,7 +194,6 @@ install_lmtslr_venv: SpectralLineReduction lmtoy_venv
 # step 2b
 install_lmtslr:  SpectralLineReduction
 	(cd SpectralLineReduction; \
-	awk -F= '{print $$1}'  requirements.txt > requirements_lmtoy.txt ; \
 	pip3 install --upgrade pip ; \
 	pip3 install -r requirements_lmtoy.txt; \
 	pip3 install -e .)
@@ -211,14 +209,12 @@ install_dreampy3_venv: dreampy3 RSR_driver lmtoy_venv
 	@echo python3 dreampy3
 	(cd dreampy3; \
 	source ../lmtoy_venv/bin/activate; \
-	awk -F= '{print $$1}'  requirements.txt > requirements_lmtoy.txt ; \
 	pip3 install -r requirements_lmtoy.txt; \
 	pip3 install -e .)
 
 install_dreampy3: dreampy3 RSR_driver
 	@echo python3 dreampy3
 	(cd dreampy3; \
-	awk -F= '{print $$1}'  requirements.txt > requirements_lmtoy.txt ; \
 	pip3 install -r requirements_lmtoy.txt; \
 	pip3 install -e .)
 
@@ -251,7 +247,7 @@ update_nemo:	nemo
 install_maskmoment: maskmoment
 	(cd maskmoment; pip install -e .)
 
-# Optional hack:  once we agree on a common ste of requirements, we can make a common step
+# Optional hack:  once we agree on a common set of requirements, we can make a common step
 #                 note the current step2 and step3 mean you can only run one of the two
 common: lmtoy_venv
 	(source lmtoy_venv/bin/activate; \
