@@ -139,7 +139,8 @@ or for example another development version (in dec 2020 the better choice)
 
 These are needed for the gridder program (written in C) **spec_driver_fits**
 
-* Ubuntu:  sudo apt install libnetcdf-dev netcdf-bin libnetcdf15 libcfitsio-dev
+* Ubuntu20:  sudo apt install libnetcdf-dev netcdf-bin libnetcdf15 libcfitsio-dev
+* Ubuntu21:  sudo apt install libnetcdf-dev netcdf-bin libnetcdf18 libcfitsio-dev
 * Centos:  sudo yum install netcdf-devel cfitsio
 * MacBrew: brew install netcdf cfitsio
 
