@@ -73,7 +73,12 @@ function lmtoy_rsr1 {
     spec2=${blanking}.sum.txt
     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo                         > rsr_sum.log 2>&1
 
-    # plot the two in one spectru, one full range, one the last band, closest to "CO"
+    # Tsys plot:  rsr.tsys.png
+    if [[ -z $obsnums ]]; then
+	python $LMTOY/examples/rsr_tsys.py -s $obsnum                                     > rsr_tsys.log 2>&1
+    fi
+
+    # plot the two in one spectrum, one full range, one the last band, closest to "CO"
     # the -z version makes an svg file for an alternative way to zoom in (TBD)
     # @todo a more interactive pan&zoom version ala matplotlib for online use
     python $LMTOY/examples/rsr_spectra.py -s -co $spec1 $spec2
