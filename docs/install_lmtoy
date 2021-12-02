@@ -12,7 +12,7 @@
 #    22-jul-2021:     better bootstrap on missing DATA_LMT
 #     2-dec-2021:     add admit
 
-version="29-nov-2021"
+version="2-dec-2021"
 
 # set -x
 
@@ -59,9 +59,11 @@ make git
 if [ $venv = 0 ]; then
   make install_python WGET=$wget
   source python_start.sh
+  make pip
   make install_lmtslr
   make install_dreampy3
 else
+  make pip
   make install_lmtslr_venv
   make install_dreampy3_venv
 fi
@@ -100,7 +102,7 @@ if [ $bench != 0 ]; then
 fi
 
 if [ $docs = 1 ]; then
-    (cd docs; pip install -r requirements.txt; make nbs lastmod html)
+    (cd docs; pip3 install -r requirements.txt; make nbs lastmod html)
 fi
 
 which python
