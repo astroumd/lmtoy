@@ -9,7 +9,7 @@ First we go through a guided install example. Please see the sections
 below if you need more information on the pre-conditions or other
 intermediate steps. The script in **docs/install_lmtoy** provides
 paths to the install described below, and it works in most cases
-on most machines we've tested (Mac, Linux).
+on most machines we've tested (Mac, Linux/Ubuntu and Linux/Redhat8).
 
 ## Install Example
 
@@ -31,23 +31,23 @@ Instructions for installing **LMTOY**:
         mkdir -p ~/LMT/data_lmt
         cd ~/LMT/data_lmt
 
-        scp cln:/home/teuben/LMT/RSR_bench.tar.gz  .
-        tar zxf RSR_bench.tar.gz
-        rm RSR_bench.tar.gz
+        scp cln:/home/teuben/LMT/rsr_bench.tar.gz  .
+        tar zxf rsr_bench.tar.gz
+        rm rsr_bench.tar.gz
 
-        scp cln:/home/teuben/LMT/IRC_bench.tar.gz  .
-        tar zxf IRC_bench.tar.gz
-        rm IRC_bench.tar.gz
+        scp cln:/home/teuben/LMT/seq_bench.tar.gz  .
+        tar zxf seq_bench.tar.gz
+        rm seq_bench.tar.gz
 
    At Umass the machine **cln** has to be used. 
    At UMD the machine **lma** has to be used.
 
-   The IRC bench is "big" (600MB), if you don't want to use the SLR
+   The SEQ bench is "big" (600MB), if you don't want to use the SLR
    software, skip it.  The RSR bench is small, 33 MB. Their OBSNUM's
    are 33550 and 33551 resp. plus the required **data_lmt/rsr**
    calibration data (also small).
    
-   Note that the 2018 IRC_bench data are compressed from the old
+   Note that the rsr_bench 2018 data are compressed from the old
    double precision raw data, the uncompressed size will be 1600
    MB. All data in 2020 and before are double precision, but we expect
    data in 2021 and beyond to be in single precision, where the
@@ -57,7 +57,7 @@ Instructions for installing **LMTOY**:
 
         cd ~/LMT
         wget https://astroumd.github.io/lmtoy/install_lmtoy
-        bash install_lmtoy venv=1 
+        bash install_lmtoy 
 
    If you are using your own $DATA_LMT, make sure the environment variable
    is set before running the bash above or use, e.g.
@@ -71,7 +71,7 @@ Instructions for installing **LMTOY**:
    results, and fully run the "old" pipeline. If you don't care, use **nemo=0**,
    but you'll be missing out.
 
-   The native python3 might work for you, for which venv=1 should be used
+   The native python3 might work for you, for which venv=1 could be used
    
    Known native python3 packages for common systems:
 
