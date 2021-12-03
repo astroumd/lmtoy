@@ -46,7 +46,7 @@ bash $msh -b -p $dir
 setenv PATH "$dir/bin:$PATH"
 
 conda update -y conda
-pip install --upgrade pip
+pip3 install --upgrade pip
 
 # write the source-able shell startup files
 
