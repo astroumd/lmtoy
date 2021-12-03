@@ -6,26 +6,6 @@ LMT is a large 50m single dish radio telescope located in Mexico
 operating at mm wavelengths. See also http://lmtgtm.org/
 
 
-## DATA
-
-LMT raw telescope data are (mostly) in netCDF-3 format (extension: .nc), which stores
-data hierarchically, name and type tagged.
-A typical SLR observation consists of a number of netCDF files in a specific directory hierarchy, starting at
-$DATA_LMT, and all identified via a 7 digit OBSNUM.  Different instruments
-use a different number of datasets, for example, RSR uses up to 9, SLR uses 10.
-
-Tools like **ncdump** display structure and contents (as CDL).
-
-A simple example to get at the raw data is the following:
-
-      import netCDF4
-      nc = netCDF4.Dataset(filename)
-      rawdata = nc.variables['Data.Integrate.Data'][:]
-      nc.close()
-
-where **rawdata** is now a 2D array, shaped (ntime,nchan) in the python sense (nchan runs fastest).
-The LMT software will typically calibrate and convert (grid) these data to the more common FITS format.
-
 
 # LMT software
 
@@ -64,39 +44,39 @@ way to install (if you have all the preconditions, most importantly the **cfitsi
 if this worked, activate it in your shell:
 
       source lmtoy/lmtoy_start.sh
+	  
+Assuming you have the raw data in your $DATA_LMT tree, you can check that with
 
-If this failed, follow the steps in the script and find our where/when it failed. At the end of the script it
-will have tried to run an SLR and RSR benchmark. This could fail if you don't have the data in the
-$DATA_LMT directory. For example:
+      lmtinfo.py $DATA_LMT 33551
+	  
+you can proceed running the SLpipeline:
 
-      cd $DATA_LMT
-      tar zxf /n/chara/teuben/LMT/IRC_data.tar.gz
-      lmtinfo.py $DATA_LMT 79488
-
-after which you can run a benchmark to verify if LMTSLR is working
-
-      cd $LMTOY/examples
-      make bench
-
-and it will print two lines starting with QAC_STATS that should agree! 
+      SLpipeline.sh obsnum=33551
+	  
+and a Timely Analysis Products can be viewed in the 2014ARSRCommissioning/33551 directory, or view
+a version we have online in https://www.astro.umd.edu/~teuben/LMT/live/2014ARSRCommissioning/33551/
 
 
-In your own directory you can use the more general **lmtoy_reduce.sh** script
+## DATA
 
-      $LMTOY/examples/lmtoy_reduce.sh obsnum=79448
+LMT raw telescope data are (mostly) in netCDF-3 format (extension: .nc), which stores
+data hierarchically, name and type tagged.
+A typical SLR observation consists of a number of netCDF files in a specific directory hierarchy, starting at
+$DATA_LMT, and all identified via a 7 digit OBSNUM.  Different instruments
+use a different number of datasets, for example, RSR uses up to 8, SLR uses 10.
 
-to analyse any dataset. It will produce
-a file **lmtoy_79448.rc** which you can edit and re-run the script to finetune
-its settings. After a large number of OBSNUM's have been reduce this way, they
-can be combined (stacked) using **lmtoy_combine.sh**. A description of these
-steps can be seen in 
-[lmtoy_reduce.md](examples/lmtoy_reduce.md).
+Tools like **ncdump** display structure and contents (as CDL).
 
-A more advanced approach is the (instrument independant) **SLpipeline.sh**, which if ADMIT
-is installed, will also followup an ADMIT run. The benchmark on IRC+10216 is now:
+A simple example to get at the raw data is the following:
 
-      cd $LMTOY/examples
-      make bench11b
+      import netCDF4
+      nc = netCDF4.Dataset(filename)
+      rawdata = nc.variables['Data.Integrate.Data'][:]
+      nc.close()
+
+where **rawdata** is now a 2D array, shaped (ntime,nchan) in the python sense (nchan runs fastest).
+The LMT software will typically calibrate and convert (grid) these data to the more common FITS format.
+
        
 
 ## References
