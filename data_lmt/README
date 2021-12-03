@@ -1,1 +1,14 @@
-placeholder
+This directory is just a placeholder for the raw LMT data.
+
+The Makefile in here is useful for those working off-line.
+
+Normally you don't want to use the space under $LMTOY for raw data. On
+LMT machines you can often find them on /data_lmt. On private laptops
+you probably should not store this data with the software. Usually during
+the install you would use
+
+    	    ./configure --with-data=/somewhere/data_lmt
+
+or with the example install_lmtoy script
+
+   	    install_lmtoy data_lmt=/somewhere/data_lmt

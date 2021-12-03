@@ -12,7 +12,7 @@
 #    22-jul-2021:     better bootstrap on missing DATA_LMT
 #     2-dec-2021:     add admit
 
-version="29-nov-2021"
+version="2-dec-2021"
 
 # set -x
 
@@ -24,7 +24,7 @@ nemo=1            # set to 0 if you don't need NEMO
 pgplot=1          # set to 1 if you want PGPLOT in NEMO, instead of simple PS driver
 data_lmt=${DATA_LMT:-data_lmt}    # give sensible default for $DATA_LMT
 work_lmt=${WORK_LMT:-work_lmt}    # give sensible default for $WORK_LMT
-bench=0                           # set to the tar.gz file for bootstrapping IRC benchmark data
+bench=0                           # set to the tar.gz file for bootstrapping IRC benchmark data; 0 skips
 admit=1                           # install ADMIT ?
 pipeline=1                        # full pipeline run on bench files? 
 docs=0                            # make docs?
@@ -59,9 +59,11 @@ make git
 if [ $venv = 0 ]; then
   make install_python WGET=$wget
   source python_start.sh
+  make pip
   make install_lmtslr
   make install_dreampy3
 else
+  make pip
   make install_lmtslr_venv
   make install_dreampy3_venv
 fi
@@ -93,38 +95,39 @@ fi
 #  on finding the data, the benchmark will not run here.
 
 source lmtoy_start.sh
+which python
+python --version
+
+if [ $docs = 1 ]; then
+    (cd docs; pip3 install -r requirements.txt; make nbs lastmod html)
+fi
 
 if [ $bench != 0 ]; then
     mkdir -p $DATA_LMT
     (cd $DATA_LMT; tar zxf $bench)
+
+    cd $LMTOY/examples
+
+    # SLR bench
+    echo Assuming your $DATA_LMT has the IRC data
+    if [ -d $DATA_LMT/ifproc ]; then
+	lmtinfo.py $DATA_LMT 79448 
+	make bench
+    else
+	echo Could not find the SLR data. Hope your DATA_LMT=$DATA_LMT is good:
+	ls -l $DATA_LMT
+    fi
+
+    # RSR bench
+    if [ -d $DATA_LMT/rsr ]; then     
+	make rsr1
+    else
+	echo Could not find the RSR data. Hope your DATA_LMT=$DATA_LMT is good:
+	ls -l $DATA_LMT
+	echo Attempting to download the RSR cal files
+	(cd $DATA_LMT; make -f $LMTOY/data_lmt/Makefile rsr)
+    fi
 fi
-
-if [ $docs = 1 ]; then
-    (cd docs; pip install -r requirements.txt; make nbs lastmod html)
-fi
-
-which python
-cd examples
-
-# SLR bench
-echo Assuming your $DATA_LMT has the IRC data
-if [ -d $DATA_LMT/ifproc ]; then
-    lmtinfo.py $DATA_LMT 79448 
-    make bench
-else
-    echo Could not find the SLR data. Hope your DATA_LMT=$DATA_LMT is good:
-    ls -l $DATA_LMT
-fi
-
-# RSR bench
-if [ -d $DATA_LMT/rsr ]; then     
-    make rsr1
-else
-    echo Could not find the RSR data. Hope your DATA_LMT=$DATA_LMT is good:
-    ls -l $DATA_LMT
-    echo Attempting to download the RSR cal files
-    (cd $DATA_LMT; make -f $LMTOY/data_lmt/Makefile rsr)
-fi    
 
 # full pipeline bench for RSR and SEQ (if you pick this, the bench=1 is really not needed anymore)
 if [ $pipeline = 1 ]; then

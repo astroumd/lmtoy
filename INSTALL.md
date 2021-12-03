@@ -21,11 +21,12 @@ Instructions for installing **LMTOY**:
    (e.g. on a mac via brew).  Things can and will massively and confusingly fail
    if these are not in tip top shape :-)
 
-   We have silently assumed the command python is a python3. Another failure mode.
+   We have silently assumed the command python is a python3. Another possible failure mode.
 
 
 1) Make a small shadow tree of the official $DATA_LMT on your laptop. If not on
-   an official machine (cln, wares, lma), use the recommended ~/LMT/data_lmt:
+   an official machine (cln, wares, lma), use the recommended ~/LMT/data_lmt
+   since it is one of the options in configure:
 
         mkdir -p ~/LMT/data_lmt
         cd ~/LMT/data_lmt
@@ -43,7 +44,7 @@ Instructions for installing **LMTOY**:
 
    The IRC bench is "big" (600MB), if you don't want to use the SLR
    software, skip it.  The RSR bench is small, 33 MB. Their OBSNUM's
-   are 79448 and 33551 resp. plus the required **data_lmt/rsr**
+   are 33550 and 33551 resp. plus the required **data_lmt/rsr**
    calibration data (also small).
    
    Note that the 2018 IRC_bench data are compressed from the old
@@ -54,19 +55,21 @@ Instructions for installing **LMTOY**:
 
 2) Install LMTOY (e.g. do this within the previously created ~/LMT)
 
+        cd ~/LMT
         wget https://astroumd.github.io/lmtoy/install_lmtoy
-        bash install_lmtoy venv=1 nemo=1
+        bash install_lmtoy venv=1 
 
    If you are using your own $DATA_LMT, make sure the environment variable
    is set before running the bash above or use, e.g.
 
-        bash install_lmtoy venv=1 nemo=1 data_lmt=/your/data_lmt
+        bash install_lmtoy venv=1 data_lmt=/your/data_lmt work_lmt=/your/work_lmt
 
    This would assume you have a proper python3 in your environment. If
    not, then use the default **venv=0**, and it will install anaconda3 for
    you. This will cost an extra 3.3 GB and a longer download.  For now we
    recommend using the default **nemo=1**, as it's useful to see benchmark
-   results, and fully run the "old" pipeline. If you don't care, use **nemo=0**.
+   results, and fully run the "old" pipeline. If you don't care, use **nemo=0**,
+   but you'll be missing out.
 
    The native python3 might work for you, for which venv=1 should be used
    
@@ -136,7 +139,8 @@ or for example another development version (in dec 2020 the better choice)
 
 These are needed for the gridder program (written in C) **spec_driver_fits**
 
-* Ubuntu:  sudo apt install libnetcdf-dev netcdf-bin libnetcdf15 libcfitsio-dev
+* Ubuntu20:  sudo apt install libnetcdf-dev netcdf-bin libnetcdf15 libcfitsio-dev
+* Ubuntu21:  sudo apt install libnetcdf-dev netcdf-bin libnetcdf18 libcfitsio-dev
 * Centos:  sudo yum install netcdf-devel cfitsio
 * MacBrew: brew install netcdf cfitsio
 
