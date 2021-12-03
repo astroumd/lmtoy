@@ -26,6 +26,7 @@ bench=0                           # set to the tar.gz file for bootstrapping IRC
 admit=1                           # install ADMIT ?
 pipeline=1                        # full pipeline run on bench files? 
 docs=0                            # make docs?
+debug=0                           # shell in debug mode?
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do\
