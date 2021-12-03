@@ -10,9 +10,11 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 2-dec-2021"
+version="SLpipeline: 3-dec-2021"
 
+echo ""
 echo "LMTOY>> $version"
+
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=OBSNUM ..."
     exit 0
@@ -70,7 +72,7 @@ rm -f $rc
 
 #             ensure again....just in case
 if [ $obsnum = 0 ]; then
-    echo No valid obsnum found, 2nd time. Should never happen
+    echo No valid obsnum found, 2nd time. Should never happen. Possibly an unknown obsnum was given.
     exit 1
 fi
 
