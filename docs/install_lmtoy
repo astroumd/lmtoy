@@ -12,9 +12,7 @@
 #    22-jul-2021:     better bootstrap on missing DATA_LMT
 #     2-dec-2021:     add admit
 
-version="2-dec-2021"
-
-# set -x
+version="3-dec-2021"
 
 lmtoy=lmtoy       # root directory name where to install (probably should not change it)
 branch=master     # branch
@@ -33,6 +31,11 @@ docs=0                            # make docs?
 for arg in $*; do\
   export $arg
 done
+
+#             put in bash debug mode
+if [ $debug = 1 ]; then
+    set -x
+fi
 
 # Announce
 echo LMTOY install script version $version
@@ -103,6 +106,8 @@ if [ $docs = 1 ]; then
 fi
 
 if [ $bench != 0 ]; then
+    bench=$(realpath $bench)
+    
     mkdir -p $DATA_LMT
     (cd $DATA_LMT; tar zxf $bench)
 
@@ -131,6 +136,7 @@ fi
 
 # full pipeline bench for RSR and SEQ (if you pick this, the bench=1 is really not needed anymore)
 if [ $pipeline = 1 ]; then
+    (cd $DATA_LMT; make -f $LMTOY/data_lmt/Makefile data)
     cd $WORK_LMT
     SLpipeline.sh obsnum=33551 restart=1
     echo "QAC_STATS: rsr.33551.driver.sum.txt 2.36888e-05 0.000943648 -0.00407884 0.0459238  0 0.157781  1185 [expected]"
