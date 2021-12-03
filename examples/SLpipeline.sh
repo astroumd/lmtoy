@@ -70,7 +70,7 @@ rm -f $rc
 
 #             ensure again....just in case
 if [ $obsnum = 0 ]; then
-    echo No valid obsnum found, 2nd time. Should never happen
+    echo No valid obsnum found, 2nd time. Should never happen. Possibly an unknown obsnum was given.
     exit 1
 fi
 
