@@ -67,7 +67,8 @@ function lmtoy_rsr1 {
 	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo    > rsr_driver0.log 2>&1	
     fi
     python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo          > rsr_driver.log 2>&1
-    #  ImageMagick:
+    #  ImageMagick:   this step can fail with some weird security policy error :-(
+    #  edit /etc/ImageMagick-*/policy.xml    
     convert rsr.wf.pdf rsr.wf.png
     
     # spec2: output spectrum rsr.$obsnum.blanking.sum.txt
