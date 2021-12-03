@@ -136,4 +136,6 @@ if [ $pipeline = 1 ]; then
     echo "QAC_STATS: rsr.33551.driver.sum.txt 2.36888e-05 0.000943648 -0.00407884 0.0459238  0 0.157781  1185 [expected]"
     SLpipeline.sh obsnum=79448 restart=1
     echo "QAC_STATS: - 0.0242549 0.33463 -2.42886 15.3425  0 0.123691 [expected]"
+    echo xdg-open  $WORK_LMT/2014ARSRCommissioning/33551/README.html
+    echo xdg-open  $WORK_LMT/2018S1SEQUOIACommissioning/79448/README.html
 fi
