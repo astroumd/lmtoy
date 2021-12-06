@@ -317,8 +317,8 @@ function lmtoy_seq1 {
 		ccdplot $s_on.wtr.ccd  yapp=$s_on.wtr.$dev/$dev
 	    fi
 	    
-	    # testing 
-	    if [ 1 = 0 ]; then
+	    # Plotting via APLPY
+	    if [ 1 = 1 ]; then
 		fitsplot.py $s_on.mom0.fits
 		fitsplot.py $s_on.mom1.fits
 		fitsplot.py $s_on.mom2.fits
