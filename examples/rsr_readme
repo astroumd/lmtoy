@@ -7,51 +7,44 @@
 obsnum=$1
    src=$2
 
-echo "<CENTER>"
-echo "<H1> Timely Analysis Products ($obsnum)</H1>"
-echo "</CENTER>"
+echo '<html lang="en"> <head> <meta charset="UTF-8"> <title>Timely Analysis Products (Obsnum=33551)</title> '
+echo "<link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css' integrity='sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh' crossorigin='anonymous'></head> <body>"
+
+echo "<center>"
+echo "<h1> Timely Analysis Products (Obsnum = $obsnum)</h1>"
+echo "</center>"
+
+echo "See <a href=\"#rsrnotes\">below</a> for notes on the <a HREF=\"http://lmtgtm.org/telescope/instrumentation/instruments/rsr/\">Redshift Search Receiver (RSR)</a>"
    
-echo "<H2>Few notes on <A HREF=http://lmtgtm.org/telescope/instrumentation/instruments/rsr/>RSR</A> </H2>"
-echo "<OL>"
-echo "<LI> 4 chassis represent the two beams and two polarizations; they are normally averaged to increase S/N"
-echo "<LI> 6 boards, which if taken in the order 0,2,1,3,5,4 are the bands sorted by increasing frequency (color coded in our plots)"
-echo "<LI> each board has 256 channels. For a lag space plot, see lags.png, the waterfall plot is in rsr.wf.pdf"
-echo "<LI> a small number of typically 30sec integrations are in each obsnum"
-echo "<LI> often multiple obsnums need to be stacked for a full observation. this can cover several days"
-echo "<LI> the final spectrum is a single band merged spectrum covering the full 73-111 GHz range, averaged in time and chassis"
-echo "<LI> Band edges are at 73.0, 79.7, 86.0, 92.1, 98.6, 104.9, 111.0 GHz, with a small overlap between bands."
-echo "<LI> Board ranges: {0: [(71.72, 79.69)], 1: [(85.41, 93.38)], 2: [(78.02, 85.99)], 3: [(90.62, 98.58)], 4: [(104.31, 112.28)], 5: [(96.92, 104.88)]}"
-echo "<LI> Channel width is 31.25 MHz or about 100 km/s in the 3mm (W) band"
-echo "<LI> There is no source doppler tracking, though observations are on a common (helio?)centric frame"
-
-
-echo "</OL>"
-echo ""
-echo "<H2> Summary of the data products for obsnum=$obsnum resulting from running the RSR pipeline </H2>"
+echo "<div class='container'>"
+echo "<h2>RSR pipeline data products for obsnum=$obsnum</h2>"
 echo ""
 
-echo "<OL>"
+echo "<div class='row'>"
+echo "<ol>"
 
-echo "<LI> Tsys plot"
-echo "<br><IMG SRC=rsr.tsys.png>"
+echo "<li> System Temperature"
+echo "<br><img src='rsr.tsys.png'>"
+echo "</li><li>"
+echo "</div> <!-- row-->"
 
-echo "<LI>"
-
+echo "<div class='row'>"
 if [ -e badlags.png ]; then
     echo "Badlags plot: shows a time sample based ACF RMS for each channel, board and chassic (i.e. lag consistency)."
     echo "<br> When the RMS is above a clip level (shown as max in the plot), this lag channel will be flagged."
     echo " Boards are color coded by their board (notice band order is 0,2,1,3,5,4)"
-    echo "<br> <A HREF=rsr_badlags.log>rsr_badlogs.log</A>"
-    echo "<br> <A HREF=rsr.$obsnum.badlags> <B>rsr.$obsnum.badlags</B></A>  <<< this file can be edited"
-    echo "<br><IMG SRC=badlags.png>"
+    echo "<br> <a href=\"rsr_badlags.log\">rsr_badlogs.log</a>"
+    echo "<br> <a href=\"rsr.$obsnum.badlags\"> <b>rsr.$obsnum.badlags</B></a>  <<< this file can be edited"
+    echo "<br><img src='badlags.png'>"
     echo "<hr>"
 else
     # we don't compute these again when doing combinations, they use the single obsnum badlags files
     echo " In this combined obsnum version we don't re-compute the baglags"
 fi
+echo "</div> <!-- row-->"
 
 
-echo "<LI>"
+echo "</li><LI>"
 echo "Spectrum from rsr_driver: (Author: D. Sanchez)"
 echo "<br>"
 echo "A Waterfall Plot is also produced: a spectrum for each band, chassis and time sample, color coded by their band."
@@ -99,17 +92,37 @@ echo "<br><IMG SRC=rsr.spectra.png>"
 echo "<br>and a zoomed version in the last band:"
 echo "<br><IMG SRC=rsr.spectra_co.png>"
 echo "<br>If there is a significant difference between the two, there is some subtle difference in how the scripts work".
+echo "</div> <!-- container-->"
 
 
 adirs=$(ls -d *.admit) || adir=""
 
-echo "<LI>"
-echo "A few admit results are also available:"
-echo "  <OL>"
-for adir in $adirs; do
-    echo "<LI> <A HREF=$adir>$adir</A>"
-done
-echo "  </OL>"
+if [ "$adir" != "" ];then 
+
+    echo "<li>"
+    echo "A few admit results are also available:"
+    echo "  <ol>"
+    for adir in $adirs; do
+        echo "<li> <A HREF=$adir>$adir</A></li>"
+    done
+    echo "  </ol></li>"
+fi
+echo "</ol>"
+echo "<hr>"
+echo '<a name="rsrnotes">'
+echo '<h2>Notes on the <a HREF="http://lmtgtm.org/telescope/instrumentation/instruments/rsr/">Redshift Search Receiver (RSR)</a> </h2>'
+echo "<ol>"
+echo "<li> 4 chassis represent the two beams and two polarizations; they are normally averaged to increase S/N"
+echo "</li><li> 6 boards, which if taken in the order 0,2,1,3,5,4 are the bands sorted by increasing frequency (color coded in our plots)"
+echo "</li><li> each board has 256 channels. For a lag space plot, see lags.png, the waterfall plot is in rsr.wf.pdf"
+echo "</li><li> a small number of typically 30sec integrations are in each obsnum"
+echo "</li><li> often multiple obsnums need to be stacked for a full observation. this can cover several days"
+echo "</li><li> the final spectrum is a single band merged spectrum covering the full 73-111 GHz range, averaged in time and chassis"
+echo "</li><li> Band edges are at 73.0, 79.7, 86.0, 92.1, 98.6, 104.9, 111.0 GHz, with a small overlap between bands."
+echo "</li><li> Board ranges: {0: [(71.72, 79.69)], 1: [(85.41, 93.38)], 2: [(78.02, 85.99)], 3: [(90.62, 98.58)], 4: [(104.31, 112.28)], 5: [(96.92, 104.88)]}"
+echo "</li><li> Channel width is 31.25 MHz or about 100 km/s in the 3mm (W) band"
+echo "</li><li> There is no source doppler tracking, though observations are on a common (helio?)centric frame"
+echo "</li></ol>"
 echo "<hr>"
 echo "Updated: `date`"
 
