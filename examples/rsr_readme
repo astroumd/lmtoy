@@ -100,13 +100,15 @@ adirs=$(ls -d *.admit) || adir=""
 if [ "$adir" != "" ];then 
 
     echo "<li>"
-    echo "A few admit results are also available:"
+    echo "A few ADMIT results are also available:"
     echo "  <ol>"
     for adir in $adirs; do
         echo "<li> <A HREF=$adir>$adir</A></li>"
     done
-    echo "  </ol></li>"
+elif
+   echo "<li>No ADMIT results available</li>" 
 fi
+echo "  </ol></li>"
 echo "</ol>"
 echo "<hr>"
 echo '<a name="rsrnotes">'
