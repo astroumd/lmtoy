@@ -33,4 +33,8 @@ except:
 
 # f.show_contour(fitsfile, levels=10)
 f.add_grid()
-f.save(fitsfile + ".pdf")
+
+idx = fitsfile.rfind('.fits')
+pfile = fitsfile[:idx] + ".png"
+f.save(pfile)
+print("Writing ",pfile)

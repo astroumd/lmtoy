@@ -19,6 +19,7 @@ base1="${src}_${obsnum}"
 base2="${src}_${obsnum}_specviews"
 base3="${src}_${obsnum}_specpoint"
 
+dev=$(yapp_query png ps)
 
 html=index.html
 echo Writing $html # in $pwd
