@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 3-dec-2021"
+version="SLpipeline: 7-dec-2021"
 
 echo ""
 echo "LMTOY>> $version"
@@ -35,6 +35,7 @@ sleep=2
 nproc=1
 obsnum=0      # obsnum or obsnums can be used for single 
 obsnums=0     # or combinations of existing obsnums
+rsync=""
 
 
 #             simple keyword=value command line parser for bash - don't make any changing below
@@ -177,7 +178,7 @@ if [ $tap != 0 ]; then
     done
     tar cf ${pdir}_TAP.tar `cat $pdir/tar.log`
 fi
-
+ 
 if [ $srdp != 0 ]; then
     echo "Creating Scientific Ready Data Producs (SRDP) in $pidir/${obsnum}_SRDP.tar"
     (cd $pidir; tar cf ${obsnum}_SRDP.tar $obsnum)
@@ -186,4 +187,12 @@ fi
 if [ $raw != 0 ]; then
     echo "Creating raw (RAW) tar for $pdir for $obsnum $calobsnum in $pidir/${obsnum}_RAW.tar"
     (cd $pidir; lmtar ${obsnum}_RAW.tar $calobsnum $obsnum)
+fi
+
+#  rsync TAP data to a remote?   e.g. rsync=teuben@lma.astro.umd.edu:/lma1/lmt/TAP_lmt
+
+
+if [ ! -x "$rsync" ]; then
+    ls -l ${pdir}_TAP.tar
+    rsync -av ${pdir}_TAP.tar $rsync
 fi
