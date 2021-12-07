@@ -13,6 +13,7 @@ source=`grep "Source:" $file |awk '{print $NF}'`
 RA=`grep "RA:" $file |awk '{print $NF}'`
 DEC=`grep "DEC:" $file |awk '{print $NF}'`
 itime=`grep "Integration Time:" $file |awk '{printf("%.2f",$(NF-1))}'`
+rms=$(grep Integration rsr.$obsnum.driver.sum.txt | awk '{printf("%.3f mK\n",1000*100/sqrt(4*32500000*$4))}')
 tau=`grep "Opacity" $file |awk '{printf $NF}'`
 inobs=`grep "Input Observations:" $file |awk '{print $NF}'`
 reddate=`grep "Date of Reduction" $file |awk '{print $NF}'`
@@ -119,7 +120,9 @@ echo "<div class='row'><div class='col'>"
 echo "<div class='card'><div class='card-body'>"
 echo "<h4 class='card-title'>Spectrum from rsr_sum: (Author: M.Yun)</h4>"
 echo "<p class='card-text'>The rsr_sum version of the average spectrum has optional blanking and sections to avoid for baseline fitting."
-echo "Below are the spectra from rsr_sum (orange) and rsr_driver (blue). If there is a significant difference between the two, then there is some subtle difference in how the scripts work.</p><p class='card-text'>Statistics on individual spectra<br><tt>$qac_stats</tt></p>"
+echo "Below are the spectra from rsr_sum (orange) and rsr_driver (blue). If there is a significant difference between the two, then there is some subtle difference in how the scripts work.</p>"
+echo "<p class='card-text'>Statistics on individual spectra<br><tt>$qac_stats"
+echo "Expected noise rms=$rms for Tsys=100K</tt></p>"
 echo "<div class='row'>"
 echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra.png'><img src='rsr.spectra.png' width='90%'></a><figcaption>The rsr_driver (blue) and rsr_sum (orange) spectra combined in a single plot</figcaption></figure></div>"
 echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra_co.png'><img src='rsr.spectra_co.png' width='90%'></a><figcaption>Zoomed in version of combined spectral plot [rsr_driver (blue), rsr_sum (orange)].</figcaption></figure></div>"
