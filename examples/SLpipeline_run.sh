@@ -53,13 +53,12 @@ while [ $sleep -ne 0 ]; do
     lmtinfo.py $data | grep ^2 | grep -v failed | sort > $run/data_lmt.latest
     on2=$(tail -1 $run/data_lmt.latest | awk '{print $2}')
     echo "$on2"
-    if [ $on1 == $on2 ]; then
-	sleep $sleep
-    else
+    if [ $on1 != $on2 ]; then
 	tail -1 $run/data_lmt.latest
 	echo Found new obsnum=$on2
-	SLpipeline obsnum=$on2
+	SLpipeline.sh obsnum=$on2 rsync=teuben@lma.astro.umd.edu:/lma1/LMT/TAP_data 
 	cp $run/data_lmt.latest $run/data_lmt.log
 	on1=$on2
     fi
+    sleep $sleep
 done    
