@@ -7,6 +7,22 @@
 obsnum=$1
    src=$2
 
+# get data for the header section
+file="rsr.$obsnum.driver.sum.txt"
+source=`grep "Source:" $file |awk '{print $NF}'`
+RA=`grep "RA:" $file |awk '{print $NF}'`
+DEC=`grep "DEC:" $file |awk '{print $NF}'`
+itime=`grep "Integration Time:" $file |awk '{printf("%.2f",$(NF-1))}'`
+tau=`grep "Opacity" $file |awk '{printf $NF}'`
+inobs=`grep "Input Observations:" $file |awk '{print $NF}'`
+reddate=`grep "Date of Reduction" $file |awk '{print $NF}'`
+
+# get WAC stats for the spectral section
+qac_stats=`grep QAC_STATS lmtoy_${obsnum}.log | awk '{printf("%-40s rms=%.3f mK<br>",$2,$4*1000)}'`
+
+# discover if there are any ADMIT directories
+adirs=$(ls -d *.admit) || adirs=""
+
 echo '<!doctype html><html lang="en"> <head> <meta charset="UTF-8"> <title>Timely Analysis Products (Obsnum=33551)</title> '
 echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">'
 
@@ -15,9 +31,19 @@ echo "<center>"
 echo "<h1> Timely Analysis Products (Obsnum = $obsnum)</h1>"
 echo "</center>"
 
+echo " <table class='table'><thead></thead><tbody>"
+echo " <tr><th scope='row'>Source</th><td>$source</td></tr>"
+echo " <tr><th scope='row'>RA</th><td>$RA</td></tr>"
+echo " <tr><th scope='row'>DEC</th><td>$DEC</td></tr>"
+echo " <tr><th scope='row'>Input Observations</th><td>$inobs</td></tr>"
+echo " <tr><th scope='row'>Integration Time (s)</th><td>$itime</td></tr>"
+echo " <tr><th scope='row'>220 GHz Opacity</th><td>$tau</td></tr>"
+echo " <tr><th scope='row'>Date of Reduction</th><td>$reddate</td></tr>"
+echo "</tbody></table>"
+
 echo "<div class='row'>"
 echo " <div class='col'>"
-echo "See <a href=\"#rsrnotes\">below</a> for notes on the <a HREF=\"http://lmtgtm.org/telescope/instrumentation/instruments/rsr/\">Redshift Search Receiver (RSR)</a>"
+echo "<p class='text-muted'>See <a href=\"#rsrnotes\">below</a> for notes on the <a HREF=\"http://lmtgtm.org/telescope/instrumentation/instruments/rsr/\">Redshift Search Receiver (RSR)</a></p>"
 echo " </div> <!-- col-->"
 echo "</div> <!-- row-->"
    
@@ -40,10 +66,10 @@ echo " <div class='col'>"
 echo "  <div class='card'><div class='card-body'>"
 echo "<h4 class='card-title'>Bad Lags</h4>"
 if [ -e badlags.png ]; then
-    echo "<a href='badlags.png'><img class='card-img-top' alt='Bad lags' src='badlags.png'></a>"
-    echo "<p class='card-text'>The Bad Lags plot shows a time sample based autocorrelation function (ACF) RMS for each channel, board and chassic (i.e. lag consistency)."
+    echo "<p class='card-text'>The Bad Lags plot shows a time sample based autocorrelation function (ACF) RMS for each channel, board and chassis (i.e., lag consistency)."
     echo "When the RMS is above a clip level (shown as max in the plot), this lag channel will be flagged."
-    echo " Boards are color coded by their board (notice band order is 0,2,1,3,5,4)</p>"
+    echo " Boards are color coded by their board number (notice band order is 0,2,1,3,5,4)</p>"
+    echo "<a href='badlags.png'><img class='card-img-top' alt='Bad lags' src='badlags.png'></a>"
     echo "<ul class='list-group list-group-flush'> "
     echo "<li class='list-group-item'> <a href=\"rsr_badlags.log\">Log file of lag flagger</a></li>"
     echo "<li class='list-group-item'> <a href=\"rsr.$obsnum.badlags\">Lag flagging file which can be edited</a></li></ul>"
@@ -62,16 +88,8 @@ echo " <div class='col'>"
 echo "  <div class='card'><div class='card-body'>"
 echo "<h4 class='card-title'>Waterfall Plot</h4>"
 echo "<p class='card-text'> The Waterfall Plot is a spectrum for each band, chassis and time sample, color coded by their band."
-echo "We keep two versions: <a href='rsr.wf0.pdf'> the original one with minimal flagging </a> and <a href='rsr.wf.pdf'>one that has the latest flags applied</a> after the pipeline has been re-run. This plot is produced by rsr_drive (Author: D. Sanchez)</p>"
+echo "We keep two versions: <a href='rsr.wf0.pdf'> the original one with minimal flagging </a> and <a href='rsr.wf.pdf'>one that has the latest flags applied</a> after the pipeline has been re-run. This plot is produced by rsr_driver (Author: D. Sanchez)</p>"
 
-echo "<ul class='list-group list-group-flush'> "
-echo "<li class='list-group-item'><a href='rsr_driver.log'>rsr_drive log file</a></li>"
-echo "<li class='list-group-item'> <a href=rsr.$obsnum.rfile>rsr_driver $obsnum parameters file (aka rfile)</a></li>"
-echo "<li class='list-group-item'><a href='rsr.$obsnum.driver.sum.txt'> ASCII table of final bandmerged spectrum</a></li></ul>"
-echo "  </div> <!-- cardbody -->"
-echo "  </div><!-- card -->"
-echo "  </div><!-- col -->"
-echo "</div><!-- row -->"
 echo "<div class='row'>"
 echo "<div class='col-md'> <a href='rsr.wf-0.png'><img src='rsr.wf-0.png'></a></div>"
 echo "<div class='col-md'> <a href='rsr.wf-1.png'><img src='rsr.wf-1.png'></a></div>"
@@ -79,6 +97,13 @@ echo "</div><div class='row'>"
 echo "<div class='col-md'> <a href='rsr.wf-2.png'><img src='rsr.wf-2.png'></a></div>"
 echo "<div class='col-md'> <a href='rsr.wf-3.png'><img src='rsr.wf-3.png'></div></a></div>"
 echo "</div><!-- row -->"
+echo "<ul class='list-group list-group-flush'> "
+echo "<li class='list-group-item'><a href='rsr_driver.log'>rsr_drive log file</a></li>"
+echo "<li class='list-group-item'> <a href=rsr.$obsnum.rfile>rsr_driver $obsnum parameters file (aka rfile)</a></li>"
+echo "<li class='list-group-item'><a href='rsr.$obsnum.driver.sum.txt'> ASCII table of final bandmerged spectrum</a></li></ul>"
+echo "  </div> <!-- cardbody -->"
+echo "  </div><!-- card -->"
+echo "  </div><!-- col -->"
 #   technically, we should do all rsr.wf-?.png and rsr.wf-?? and rsr.wf-???
 #   but this would fill up the page too much, plus one could argue these are already displayed
 #   on the individual obsnum page, so could just be skipped here !!!
@@ -94,54 +119,42 @@ echo "<div class='row'><div class='col'>"
 echo "<div class='card'><div class='card-body'>"
 echo "<h4 class='card-title'>Spectrum from rsr_sum: (Author: M.Yun)</h4>"
 echo "<p class='card-text'>The rsr_sum version of the average spectrum has optional blanking and sections to avoid for baseline fitting."
-echo "Below are the spectra from rsr_sum (orange) and rsr_driver (blue). If there is a significant difference between the two, then there is some subtle difference in how the scripts work.</p><p class='card-text'>Statistics on individual spectra:"
-echo "<pre>"
-grep QAC_STATS lmtoy_${obsnum}.log | awk '{printf("%-40s rms=%.3fmK\n",$2,$4*1000)}'
-echo "</pre></p>"
-echo "  </div> <!-- cardbody -->"
-echo "  </div><!-- card -->"
-echo "  </div><!-- col -->"
+echo "Below are the spectra from rsr_sum (orange) and rsr_driver (blue). If there is a significant difference between the two, then there is some subtle difference in how the scripts work.</p><p class='card-text'>Statistics on individual spectra<br><tt>$qac_stats</tt></p>"
 echo "<div class='row'>"
-echo "<div class='col-md'> <figure class='figure'><a href='rsr.spectra.png'><img src='rsr.spectra.png'></a><figcaption>The rsr_driver (blue) and rsr_sum (orange) spectra combined in a single plot</figcaption></figure></div>"
-echo "<div class='col-md'> <figure class='figure'><a href='rsr.spectra_co.png'><img src='rsr.spectra_co.png'></a><figcaption>Zoomed in version of combined spectral plot [rsr_driver (blue), rsr_sum (orange)].</figcaption></figure></div>"
-echo "  </div><!-- col -->"
+echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra.png'><img src='rsr.spectra.png' width='90%'></a><figcaption>The rsr_driver (blue) and rsr_sum (orange) spectra combined in a single plot</figcaption></figure></div>"
+echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra_co.png'><img src='rsr.spectra_co.png' width='90%'></a><figcaption>Zoomed in version of combined spectral plot [rsr_driver (blue), rsr_sum (orange)].</figcaption></figure></div>"
 echo "</div><!-- row -->"
-echo "<div class='row'>"
-echo " <div class='col'>"
-echo "  <div class='card'><div class='card-body'>"
 echo "<ul class='list-group list-group-flush'> "
 echo "<li class='list-group-item'> <a href='rsr_sum.log'>rsr_sum log file</a></li>"
 echo "<li class='list-group-item'><a href='rsr.$obsnum.blanking'>blanking file</a></li>"
 echo "<li class='list-group-item'><a href='rsr.$obsnum.blanking.sum.txt'> ASCII table of final bandmerged spectrum</a></li></ul>"
+echo "<li class='list-group-item'><a href='rsr.spectra.svg.html'>Experimental SVG version of figure.</a> </li></ul>"
 echo "  </div> <!-- cardbody -->"
 echo "  </div><!-- card -->"
 echo "  </div><!-- col -->"
 echo "</div><!-- row -->"
-echo "<div class='row'><div class='col'>"
-echo "(or try <A HREF=rsr.spectra.svg.html>rsr.spectra.svg</A>)"
+
+echo "<div class='card'><div class='card-body'>"
+if [ "$adirs" != "" ];then 
+
+    echo "<h4 class='card-title'>Results of ALMA Data Mining Toolkit (ADMIT)</h4>"
+    echo "<ul class='list-group list-group-flush'> "
+    for adir in $adirs; do
+        echo "<li class='list-group-item'><a href='$adir'>$adir</a></li>"
+    done
+    echo "</ul>"
+else
+    echo "<h4 class='card-title'>No ALMA Data Mining Toolkit (ADMIT) results available</h4>" 
+fi
+echo "  </div> <!-- cardbody -->"
+echo "  </div><!-- card -->"
 echo "  </div><!-- col -->"
 echo "</div><!-- row -->"
 echo "</div> <!-- container-->"
-
-
-adirs=$(ls -d *.admit) || adir=""
-
-if [ "$adir" != "" ];then 
-
-    echo "<li>"
-    echo "A few ADMIT results are also available:"
-    echo "  <ol>"
-    for adir in $adirs; do
-        echo "<li> <A HREF=$adir>$adir</A></li>"
-    done
-else
-   echo "<li>No ADMIT results available</li>" 
-fi
-echo "  </ol></li>"
-echo "</ol>"
+echo "<div class='container'>"
 echo "<hr>"
 echo '<a name="rsrnotes">'
-echo '<h2>Notes on the <a HREF="http://lmtgtm.org/telescope/instrumentation/instruments/rsr/">Redshift Search Receiver (RSR)</a> </h2>'
+echo '<h5>Notes on the <a HREF="http://lmtgtm.org/telescope/instrumentation/instruments/rsr/">Redshift Search Receiver (RSR)</a> </h5>'
 echo "<ol>"
 echo "<li> 4 chassis represent the two beams and two polarizations; they are normally averaged to increase S/N"
 echo "</li><li> 6 boards, which if taken in the order 0,2,1,3,5,4 are the bands sorted by increasing frequency (color coded in our plots)"
@@ -155,5 +168,4 @@ echo "</li><li> Channel width is 31.25 MHz or about 100 km/s in the 3mm (W) band
 echo "</li><li> There is no source doppler tracking, though observations are on a common (helio?)centric frame"
 echo "</li></ol>"
 echo "<hr>"
-echo "Updated: `date`"
-
+echo "Updated: `date`</div><!-- container -->"
