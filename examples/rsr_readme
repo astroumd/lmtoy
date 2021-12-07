@@ -97,6 +97,8 @@ echo "<p class='card-text'>The rsr_sum version of the average spectrum has optio
 echo "Below are the spectra from rsr_sum (orange) and rsr_driver (blue). If there is a significant difference between the two, then there is some subtle difference in how the scripts work.</p><p class='card-text'>Statistics on individual spectra:"
 echo "<pre>"
 grep QAC_STATS lmtoy_${obsnum}.log | awk '{printf("%-40s rms=%.3fmK\n",$2,$4*1000)}'
+rms=$(grep Integration rsr.$obsnum.driver.sum.txt | awk '{printf("%.3fmK\n",1000*100/sqrt(4*32500000*$4))}')
+echo "Expected noise                           rms=$rms for Tsys=100K"
 echo "</pre></p>"
 echo "  </div> <!-- cardbody -->"
 echo "  </div><!-- card -->"
