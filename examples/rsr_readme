@@ -18,8 +18,9 @@ tau=`grep "Opacity" $file |awk '{printf $NF}'`
 inobs=`grep "Input Observations:" $file |awk '{print $NF}'`
 reddate=`grep "Date of Reduction" $file |awk '{print $NF}'`
 
-# get WAC stats for the spectral section
-qac_stats=`grep QAC_STATS lmtoy_${obsnum}.log | awk '{printf("%-40s rms=%.3f mK<br>",$2,$4*1000)}'`
+# get QAC stats for the spectral section
+#qac_stats=`grep QAC_STATS lmtoy_${obsnum}.log | awk '{printf("%-40s rms=%.3f mK<br>",$2,$4*1000)}'`
+qac_stats=$(grep QAC_STATS lmtoy_${obsnum}.log | awk '{printf("<tr><td>%s</td><td>rms=%.3f mK</td></tr>",$2,$4*1000)}')
 
 # discover if there are any ADMIT directories
 adirs=$(ls -d *.admit) || adirs=""
@@ -121,8 +122,8 @@ echo "<div class='card'><div class='card-body'>"
 echo "<h4 class='card-title'>Spectrum from rsr_sum: (Author: M.Yun)</h4>"
 echo "<p class='card-text'>The rsr_sum version of the average spectrum has optional blanking and sections to avoid for baseline fitting."
 echo "Below are the spectra from rsr_sum (orange) and rsr_driver (blue). If there is a significant difference between the two, then there is some subtle difference in how the scripts work.</p>"
-echo "<p class='card-text'>Statistics on individual spectra<br><tt>$qac_stats"
-echo "Expected noise rms=$rms for Tsys=100K</tt></p>"
+echo "<p class='card-text'>Statistics on individual spectra</p><table class='table table-borderless w-auto'><tbody>$qac_stats"
+echo "<tr><td>Expected noise for Tsys=100 K</td><td class='text-start'>rms=$rms </td></tr></tbody></table>"
 echo "<div class='row'>"
 echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra.png'><img src='rsr.spectra.png' width='90%'></a><figcaption>The rsr_driver (blue) and rsr_sum (orange) spectra combined in a single plot</figcaption></figure></div>"
 echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra_co.png'><img src='rsr.spectra_co.png' width='90%'></a><figcaption>Zoomed in version of combined spectral plot [rsr_driver (blue), rsr_sum (orange)].</figcaption></figure></div>"
