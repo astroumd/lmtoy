@@ -15,3 +15,9 @@ echo "WORK_LMT:  $WORK_LMT"
 echo "python:    $(which python)"
 echo "version:   $(python --version)"
 echo "NEMO:      $NEMO"
+
+
+if [ "$1" == pull ]; then
+    cd $LMTOY
+    make pull
+fi
