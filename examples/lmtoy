@@ -1,0 +1,17 @@
+#! /usr/bin/env bash
+#
+#    report the LMTOY environment
+#
+
+if [ -z $LMTOY ]; then
+    echo "LMTOY environment not loaded (odd)"
+    exit 0
+else
+    echo "LMTOY:     $LMTOY"
+fi
+
+echo "DATA_LMT:  $DATA_LMT"
+echo "WORK_LMT:  $WORK_LMT"
+echo "python:    $(which python)"
+echo "version:   $(python --version)"
+echo "NEMO:      $NEMO"
