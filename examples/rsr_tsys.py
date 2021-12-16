@@ -1,5 +1,13 @@
 #! /usr/bin/env python
-
+#
+#    inspect the chassis and band based Tsys (or with -t the Spectrum)
+#
+#    Usage:
+#    rsr_tsys.py [-s] [-z] [-t] obsnum
+#
+#    -s     don't show, just create the png
+#    -z     use "svg" extension
+#    -f     show spectrum instead of tsys
 
 import sys
 import numpy as np
