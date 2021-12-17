@@ -26,7 +26,7 @@ from time import localtime
 project = 'lmtoy'
 # The full version, including alpha/beta/rc tags
 # release = pdrtpy.VERSION
-release = "0.1"
+release = "0.2"
 year = str(localtime().tm_year)
 #author = pdrtpy.AUTHORS
 author = "Peter Teuben"
