@@ -1,28 +1,29 @@
 # LMT software
 
-1. SpectralLineReduction - for Sequoia, Omaya, 1MMRx
+1. SpectralLineReduction - for Sequoia, Omaya, 1MMRx (python module:  lmtslr)
 2. dreampy3 - for RSR
-3. tolteca/citlali - for TolTEC, Muscat and also old Aztec data
-   (not covered here)
+3. tolteca/citlali - for TolTEC, Muscat and also old Aztec data (not covered here)
 
 First we go through a guided install example. Please see the sections
 below if you need more information on the pre-conditions or other
 intermediate steps. The script in **docs/install_lmtoy** provides
-paths to the install described below, and it works in most cases
-on most machines we've tested (Mac, Linux/Ubuntu and Linux/Redhat8).
+some paths to the install described below, and it works in most cases
+on most machines we've tested (Mac, Linux/Ubuntu and Linux/Redhat8). YMMV.
 
 ## Install Example
 
 Instructions for installing **LMTOY**:
 
-0) Pre-conditions: We are assuming you have a python3 development like
-   anaconda3 already in your path. We also assume you have a C
+0) Pre-conditions: We are assuming you have a python3 
+   (e.g. anaconda3) already in your path. We also assume you have a C
    compiler, and that cfitsio and netcdf libraries have been installed 
    (e.g. on a mac via brew).  Things can and will massively and confusingly fail
    if these are not in tip top shape :-)
 
-   We have silently assumed the command python is a python3. Another possible failure mode.
-
+   For python3 we also provide a manual install of anaconda3 before lmtoy is installed.
+   
+   Example ubuntu packages:  build-essential gfortran xorg-dev git tcsh cmake pgplot5 libcfitsio-dev autoconf libnetcdf-dev netcdf-bin
+   Example centos packages:  gcc-gfortran tcsh gcc-c++ cmake libXext-devel libtirpc-devel netcdf-devel cfitsio-devel
 
 1) Make a small shadow tree of the official $DATA_LMT on your laptop. If not on
    an official machine (cln, wares, lma), use the recommended ~/LMT/data_lmt
@@ -90,8 +91,8 @@ Instructions for installing **LMTOY**:
         # Y-M-D   T H:M:S     ObsNum ObsPgm SourceName       RestFreq  VLSR    TSKY     RA        DEC          AZ    EL
         2015-01-21T23:12:07    33550  Cal   I10565               RSR      0      39.5  164.825417  24.542778   74.3  51.6
         2015-01-21T23:12:07    33551  Bs    I10565               RSR      0     319.5  164.825417  24.542778   74.3  51.9
-        2018-11-16T06:48:30   079447  Cal   IRC+10216        115.2712   -20       7.8  146.989192  13.278767  115.0  77.1
-        2018-11-16T06:48:52   079448  Map   IRC+10216        115.2712   -20     685.8  146.989192  13.278767  115.2  77.2
+        2018-11-16T06:48:30    79447  Cal   IRC+10216        115.2712   -20       7.8  146.989192  13.278767  115.0  77.1
+        2018-11-16T06:48:52    79448  Map   IRC+10216        115.2712   -20     685.8  146.989192  13.278767  115.2  77.2
 
 
    You can now go back in the examples directory, and run the two benchmarks:
@@ -252,18 +253,31 @@ Some examples how to use LMT software are in the examples directory.  The irc_re
 m31_reduce.sh  and m51_reduce.sh  serve as other "hardcoded" example, but lmtoy_reduce.sh should be able
 to reduce any OTF data. There are now also some RSR data reduction methods.   
 
+## LMT machines
+
+The following linux distributions are being used in the consortium (e.g. via the **lsb_release -a** command)
+
+1. malt (LMT) - Ubuntu 18.04.5 LTS (to be upgraded)
+2. cln (UMASS) - Ubuntu 16.04.7 LTS
+3. unity (UMASS) - Ubuntu 20.04.1 LTS
+4. lma (UMD) - CentOS 8.5.2111 - soon to be "Red Hat Enterprise 8.5"
+5. T480 (Peter's laptop) - Ubuntu 20.04.3 LTS
+6. xps13 (Peter's laptop) - Ubuntu 21.10
+7. (Peter's rogue mac) - Mac 10.15.7 w/ brew
+
 # Other packages
 
 A few popular 3rd party tools for cube analysis
 
 * MIRIAD
 * karma (viz)
-* ds9 (viz)
-* carta (viz)
-* casa 
-* radio astro tools
+* ds9 (viz):     https://sites.google.com/cfa.harvard.edu/saoimageds9/download - Current version: 8.3
+* carta (viz):   https://cartavis.org/
+* casa - we still use CASA 5.8 for ADMIT
+* RADIO astro tools
   * pip install spectral-cube pyds9 pvextractor
 * bettermoments
   * pip install bettermoments
 * maskmoment
-  * Tony's EDGE scripts https://github.com/tonywong94/maskmoment
+  * Tony Wong's EDGE scripts https://github.com/tonywong94/maskmoment
+* phangs pipeline
