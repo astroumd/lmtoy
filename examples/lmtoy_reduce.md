@@ -1,11 +1,15 @@
-#  A short introduction in using lmtoy_reduce.sh
+#  A short introduction in using SLpipeline for Sequioa OTF
 
-**lmtoy_reduce.sh** is a bash shell script, inspired by the scripts
-Mike Heyer shared. Its intent is to reduce Sequoia OTF data
-without any guidance from the user, as well as prepare (or even run)
-ADMIT on the final cube. This is a simple proof of concept to learn
-how to generalize LMT reduction scripts, with the added bonus that we
-get some science done in a waterfall fashion!
+NOTE: an older version (pre December 2021) of this documentation was
+referring to ``lmtoy_reduce.sh`` for a single obsnum, and
+``lmtoy_combine.sh`` for multiple obsnums. These have been renamed to
+``seq_pipeline.sh`` and ``seq_combine.sh`` resp.
+
+**seq_pipeline.sh** is a bash shell script, inspired by the scripts
+Mike Heyer shared, and formerly called ``lmtoy_reduce.sh``.
+Its intent is to reduce Sequoia OTF data
+without any guidance from the user, as well as run
+ADMIT on the final cubes. 
 
 For an observation consisting of a set of OBSNUM's a typical reduction
 strategy could be as follows:
@@ -13,15 +17,15 @@ strategy could be as follows:
 * Find out which OBSNUM's you are interested in. For example a simple grep
 on the **data_lmt.log** file could be sufficient.
 
-* Then use **lmtoy_reduce.sh** for each OBSNUM. Make sure you cull out the
+* Then use **seq_pipeline.sh** for each OBSNUM. Make sure you cull out the
 spectra that are bad, by reviewing logs, figures and data, edit the parameter file and
 re-running the script. 
 
-* If applicable, use **lmtoy_combine.sh** for the series of previously
+* If applicable, use **seq_combine.sh** for the series of previously
 determined good OBSNUM's.  Make sure the gridding is the same for all OBSNUM's.
 
 
-## Running lmtoy_reduce.sh
+## Running seq_pipeline.sh
 
 This script reduces a single OBSNUM, and uses a series of *keyword=value* commandline
 argument pairs to construct a parameter file.
@@ -29,7 +33,7 @@ The commandline parser is a very simple one, and does not check if you spelled
 the parameters correctly.  Only **obsnum=** is required for each run, the rest
 is optional:
 
-    lmtoy_reduce.sh \
+    SLpipeline.sh \
 	    obsnum=91112                # always required
 	    path=data_lmt               # optional, default is $DATA_LMT
 	    obsid=                      # optional on first run [not yet implemented]
@@ -49,7 +53,8 @@ On the first run it creates the **lmtoy_OBSNUM.rc** parameter file,
 which is nothing more than a collection of shell variables that the
 script uses. This parameter file can be edited and you can
 re-run the script. Remember there are no spaces left and right of the '='
-sign in an rc file, this is bash, not python!
+sign in an rc file, this is bash, not python, but could be used by python
+as well!
 
 In the end the script creates a FITS cube **SRC_OBSNUM.fits**, as well
 as a FITS weight map **SRC_OBSNUM.wt.fits**.  The current version the
@@ -82,6 +87,7 @@ Here a summary of the files that are created:
    
      lmtoy_OBSNUM.rc         parameter (bash style) file
      SRC_OBSNUM.nc           SpecFile  (netcdf format)
+     SRC_OBSNUM.sd.fits      SpecFile (SDFITS format)
      SRC_OBSNUM.wf.fits      Waterfall version of SpecFile
      SRC_OBSNUM.wf10.fits    Waterfall version of SpecFile with 10 times binning in time
      SRC_OBSNUM.fits         (flux flat) fits cube
@@ -110,7 +116,7 @@ current working directory. This may be OK for a PI reducing data locally, but wh
 handling a lot of data, the convention is to create a directory hierarchy that contains the **ProjectId**,
 the **ObsNum**, and a reduction date **Rdate**.
 
-## An experiment
+## An old experiment
 
 
      ./lmtoy_reduce.sh path=M31_data obsnum=85776 
@@ -144,7 +150,7 @@ people enjoy reducing their Sequoia data.
 
 # Short description of LMTSLR scripts
 
-The following scripts are used by the **lmtoy_reduce.sh** pipeline.
+The following scripts are used by the **seq_pipeline.sh** pipeline.
 All scripts should self-describe using the **-h** or **--help** flag.
 
 * **lmtinfo.py**:            gathers info what OBSNUM's you have, or for a specific OBSNUM selected, useful info for the pipeline
@@ -187,7 +193,9 @@ The **lmtinfo.py** script makes a summary listing of the OBSNUM's you have, e.g.
 
 NOTE: Although VLSR -296 agrees with NED, it is the systemic velocity of M31,
 which could throw off current auto-baselining for fields away from the
-minor axis ofr M31. The one used for M51 (463) does not agree with NED (611)
+minor axis of M31. The one used for M51 (463) does not agree with NED (611). 
+This could affect the capabilities of ADMIT correctly identiying lines. These
+could possibly be resolved by using PI parameters to the pipeline.
 
 ## "lmtar" "lmtls"
 
@@ -199,7 +207,7 @@ more useful. It's usage would be something like
       lmtar /tmp/irc.tar 79447 79448
 
 Since typically an observation is at least two OBSNUM's (cal and map), the
-user is responsible to fine all the correct OBSNUM's.
+user is responsible to find all the correct OBSNUM's.
 
 The command **lmtls** reports a simple pattern matching to find potential
 OBSNUMs's, e.g.
@@ -223,7 +231,7 @@ script in the **makespec=1** setting.
 
 A set of [channel0,channel1] ranges (in VLSR) can be
 selected. Typically you would select a set on either side of the
-spectral line. The **lmtoy_reduce.sh** will make an initial guess based on
+spectral line. The **seq_pipeline.sh** will make an initial guess based on
 **vlsr,dv and dw**, but you can edit the parameter file and work with
 posterior values.
 
@@ -274,7 +282,7 @@ the same.
 
 It is also important to be sure to cull as many pixels as are needed,
 not just to make a smaller SpecFile, but to ensure the
-**lmtoy_combine.sh** script to properly work.
+**seq_combine.sh** script to properly work.
 
 ### otf_cal
 
@@ -418,14 +426,14 @@ and will rely on the SpecFiles to contain the good spectra/pixels.
 
 There are two different ways to make a weight (.wt.fits) map.
 
-## lmtoy_combine.sh
+## seq_combine.sh
 
 Example for our M31 data (see also "make bench31" in examples)
 
-      ./lmtoy_reduce.sh path=M31_data obsnum=85776 > lmtoy_85776.log 2>&1
-      ./lmtoy_reduce.sh path=M31_data obsnum=85778 > lmtoy_85778.log 2>&1
-      ./lmtoy_reduce.sh path=M31_data obsnum=85824 > lmtoy_85824.log 2>&1
-      ./lmtoy_combine.sh obsnum=85776,85778,85824  > lmtoy_m31.log   2>&1
+      ./seq_pipeline.sh path=M31_data obsnum=85776 > lmtoy_85776.log 2>&1
+	  ./seq_pipeline.sh path=M31_data obsnum=85778 > lmtoy_85778.log 2>&1
+      ./seq_pipeline.sh path=M31_data obsnum=85824 > lmtoy_85824.log 2>&1
+      ./seq_combine.sh obsnum=85776,85778,85824  > lmtoy_m31.log   2>&1
 
 but again, for now this depends on each OBSNUM having the bad pixels removed
 during the "makespec" stage. 
@@ -450,7 +458,7 @@ can simply be copied, e.g.
 
 After this, inspection of each OBSNUM will show which pixel etc. will need to
 be culled for gridding, and the scripts can be rerun for a clean set of
-SpecFiles for each OBSNUM.  After this lmtoy_combine.sh can be run for a clean
+SpecFiles for each OBSNUM.  After this ``seq_combine.sh`` can be run for a clean
 combination, or the cubes can be combined.
 
 If for some reason all rc files need an edit, consider using the lmtrc.py script,
@@ -460,7 +468,7 @@ e.g.
 
 after which you can either re-run all single cubes, or just run for example
 
-      lmtoy_combine.sh obsnum=91111,91113,91115,91117
+      seq_combine.sh obsnum=91111,91113,91115,91117
 
 
 # The M31 benchmark using SLpipeline.sh
@@ -518,13 +526,13 @@ this created a 2018-S1-MU-46 directory with sub-directories: 85776 85778 85824
 	you can also do something like
 	
 	      cd 2018-S1-MU-46/85776 
-		  lmtoy_reduce.sh obsnum=85776 
+		  seq_pipeline.sh obsnum=85776 
 	      
 	
 4. If you think all obsnums are now ok, combine them:
 
           cd 2018-S1-MU-46
-          lmtoy_combine.sh obsnum=85776,85778,85824
+          seq_combine.sh obsnum=85776,85778,85824
 		
    For gridding it will use the first rc file, i.e. lmtoy_85776.rc
 	  
