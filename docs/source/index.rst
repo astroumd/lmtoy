@@ -15,59 +15,56 @@ http://lmtgtm.org/
 
 This document describes the current toolbox of LMT tools that you might
 want to use to reduce LMT data.   It will cover most Spectral Line instruments
-(Sequioa, RSR, 1MM, B4R), but does not discuss continuum instruments.
+(Sequioa, RSR, 1MM, B4R), but currently does not discuss continuum instruments.
 
 The source code is available via https://github.com/astroumd/lmtoy which describes
-how to assemble the toolbox with the help of a number of older existing
+how to assemble the toolbox with the help of a number of existing
 codes. We also use the
 `github issue tracker <https://github.com/astroumd/lmtoy/issues>`_ for all things
 related to the toolbox.
 
 
-For Developers
-==============
+Installation
+============
 
-If you plan to try out the code, you may want to inspect the ``docs/install_lmtoy``
-script from the **lmtoy** github repo. Here's an example how to install using it:
+If you plan to try out the code, you may want to inspect or use the
+``docs/install_lmtoy`` script from the **lmtoy** github repo. Here's
+an example how to install using it:
 
 .. code-block:: sh
   
    wget https://astroumd.github.io/lmtoy/install_lmtoy
    bash install_lmtoy 
 
-This example script is not very long, is fairly self-documenting, should work on most Linux and Mac machines.
-It has a few optional command line parameters.  Here is an example of installing it on a laptop with a local
-version of ``$DATA_LMT``:
+This example script is not very long, is fairly self-documenting, and
+should work on most Linux and Mac machines.  It has a few optional
+command line parameters. 
+Here is an example of installing it with an
+already populated ``$DATA_LMT`` data directory:
 
 .. code-block:: sh
 
-    bash install_lmtoy data_lmt=~/LMT/data_lmt bench=/n/chara/teuben/LMT/irc_2018.tar.gz
+    bash install_lmtoy data_lmt=/lma1/lmt/data_lmt 
 
-with an example of where we keep the IRC benchmark data at UMD.  After this was installed, the pipeline can be
-run as follows:
+After this was installed, the pipeline can be activated and executed as follows:
 
 .. code-block:: sh
 
     source lmtoy_start.sh
     SLpipeline.sh obsnum=79448
 
-after which all the data products can be found in the directory ``2018S1SEQUOIACommissioning/79448``.
+After this the data products can be found in the directory
+``2018S1SEQUOIACommissioning/79448``. Currently by default the script
+runs the pipeline for obsnum=33551 (an RSR example) and obsnum=79448
+(a Sequoia example), and the results are in ``$LMTOY/work_lmt``.
    
 
-API
-=== 
 
-This is where the API can eventually be found
+Spectral Line Reduction
+=======================
 
-.. toctree::
-   :maxdepth: 2
+Here is most of the manual
 
-   api
-   lmtslr <lmtslr.api>
-   dreampy3 <dreampy3.api>
-
-Various
-=======
 .. toctree::
    :maxdepth: 2
       
@@ -77,28 +74,48 @@ Various
    glossary
    FAQ
 
+
+Sequoia pipeline
+================
+
+This old markdown will be converted to official rst.
+
+.. toctree::
+   :maxdepth: 2
+
+   reduce
+
+RSR pipeline
+============
+
+.. toctree::
+   :maxdepth: 2
+
+   rsr
+
+Pointing
+========
+
+.. toctree::
+   :maxdepth: 2
+
+   pointing
+
+
+
 Markdowns	      
 =========
 
-Some of the documentation is still in markdown format, and
-often contain just notes. 
+Some of the old documentation is still in markdown format, and
+often contain just notes.  Here we attempt to include them
+automagically
 
 .. toctree::
    :maxdepth: 2
 
    masking
    wishlist
-
-Pipeline
-========
-
-These markdowns will be moved to official rst.
-
-.. toctree::
-   :maxdepth: 3
-
-   reduce
-   rsr
+	      
 
 Notebook: SLR_example
 =====================
@@ -109,6 +126,19 @@ Here are some jupyter notebooks, automatically included by sphinx.
    :maxdepth: 2
 
    SLR_example
+
+API
+=== 
+
+This is where the API can eventually be found, but there is not much there yet.
+
+.. toctree::
+   :maxdepth: 2
+
+   api
+   lmtslr <lmtslr.api>
+   dreampy3 <dreampy3.api>
+	      
 
 
 Indices

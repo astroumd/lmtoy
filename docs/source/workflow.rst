@@ -1,31 +1,41 @@
 Spectral Line Workflow
 ======================
 
-The current (pre2021) style data reduction workflow requires you to have your RAW files locally present. For LMT data this 
-means having them located in your local $DATA_LMT tree.  In the future we expect another workflow, described
-later in this section. 
+The current style data reduction workflow requires you to have your RAW files locally present, in
+the $DATA_LMT tree.   To reduce data you will need to know a set of **ObsNum** 's , which can be
+obtained by querying a database. 
 
-In this current workflow, all you need to know is a set of **ObsNum** 's , which can be obtained by quering
-(some) database. We need some examples of this.
+To run the pipeline, you would process each obsnum individually, inspect the pipeline products
+in the $WORK_LMT tree and
+decide if the data is good enough, or needs some extra flagging/masking. These are usually defined
+in a small set of ascii files. After this the pipeline can be re-run.  In the case an observation
+was split in a series of obsnums, you can combine them with the same script, viz.
 
-RSR data
---------
+.. code-block::
 
+   SLpipeline.sh obsnum=12345
+   SLpipeline.sh obsnum=23456
+   SLpipeline.sh obsnums=12345,23456
 
-Symmetric to the WARES scripts, two front-end scripts
-``rsr_pipeline.sh`` and ``rsr_combine.sh``  will reduce RSR data. Behind the scenes there
-are two different scripts,
-``rsr_driver.sh`` and ``rsr_sum.sh``, reducing the raw data directly into an ASCII spectrum, there
-is no SpecFile created as there is for WARES data. These two scripts have slightly different
+The resulting data can then be found in $WORK_LMT/$ProjectId/$obsnum, or in the case of a combination,
+$ProjectId/${on0}_${on1}. Inside there will be a README.html summarizing the
+Timely Analysis Products (TAP).
+
+Each instrument (e.g. RSR, SEQ) have their own pipeline script.
+
+RSR pipeline
+------------
+
+For the RSR pipeline there are two scripts:
+``rsr_pipeline.sh`` and ``rsr_combine.sh``.   These in turn use 
+two different scripts, ``rsr_driver.sh`` and ``rsr_sum.sh``, reducing the raw data directly into an ASCII spectrum,
+there is no SpecFile created as there is for WARES based data. These two scripts have slightly different
 ways to mask bad data, but should otherwise produce a very similar final spectrum.
 
-two slightly different versions of a spectrum, each with their own command line options and masking
-file:
-
-1. rsr_driver uses the RFILE (a simple obsnum,chassis,board tuple to remove from the data) and ``--exclude`` option
+1. ``rsr_driver`` uses the RFILE (a simple obsnum,chassis,board tuple to remove from the data) and ``--exclude`` option
    to remove sections in frequency space to be removed from the baseline fitting.
 
-2. rsr_sum uses the BLANKING (a more detailed format to exclode certain chassis and board sections from inclusion).
+2. ``rsr_sum`` uses the BLANKING (a more detailed format to exclode certain chassis and board sections from inclusion).
    a separate **windows[]** list is used to designate sections in frequency space for baselining.
 
 
@@ -37,13 +47,35 @@ The parameter files are:
 4. ``rsr.${obsnum}.rfile`` - triples of obsnum,chassis,board - for rsr_sum.py
 
 
+RSR Parameters
+~~~~~~~~~~~~~~
 
-WARES data
-----------
+Currently (to be) accepted by SLpipeline.sh when using it for RSR,
+ignored when you happen to use them otherwise.
 
-For WARES based instrument, such as Sequoia, 
+1. badboard=      a comma separated list, 0 being the first.  this is where board=4 is the highest freq board
+2. badcb=         a comma separate list of *chassis/board* combinations, e.g. badcb=0/1,0/5,3/5 is a common one
+3. vlsr=          not implemented yet
+4. blo=           baseline order fit. hardcoded at 0 at the moment, so not implemented yet.
+
+The **badboard** and **badcb** are normally not used, and during the **badlags** scanning, a set of badcb combinations are
+identified if their RMS_diff is outside the 0.01-0.1 window. These are currently heuristically determined, and after inspection
+the user can still edit them.
+
+Common ones for SLpipeline:
+
+1. obsnum=0 (or obsnums=0)
+2. debug=0
+3. pdir=""
+
+
+
+WARES workflow
+--------------
+
+For WARES based instrument, such as Sequoia (SEQ)
 the scripts ``seq_reduce.sh`` and ``seq_combine.sh`` will reduce single and combined OBSNUM's. They
-always work through an intermediate Specfile (equivalent to our future SDFITS file), which gets gridded
+always work through an intermediate Specfile (equivalent to our future SDFITS file), which gets then gridded
 into a FITS cube.
 
 The parameter files are:
@@ -58,16 +90,24 @@ Many more details of the old workflow is in ``examples/lmtoy_reduce.md``
 Getting at the RAW data
 -----------------------
 
-Here are some examples to get LMT data and reduce them
-in your own local workspace. This assumes the full LMTOY toolkit has been installed:
+Here are some examples to get raw (netCDF) LMT data and reduce them
+in your own local workspace. This assumes the LMTOY toolkit has been installed:
 
-1.  Find out which **obsnum** covers your observation(s).  Depending on the procedure, you may
-    also need to know the calibration ObsNum's as well, referred to as the **CalObsNum**.
+1.  Find out which **obsnum** covers your observation(s).  Depending on the observing procedure, you may
+    also need to know the calibration ObsNum's as well, referred to as the **CalObsNum**, and usually you do.
     There are some existing databases and logfiles where a simple **grep** command will probably be sufficient
     to get the obsnums. The **lmtinfo.py $DATA_LMT** command can also be used. If you have the **Scans.csv**
     database, this might be faster. If you see a log file in the $DATA_LMT directory, this might be another
     place were a record of all ObsNum's exists.
     As they say, YMMV.
+
+.. code-block::
+
+      # assuming your administrator is maintaining a **data_lmt.log**
+      % lmtinfo.py grep 2021-12-17
+      % lmtinfo.py grep 2020 NGC5194
+
+    would show all the data observed on that date, the second example shows all NGC5194 data in 2020.
     
 2.  Get the data from a full $DATA_LMT archive (e.g. at "cln", or at LMT) via the **rsync_lma** script. Obviously
     only somebody on that archive machine can do this, but this is the easiest way. Here is an example of several
@@ -96,10 +136,14 @@ be inspected the ADMIT way (or any other way).
 
 An alternative would be a direct rsync conection between e.g. cln and lma:
 
+.. code-block::
+
    cln% cd $DATA_LMT
    cln% rsync -avR `lmtar.py 79447 79448` lma:/lma1/lmt/data_lmt
 
-for which we have a script, which works from any directory:
+for which we have a script, which also works from any directory:
+
+.. code-block::
 
    cln% rsync_lma 79448
 
@@ -278,8 +322,8 @@ in docs/masking.md, but here is a flavor of what is being considered:
 
 
 
-Future Workflow
-~~~~~~~~~~~~~~~
+Workflow
+~~~~~~~~
 
 UMass Server has the data, a web interface will run the new-style pipeline. Data can be inspected.
 New parameters can be set, and re-imaged.

@@ -1,20 +1,20 @@
-RSR via the SLpipeline
-======================
+RSR via SLpipeline
+==================
 
 Here we summarize the current (nov 2021) status of data reduction for the RSR. The invocation would be
 
 .. code-block::
 
-      SLpipeline obsnum=33551
+      SLpipeline.sh obsnum=33551
 
 The current **SLpipeline.sh** will currently run a few scripts for a single obsnum:
 
-1. **seek_bad_channels.py**:  this will identify the bad lags, and store them in a **rsr.badlags** file. This file
-   should be inspected (see the **sbc.png** plot). Options:
+1. **seek_bad_channels.py**:  this will identify the bad lags, and store them in a **rsr.$obsnum.badlags** file. This file
+   should be inspected (see the **badlags.png** plot). Options:
 
-2. **rsr_driver.py**:
+2. **rsr_driver.py**: this will produce a final averaged and bandmerged spectrum
 
-3. **rsr_sum.py**:
+3. **rsr_sum.py**: this will produce a final averaged and bandmerged spectrum
 
 The data are stored in a directory *ProjectId/ObsNum*, and the following files can be edited to re-run and improve
 the pipeline:
@@ -32,9 +32,11 @@ the pipeline:
 Final averaged spectrum
 -----------------------
 
-The final spectrum is a band merged spectrum covering from about  73 GHz to 110 GHz, in 6 bands. The average is over the 4 chassis and
-a small number (5-10) of integrations. The typical integration time per sample is about 30 seconds. Here is a typical header
-of a final spectrum:
+The final spectrum is a band merged spectrum covering from about 73
+GHz to 111 GHz, in 6 bands. The average is over the 4 chassis (beam
+and polarization) and a small number (5-10) of integrations. The
+typical integration time per sample is about 30 seconds. Here is a
+typical header of a final spectrum:
 
 .. code-block::
 
@@ -61,23 +63,24 @@ of a final spectrum:
 PI parameters
 -------------
 
-Optional PI parameter can be set for each project, but currently this has to be set via the pipeline,
-after the observations. There is no method yet to inherit this from the observing script.
-For some projects multiple targets may be taken, in which case a parameter such as **vlsr** makes
-no sense.  Currently if there is a **PI_pars.rc** file, it will be sourced. This procedure will likely
-change in the future.
+Optional PI parameter can be set for each project, but currently this
+has to be set via the pipeline, after the observations. There is no
+method yet to inherit this from the observing script.  For some
+projects multiple targets may be taken, in which case a parameter such
+as **vlsr** makes no sense.  Currently if there is a **PI_pars.rc**
+file, it will be sourced. This procedure might change in the future.
 
 Combining ObsNum's
 ------------------
 
-Although not officially supported yet, the **rsr_combine.sh** script will take all the
-parameter file, and re-run the pipeline with these ranges of obsnums.
-
+The **rsr_combine.sh** script accepts a comma separated list of obsnums, 
+and re-run the pipeline with the settings of each of the parameter files that
+belong to that obsnum.
 
 
 .. code-block::
 
-      rsr_combine.sh obsnum=33551,71610,92068
+      SLpipeline.sh obsnums=33551,71610,92068
 
 the results are available in **2014ARSRCommissioning/33551_92068** and will otherwise look familiar to the
 pipeline results of a single obsnum.

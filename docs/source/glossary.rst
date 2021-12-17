@@ -18,12 +18,12 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       sky. Commisioned April 2018.
 
     band
-      A coherent section in frequency space. For **RSR** there
+      A coherent section of channels in frequency space. For **RSR** there
       are 6 bands, sometimes the word **board** is used as well, although
       the ordering of bands and boards is different. bands are ordered
-      in frequency. LSR
+      in frequency (by our convention). SLR
       also uses this keyword, but there is currently only board=0 for
-      LSR. See also **bank**
+      SLR. See also **bank**
 
     bank
       A set of spectrometers that cover the same IF band at the same
@@ -39,7 +39,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       21".  The beam separation is 27.8" for Sequoia.
 
     board
-      for LSR these are the roach boards (4). For RSR they
+      for SLR these are the roach boards (4). For RSR they
       are called **chassis** (4). But in **RSR** board has also been
       used where **band** is meant, but there is a subtle difference
       where bands are ordered in frequency.
@@ -84,9 +84,6 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       The LMT Spectral Line Reduction modules you will need to reduce
       WARES based data.
     
-    LSR
-      (Spectral Line Reduction):  the software reduction Sequoia (3mm) data, and presumably in the future, Omaya (1mm)
-
     ObsNum
       Observatation Number. This is not all, obsnum is part of the (**ObsNum** , **SubObsNum** , **ScanNum**) tuple.
 
@@ -108,6 +105,10 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 
     ProjectId
       Each LMT observing proposal has a unique proposal ID assigned. An example is **2018-S1-MU-46**
+
+    Quick Look data
+      At the LMT there are "Quick Look" data that will be used to assess if data will be scientifically
+      viable. See also Timely Analysis Products (TAP)
 
     ramp
       The ramp is the area where not all beams have
@@ -170,8 +171,18 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       defined by its own seting of *(crval, crpix, cdelt)* in a FITS WCS sense.
       See also :ref:`storage`.
 
+
+    SRDP
+      Science Ready Data Products (SRDP) are the data produced by the pipeline that can be used
+      to write a paper, in theory. In practice the PI will want to assess the quality, perhaps
+      even tune some pipeline parameters, and re-run the pipeline.
+
     SubObsNum
       Sub-Observatation Number - see **ObsNum**
+
+    Timely Analysis Products (TAP)
+      The SLpipeline produces a set of Timely Analysis Products, mostly in the form of figures,
+      for the PI to asses the quality of the data. See also SRDP.
 
     TolTec
       Continuum mapping instrument
