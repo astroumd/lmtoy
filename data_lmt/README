@@ -12,3 +12,20 @@ the install you would use
 or with the example install_lmtoy script
 
    	    install_lmtoy data_lmt=/somewhere/data_lmt
+
+It is also possible to keep a private $LMTOY/data_lmt and use symbolic links
+to the actual data (e.g. to maintain your data_lmt.log file).
+
+As of this writing you will need to following symlinks:
+
+ifproc
+rsr
+RedshiftChassis0
+RedshiftChassis1
+RedshiftChassis2
+RedshiftChassis3
+spectrometer/roach0
+spectrometer/roach1
+spectrometer/roach2
+spectrometer/roach3
+
