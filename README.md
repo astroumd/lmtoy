@@ -34,18 +34,18 @@ LMT software is very instrument specific:
 
 ## Installation
 
-There are some expanded notes in [INSTALL.md](INSTALL.md), and also check out the
+There are expanded notes in [INSTALL.md](INSTALL.md), and also check out the
 Makefile for specific targets that simplify the install and updates. Probably the most automated/simple
 way to install (if you have all the preconditions, most importantly the **cfitsio** and **netcdf** library) is:
 
       wget https://astroumd.github.io/lmtoy/install_lmtoy
       bash install_lmtoy
 
-if this worked, activate it in your shell:
+if this [worked](install_results.md), activate it in your shell:
 
       source lmtoy/lmtoy_start.sh
 	  
-Assuming you have the raw data in your $DATA_LMT tree, you can check that with
+Assuming you have the raw data in your $DATA_LMT tree, you can check an RSR benchmark with
 
       lmtinfo.py $DATA_LMT 33551
 	  
@@ -55,6 +55,8 @@ you can proceed running the SLpipeline:
 	  
 and a Timely Analysis Products can be viewed in the 2014ARSRCommissioning/33551 directory, or view
 a version we have online in https://www.astro.umd.edu/~teuben/LMT/live/2014ARSRCommissioning/33551/
+
+The sequoia benchmark is **obsnum=79448**
 
 
 ## DATA
