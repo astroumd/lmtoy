@@ -10,7 +10,7 @@
 #
 
 
-version="seq_combine: 19-nov-2021"
+version="seq_combine: 17-dec-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=ON1,ON2,..."
@@ -56,6 +56,7 @@ otf_c=2
 noise_sigma=1
 b_order=0
 stype=2
+edge=0
 
 # unset a view things, since setting them will give a new meaning
 unset vlsr

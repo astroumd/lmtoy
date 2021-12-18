@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="2-dec-2021"
+lmtoy_version="17-dec-2021"
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
 function lmtoy_decipher_obsnums {
@@ -226,6 +226,7 @@ function lmtoy_seq1 {
 	    --otf_a       $otf_a \
 	    --otf_b       $otf_b \
 	    --otf_c       $otf_c \
+	    --edge        $edge \
 	    --sample      $sample \
 	    --n_samples   256 \
 	    --noise_sigma $noise_sigma
