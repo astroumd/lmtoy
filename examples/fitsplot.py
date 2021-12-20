@@ -25,6 +25,9 @@ else:
 f.show_grayscale()
 f.show_colorscale(cmap='gist_heat')
 f.add_colorbar()
+# Cannot show beam when WCS is not celestial
+# perhaps doesn't lke VRAD, but our fits files are not good enough
+# f.add_beam()
 
 try:
     f.add_beam()
@@ -35,6 +38,9 @@ except:
 f.add_grid()
 
 idx = fitsfile.rfind('.fits')
-pfile = fitsfile[:idx] + ".png"
+if plane < 0:
+    pfile = fitsfile[:idx] + ".png"
+else:
+    pfile = fitsfile[:idx] + ".%04d.png" % plane
 f.save(pfile)
 print("Writing ",pfile)

@@ -14,7 +14,7 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="lmtoy_reduce: 16-nov-2021"
+version="seq_pipeline: 17-dec-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -67,6 +67,7 @@ b_order=0
 stype=2
 sample=-1
 otf_cal=0
+edge=0
 
 # unset a view things, since setting them will give a new meaning
 unset vlsr
@@ -161,9 +162,9 @@ if [ $newrc = 1 ]; then
     echo l_regions=$l_regions       >> $rc
     echo slice=$slice               >> $rc
     echo v_range=$v_range           >> $rc
-    if [ $extent == 0 ]; then
-	echo x_extent=$x_extent     >> $rc
-	echo y_extent=$y_extent     >> $rc
+    if [ $extent != 0 ]; then
+	echo x_extent=$extent       >> $rc
+	echo y_extent=$extent       >> $rc
     fi
     
     echo pix_list=$pix_list         >> $rc
@@ -174,6 +175,10 @@ if [ $newrc = 1 ]; then
     echo otf_c=$otf_c               >> $rc
     echo sample=$sample             >> $rc
     echo otf_cal=$otf_cal           >> $rc
+    echo edge=$edge                 >> $rc
+
+    # source again to ensure the changed variables are in
+    source $rc
     
 
     echo "LMTOY>> this is your startup $rc file:"

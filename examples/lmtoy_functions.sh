@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="2-dec-2021"
+lmtoy_version="17-dec-2021"
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
 function lmtoy_decipher_obsnums {
@@ -226,6 +226,7 @@ function lmtoy_seq1 {
 	    --otf_a       $otf_a \
 	    --otf_b       $otf_b \
 	    --otf_c       $otf_c \
+	    --edge        $edge \
 	    --sample      $sample \
 	    --n_samples   256 \
 	    --noise_sigma $noise_sigma
@@ -328,6 +329,10 @@ function lmtoy_seq1 {
 		fitsplot.py $s_on.wtn.fits
 		fitsplot.py $s_on.wtr.fits
 	    fi
+
+	    # Just a MOM0 plot for the pipeline summary
+	    ccdfits $s_on.mom0.ccd  $s_on.mom0.fits;  fitsplot.py $s_on.mom0.fits
+	    
 	    # remove useless files
 	    if [ $clean -eq 1 ]; then
 		rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd $s_on.wt2.ccd  $s_on.wt3.ccd \
