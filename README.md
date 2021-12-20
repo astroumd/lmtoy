@@ -79,6 +79,11 @@ A simple example to get at the raw data is the following:
 where **rawdata** is now a 2D array, shaped (ntime,nchan) in the python sense (nchan runs fastest).
 The LMT software will typically calibrate and convert (grid) these data to the more common FITS format.
 
+## Manual
+
+A manual is in preparation, but is far from done. Here is a link of which the contents changes faster than
+the github source. At the bottom of the index page it lists the last built time.
+https://www.astro.umd.edu/~teuben/LMT/lmtoy/html
        
 
 ## References
