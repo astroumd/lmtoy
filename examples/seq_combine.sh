@@ -122,12 +122,9 @@ s_nc=../../$(echo $ons | sed 's| |,../../|g')
 
 mkdir -p $pdir
 cp $rc $pdir/lmtoy_${on0}_${on1}.rc
-echo obsnum=${on0}_${on1} >> $pdir/lmtoy_${on0}_${on1}.rc
-cd $pdir
-
-# make new 'fake' obsnum
 obsnum=${on0}_${on1}
-
+echo obsnum=${obsnum} >> $pdir/lmtoy_${on0}_${on1}.rc
+cd $pdir
 
 s_on=${src}_${on0}_${on1}
 if [ ! -z $output ]; then
@@ -136,8 +133,8 @@ fi
 s_fits=${s_on}.fits
 w_fits=${s_on}.wt.fits
 
-echo OBSNUM range: $on0 $on1
-echo FILES: s_nc: $s_nc
+echo "OBSNUM range: $on0 $on1"
+echo "FILES: s_nc: $s_nc"
 
 
 makespec=0
