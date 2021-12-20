@@ -329,6 +329,10 @@ function lmtoy_seq1 {
 		fitsplot.py $s_on.wtn.fits
 		fitsplot.py $s_on.wtr.fits
 	    fi
+
+	    # Just a MOM0 plot for the pipeline summary
+	    ccdfits $s_on.mom0.ccd  $s_on.mom0.fits;  fitsplot.py $s_on.mom0.fits
+	    
 	    # remove useless files
 	    if [ $clean -eq 1 ]; then
 		rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd $s_on.wt2.ccd  $s_on.wt3.ccd \
