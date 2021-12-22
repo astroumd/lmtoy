@@ -257,3 +257,13 @@ common: lmtoy_venv
 	pip3 install -e dreampy3)
 
 
+bench:
+	SLpipeline.sh obsnum=33551 restart=1
+	@echo "QAC_STATS: rsr.33551.driver.sum.txt 2.36888e-05 0.000943648 -0.00407884 0.0459238  0 0.157781  1185 [expected]"
+	@echo "QAC_STATS: rsr.33551.blanking.sum.txt 4.19332e-05 0.000950482 -0.00385069 0.0459053  0 0.188981  1186 [expected]"
+	SLpipeline.sh obsnum=79448 restart=1
+	@echo "QAC_STATS: IRC+10216_79448.ccd 0.0142744 2.21014 -563.449 634.86  0 0.0531463 [expected]"
+	@echo "QAC_STATS: - 0.0242549 0.33463 -2.42886 15.3425  0 0.123691 [expected]"
+	@echo xdg-open  $WORK_LMT/2014ARSRCommissioning/33551/README.html
+	@echo xdg-open  $WORK_LMT/2018S1SEQUOIACommissioning/79448/README.html
+
