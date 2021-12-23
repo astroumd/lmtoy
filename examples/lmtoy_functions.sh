@@ -48,7 +48,24 @@ function printf_red {
     RED='\033[0;31m'
     NC='\033[0m' # No Color
     echo -e "${RED}$*${NC}"
-    }
+}
+
+function printf_green {
+    # could also use the tput command?
+    RED='\033[0;32m'
+    NC='\033[0m' # No Color
+    echo -e "${RED}$*${NC}"
+}
+
+function qac_select {
+    msg=$(grep ^$1 $LMTOY/etc/qac_stats.log | sed s/$1//)
+    if [ -z "$msg" ]; then
+	printf_red Warning: No qac_select for $1
+    else
+	printf_green $msg
+    fi
+    
+}
 
 function lmtoy_rsr1 {
     # input:  first, obsnum, badlags, blanking, ....
@@ -93,7 +110,7 @@ function lmtoy_rsr1 {
     spec2=${blanking}.sum.txt
     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo                         > rsr_sum.log 2>&1
 
-    # Tsys plot:  rsr.tsys.png
+    # Tsys plot:  rsr.tsys.png  - only for single obsnum
     if [[ -z $obsnums ]]; then
 	python $LMTOY/examples/rsr_tsys.py -s $obsnum                                     > rsr_tsys.log 2>&1
     fi
@@ -108,7 +125,7 @@ function lmtoy_rsr1 {
 
     
     # NEMO summary spectra
-    if [[ ! -z $NEMO ]]; then
+    if [[ -n $NEMO ]]; then
 	echo "LMTOY>> Some NEMO post-processing"
 	dev=$(yapp_query png ps)
 	tabplot  $spec1 line=1,1 color=2 ycoord=0        yapp=${spec1}.sp.$dev/$dev  debug=-1
@@ -273,7 +290,7 @@ function lmtoy_seq1 {
 		     --interpolation bilinear
     fi
     
-    if [ ! -z $NEMO ]; then
+    if [ -n $NEMO ]; then
 	echo "LMTOY>> Some NEMO post-processing"
 
 	# cleanup from a previous run
