@@ -338,7 +338,7 @@ function lmtoy_seq1 {
 	    
 	    # QAC_STATS:
 	    printf_red $(ccdstat $s_on.ccd bad=0 qac=t)
-	    printt_red $(ccdsub  $s_on.ccd -  centerbox=0.5,0.5 | ccdstat - bad=0 qac=t)
+	    printf_red $(ccdsub  $s_on.ccd -  centerbox=0.5,0.5 | ccdstat - bad=0 qac=t)
 
 	    # hack
 	    fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.specstab
