@@ -43,6 +43,13 @@ function lmtoy_decipher_obsnums {
     echo OBSNUMS1: $obsnums1
 }
 
+function printf_red {
+    # could also use the tput command?
+    RED='\033[0;31m'
+    NC='\033[0m' # No Color
+    echo -e "${RED}$*${NC}"
+    }
+
 function lmtoy_rsr1 {
     # input:  first, obsnum, badlags, blanking, ....
 
@@ -108,8 +115,9 @@ function lmtoy_rsr1 {
 	tabplot  $spec2 line=1,1 color=2 ycoord=0        yapp=${spec2}.sp.$dev/$dev  debug=-1
 	tabtrend $spec1 2 | tabhist - robust=t xcoord=0  yapp=${spec1}.rms.$dev/$dev debug=-1
 	tabtrend $spec2 2 | tabhist - robust=t xcoord=0  yapp=${spec2}.rms.$dev/$dev debug=-1
-	tabstat  $spec1 2 bad=0 robust=t qac=t
-	tabstat  $spec2 2 bad=0 robust=t qac=t
+	# QAC_STATS
+	printf_red $(tabstat  $spec1 2 bad=0 robust=t qac=t)
+	printf_red $(tabstat  $spec2 2 bad=0 robust=t qac=t)
     else
 	echo "LMTOY>> Skipping NEMO post-processing"
     fi
@@ -137,6 +145,7 @@ function lmtoy_rsr1 {
 
 function lmtoy_seq1 {
     # input: obsnum, ... (lots)
+    # this will process a single band in an $obsnum
 
     # log the version
     lmtoy_version > lmtoy.rc 
@@ -311,8 +320,8 @@ function lmtoy_seq1 {
 	    ccdsmooth $s_on.n.ccd - dir=xyz nsmooth=5 | ccdfits - $s_on.nfs.fits fitshead=$s_fits
 	    
 	    # QAC_STATS:
-	    ccdstat $s_on.ccd bad=0 qac=t
-	    ccdsub  $s_on.ccd -  centerbox=0.5,0.5 | ccdstat - bad=0 qac=t
+	    printf_red $(ccdstat $s_on.ccd bad=0 qac=t)
+	    printt_red $(ccdsub  $s_on.ccd -  centerbox=0.5,0.5 | ccdstat - bad=0 qac=t)
 
 	    # hack
 	    fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.specstab
