@@ -192,7 +192,7 @@ fi
 #  rsync TAP data to a remote?   e.g. rsync=teuben@lma.astro.umd.edu:/lma1/lmt/TAP_lmt
 
 
-if [ ! -x "$rsync" ]; then
+if [ -n "$rsync" ]; then
     ls -l ${pdir}_TAP.tar
     rsync -av ${pdir}_TAP.tar $rsync
 fi
