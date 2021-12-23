@@ -235,18 +235,11 @@ updated, it's safe to do this:
 
       make install_lmtslr
 
-NEMO, depending on what you see, may need to have a new
-executable installed, e.g.
+NEMO, depending on what you see was updated, may need to have a new executable installed
+(the mknemo command can be executed from any directory), e.g.
 
-      mknemo ccdstat ccdfits fitsccd ccdhist ccdsub ccdmath ccdsmooth ccdmom scanfits tabplot tabhist
+      mknemo ccdstat ccdfits fitsccd ccdhist ccdsub ccdmath ccdsmooth scanfits ccdmom tabplot tabhist
 
-For montage, I would use
-
-      make install_montage
-
-That should keep your environment up to date. Note we currently don't use Montage yet, so you can skip this.
-
-      
 ## Examples
 
 Some examples how to use LMT software are in the examples directory.  The irc_reduce.sh serves as the benchmark,
