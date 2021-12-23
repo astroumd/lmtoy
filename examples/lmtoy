@@ -7,14 +7,13 @@ if [ -z $LMTOY ]; then
     echo "LMTOY environment not loaded (odd)"
     exit 0
 else
-    echo "LMTOY:     $LMTOY"
+    echo "LMTOY:     $LMTOY  - $(cat $LMTOY/VERSION)"
 fi
 
 echo "DATA_LMT:  $DATA_LMT"
 echo "WORK_LMT:  $WORK_LMT"
-echo "python:    $(which python)"
-echo "version:   $(python --version)"
-echo "NEMO:      $NEMO"
+echo "python:    $(which python)  - $(python --version)"
+echo "NEMO:      $NEMO  - $(cat $NEMO/VERSION)"
 
 
 if [ "$1" == pull ]; then
