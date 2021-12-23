@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="17-dec-2021"
+lmtoy_version="21-dec-2021"
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
 function lmtoy_decipher_obsnums {
@@ -18,10 +18,10 @@ function lmtoy_decipher_obsnums {
     #             set first and last obsnum, and make a list
     if [ -e $obsnums ]; then
 	# obsnum is a file
-	on0=$(grep -v ^# $obsnums | head -1)
-	on1=$(grep -v ^# $obsnums | tail -1)
-	obsnums1=$(grep -v ^# $obsnums)
-	obsnums=$(echo $obsnums1 | sed '/ /,/g')
+	on0=$(grep -v ^# $obsnums | head -1 | awk '{print $1}')
+	on1=$(grep -v ^# $obsnums | tail -1 | awk '{print $1}')
+	obsnums1=$(grep -v ^# $obsnums | awk '{print $1}')
+	obsnums=$(echo $obsnums1 | sed 's/ /,/g')
     else
 	# obsnums is a comma separated list
 	#         figure out the first obsnum, to inherit basic pars
