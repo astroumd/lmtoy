@@ -3,8 +3,16 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="17-dec-2021"
+lmtoy_version="23-dec-2021"
+
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
+
+function lmtoy_version {
+    v=$(cat $LMTOY/VERSION)
+    d=$(date -u +%Y-%m-%dT%H:%M:%S)
+    echo $v $d
+}
+
 
 function lmtoy_decipher_obsnums {
     # input:    obsnums
@@ -37,6 +45,9 @@ function lmtoy_decipher_obsnums {
 
 function lmtoy_rsr1 {
     # input:  first, obsnum, badlags, blanking, ....
+
+    # log the version
+    lmtoy_version > lmtoy.rc 
     
 
     # FIRST get the badlags - this is a file that can be edited by the user in later re-runs
@@ -126,6 +137,9 @@ function lmtoy_rsr1 {
 
 function lmtoy_seq1 {
     # input: obsnum, ... (lots)
+
+    # log the version
+    lmtoy_version > lmtoy.rc 
 
     #  convert RAW to SpecFile (hardcoded parameters are hardcoded for a good resaon)
     if [ $makespec = 1 ]; then
