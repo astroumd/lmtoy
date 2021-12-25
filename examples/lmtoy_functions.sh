@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="23-dec-2021"
+lmtoy_version="24-dec-2021"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -111,7 +111,7 @@ function lmtoy_rsr1 {
     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo                         > rsr_sum.log 2>&1
 
     # Tsys plot:  rsr.tsys.png  - only for single obsnum
-    if [[ -z $obsnums ]]; then
+    if [[ -z "$obsnums" ]]; then
 	python $LMTOY/examples/rsr_tsys.py -s $obsnum                                     > rsr_tsys.log 2>&1
     fi
 
@@ -125,7 +125,7 @@ function lmtoy_rsr1 {
 
     
     # NEMO summary spectra
-    if [[ -n $NEMO ]]; then
+    if [[ -n "$NEMO" ]]; then
 	echo "LMTOY>> Some NEMO post-processing"
 	dev=$(yapp_query png ps)
 	tabplot  $spec1 line=1,1 color=2 ycoord=0        yapp=${spec1}.sp.$dev/$dev  debug=-1
@@ -290,7 +290,7 @@ function lmtoy_seq1 {
 		     --interpolation bilinear
     fi
     
-    if [ -n $NEMO ]; then
+    if [ -n "$NEMO" ]; then
 	echo "LMTOY>> Some NEMO post-processing"
 
 	# cleanup from a previous run
