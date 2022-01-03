@@ -311,6 +311,7 @@ function lmtoy_seq1 {
 	    
 	    # convert flux flat to noise flat
 	    wmax=$(ccdstat $s_on.wt.ccd  | grep ^Min | awk '{print $6}')
+	    #wmax=$(ccdstat $s_on.wt.ccd  | txtpar - p0=Min,1,6)
 	    
 	    ccdmath $s_on.wt.ccd $s_on.wtn.ccd "sqrt(%1/$wmax)"
 	    ccdmath $s_on.ccd,$s_on.wtn.ccd $s_on.n.ccd '%1*%2' replicate=t
