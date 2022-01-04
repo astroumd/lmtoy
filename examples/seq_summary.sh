@@ -14,12 +14,12 @@ tmp=tmp$$
 
 
 
-echo "# Min/Max/Mean/RMS of 2 cubes"
 grep 'Min and Max'  $f | awk -F: '{print $2}'   > $tmp.1
 grep 'Mean Robust'  $f | awk -F: '{print $2}'   > $tmp.2
 grep 'Sigma Robust' $f | awk -F: '{print $2}'   > $tmp.3
 paste $tmp.1 $tmp.2 $tmp.3
 
+echo "QAC_STATS Min/Max/Mean/RMS of cubes"
 grep QAC_STATS $f
 
 # cleanup

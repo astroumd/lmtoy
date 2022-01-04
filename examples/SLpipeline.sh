@@ -10,19 +10,15 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 7-dec-2021"
+version="SLpipeline: 24-dec-2021"
 
 echo ""
 echo "LMTOY>> $version"
 
-if [ -z $1 ]; then
-    echo "LMTOY>> Usage: obsnum=OBSNUM ..."
-    exit 0
-fi
-
-source lmtoy_functions.sh
 
 # default input parameters
+obsnum=0                       # obsnum or obsnums can be used for single 
+obsnums=0                      # or combinations of existing obsnums
 path=${DATA_LMT:-data_lmt}
 work=${WORK_LMT:-.}
 debug=0
@@ -33,15 +29,43 @@ raw=0
 admit=1
 sleep=2
 nproc=1
-obsnum=0      # obsnum or obsnums can be used for single 
-obsnums=0     # or combinations of existing obsnums
 rsync=""
+rc=""
 
+if [ -z "$1" ]; then
+    echo "LMTOY>> Usage: obsnum=OBSNUM             ...         (process a single obsnum)"
+    echo "               obsnums=ON1,ON2,ON3,...   ...         (combine previously processed obsnums)"
+    echo "Optional SLpipeline parameters:"
+    echo "  path=$path"
+    echo "  work=$work"
+    echo "  debug=$debug"
+    echo "  restart=$restart"
+    echo "  tap=$tap"
+    echo "  srdp=$srdp"
+    echo "  raw=$raw"
+    echo "  admit=$admit"
+    echo "  sleep=$sleep"
+    echo "  nproc=$nproc"
+    echo "  rsync=$rsync"
+    echo "  rc =$rc"
+    echo "Optional instrument specific pipeline can be added as well but are not known here"
+    exit 0
+fi
 
 #             simple keyword=value command line parser for bash - don't make any changing below
-for arg in $*; do\
+for arg in $*; do
   export $arg
 done
+
+# global rc ?
+if [ -n "$rc" ]; then
+    echo "LMTOY>> source $rc"
+    source $rc
+fi
+
+# 
+source lmtoy_functions.sh
+
 
 #             put in bash debug mode
 if [ $debug = 1 ]; then
@@ -58,7 +82,7 @@ if [ $obsnum = 0 ]; then
 fi
 
 #             set number of processors
-if [ -z $OMP_NUM_THREADS ]; then
+if [ -z "$OMP_NUM_THREADS" ]; then
     if [ $nproc -gt 0 ]; then
 	export OMP_NUM_THREADS=$nproc
     fi
@@ -115,11 +139,11 @@ if [ $instrument = "SEQ" ]; then
     sleep $sleep
     if [ $obsnums = 0 ]; then
 	echo "LMTOY>> seq_pipeline.sh pdir=$pdir $*"
-	seq_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	$time seq_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
     else
 	obsnum=${on0}_${on1}
 	echo "LMTOY>> seq_combine.sh             $*"
-	seq_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	$time seq_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
     fi
     seq_summary.sh $pdir/lmtoy_$obsnum.log
     date >> $pdir/date.log	
@@ -142,11 +166,11 @@ elif [ $instrument = "RSR" ]; then
     sleep $sleep
     if [ $obsnums = 0 ]; then
 	echo "LMTOY>> rsr_pipeline.sh pdir=$pdir $*"
-	rsr_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	$time  rsr_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
     else
 	obsnum=${on0}_${on1}
 	echo "LMTOY>> rsr_combine.sh             $*"
-	rsr_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	$time rsr_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
     fi
     rsr_summary.sh $pdir/lmtoy_$obsnum.log
     echo Logfile in: $pdir/lmtoy_$obsnum.log
@@ -190,8 +214,6 @@ if [ $raw != 0 ]; then
 fi
 
 #  rsync TAP data to a remote?   e.g. rsync=teuben@lma.astro.umd.edu:/lma1/lmt/TAP_lmt
-
-
 if [ -n "$rsync" ]; then
     ls -l ${pdir}_TAP.tar
     rsync -av ${pdir}_TAP.tar $rsync
