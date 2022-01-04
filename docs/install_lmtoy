@@ -2,7 +2,8 @@
 #
 #    this is an example how the LMTOY environment can be installed
 #    Takes about 2 mins (on a good internet connection)
-#    and 4.5 GB of diskspace
+#    and 4.5 GB of diskspace - all of this with pipeline=0
+#    With pipeline=1 this will be 7.5 mins and 9.1 GB
 #
 #    28-dec-2020:     LMTSRL installed (more to come)
 #     4-jan-2021:     try to be smart on finding LMT data; disable montage for now
@@ -12,7 +13,7 @@
 #    22-jul-2021:     better bootstrap on missing DATA_LMT
 #     2-dec-2021:     add admit
 
-version="3-dec-2021"
+version=4-jan-2021
 
 lmtoy=lmtoy       # root directory name where to install (probably should not change it)
 branch=master     # branch
@@ -20,7 +21,7 @@ wget=wget         # use wgetc if you have my caching version
 venv=0            # set to 1 if you want to bypass a new anaconda3 and use venv
 nemo=1            # set to 0 if you don't need NEMO
 pgplot=1          # set to 1 if you want PGPLOT in NEMO, instead of simple PS driver
-data_lmt=${DATA_LMT:-data_lmt}    # give sensible default for $DATA_LMT
+data_lmt=${DATA_LMT:-data_lmt}    # give sensible default for $DATA_LMT   lma:/lma1/lmt/data_lmt/
 work_lmt=${WORK_LMT:-work_lmt}    # give sensible default for $WORK_LMT
 bench=0                           # set to the tar.gz file for bootstrapping IRC benchmark data; 0 skips
 admit=1                           # install ADMIT ?
@@ -106,6 +107,7 @@ if [ $docs = 1 ]; then
     (cd docs; pip3 install -r requirements.txt; make nbs lastmod html)
 fi
 
+# this bench will be deprecation, as it is not using the official pipeline
 if [ $bench != 0 ]; then
     bench=$(realpath $bench)
     
@@ -139,10 +141,10 @@ fi
 if [ $pipeline = 1 ]; then
     (cd $DATA_LMT; make -f $LMTOY/data_lmt/Makefile data)
     cd $WORK_LMT
-    SLpipeline.sh obsnum=33551 restart=1
+    SLpipeline.sh obsnum=33551 restart=1 admit=$admit
     echo "QAC_STATS: rsr.33551.driver.sum.txt 2.36888e-05 0.000943648 -0.00407884 0.0459238  0 0.157781  1185 [expected]"
     echo "QAC_STATS: rsr.33551.blanking.sum.txt 4.19332e-05 0.000950482 -0.00385069 0.0459053  0 0.188981  1186 [expected]"
-    SLpipeline.sh obsnum=79448 restart=1
+    SLpipeline.sh obsnum=79448 restart=1 admit=$admit
     echo "QAC_STATS: IRC+10216_79448.ccd 0.0142744 2.21014 -563.449 634.86  0 0.0531463 [expected]"
     echo "QAC_STATS: - 0.0242549 0.33463 -2.42886 15.3425  0 0.123691 [expected]"
     echo xdg-open  $WORK_LMT/2014ARSRCommissioning/33551/README.html
