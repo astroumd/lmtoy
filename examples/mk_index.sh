@@ -28,7 +28,17 @@ echo "<H2>  <A HREF=index_pipeline.html>SL Pipeline summary</A> </H2>"    >> $ht
 echo "<H2>  <A HREF=index_admit.html>ADMIT summary</A>          </H2>"    >> $html
 echo "<H2>  <A HREF=index_pars.html>parameters</A>              </H2>"    >> $html
 echo "<H2>  <A HREF=index_log.html>log files</A>                </H2>"    >> $html
-echo "Last updated $(date)"                                               >> $html
+echo "<H2>  FITS files:   </H2>"    >> $html
+echo "<OL>"                                       >> $html
+for ff in ${base1}.fits ${base1}.wt.fits ${base1}.wf.fits ; do
+    if [ -e $ff ]; then
+	echo "<LI><A HREF=$ff>$ff</A>"                                    >> $html
+    else
+	echo "<LI>$ff (missing)"                                          >> $html
+    fi
+done
+echo "</OL>"                                       >> $html
+echo "<br>Last updated $(date)"                                           >> $html
 
 
 html=index_pipeline.html
