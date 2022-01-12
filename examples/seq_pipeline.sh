@@ -18,6 +18,7 @@ version="seq_pipeline: 17-dec-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
+    echo "LMTOY>> $version"    
     echo ""
     echo "See lmtoy_reduce.md for examples on usage"
     exit 0
@@ -30,6 +31,8 @@ source lmtoy_functions.sh
 # debug
 # set -x
 debug=0
+#set -e
+
 
 # input parameters
 #            - start or restart
