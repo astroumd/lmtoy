@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 24-dec-2021"
+version="SLpipeline: 11-jan-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -47,7 +47,7 @@ if [ -z "$1" ]; then
     echo "  sleep=$sleep"
     echo "  nproc=$nproc"
     echo "  rsync=$rsync"
-    echo "  rc =$rc"
+    echo "  rc=$rc"
     echo "Optional instrument specific pipeline can be added as well but are not known here"
     exit 0
 fi
@@ -137,6 +137,10 @@ if [ $instrument = "SEQ" ]; then
 	mkdir -p $pdir
     fi
     sleep $sleep
+    if [ $numbands != 1 ]; then
+	echo "SEQ data with numbands=$numbands not supported yet"
+	exit 0
+    fi
     if [ $obsnums = 0 ]; then
 	echo "LMTOY>> seq_pipeline.sh pdir=$pdir $*"
 	$time seq_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1

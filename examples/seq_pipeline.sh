@@ -14,7 +14,7 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="seq_pipeline: 17-dec-2021"
+version="seq_pipeline: 11-jan-2022"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -71,6 +71,7 @@ stype=2
 sample=-1
 otf_cal=0
 edge=0
+bank=-1
 
 # unset a view things, since setting them will give a new meaning
 unset vlsr
@@ -192,19 +193,32 @@ else
     echo "LMTOY>> updating"
 fi
 
-#             derived parameters (you should not have to edit these)
-p_dir=${path}
-s_on=${src}_${obsnum}
-s_nc=${s_on}.nc
-s_fits=${s_on}.fits
-w_fits=${s_on}.wt.fits
-
-
 #             sanity checks
 if [ ! -d $p_dir ]; then
     echo "LMTOY>> directory $p_dir does not exist"
     exit 1
 fi
 
-lmtoy_seq1
+#             derived parameters (you should not have to edit these)
+p_dir=${path}
 
+if [ $bank != -1 ]; then
+    s_on=${src}_${obsnum}_${bank}
+    s_nc=${s_on}_${bank}.nc
+    s_fits=${s_on}_${bank}.fits
+    w_fits=${s_on}_${bank}.wt.fits
+    lmtoy_seq1
+elif [ $numbands == 1 ]; then
+    s_on=${src}_${obsnum}
+    s_nc=${s_on}.nc
+    s_fits=${s_on}.fits
+    w_fits=${s_on}.wt.fits
+    bank=0
+    lmtoy_seq1
+else
+    for b in $(seq 1 $numbanks); do
+	bank=$(expr $b -1)
+	echo "Preparing for bank = $bank"
+    done
+    exit 0
+fi

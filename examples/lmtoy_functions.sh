@@ -181,7 +181,7 @@ function lmtoy_seq1 {
 	    -o $s_nc \
 	    --obsnum $obsnum \
 	    --pix_list $pix_list \
-	    --bank 0 \
+	    --bank $bank \
 	    --stype $stype \
 	    --use_cal \
 	    $use_otf_cal \
@@ -338,8 +338,8 @@ function lmtoy_seq1 {
 	    ccdsmooth $s_on.n.ccd - dir=xyz nsmooth=5 | ccdfits - $s_on.nfs.fits fitshead=$s_fits
 	    
 	    # QAC_STATS:
-	    printf_red $(ccdstat $s_on.ccd bad=0 qac=t)
-	    printf_red $(ccdsub  $s_on.ccd -  centerbox=0.5,0.5 | ccdstat - bad=0 qac=t)
+	    printf_red $(ccdstat $s_on.ccd bad=0 qac=t label="${s_on} full")
+	    printf_red $(ccdsub  $s_on.ccd -  centerbox=0.5,0.5 | ccdstat - bad=0 qac=t label="${s_on} cent")
 
 	    # hack
 	    fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.specstab
