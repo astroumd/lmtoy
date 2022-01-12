@@ -89,11 +89,15 @@ lmtoy_decipher_obsnums
 
 rc=0
 for on in $obsnums1; do
-    file=$(ls */$on/lmtoy_$on.rc)
-    echo $on : $file
+    files=(*/$on/lmtoy_$on.rc)
+    echo $on : ${#files[@]} ${files[@]}
+    if [ ${#files[@]} != 1 ]; then
+	echo Too many matching files for $on : ${files[@]}
+	exit 0
+    fi	
     if [ $rc = 0 ]; then
-        if [ -e $file ]; then
-            rc=$file
+        if [ -e $files ]; then
+            rc=$files
         fi
     fi
 done

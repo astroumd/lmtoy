@@ -10,7 +10,7 @@
 #
 #  Example:   rsr_combine.sh obsnum=33551,71610,92068 
 
-version="rsr_combine: 30-nov-2021"
+version="rsr_combine: 6-jan-2022"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnums=ON1,ON2,..."
@@ -69,8 +69,12 @@ lmtoy_decipher_obsnums
 
 rc=0
 for on in $obsnums1; do
-    file=$(ls */$on/lmtoy_$on.rc)
-    echo $on : $file
+    files=$(*/$on/lmtoy_$on.rc)
+    echo $on : ${#files[@]} ${files[@]}
+    if [ ${#files[@]} != 1 ]; then
+	echo Too many matching files for $on : ${files[@]}
+	exit 0
+    fi	
     if [ $rc = 0 ]; then
 	if [ -e $file ]; then
 	    rc=$file
