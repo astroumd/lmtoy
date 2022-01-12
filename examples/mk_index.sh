@@ -66,6 +66,9 @@ echo "           <br><IMG SRC=$base2.5.png>"                              >> $ht
 echo "  <LI> coverage as defined how often sky pixel was seen"            >> $html
 echo "       (sky pixels are half of LMT beam size)"                      >> $html
 echo "           <br><IMG SRC=$base1.wt.png>"                             >> $html
+# temp PJT
+echo "  <LI> moment-0 estimate (see also <A HREF=index_admit>ADMIT</A>)"  >> $html
+echo "           <br><IMG SRC=$base1.mom0.png>"                           >> $html
 echo "</OL>"                                                              >> $html
 
 html=index_admit.html
