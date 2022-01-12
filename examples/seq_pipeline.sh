@@ -202,6 +202,7 @@ fi
 #             derived parameters (you should not have to edit these)
 p_dir=${path}
 
+#             pick one bank, or loop over all allowed banks
 if [ $bank != -1 ]; then
     s_on=${src}_${obsnum}_${bank}
     s_nc=${s_on}_${bank}.nc
@@ -217,7 +218,7 @@ elif [ $numbands == 1 ]; then
     lmtoy_seq1
 else
     for b in $(seq 1 $numbanks); do
-	bank=$(expr $b -1)
+	bank=$(expr $b - 1)
 	echo "Preparing for bank = $bank"
     done
     exit 0
