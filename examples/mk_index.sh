@@ -28,7 +28,23 @@ echo "<H2>  <A HREF=index_pipeline.html>SL Pipeline summary</A> </H2>"    >> $ht
 echo "<H2>  <A HREF=index_admit.html>ADMIT summary</A>          </H2>"    >> $html
 echo "<H2>  <A HREF=index_pars.html>parameters</A>              </H2>"    >> $html
 echo "<H2>  <A HREF=index_log.html>log files</A>                </H2>"    >> $html
-echo "Last updated $(date)"                                               >> $html
+echo "<H2>  FITS files:   </H2>"    >> $html
+echo "<OL>"                                       >> $html
+
+c=("final reduced data cube"  "per pixel weights map"    "waterfall cube")
+f="${base1}.fits              ${base1}.wt.fits           ${base1}.wf.fits"
+i=0
+for ff in $f ; do
+    if [ -e $ff ]; then
+	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
+    else
+	echo "<LI>$ff (missing)"                                          >> $html
+    fi
+    ((i=i+1))
+done
+echo "<LI> These and other files are also available via the SRDP.tar"     >> $html
+echo "</OL>"                                                              >> $html
+echo "<br>Last updated $(date)"                                           >> $html
 
 
 html=index_pipeline.html
@@ -56,6 +72,9 @@ echo "           <br><IMG SRC=$base2.5.png>"                              >> $ht
 echo "  <LI> coverage as defined how often sky pixel was seen"            >> $html
 echo "       (sky pixels are half of LMT beam size)"                      >> $html
 echo "           <br><IMG SRC=$base1.wt.png>"                             >> $html
+# temp PJT
+echo "  <LI> moment-0 estimate (see also <A HREF=index_admit>ADMIT</A>)"  >> $html
+echo "           <br><IMG SRC=$base1.mom0.png>"                           >> $html
 echo "</OL>"                                                              >> $html
 
 html=index_admit.html

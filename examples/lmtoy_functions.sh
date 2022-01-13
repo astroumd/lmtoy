@@ -181,7 +181,7 @@ function lmtoy_seq1 {
 	    -o $s_nc \
 	    --obsnum $obsnum \
 	    --pix_list $pix_list \
-	    --bank 0 \
+	    --bank $bank \
 	    --stype $stype \
 	    --use_cal \
 	    $use_otf_cal \
@@ -311,6 +311,7 @@ function lmtoy_seq1 {
 	    
 	    # convert flux flat to noise flat
 	    wmax=$(ccdstat $s_on.wt.ccd  | grep ^Min | awk '{print $6}')
+	    #wmax=$(ccdstat $s_on.wt.ccd  | txtpar - p0=Min,1,6)
 	    
 	    ccdmath $s_on.wt.ccd $s_on.wtn.ccd "sqrt(%1/$wmax)"
 	    ccdmath $s_on.ccd,$s_on.wtn.ccd $s_on.n.ccd '%1*%2' replicate=t
@@ -337,8 +338,8 @@ function lmtoy_seq1 {
 	    ccdsmooth $s_on.n.ccd - dir=xyz nsmooth=5 | ccdfits - $s_on.nfs.fits fitshead=$s_fits
 	    
 	    # QAC_STATS:
-	    printf_red $(ccdstat $s_on.ccd bad=0 qac=t)
-	    printf_red $(ccdsub  $s_on.ccd -  centerbox=0.5,0.5 | ccdstat - bad=0 qac=t)
+	    printf_red $(ccdstat $s_on.ccd bad=0 qac=t label="${s_on}-full")
+	    printf_red $(ccdsub  $s_on.ccd -  centerbox=0.5,0.5 | ccdstat - bad=0 qac=t label="${s_on}-cent")
 
 	    # hack
 	    fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.specstab
@@ -371,16 +372,17 @@ function lmtoy_seq1 {
 	    fi
 
 	    # Just a MOM0 plot for the pipeline summary
-	    ccdfits $s_on.mom0.ccd  $s_on.mom0.fits;  fitsplot.py $s_on.mom0.fits
+	    ccdfits $s_on.mom0.ccd  $s_on.mom0.fits
+	    fitsplot.py $s_on.mom0.fits
 	    
 	    # remove useless files
 	    if [ $clean -eq 1 ]; then
-		rm -f $s_on.n.fits $s_on.head1 $s_on.data1 $s_on.ccd $s_on.wt.ccd $s_on.wt2.ccd  $s_on.wt3.ccd \
-	           $s_on.n.ccd $s_on.wtr.ccd
+		rm -f $s_on.n.fits $s_on.head1 $s_on.data1 *.ccd
+		#$s_on.ccd $s_on.wt.ccd $s_on.wt2.ccd  $s_on.wt3.ccd \
+	        #   $s_on.n.ccd $s_on.wtr.ccd
 	    fi
 	    
 	    echo "LMTOY>> Created $s_on.nf.fits and $s_on.nfs.fits"
-	    
 	else
 	    echo "LMTOY>> Problems finding $s_fits. Skipping NEMO work."
 	fi
