@@ -5,9 +5,9 @@
     O = ObsNum        - (O can be O1, O1_O2, etc.)
     S = SourceName    - 
     B = BandName      - need to cover (not implented yet)
-    L = LMT TAP shadow tree
+    L = LMT (TAP shadow tree)
 
-#  sequoia
+#  SEQUOIA
 
 ## Current Structure
 
@@ -29,18 +29,21 @@
          O_SRDP.tar             - SRDP
 		 
 	 W/P/L/O1                   - LMT TAP shadow lightweight tree
-	       O1/index.html          ... only single obsnum's
-		   O1_TAP.tar           - ??? should we keep that here ???
+	       O1/...                 only single obsnum's
+	       O1/index.html          PI summary
+		   O1_TAP.tar           - probably no need to keep this
 
 
 ## Grouping:
      1. by radec        (e.g. M31, one per obsnum) - RSR 
      2. by (rest)freq   (e.g. M83, one per obsnum)
      3. by restfreq     IRC+1021 has two lines (PI parameter, or ADMIT ?)
-     4. by band         when we have the 4 new roach boards
+     4. by band         when we have the new roach boards, B=0,1 will be needed
+	                    this would result in filenames such as S_O_B.fits
  
 **note:**   forced combining by different sourcenames (M51_north, M51, M51_south)
 
+# RSR
 
 # Grant_Data_Product_Filenames.pdf
 
