@@ -30,14 +30,20 @@ echo "<H2>  <A HREF=index_pars.html>parameters</A>              </H2>"    >> $ht
 echo "<H2>  <A HREF=index_log.html>log files</A>                </H2>"    >> $html
 echo "<H2>  FITS files:   </H2>"    >> $html
 echo "<OL>"                                       >> $html
-for ff in ${base1}.fits ${base1}.wt.fits ${base1}.wf.fits ; do
+
+c=("final reduced data cube"  "per pixel weights map"    "waterfall cube")
+f="${base1}.fits              ${base1}.wt.fits           ${base1}.wf.fits"
+i=0
+for ff in $f ; do
     if [ -e $ff ]; then
-	echo "<LI><A HREF=$ff>$ff</A>"                                    >> $html
+	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
     else
 	echo "<LI>$ff (missing)"                                          >> $html
     fi
+    ((i=i+1))
 done
-echo "</OL>"                                       >> $html
+echo "<LI> These and other files are also available via the SRDP.tar"     >> $html
+echo "</OL>"                                                              >> $html
 echo "<br>Last updated $(date)"                                           >> $html
 
 

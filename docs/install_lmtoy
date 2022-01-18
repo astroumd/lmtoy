@@ -5,16 +5,25 @@
 #    and 4.5 GB of diskspace - all of this with pipeline=0
 #    With pipeline=1 this will be 7.5 mins and 9.1 GB
 #
-#    28-dec-2020:     LMTSRL installed (more to come)
+#    28-dec-2020:     LMTSLR installed (more to come)
 #     4-jan-2021:     try to be smart on finding LMT data; disable montage for now
 #    12-feb-2021:     lmt_data -> data_lmt
 #    23-feb-2021:     new options (venv, nemo)
 #    11-may-2021:     use only $DATA_LMT, no more IRC_data
 #    22-jul-2021:     better bootstrap on missing DATA_LMT
-#     2-dec-2021:     add admit
+#     2-dec-2021:     add admit, use embedded DATA_LMT and WORK_LMT if none else given
 
 version=4-jan-2021
 
+<<<<<<< HEAD
+lmtoy=lmtoy                       # root directory name where to install (probably should not change it)
+branch=master                     # branch
+wget=wget                         # use wgetc if you have my caching version
+venv=0                            # set to 1 if you want to bypass a new anaconda3 and use venv
+nemo=1                            # set to 0 if you don't need NEMO (not recommended)
+pgplot=1                          # set to 1 if you want PGPLOT in NEMO, instead of simple PS driver
+data_lmt=${DATA_LMT:-data_lmt}    # give sensible default for $DATA_LMT
+=======
 lmtoy=lmtoy       # root directory name where to install (probably should not change it)
 branch=master     # branch
 wget=wget         # use wgetc if you have my caching version
@@ -22,11 +31,12 @@ venv=0            # set to 1 if you want to bypass a new anaconda3 and use venv
 nemo=1            # set to 0 if you don't need NEMO
 pgplot=1          # set to 1 if you want PGPLOT in NEMO, instead of simple PS driver
 data_lmt=${DATA_LMT:-data_lmt}    # give sensible default for $DATA_LMT   lma:/lma1/lmt/data_lmt/
+>>>>>>> 394fa6f8a82e464d75946cda32162a269200a9ad
 work_lmt=${WORK_LMT:-work_lmt}    # give sensible default for $WORK_LMT
 bench=0                           # set to the tar.gz file for bootstrapping IRC benchmark data; 0 skips
 admit=1                           # install ADMIT ?
-pipeline=1                        # full pipeline run on bench files? 
-docs=0                            # make docs?
+pipeline=1                        # full pipeline run on bench files?  If selected, bench=1 is not needed
+docs=0                            # make docs? (produces the html tree)
 debug=0                           # shell in debug mode?
 
 #             simple keyword=value command line parser for bash - don't make any changing below
@@ -41,8 +51,6 @@ fi
 
 # Announce
 echo LMTOY install script version $version
-
-# this takes about 4-5 minutes to run, including the benchmark, and takes 4.3GB
 
 if [ -z $LMTOY ]; then
     echo "Warning, installing a new LMTOY in $lmtoy, removing the old one, if present"
