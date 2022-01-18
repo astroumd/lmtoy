@@ -71,6 +71,7 @@ Here is most of the manual
    workflow
    sdfits
    tools
+   pipeline
    glossary
    FAQ
 

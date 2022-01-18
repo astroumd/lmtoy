@@ -16,10 +16,11 @@ was split in a series of obsnums, you can combine them with the same script, viz
    SLpipeline.sh obsnum=12345
    SLpipeline.sh obsnum=23456
    SLpipeline.sh obsnums=12345,23456
+   SLpipeline.sh obsnums=my.obsnums
 
 The resulting data can then be found in $WORK_LMT/$ProjectId/$obsnum, or in the case of a combination,
 $ProjectId/${on0}_${on1}. Inside there will be a README.html summarizing the
-Timely Analysis Products (TAP).
+Timely Analysis Products (TAP).  You can also list the obsnums, line by line, in a text file ``my.obsnums``.
 
 Each instrument (e.g. RSR, SEQ) have their own pipeline script.
 
@@ -93,7 +94,18 @@ Getting at the RAW data
 Here are some examples to get raw (netCDF) LMT data and reduce them
 in your own local workspace. This assumes the LMTOY toolkit has been installed:
 
-1.  Find out which **obsnum** covers your observation(s).  Depending on the observing procedure, you may
+1.  Find out which **obsnum** covers your observation(s). For example here
+    we show all the data observed on a given date, and the second example shows all NGC5194 data in 2020.
+
+.. code-block::
+
+      % lmtinfo.py grep 2021-12-17
+      % lmtinfo.py grep 2020 NGC5194
+   
+
+..
+
+    Depending on the observing procedure, you may
     also need to know the calibration ObsNum's as well, referred to as the **CalObsNum**, and usually you do.
     There are some existing databases and logfiles where a simple **grep** command will probably be sufficient
     to get the obsnums. The **lmtinfo.py $DATA_LMT** command can also be used. If you have the **Scans.csv**
@@ -101,13 +113,10 @@ in your own local workspace. This assumes the LMTOY toolkit has been installed:
     place were a record of all ObsNum's exists.
     As they say, YMMV.
 
-.. code-block::
 
-      # assuming your administrator is maintaining a **data_lmt.log**
-      % lmtinfo.py grep 2021-12-17
-      % lmtinfo.py grep 2020 NGC5194
-
-    would show all the data observed on that date, the second example shows all NGC5194 data in 2020.
+.. note::   We need a unified procedure for finding your obsnum -
+   this is all rather haphasard
+   
     
 2.  Get the data from a full $DATA_LMT archive (e.g. at "cln", or at LMT) via the **rsync_lma** script. Obviously
     only somebody on that archive machine can do this, but this is the easiest way. Here is an example of several

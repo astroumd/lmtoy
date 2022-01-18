@@ -38,6 +38,10 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       **FWHM**.  At 115 GHz the **FWHM** is about 16", at 86 GHz about
       21".  The beam separation is 27.8" for Sequoia.
 
+    beammap
+      A special observing mode (always in Az-El?) where you map around
+      a strong source, e.g. Ori-KL.
+
     board
       for SLR these are the roach boards (4). For RSR they
       are called **chassis** (4). But in **RSR** board has also been
