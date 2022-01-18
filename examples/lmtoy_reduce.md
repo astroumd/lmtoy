@@ -368,6 +368,17 @@ a pixel has never been seen.  I could add one cycle if N neighbors are
 present. N=3 could be a good value, with N=2 this will fill in the odd
 NaN bands with otf_select=1.
 
+### extent:  half size of the box
+
+This parameter is defaulted to 0, but for maps that are not square (e.g. M51)
+there is a bug in the code that can make the map go off the grid. Best is to
+choose a square map of the largest dimension. For M51 the map is 400 x 600 arcsec,
+so best is to use extent=600 in this case. The role of the Xstep/Ystep is not clear
+here, since it is 1 and 0.5.
+
+NOTE: The fact that the mapsize if 2*extent is found confusing for users. We should
+redefine this parameter.
+
 ### pix_list:  list of pixels to keep
 
 The same keyword as the process script, which within the pipeline is used
