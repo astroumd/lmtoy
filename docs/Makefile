@@ -20,7 +20,7 @@ help:
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 
-PJT = chara.astro.umd.edu:public_html/LMT/lmtoy
+PJT = ursa.astro.umd.edu:public_html/LMT/lmtoy
 
 pjt: nbs lastmod html
 	rsync -av build/html $(PJT)
