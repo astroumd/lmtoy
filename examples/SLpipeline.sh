@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 11-jan-2022"
+version="SLpipeline: 25-jan-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -126,19 +126,20 @@ if [ -e $pidir/PI_pars.rc ]; then
 fi
 
 
-if [ $instrument = "SEQ" ]; then
+if [ $obspgm == "Map" ]; then
+    echo "Map mode with instrument=$instrument"
     if [ -d $pdir ]; then
-	echo "Re-Processing SEQ in $pdir for $src (use restart=1 if you need a fresh start)"
+	echo "Re-Processing SEQ/Map in $pdir for $src (use restart=1 if you need a fresh start)"
 	first=0
 	date >> $pdir/date.log
     else
-	echo "Processing SEQ in $pdir for $src"
+	echo "Processing SEQ/Map in $pdir for $src"
 	first=1
 	mkdir -p $pdir
     fi
     sleep $sleep
     if [ $numbands != 1 ]; then
-	echo "SEQ data with numbands=$numbands not supported yet"
+	echo "SEQ/Map data with numbands=$numbands not supported yet"
 	exit 0
     fi
     if [ $obsnums = 0 ]; then
