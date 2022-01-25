@@ -32,10 +32,13 @@ if [ ! -z $ADMIT ]; then
 fi
 
 # if you want to change this, edit lmtoy_local.sh instead, or use configure correctly
+# or for personal settings, use ~/.lmtoy_start.sh
 export DATA_LMT=@DATA_LMT@
 export WORK_LMT=@WORK_LMT@
 export CORR_CAL_DIR=$DATA_LMT/rsr/cal
 
-if [ -e $LMTOY/lmtoy_local.sh ]; then
-    source $LMTOY/lmtoy_local.sh
-fi
+for f in $LMTOY/lmtoy_local.sh $HOME/.lmtoy_start.sh; do
+    if [ -e $f ]; then
+	source $f
+    fi
+done
