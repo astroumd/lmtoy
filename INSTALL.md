@@ -250,11 +250,11 @@ to reduce any OTF data. There are now also some RSR data reduction methods.
 
 The following linux distributions are being used in the consortium (e.g. via the **lsb_release -a** command)
 
-1. malt (LMT) - Ubuntu 18.04.5 LTS (to be upgraded)
-2. cln (UMASS) - Ubuntu 16.04.7 LTS
-3. unity (UMASS) - Ubuntu 20.04.1 LTS
-4. lma (UMD) - CentOS 8.5.2111 - soon to be "Red Hat Enterprise 8.5"
-5. T480 (Peter's laptop) - Ubuntu 20.04.3 LTS
+1. malt/slrtac (LMT) - Ubuntu 18.04.5 LTS (to be upgraded) - AMD FX(tm)-8150 Eight-Core Processor
+2. cln (UMASS) - Ubuntu 16.04.7 LTS - Intel(R) Xeon(R) CPU E5-1630 v3 @ 3.70GHz
+3. unity (UMASS) - Ubuntu 20.04.1 LTS - Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz
+4. lma (UMD) - CentOS 8.5.2111 - soon to be "Red Hat Enterprise 8.5" - AMD EPYC 7302 16-Core Processor
+5. T480 (Peter's laptop) - Ubuntu 20.04.3 LTS - Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz
 6. xps13 (Peter's laptop) - Ubuntu 21.10
 7. (Peter's rogue mac) - Mac 10.15.7 w/ brew
 
