@@ -4,7 +4,7 @@
     P = ProjectId     - e.g. 2018-S1-MU-8 (this is where .htaccess is)
     O = ObsNum        - (O can be O1, O1_O2, etc.)
     S = SourceName    - 
-    B = BandName      - need to cover (not implented yet)
+    B = BandName      - need to cover (not implemented yet)
     L = LMT (TAP shadow tree)
 
 #  SEQUOIA
