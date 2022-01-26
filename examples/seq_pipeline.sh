@@ -14,7 +14,7 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="seq_pipeline: 25-jan-2022"
+version="seq_pipeline: 26-jan-2022"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -205,11 +205,12 @@ p_dir=${path}
 #             pick one bank, or loop over all allowed banks
 if [ $bank != -1 ]; then
     s_on=${src}_${obsnum}_${bank}
-    s_nc=${s_on}_${bank}.nc
-    s_fits=${s_on}_${bank}.fits
-    w_fits=${s_on}_${bank}.wt.fits
+    s_nc=${s_on}.nc
+    s_fits=${s_on}.fits
+    w_fits=${s_on}.wt.fits
     lmtoy_seq1
 elif [ $numbands == 1 ]; then
+    # old style, we should not use it anymore
     s_on=${src}_${obsnum}
     s_nc=${s_on}.nc
     s_fits=${s_on}.fits
@@ -221,9 +222,11 @@ else
 	bank=$(expr $b - 1)
 	echo "Preparing for bank = $bank / $numbands"
 	s_on=${src}_${obsnum}_${bank}
-	s_nc=${s_on}_${bank}.nc
-	s_fits=${s_on}_${bank}.fits
-	w_fits=${s_on}_${bank}.wt.fits
+	s_nc=${s_on}.nc
+	s_fits=${s_on}.fits
+	w_fits=${s_on}.wt.fits
+	#s_fits=${s_on}_${bank}.fits
+	#w_fits=${s_on}_${bank}.wt.fits
 	lmtoy_seq1	
     done
     # exit 0
