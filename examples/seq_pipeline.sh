@@ -14,7 +14,7 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="seq_pipeline: 13-jan-2022"
+version="seq_pipeline: 25-jan-2022"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -71,7 +71,7 @@ stype=2
 sample=-1
 otf_cal=0
 edge=0
-bank=-1
+bank=-1           # -1 means all banks 0..numbands-1
 
 # unset a view things, since setting them will give a new meaning
 unset vlsr
@@ -223,9 +223,14 @@ elif [ $numbands == 1 ]; then
     bank=0
     lmtoy_seq1
 else
-    for b in $(seq 1 $numbanks); do
+    for b in $(seq 1 $numbands); do
 	bank=$(expr $b - 1)
-	echo "Preparing for bank = $bank"
+	echo "Preparing for bank = $bank / $numbands"
+	s_on=${src}_${obsnum}_${bank}
+	s_nc=${s_on}_${bank}.nc
+	s_fits=${s_on}_${bank}.fits
+	w_fits=${s_on}_${bank}.wt.fits
+	lmtoy_seq1	
     done
-    exit 0
+    # exit 0
 fi

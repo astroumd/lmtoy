@@ -138,10 +138,6 @@ if [ $obspgm == "Map" ]; then
 	mkdir -p $pdir
     fi
     sleep $sleep
-    if [ $numbands != 1 ]; then
-	echo "SEQ/Map data with numbands=$numbands not supported yet"
-	exit 0
-    fi
     if [ $obsnums = 0 ]; then
 	echo "LMTOY>> seq_pipeline.sh pdir=$pdir $*"
 	$time seq_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
