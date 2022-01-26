@@ -14,7 +14,7 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="seq_pipeline: 11-jan-2022"
+version="seq_pipeline: 13-jan-2022"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -84,6 +84,12 @@ done
 #             put in bash debug mode
 if [ $debug = 1 ]; then
     set -x
+fi
+
+if [ -e lmtoy.rc ]; then
+    first=0
+else
+    first=1
 fi
 
 #             see if pdir working directory needs to be used
