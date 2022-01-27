@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 25-jan-2022"
+version="SLpipeline: 26-jan-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -151,11 +151,11 @@ if [ $obspgm == "Map" ]; then
     echo Logfile in: $pdir/lmtoy_$obsnum.log
 elif [ $instrument = "RSR" ]; then
     if [ -d $pdir ]; then
-	echo "Re-Processing RSR in $pdir for $src (use restart=1 if you need a fresh start)"
+	echo "Re-Processing $obspgm RSR in $pdir for $src (use restart=1 if you need a fresh start)"
 	first=0
 	date                             >> $pdir/date.log
     else
-	echo "Processing RSR for $ProjectId $obsnum $src"
+	echo "Processing $obspgm RSR for $ProjectId $obsnum $src"
 	first=1
 	mkdir -p $pdir
 	if [ $obsnums = 0 ]; then
@@ -178,13 +178,17 @@ elif [ $instrument = "RSR" ]; then
 elif [ $instrument = "1MM" ]; then
     # @todo   only tested for one case
     if [ -d $pdir ]; then
-	echo "Re-Processing 1MM in $pdir for $src"
+	echo "Re-Processing $obspgm 1MM in $pdir for $src"
     else
-	echo "Processing 1MM in $pdir for $src"
+	echo "Processing $obspgm 1MM in $pdir for $src"
     fi
     sleep $sleep
-    mkdir -p $pdir
-    (cd $pdir; process_ps.py --obs_list $obsnum --pix_list 2 --bank 0 -p $DATA_LMT )
+    if [ $obspgm == "Ps" ]; then
+	mkdir -p $pdir
+	(cd $pdir; process_ps.py --obs_list $obsnum --pix_list 2 --bank 0 -p $DATA_LMT )
+    else
+	echo "Skipping unknown obspgm=$obspgm"
+    fi
 else
     echo Unknown instrument $instrument
     tar=0
