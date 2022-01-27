@@ -75,8 +75,15 @@ if [ ! -z $ADMIT ]; then
         echo 'usePV = False'  >> $apar
     fi
     
-    # make sure Xvfb has been cleaned up
-    casaclean x
+    # make sure Xvfb has been cleaned up; kill oldest 2 when there are more than 32
+    # casaclean foobar
+    n=$(ps axo pid,stat,fname | grep Xvfb | wc -l)
+    if [ $n -gt 32 ]; then
+	echo Found $n Xvfb
+	ps axo pid,stat,fname  | grep Xvfb | sort -nr | tail -4
+	pkill -o Xvfb
+	pkill -o Xvfb
+    fi
 
     if [[ $ffile == *.fits ]] ; then
 	runa1 $ffile

@@ -86,6 +86,12 @@ if [ $debug = 1 ]; then
     set -x
 fi
 
+if [ -e lmtoy.rc ]; then
+    first=0
+else
+    first=1
+fi
+
 #             see if pdir working directory needs to be used
 if [ ! -z $pdir ]; then
     echo Working directory $pdir
