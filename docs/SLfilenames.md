@@ -1,17 +1,19 @@
-# LMT SLpipeline Directory structure - current status (v0.3)
+# LMT SLpipeline Directory structure - current status (v0.4)
 
+    D = DATA_LMT      - root of the (read-only) RAW data 
     W = WORK_LMT      - root of all pipeline results, working and PI accessible
     P = ProjectId     - e.g. 2018-S1-MU-8 (this is where .htaccess is)
     O = ObsNum        - (O can be O1, O1_O2, etc.)
-    S = SourceName    - 
-    B = BandName      - need to cover (not implemented yet)
-    L = LMT (TAP shadow tree)
+    S = SourceName    - PI provided
+    B = BandName      - (0,1 currently)
+    L = LMT           - TAP shadow tree
 
-#  SEQUOIA
+#  SLR (SEQUOIA, 1MM, OMAYA)
 
 ## Current Structure
 
      W/P/O/                    directory (currently 50-ish files)
+	     O/S_O.nc              0. specfile
          O/S_O.fits            1. flux flat 3d fits
          O/S_O.wt.fits         2. weight (2d)
          O/S_O.nf.fits         3. noise flat 3d fits 
@@ -39,11 +41,26 @@
      2. by (rest)freq   (e.g. M83, one per obsnum)
      3. by restfreq     IRC+1021 has two lines (PI parameter, or ADMIT ?)
      4. by band         when we have the new roach boards, B=0,1 will be needed
-	                    this would result in filenames such as S_O_B.fits
+	                    this will result in filenames such as S_O_B.fits
+						For RSR the 6 bands will normally be bandmerged
+						to S_O.fits
  
 **note:**   forced combining by different sourcenames (M51_north, M51, M51_south)
 
 # RSR
+
+To be written, the current filenames are based on the two different scripts
+and only produce a text based spectrum, viz.
+
+      rsr.33551.blanking.sum.txt
+	  rsr.33551.driver.sum.txt
+	  
+which should become
+
+      I10565_33551.txt
+      I10565_33551.fits
+	  
+following the SLR convention.
 
 # Grant_Data_Product_Filenames.pdf
 
@@ -58,3 +75,24 @@ e.g.     **SEQUOIA_2018-S1-MU-8_A1100_Science_91112_NGC5194_2022-01-11T13:55:42.
 - note that a : in a filename does not play nice on windows filesystem
 - This ignores Band number (future SL expansion we will need, like spwNN in ALMA)
 - for SEQUOIA the ArrayName makes little sense
+
+# ALMA 
+
+As another extreme, here is an example of the ALMA SOUS/GOUS/MOUS archive hierarchy:
+
+	2016.2.00005.S/
+		science_goal.uid___A001_X1234_X1f6/
+			group.uid___A001_X1234_X1f7/
+				member.uid___A001_X1234_X1f8/calibration
+				member.uid___A001_X1234_X1f8/log
+				member.uid___A001_X1234_X1f8/qa
+				member.uid___A001_X1234_X1f8/raw
+				member.uid___A001_X1234_X1f8/script
+				member.uid___A001_X1234_X1f8/product/
+					uid___A001_X1234_X1f8.J1922+1530_ph.spw16.mfs.I.pbcor.fits
+					uid___A001_X1234_X1f8.J1922+1530_ph.spw16.mfs.I.pb.fits.gz
+					uid___A001_X1234_X1f8.W51_sci.spw16_18_20_22.cont.I.alpha.fits
+					uid___A001_X1234_X1f8.W51_sci.spw16.cube.I.pbcor.fits
+					uid___A001_X1234_X1f8.W51_sci.spw16.cube.I.pb.fits.gz
+					....
+
