@@ -41,14 +41,14 @@ sky and spectral are. Perhaps the **lmtinfo.py** can be useful too:
 
 .. code-block::
 
-     lmtinfo.py $DATA_LMT
+     lmtinfo.py data
 
 
 Lets say you find there are only three: 85776 85778 85824.   You start with one:
 
 .. code-block::
 
-     lmtoy_reduce obsnum=85776
+     SLpipeline.sh obsnum=85776
 
 
 this will attempt to make a cube of the line specified by the VLSR in the header, and
