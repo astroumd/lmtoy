@@ -13,25 +13,16 @@
 #    22-jul-2021:     better bootstrap on missing DATA_LMT
 #     2-dec-2021:     add admit, use embedded DATA_LMT and WORK_LMT if none else given
 
-version=4-jan-2021
+version=29-jan-2021
 
-<<<<<<< HEAD
+
 lmtoy=lmtoy                       # root directory name where to install (probably should not change it)
 branch=master                     # branch
 wget=wget                         # use wgetc if you have my caching version
 venv=0                            # set to 1 if you want to bypass a new anaconda3 and use venv
 nemo=1                            # set to 0 if you don't need NEMO (not recommended)
 pgplot=1                          # set to 1 if you want PGPLOT in NEMO, instead of simple PS driver
-data_lmt=${DATA_LMT:-data_lmt}    # give sensible default for $DATA_LMT
-=======
-lmtoy=lmtoy       # root directory name where to install (probably should not change it)
-branch=master     # branch
-wget=wget         # use wgetc if you have my caching version
-venv=0            # set to 1 if you want to bypass a new anaconda3 and use venv
-nemo=1            # set to 0 if you don't need NEMO
-pgplot=1          # set to 1 if you want PGPLOT in NEMO, instead of simple PS driver
 data_lmt=${DATA_LMT:-data_lmt}    # give sensible default for $DATA_LMT   lma:/lma1/lmt/data_lmt/
->>>>>>> 394fa6f8a82e464d75946cda32162a269200a9ad
 work_lmt=${WORK_LMT:-work_lmt}    # give sensible default for $WORK_LMT
 bench=0                           # set to the tar.gz file for bootstrapping IRC benchmark data; 0 skips
 admit=1                           # install ADMIT ?
@@ -127,7 +118,7 @@ if [ $bench != 0 ]; then
     # SLR bench
     echo Assuming your $DATA_LMT has the IRC data
     if [ -d $DATA_LMT/ifproc ]; then
-	lmtinfo.py $DATA_LMT 79448 
+	lmtinfo.py 79448 
 	make bench
     else
 	echo Could not find the SLR data. Hope your DATA_LMT=$DATA_LMT is good:
