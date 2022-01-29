@@ -171,7 +171,7 @@ We now highlight some keywords for a few selected scripts:
 
 The **lmtinfo.py** script makes a summary listing of the OBSNUM's you have, e.g.
 
-      lmtinfo.py $DATA_LMT
+      lmtinfo.py data
       
       #     DATE           OBSNUM   SOURCE     RESTFRQ VLSR INTTIME
       
