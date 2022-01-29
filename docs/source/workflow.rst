@@ -108,7 +108,7 @@ in your own local workspace. This assumes the LMTOY toolkit has been installed:
     Depending on the observing procedure, you may
     also need to know the calibration ObsNum's as well, referred to as the **CalObsNum**, and usually you do.
     There are some existing databases and logfiles where a simple **grep** command will probably be sufficient
-    to get the obsnums. The **lmtinfo.py $DATA_LMT** command can also be used. If you have the **Scans.csv**
+    to get the obsnums. The **lmtinfo.py data** command can also be used. If you have the **Scans.csv**
     database, this might be faster. If you see a log file in the $DATA_LMT directory, this might be another
     place were a record of all ObsNum's exists.
     As they say, YMMV.
