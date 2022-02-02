@@ -31,6 +31,7 @@ sleep=2
 nproc=1
 rsync=""
 rc=""
+goal=Science
 
 if [ -z "$1" ]; then
     echo "LMTOY>> Usage: obsnum=OBSNUM             ...         (process a single obsnum)"
@@ -48,6 +49,7 @@ if [ -z "$1" ]; then
     echo "  nproc=$nproc"
     echo "  rsync=$rsync"
     echo "  rc=$rc"
+    echo "  goal=$goal    (Science, or override with: Pointing Focus)"
     echo "Optional instrument specific pipeline can be added as well but are not known here"
     exit 0
 fi
@@ -125,6 +127,8 @@ if [ -e $pidir/PI_pars.rc ]; then
     source $pidir/PI_pars.rc
 fi
 
+if [ $goal == "Science" ]; then
+
 if [ $obspgm == "Map" ]; then
     echo "Map mode with instrument=$instrument"
     if [ -d $pdir ]; then
@@ -193,7 +197,26 @@ else
     tar=0
 fi
 
-
+else
+    if [ -d $pdir ]; then
+	echo "Re-Processing $obspgm/$obsgoal in $pdir for $src"
+    else
+	echo "Processing $obspgm/$obsgoal in $pdir for $src"
+	mkdir -p $pdir
+	lmtinfo.py $obsnum > $pdir/lmtoy_$obsnum.rc
+    fi
+    sleep $sleep
+    
+    if [ $goal == "Pointing" ]; then
+	# benchmarks:   1mm=93560  seq=92984
+	echo Running linepoint.py $obsnum
+	cd $pdir
+	python $LMTOY/LinePointing/linepoint.py $obsnum > lmtoy_$obsnum.log
+	echo "Results in $pdir"
+    fi
+    lmtoy_report
+    exit 0
+fi
 
 # produce TAP, RSRP, RAW tar files, whichever are requested.
 
@@ -223,3 +246,6 @@ if [ -n "$rsync" ]; then
     ls -l ${pdir}_TAP.tar
     rsync -av ${pdir}_TAP.tar $rsync
 fi
+
+# final reminder of parameters
+lmtoy_report
