@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 26-jan-2022"
+version="SLpipeline: 2-feb-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -91,7 +91,7 @@ echo "OMP_NUM_THREADS=$OMP_NUM_THREADS"
 
 #             bootstrap
 rc=/tmp/lmtoy_${obsnum}.$$.rc
-lmtinfo.py $path $obsnum > $rc
+lmtinfo.py $obsnum > $rc
 source $rc
 rm -f $rc
 
@@ -124,7 +124,6 @@ if [ -e $pidir/PI_pars.rc ]; then
     echo "Found PI parameters in $pidir/PI_pars.rc"
     source $pidir/PI_pars.rc
 fi
-
 
 if [ $obspgm == "Map" ]; then
     echo "Map mode with instrument=$instrument"
@@ -160,7 +159,7 @@ elif [ $instrument = "RSR" ]; then
 	mkdir -p $pdir
 	if [ $obsnums = 0 ]; then
 	    echo $obsnum                  > $pdir/rsr.obsnum
-	    lmtinfo.py $DATA_LMT $obsnum  > $pdir/lmtoy_$obsnum.rc
+	    lmtinfo.py $obsnum            > $pdir/lmtoy_$obsnum.rc
 	fi
 	date                              > $pdir/date.log
     fi
@@ -190,9 +189,10 @@ elif [ $instrument = "1MM" ]; then
 	echo "Skipping unknown obspgm=$obspgm"
     fi
 else
-    echo Unknown instrument $instrument
+    echo "Unknown instrument $instrument"
     tar=0
 fi
+
 
 
 # produce TAP, RSRP, RAW tar files, whichever are requested.
