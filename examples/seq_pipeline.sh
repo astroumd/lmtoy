@@ -14,7 +14,7 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="seq_pipeline: 26-jan-2022"
+version="seq_pipeline: 2-feb-2022"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -151,7 +151,7 @@ if [ $newrc = 1 ]; then
     echo "# path=$path"           >> $rc
 
     # lmtinfo grabs some useful parameters from the ifproc file
-    lmtinfo.py $path $obsnum | tee -a $rc
+    lmtinfo.py $obsnum | tee -a $rc
     source ./$rc
     
     #   w0   v0   v1     w1
