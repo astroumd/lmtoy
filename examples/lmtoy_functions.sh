@@ -13,6 +13,12 @@ function lmtoy_version {
     echo "$v   $d"
 }
 
+function lmtoy_report {
+    printf_red "LMTOY>> ProjectId=$ProjectId  obsnum=$obsnum  obspgm=$obspgm  obsgoal=$obsgoal"
+    
+}
+
+
 
 function lmtoy_decipher_obsnums {
     # input:    obsnums
