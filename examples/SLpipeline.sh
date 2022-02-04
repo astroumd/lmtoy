@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 2-feb-2022"
+version="SLpipeline: 3-feb-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -127,6 +127,7 @@ if [ -e $pidir/PI_pars.rc ]; then
     source $pidir/PI_pars.rc
 fi
 
+# warning: we're not using obsgoal
 if [ $goal == "Science" ]; then
 
 if [ $obspgm == "Map" ]; then
@@ -220,31 +221,35 @@ fi
 
 # produce TAP, RSRP, RAW tar files, whichever are requested.
 
+
+#        ensure we are in $WORK_LMT ("cd $WORK_LMT" doesn't work if it's ".")
+cd $work
+
 if [ $tap != 0 ]; then
     echo "Creating Timely Analysis Products (TAP) with admit=$admit in ${pdir}_TAP.tar"
     products="rc tab txt png pdf log apar html cubestat rfile obsnum badlags blanking"
     rm -f $pdir/tar.log
     touch $pdir/tar.log
     for ext in $products; do
-	find $pdir -name \*$ext  >> $pdir/tar.log
+	find $ProjectId/$obsnum -name \*$ext  >> $pdir/tar.log
     done
     tar cf ${pdir}_TAP.tar `cat $pdir/tar.log`
 fi
  
 if [ $srdp != 0 ]; then
     echo "Creating Scientific Ready Data Producs (SRDP) in $pidir/${obsnum}_SRDP.tar"
-    (cd $pidir; tar cf ${obsnum}_SRDP.tar $obsnum)
+    tar cf $ProjectId/${obsnum}_SRDP.tar $ProjectId/$obsnum
 fi
 
 if [ $raw != 0 ]; then
     echo "Creating raw (RAW) tar for $pdir for $obsnum $calobsnum in $pidir/${obsnum}_RAW.tar"
-    (cd $pidir; lmtar ${obsnum}_RAW.tar $calobsnum $obsnum)
+    lmtar $ProjectId/${obsnum}_RAW.tar $calobsnum $obsnum
 fi
 
 #  rsync TAP data to a remote?   e.g. rsync=teuben@lma.astro.umd.edu:/lma1/lmt/TAP_lmt
 if [ -n "$rsync" ]; then
     ls -l ${pdir}_TAP.tar
-    rsync -av ${pdir}_TAP.tar $rsync
+    echo rsync -av ${pdir}_TAP.tar $rsync
 fi
 
 # final reminder of parameters
