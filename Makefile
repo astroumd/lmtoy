@@ -17,7 +17,7 @@ GIT_DIRS = SpectralLineReduction dreampy3 maskmoment RSR_driver nemo Montage b4r
 
 # URLs that we'll need
 
-URL1  = https://github.com/teuben/SpectralLineReduction
+URL1  = https://github.com/lmt-heterodyne/SpectralLineReduction
 URL1a = https://github.com/teuben/SpectralLineReduction
 URL2  = https://github.com/lmt-heterodyne/dreampy3
 URL3  = https://github.com/lmt-heterodyne/SpectralLineConfigFiles
@@ -95,12 +95,14 @@ lmtoy_local.csh:
 	@echo '# setenv HDF5_DISABLE_VERSION_CHECK 2'     >> lmtoy_local.csh
 
 
-SpectralLineReduction:
+#  deprecated, this is where development took place Nov 2020 - March 2022
+SpectralLineReduction_teuben1:
 	git clone --branch teuben1 $(URL1a)
 	(cd SpectralLineReduction; git remote add upstream $(URL1) )
 
-SpectralLineReduction_upstream:
-	git clone $(URL1a) SpectralLineReduction_upstream
+#   interim
+SpectralLineReduction:
+	git clone --branch teuben2 $(URL1)
 
 SpectralLineConfigFiles:
 	git clone $(URL3)
@@ -272,3 +274,12 @@ bench2:
 	@echo "QAC_STATS: - 0.0242549 0.33463 -2.42886 15.3425  0 0.123691 [expected]"
 	@echo "========================================================================================"
 	@echo xdg-open  $(WORK_LMT)/2018S1SEQUOIACommissioning/79448/README.html
+
+# to be documented and regressed
+bench99:
+	@echo 1MM PS/Gaincurve
+	SLpipeline.sh obsnum=93562 restart=1
+	@echo beam-map for 1mm
+	SLpipeline.sh obsnum=93560 restart=1 goal=Pointing
+	@echo beam-map for seq
+	SLpipeline.sh obsnum=92984 restart=1 goal=Pointing 
