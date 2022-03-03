@@ -1,0 +1,64 @@
+#  ivoa.ObsCore 
+access_format
+access_url
+antenna_arrays
+asdm_uid
+authors
+band_list
+bandwidth
+bib_reference
+calib_level
+cont_sensitivity_bandwidth
+dataproduct_type
+data_rights
+em_max
+em_min
+em_resolution
+em_res_power
+facility_name                        , telescope,    LMT
+first_author
+frequency
+frequency_support
+gal_latitude
+gal_longitude
+group_ous_uid
+instrument_name                      , instrument  ,       RSR, SEQUIA
+is_mosaic
+lastModified
+member_ous_uid
+obs_collection
+obs_creator_name
+obs_id                               , obsnum
+obs_publisher_did
+obs_release_date
+obs_title
+o_ucd
+pol_states
+proposal_abstract
+proposal_authors
+proposal_id
+pub_abstract
+publication_year
+pub_title
+pwv
+qa2_passed
+scan_intent
+schedblock_name
+science_keyword
+science_observation
+scientific_category
+s_dec
+sensitivity_10kms
+s_fov
+spatial_resolution
+spatial_scale_max
+s_ra
+s_region
+s_resolution
+target_name                         , object,     
+t_exptime
+t_max
+t_min
+t_resolution
+type
+velocity_resolution
