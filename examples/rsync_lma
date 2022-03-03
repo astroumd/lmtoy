@@ -11,7 +11,7 @@ dest=teuben@lma.astro.umd.edu:/lma1/lmt/data_lmt
 cd $DATA_LMT
 
 for obsnum in $* ; do
-  lmtinfo.py $DATA_LMT $obsnum > /tmp/$obsnum.rc
+  lmtinfo.py $obsnum > /tmp/$obsnum.rc
   source /tmp/$obsnum.rc
   rm /tmp/$obsnum.rc
   echo "-------------------------------------------------------------"
