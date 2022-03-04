@@ -100,9 +100,17 @@ SpectralLineReduction_teuben1:
 	git clone --branch teuben1 $(URL1a) SpectralLineReduction_teuben1
 	(cd SpectralLineReduction_teuben1; git remote add upstream $(URL1) )
 
-#   interim
+# March-2022 update
+update1: SpectralLineReduction
+	@echo "Swapping out an old SpectralLineReduction repo"
+	mv SpectralLineReduction SpectralLineReduction_`date +%Y-%m-%d-%H%M%S`
+	$(MAKE) SpectralLineReduction
+	@echo "Depending on your python environment you should now do one of:"
+	@echo "   make install_lmtslr"
+	@echo "   make install_lmtslr_venv"
+
 SpectralLineReduction:
-	git clone --branch teuben2 $(URL1)
+	git clone $(URL1)
 
 SpectralLineConfigFiles:
 	git clone $(URL3)
