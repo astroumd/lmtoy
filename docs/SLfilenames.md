@@ -3,27 +3,28 @@
     D = DATA_LMT      - root of the (read-only) RAW data 
     W = WORK_LMT      - root of all pipeline results, working and PI accessible
     P = ProjectId     - e.g. 2018-S1-MU-8 (this is where .htaccess is)
-    O = ObsNum        - (O can be O1, O1_O2, etc.)
     S = SourceName    - PI provided
+    O = ObsNum        - (O can be O1, O1_O2, etc.)
     B = BandName      - (0,1 currently)
     L = LMT           - TAP shadow tree
+	
 
 #  SLR (SEQUOIA, 1MM, OMAYA)
 
 ## Current Structure
 
      W/P/O/                    directory (currently 50-ish files)
-	     O/S_O.nc              0. specfile
-         O/S_O.fits            1. flux flat 3d fits
-         O/S_O.wt.fits         2. weight (2d)
-         O/S_O.nf.fits         3. noise flat 3d fits 
-         O/S_O.nfs.fits        4. noise flat smoothed 3d fits
-         O/S_O.wf.fits         5. waterfall 3d fits (time,freq,beam)
+	     O/S_O_B.nc              0. specfile
+         O/S_O_B.fits            1. flux flat 3d fits
+         O/S_O_B.wt.fits         2. weight (2d)
+         O/S_O_B.nf.fits         3. noise flat 3d fits 
+         O/S_O_B.nfs.fits        4. noise flat smoothed 3d fits
+         O/S_O_B.wf.fits         5. waterfall 3d fits (time,freq,beam)
          ...
-         O/index.html         99. PI summary (only advertise #1,#2,#5)
+         O/index.html           99. PI summary (only advertise #1,#2,#5)
          .
-         O/S_O.nf.admit/     101. admit native resolution results
-         O/S_O.nfs.admit/    102. admit smoothed results
+         O/S_O_B.nf.admit/     101. admit native resolution results
+         O/S_O_B.nfs.admit/    102. admit smoothed results
          .
          .
          O_RAW.tar              - by request only
@@ -75,6 +76,21 @@ e.g.     **SEQUOIA_2018-S1-MU-8_A1100_Science_91112_NGC5194_2022-01-11T13:55:42.
 - note that a : in a filename does not play nice on windows filesystem
 - This ignores Band number (future SL expansion we will need, like spwNN in ALMA)
 - for SEQUOIA the ArrayName makes little sense
+
+# LMT SL RAW data
+
+some examples
+
+	ifproc/ifproc_2020-02-20_091112_00_0001.nc
+	spectrometer/roach0/roach0_91112_0_1_NGC5194_2020-02-20_060348.nc
+	spectrometer/roach1/roach1_91112_0_1_NGC5194_2020-02-20_060348.nc
+	spectrometer/roach2/roach2_91112_0_1_NGC5194_2020-02-20_060348.nc
+	spectrometer/roach3/roach3_91112_0_1_NGC5194_2020-02-20_060348.nc
+
+	RedshiftChassis0/RedshiftChassis0_2015-01-22_033551_00_0001.nc
+	RedshiftChassis1/RedshiftChassis1_2015-01-22_033551_00_0001.nc
+	RedshiftChassis2/RedshiftChassis2_2015-01-22_033551_00_0001.nc
+	RedshiftChassis3/RedshiftChassis3_2015-01-22_033551_00_0001.nc
 
 # ALMA 
 
