@@ -97,8 +97,8 @@ lmtoy_local.csh:
 
 #  deprecated, this is where development took place Nov 2020 - March 2022
 SpectralLineReduction_teuben1:
-	git clone --branch teuben1 $(URL1a)
-	(cd SpectralLineReduction; git remote add upstream $(URL1) )
+	git clone --branch teuben1 $(URL1a) SpectralLineReduction_teuben1
+	(cd SpectralLineReduction_teuben1; git remote add upstream $(URL1) )
 
 #   interim
 SpectralLineReduction:
@@ -263,15 +263,15 @@ bench:  bench1 bench2
 
 bench1:
 	SLpipeline.sh obsnum=33551 restart=1
-	@echo "QAC_STATS: rsr.33551.driver.sum.txt 2.36888e-05 0.000943648 -0.00407884 0.0459238  0 0.157781  1185 [expected]"
-	@echo "QAC_STATS: rsr.33551.blanking.sum.txt 4.19332e-05 0.000950482 -0.00385069 0.0459053  0 0.188981  1186 [expected]"
-	@echo "	================================================================================================================"
+	@echo "QAC_STATS: rsr.33551.driver.sum.txt 2.0904e-05 0.00095051 -0.00407884 0.0459238 0.173963 0.156462 1186 [expected]"
+	@echo "QAC_STATS: rsr.33551.blanking.sum.txt 4.19332e-05 0.000950482 -0.00385069 0.0459053 0.210346 0.188981 1186 [expected]"
+	@echo "================================================================================================================="
 	@echo xdg-open  $(WORK_LMT)/2014ARSRCommissioning/33551/README.html
 
 bench2:
 	SLpipeline.sh obsnum=79448 restart=1
-	@echo "QAC_STATS: IRC+10216_79448.ccd 0.0142744 2.21014 -563.449 634.86  0 0.0531463 [expected]"
-	@echo "QAC_STATS: - 0.0242549 0.33463 -2.42886 15.3425  0 0.123691 [expected]"
+	@echo "QAC_STATS: IRC+10216_79448-full 0.0154308 0.436052 -55.9662 45.8299 72030.6 0.0721877 [expected]"
+	@echo "QAC_STATS: IRC+10216_79448-cent 0.0394178 0.373722 -0.947408 15.264 67897.1 0.213951 [expected]"
 	@echo "========================================================================================"
 	@echo xdg-open  $(WORK_LMT)/2018S1SEQUOIACommissioning/79448/README.html
 
