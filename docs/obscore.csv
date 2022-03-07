@@ -1,23 +1,23 @@
 # =====================  ivoa.ObsCore for ALMA ================================
-# access_estsize
-access_format
-access_url
+# access_estsize			, , MANDATORY
+access_format			, , MANDATORY
+access_url			, , MANDATORY
 antenna_arrays
 asdm_uid
 authors
 band_list
 bandwidth
 bib_reference
-calib_level
+calib_level			, , MANDATORY
 cont_sensitivity_bandwidth
-dataproduct_type
+dataproduct_type			, , MANDATORY
 # dataproduct_subtype
 data_rights
-em_max
-em_min
+em_max			, , MANDATORY
+em_min			, , MANDATORY
 em_resolution
-em_res_power
-# em_xel
+em_res_power			, , MANDATORY
+# em_xel			, , MANDATORY
 facility_name                        , telescope,    LMT
 first_author
 frequency			     , , frequency in middle of band
@@ -29,17 +29,17 @@ instrument_name                      , instrument  ,       RSR, SEQUIA
 is_mosaic
 lastModified
 member_ous_uid
-obs_collection
+obs_collection			, , MANDATORY
 # obs_creation_date
 # obs_creator_did
 obs_creator_name
-obs_id                               , obsnum
-obs_publisher_did
+obs_id                               , obsnum ,   MANDATORY
+obs_publisher_did			, , MANDATORY
 # obs_publisher_id
 obs_release_date
 obs_title
 # o_calib_status
-o_ucd
+o_ucd			, , MANDATORY
 pol_states
 pol_xel
 proposal_abstract
@@ -55,21 +55,21 @@ schedblock_name
 science_keyword
 science_observation
 scientific_category
-s_dec
+s_dec			, , MANDATORY
 sensitivity_10kms
-s_fov
+s_fov			, , MANDATORY
 spatial_resolution
 spatial_scale_max
-s_ra
-s_region
-s_resolution
-# s_xel1
-# s_xel2
-target_name                         , object,     
-t_exptime
-t_max
-t_min
-t_resolution
-# t_xel
+s_ra			, , MANDATORY
+s_region			, , MANDATORY
+s_resolution			, , MANDATORY
+# s_xel1			, , MANDATORY
+# s_xel2			, , MANDATORY
+target_name                         , object,     MANDATORY
+t_exptime			, , MANDATORY
+t_max			, , MANDATORY
+t_min			, , MANDATORY
+t_resolution			, , MANDATORY
+# t_xel			, , MANDATORY
 type
 velocity_resolution
