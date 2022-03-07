@@ -1,4 +1,5 @@
-#  ivoa.ObsCore 
+# =====================  ivoa.ObsCore for ALMA ================================
+# access_estsize
 access_format
 access_url
 antenna_arrays
@@ -10,15 +11,17 @@ bib_reference
 calib_level
 cont_sensitivity_bandwidth
 dataproduct_type
+# dataproduct_subtype
 data_rights
 em_max
 em_min
 em_resolution
 em_res_power
+# em_xel
 facility_name                        , telescope,    LMT
 first_author
-frequency
-frequency_support
+frequency			     , , frequency in middle of band
+frequency_support 		     , , lists various bands?
 gal_latitude
 gal_longitude
 group_ous_uid
@@ -27,16 +30,21 @@ is_mosaic
 lastModified
 member_ous_uid
 obs_collection
+# obs_creation_date
+# obs_creator_did
 obs_creator_name
 obs_id                               , obsnum
 obs_publisher_did
+# obs_publisher_id
 obs_release_date
 obs_title
+# o_calib_status
 o_ucd
 pol_states
+pol_xel
 proposal_abstract
 proposal_authors
-proposal_id
+proposal_id				,     , e.g. 2018-S1-MU-64
 pub_abstract
 publication_year
 pub_title
@@ -55,10 +63,13 @@ spatial_scale_max
 s_ra
 s_region
 s_resolution
+# s_xel1
+# s_xel2
 target_name                         , object,     
 t_exptime
 t_max
 t_min
 t_resolution
+# t_xel
 type
 velocity_resolution
