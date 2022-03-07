@@ -1,4 +1,6 @@
 # =====================  ivoa.ObsCore for ALMA ================================
+# See Appendix B in the ObsCore V1.1 document
+#
 # access_estsize			, , MANDATORY
 access_format			, , MANDATORY
 access_url			, , MANDATORY
@@ -18,18 +20,18 @@ em_min			, , MANDATORY
 em_resolution
 em_res_power			, , MANDATORY
 # em_xel			, , MANDATORY
-facility_name                        , telescope,    LMT
+facility_name                        , telescope,    LMT   MANDATORY
 first_author
 frequency			     , , frequency in middle of band
 frequency_support 		     , , lists various bands?
 gal_latitude
 gal_longitude
 group_ous_uid
-instrument_name                      , instrument  ,       RSR, SEQUIA
+instrument_name                      , instrument  ,       RSR, SEQUIA    MANDATORY
 is_mosaic
 lastModified
 member_ous_uid
-obs_collection			, , MANDATORY
+obs_collection			, , MANDATORY     
 # obs_creation_date
 # obs_creator_did
 obs_creator_name
@@ -39,9 +41,9 @@ obs_publisher_did			, , MANDATORY
 obs_release_date
 obs_title
 # o_calib_status
-o_ucd			, , MANDATORY
-pol_states
-pol_xel
+o_ucd			, , MANDATORY   phot.flux.density
+pol_states			, , MANDATORY
+pol_xel			, , MANDATORY
 proposal_abstract
 proposal_authors
 proposal_id				,     , e.g. 2018-S1-MU-64
