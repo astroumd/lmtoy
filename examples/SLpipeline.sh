@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 3-feb-2022"
+version="SLpipeline: 11-mar-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -130,7 +130,7 @@ fi
 # warning: we're not using obsgoal
 if [ $goal == "Science" ]; then
 
-if [ $obspgm == "Map" ]; then
+if [ $obspgm == "Map" ] || [ $obspgm == "Lissajous" ]; then
     echo "Map mode with instrument=$instrument"
     if [ -d $pdir ]; then
 	echo "Re-Processing SEQ/Map in $pdir for $src (use restart=1 if you need a fresh start)"
