@@ -42,6 +42,7 @@ URL13b= https://github.com/gopastro/sculpt
 URL14 = https://github.com/teuben/gbtgridder
 URL15 = https://github.com/lmt-heterodyne/RedshiftPointing
 URL16 = https://github.com/lmt-heterodyne/LinePointing
+URL17 = https://github.com/teuben/aplpy
 
 .PHONY:  help install build
 
@@ -132,6 +133,11 @@ sculpt:
 
 RSR_driver:
 	git clone --branch teuben1 $(URL8a)
+
+aplpy:
+	git clone --branch fix_block_reduce $(URL17)
+	@echo Only apply this if your aplpy is broken due to astropy5
+	@echo pip install -e aplpy
 
 dasha:
 	git clone $(URL9a)
