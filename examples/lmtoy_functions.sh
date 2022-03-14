@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="24-dec-2021"
+lmtoy_version="11-mar-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -171,7 +171,8 @@ function lmtoy_seq1 {
     # this will process a single band in an $obsnum
 
     # log the version
-    lmtoy_version > lmtoy.rc 
+    lmtoy_version > lmtoy.rc
+    ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
 
     #  convert RAW to SpecFile (hardcoded parameters are hardcoded for a good resaon)
     if [ $makespec = 1 ]; then
