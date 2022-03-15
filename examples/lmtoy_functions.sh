@@ -161,7 +161,8 @@ function lmtoy_rsr1 {
     echo "LMTOY>> obsnum=$obsnum"
     
     rsr_readme $obsnum $src > README.html
-
+    
+    cp $LMTOY/docs/README_rsr.md README_files.md
 
 } # function rsr1
 
@@ -415,6 +416,7 @@ function lmtoy_seq1 {
     echo "LMTOY>> Parameter file used: $rc"
     
     # seq_readme > $pdir/README.html
+    cp $LMTOY/docs/README_sequoia.md README_files.md
     
     echo "LMTOY>> Making summary index.html:"
     mk_index.sh
