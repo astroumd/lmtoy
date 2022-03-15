@@ -70,6 +70,7 @@ Here is most of the manual
       
    workflow
    sdfits
+   fits
    tools
    pipeline
    glossary
