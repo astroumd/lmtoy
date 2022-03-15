@@ -303,7 +303,8 @@ function lmtoy_seq1 {
 	# cleanup from a previous run
 	rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 \
 	   $s_on.data1 $s_on.n.fits $s_on.nfs.fits $s_on.mom0.ccd $s_on.mom1.ccd \
-	   $s_on.wt2.fits $s_on.wt3.fits $s_on.wtr.fits
+	   $s_on.wt2.fits $s_on.wt3.fits $s_on.wtr.fits \
+	   $s_on.mom0.fits $s_on.mom1.fits $s_on.mom2.fits
 
 	if [ -e $s_fits ]; then
 	    fitsccd $s_fits $s_on.ccd    axistype=1
