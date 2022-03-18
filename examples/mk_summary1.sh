@@ -31,10 +31,14 @@ echo "    </th>"
 echo "    <th>"
 echo "      RMS"
 echo "    </th>"
+echo "    <th>"
+echo "      mom0"
+echo "    </th>"
 echo "  </tr>"
 
 n=0
-for o in ????? ?????_?????; do
+#for o in ????? ?????_?????; do
+for o in ????? ; do
     rc=$o/lmtoy_*$o.rc
     log=$o/lmtoy_*$o.log
     source $rc
@@ -51,7 +55,7 @@ for o in ????? ?????_?????; do
     echo "      $date_obs"
     echo "    </td>"
     echo "    <td>"
-    echo "      <A HREF=$obsnum/> $obsnum</A>"
+    echo "      <A HREF=$obsnum/README.html> $obsnum</A>"
     echo "    </td>"
     echo "    <td>"
     echo "      $ProjectId"
@@ -64,6 +68,11 @@ for o in ????? ?????_?????; do
     echo "    </td>"
     echo "    <td>"
     echo "      $rms"
+    echo "    </td>"
+    echo "    <td>"
+    echo "      <A HREF=${o}/${src}_${o}.nf.admit/x.csm.png> <IMG SRC=${o}/${src}_${o}.nf.admit/x.csm.png height=100></A>"
+    echo "      <A HREF=${o}/${src}_${o}.nfs.admit/x.csm.png> <IMG SRC=${o}/${src}_${o}.nfs.admit/x.csm.png height=100></A>"
+
     echo "    </td>"
     echo "  </tr>"
 
