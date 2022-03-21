@@ -7,7 +7,11 @@ for arg in $*; do
     export $arg
 done
 
-run=$WORK_LMT/run_$obsnum.sh
+#                     do all sbatch work in $WORK_LMT/sbatch
+cd $WORK_LMT/sbatch
+
+#                     sbatch run file
+run=run_$obsnum.sh
 
 
 if [ $obsnum == 0 ]; then
