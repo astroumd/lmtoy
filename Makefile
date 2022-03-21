@@ -4,6 +4,9 @@
 #
 SHELL = /bin/bash
 
+#
+TIME = /usr/bin/time
+
 # use standard wget or Peter's caching wgetc 
 WGET = wget
 
@@ -281,14 +284,14 @@ common: lmtoy_venv
 bench:  bench1 bench2
 
 bench1:
-	SLpipeline.sh obsnum=33551 restart=1
+	$(TIME) SLpipeline.sh obsnum=33551 restart=1
 	@echo "QAC_STATS: rsr.33551.driver.sum.txt 2.0904e-05 0.00095051 -0.00407884 0.0459238 0.173963 0.156462 1186 [expected]"
 	@echo "QAC_STATS: rsr.33551.blanking.sum.txt 4.19332e-05 0.000950482 -0.00385069 0.0459053 0.210346 0.188981 1186 [expected]"
 	@echo "================================================================================================================="
 	@echo xdg-open  $(WORK_LMT)/2014ARSRCommissioning/33551/README.html
 
 bench2:
-	SLpipeline.sh obsnum=79448 restart=1
+	$(TIME) SLpipeline.sh obsnum=79448 restart=1
 	@echo "QAC_STATS: IRC+10216_79448-full 0.0154308 0.436052 -55.9662 45.8299 72030.6 0.0721877 [expected]"
 	@echo "QAC_STATS: IRC+10216_79448-cent 0.0394178 0.373722 -0.947408 15.264 67897.1 0.213951 [expected]"
 	@echo "========================================================================================"
