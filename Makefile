@@ -78,6 +78,11 @@ status:
 	-@for dir in $(GIT_DIRS); do\
 	(echo -n "$$dir: " ;cd $$dir; git status -uno); done
 
+branch:
+	@echo -n "lmtoy: "; git branch --show-current
+	-@for dir in $(GIT_DIRS); do\
+	(echo -n "$$dir: " ;cd $$dir; git branch --show-current); done
+
 
 config:  lmtoy_local.sh lmtoy_local.csh
 	./configure
