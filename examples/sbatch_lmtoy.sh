@@ -55,4 +55,4 @@ echo $run
 sbatch $run
 #   report last few
 sleep 2
-ls -ltr $WORK_LMT/$run | tail -6
+ls -ltr $WORK_LMT/sbatch | tail -6
