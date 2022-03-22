@@ -7,24 +7,29 @@ for arg in $*; do
     export $arg
 done
 
-#                     do all sbatch work in $WORK_LMT/sbatch
-cd $WORK_LMT/sbatch
+#                     version
+version="21-mar-2022"
+
 
 #                     sbatch run file
 run=run_$obsnum.sh
 
 
 if [ $obsnum == 0 ]; then
+    echo "$0 version=$version"
     echo "ERROR: Needs obsnum=, then creates $run and uses sbatch to submit work"
     exit 0
 fi
 
 if [ "$(which sbatch)" != "/usr/bin/sbatch" ]; then
+    echo "$0 version=$version"    
     echo "run=$run"
     echo "ERROR:  No sbatch system here on $(hostname)"
     exit 0
 fi
 
+#                     do all sbatch work in $WORK_LMT/sbatch
+cd $WORK_LMT/sbatch
 
 
 cat <<EOF > $run
@@ -48,3 +53,6 @@ EOF
 chmod +x $run
 echo $run
 sbatch $run
+#   report last few
+sleep 2
+ls -ltr $WORK_LMT/$run | tail -6
