@@ -56,3 +56,4 @@ sbatch $run
 #   report last few
 sleep 2
 ls -ltr $WORK_LMT/sbatch/slurm*lmtoy*.out | tail -6
+squeue -u lmtslr_umass_edu
