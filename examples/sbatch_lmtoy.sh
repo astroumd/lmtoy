@@ -38,7 +38,7 @@ cat <<EOF > $run
 #   $0 version=$version
 #
 #SBATCH -J $obsnum
-#SBATCH -o slurm-%j-%x.log
+#SBATCH -o slurm-%j-%x.out
 #SBATCH -t 01:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -57,5 +57,5 @@ echo $run
 sbatch $run
 #   report last few
 sleep 2
-ls -ltr $WORK_LMT/sbatch/slurm*.log | tail -6
+ls -ltr $WORK_LMT/sbatch/slurm*.out | tail -6
 squeue -u lmtslr_umass_edu
