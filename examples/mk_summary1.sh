@@ -70,8 +70,14 @@ for o in ????? ; do
     echo "      $rms"
     echo "    </td>"
     echo "    <td>"
-    echo "      <A HREF=${o}/${src}_${o}.nf.admit/x.csm.png> <IMG SRC=${o}/${src}_${o}.nf.admit/x.csm.png height=100></A>"
-    echo "      <A HREF=${o}/${src}_${o}.nfs.admit/x.csm.png> <IMG SRC=${o}/${src}_${o}.nfs.admit/x.csm.png height=100></A>"
+    if [ -e ${o}/${src}_${o}.nf.admit/x.csm.png ]; then
+	echo "      <A HREF=${o}/${src}_${o}.nf.admit/x.csm.png> <IMG SRC=${o}/${src}_${o}.nf.admit/x.csm.png height=100></A>"
+	echo "      <A HREF=${o}/${src}_${o}.nfs.admit/x.csm.png> <IMG SRC=${o}/${src}_${o}.nfs.admit/x.csm.png height=100></A>"
+    elif [ -e ${o}/${src}_${o}.mom0.png ]; then
+	echo "      <A HREF=${o}/${src}_${o}.mom0.png> <IMG SRC=${o}/${src}_${o}.mom0.png height=100></A>"
+    else
+	echo "      N/A"
+    fi  
 
     echo "    </td>"
     echo "  </tr>"
