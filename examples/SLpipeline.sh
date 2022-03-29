@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 15-mar-2022"
+version="SLpipeline: 28-mar-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -51,6 +51,9 @@ if [ -z "$1" ]; then
     echo "  rc=$rc"
     echo "  goal=$goal    (Science, or override with: Pointing Focus)"
     echo "Optional instrument specific pipeline can be added as well but are not known here"
+    echo "  To Unity:  rsync=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt"
+    echo "  To UMD:    rsync=teuben@lma.astro.umd.edu:/lma1/teuben/LMT/work_lmt/"
+
     exit 0
 fi
 
@@ -250,6 +253,7 @@ fi
 if [ -n "$rsync" ]; then
     ls -l ${pdir}_TAP.tar
     echo rsync -av ${pdir}_TAP.tar $rsync
+    rsync -av ${pdir}_TAP.tar $rsync    
 fi
 
 # final reminder of parameters
