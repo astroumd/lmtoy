@@ -314,9 +314,9 @@ function lmtoy_seq1 {
 	    ccdspec $s_on.ccd > $s_on.spectab
 	    ccdstat $s_on.ccd bad=0 robust=t planes=0 > $s_on.cubestat
 	    echo "LMTOY>> STATS  $s_on.ccd     centerbox robust"
-	    ccdsub  $s_on.ccd -    centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
+	    ccdsub  $s_on.ccd -    centerbox=0.5,0.5 | ccdstat - bad=0 robust=t qac=t label=on
 	    echo "LMTOY>> STATS  $s_on.wt.ccd  centerbox robust"
-	    ccdsub  $s_on.wt.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t
+	    ccdsub  $s_on.wt.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t qac=t label=wt
 	    
 	    # convert flux flat to noise flat
 	    wmax=$(ccdstat $s_on.wt.ccd  | grep ^Min | awk '{print $6}')
@@ -346,9 +346,9 @@ function lmtoy_seq1 {
 	    
 	    ccdsmooth $s_on.n.ccd - dir=xyz nsmooth=5 | ccdfits - $s_on.nfs.fits fitshead=$s_fits
 	    
-	    # QAC_STATS:
-	    printf_red $(ccdstat $s_on.ccd bad=0 qac=t label="${s_on}-full")
-	    printf_red $(ccdsub  $s_on.ccd -  centerbox=0.5,0.5 | ccdstat - bad=0 qac=t label="${s_on}-cent")
+	    # QAC_STATS:  @todo need to use robust=t
+	    printf_red $(ccdstat $s_on.ccd bad=0 qac=t robust=t label="${s_on}-full")
+	    printf_red $(ccdsub  $s_on.ccd -  centerbox=0.5,0.5 | ccdstat - bad=0 qac=t robust=t label="${s_on}-cent")
 
 	    # hack
 	    fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.specstab
