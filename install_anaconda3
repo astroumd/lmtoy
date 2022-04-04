@@ -24,11 +24,8 @@ set url   = https://repo.anaconda.com/archive/Anaconda3-2021.04-%s-x86_64.sh
 #set url   = https://repo.anaconda.com/archive/Anaconda3-2021.11-%s-x86_64.sh      # sphinx
 
 set dir   = `pwd`/anaconda3
-set opt   = 0
 set wget  = wget
 set os    = `uname -s`
-
-set amuse = 0
 
 # you better know what you are doing here
 foreach arg ($*)
@@ -53,14 +50,6 @@ pip3 install --upgrade pip
 echo "set path = ($dir/bin "'$path); rehash'  >> python_start.csh
 echo "export PATH=${dir}/bin:"'$PATH'         >> python_start.sh
 
-echo Created python_start files for you
+echo "Created python_start.[c]sh files for you"
 
-
-# ubuntu packages for amuse:
-#  build-essential gfortran python-dev \
-#  libopenmpi-dev openmpi-bin \
-#  libgsl-dev cmake libfftw3-3 libfftw3-dev \
-#  libgmp3-dev libmpfr6 libmpfr-dev \
-#  libhdf5-serial-dev hdf5-tools \
-#  git
 
