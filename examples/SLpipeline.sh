@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 28-mar-2022"
+version="SLpipeline: 5-apr-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -136,7 +136,7 @@ if [ $goal == "Science" ]; then
 if [ $obspgm == "Map" ] || [ $obspgm == "Lissajous" ]; then
     echo "Map mode with instrument=$instrument"
     if [ -d $pdir ]; then
-	echo "Re-Processing SEQ/Map in $pdir for $src (use restart=1 if you need a fresh start)"
+	echo "Re-Processing Map in $pdir for $src (use restart=1 if you need a fresh start)"
 	first=0
 	date >> $pdir/date.log
     else
@@ -230,7 +230,7 @@ cd $work
 
 if [ $tap != 0 ]; then
     echo "Creating Timely Analysis Products (TAP) with admit=$admit in ${pdir}_TAP.tar"
-    products="rc md tab txt png pdf log apar html cubestat ifproc rfile obsnum badlags blanking"
+    products="rc md tab txt png pdf log apar html cubestat ifproc rfile obsnum badlags blanking resources"
     rm -f $pdir/tar.log
     touch $pdir/tar.log
     for ext in $products; do
