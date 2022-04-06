@@ -15,7 +15,7 @@ PYTHON = anaconda3
 
 # git directories we should have here
 
-GIT_DIRS = SpectralLineReduction dreampy3 maskmoment RSR_driver nemo Montage b4r \
+GIT_DIRS = SpectralLineReduction dreampy3 maskmoment RSR_driver nemo b4r \
            RedshiftPointing LinePointing
 
 # URLs that we'll need
@@ -296,6 +296,10 @@ bench2:
 	@echo "QAC_STATS: IRC+10216_79448-cent 0.0394178 0.373722 -0.947408 15.264 67897.1 0.213951 [expected]"
 	@echo "========================================================================================"
 	@echo xdg-open  $(WORK_LMT)/2018S1SEQUOIACommissioning/79448/README.html
+
+# a pure CPU bench from NEMO
+bench5:
+	(cd $(NEMO); $(TIME) make bench5)
 
 # to be documented and regressed
 bench99:
