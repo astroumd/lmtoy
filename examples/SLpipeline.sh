@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 5-apr-2022"
+version="SLpipeline: 6-apr-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -150,6 +150,7 @@ if [ $obspgm == "Map" ] || [ $obspgm == "Lissajous" ]; then
 	$time seq_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
     else
 	obsnum=${on0}_${on1}
+	cd $work
 	echo "LMTOY>> seq_combine.sh             $*"
 	$time seq_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
     fi
