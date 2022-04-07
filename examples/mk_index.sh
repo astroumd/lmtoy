@@ -5,6 +5,7 @@
 
 set -e
 pwd=$(pwd)
+update="$(date) on $(hostname)"
 
 # there better be only one....
 source $(ls ./lmtoy_*.rc)
@@ -18,6 +19,16 @@ echo "Making index.html for obsnum=$obsnum"
 base1="${src}_${obsnum}"
 base2="${src}_${obsnum}_specviews"
 base3="${src}_${obsnum}_specpoint"
+
+#base1="${src}_${obsnum}_?"
+#base2="${src}_${obsnum}_?_specviews"
+#base3="${src}_${obsnum}_?_specpoint"
+
+
+echo $base1
+echo $base2
+echo $base3
+
 
 dev=$(yapp_query png ps)
 
@@ -44,38 +55,62 @@ for ff in $f ; do
 done
 echo "<LI> These and other files are also available via the SRDP.tar"     >> $html
 echo "</OL>"                                                              >> $html
-echo "<br>Last updated $(date)"                                           >> $html
+echo "<br>Last updated $update"                                           >> $html
+
 
 
 html=index_pipeline.html
 echo Writing $html # in $pwd
+
+
+# if "first" figures don't exist, copy them from existing
+first="$base2.1.png $base2.6.png $base2.2.png $base2.3.png $base3.1.png $base3.2.png $base2.5.png $base1.wt.png $base1.mom0.png"
+for f in $first; do
+    if [ ! -e first_$f ]; then
+	cp $f  first_$f
+    fi
+done
+
+
 echo "<H1> SL Pipeline summary for $ProjectId/$obsnum for $src </H1>"      > $html
+echo "The figures in the right column are those generated from the first" >> $html
+echo "pass of the pipeline, those on the left are the latest iteration."  >> $html
 echo "<OL>"                                                               >> $html
 echo "  <LI> sky coverage for all 16 beams"                               >> $html
 echo "       (sky coordinates in arcsec w.r.t. map center)"               >> $html
 echo "           <br><IMG SRC=$base2.1.png>"                              >> $html
+echo "         <IMG SRC=first_$base2.1.png>"                              >> $html
 echo "  <LI> Tsys for each beam in 4x4 panels"                            >> $html
 echo "       (VLSR vs. TA*)"                                              >> $html
 echo "           <br><IMG SRC=$base2.6.png>"                              >> $html
+echo "         <IMG SRC=first_$base2.6.png>"                              >> $html
 echo "  <LI> waterfall plot for each beam in 4x4 panels"                  >> $html
 echo "       (VLSR vs. SAMPLE TIME)"                                      >> $html
 echo "           <br><IMG SRC=$base2.2.png>"                              >> $html
+echo "         <IMG SRC=first_$base2.2.png>"                              >> $html
 echo "  <LI> RMS $b_order order baseline fit for each beam in 4x4 panels" >> $html
 echo "           <br><IMG SRC=$base2.3.png>"                              >> $html
+echo "         <IMG SRC=first_$base2.3.png>"                              >> $html
 echo "  <LI> spectra for the whole map, overplotted for each beam"        >> $html
 echo "           <br><IMG SRC=$base3.1.png>"                              >> $html
+echo "         <IMG SRC=first_$base3.1.png>"                              >> $html
 echo "  <LI> spectra for center beam, overplotted for each beam"          >> $html
 echo "           <br><IMG SRC=$base3.2.png>"                              >> $html
+echo "         <IMG SRC=first_$base3.2.png>"                              >> $html
 #    unclear if we want to do this one
 echo "  <LI> mean_spectra_plot for each beam"                             >> $html
 echo "           <br><IMG SRC=$base2.5.png>"                              >> $html
+echo "         <IMG SRC=first_$base2.5.png>"                              >> $html
 echo "  <LI> coverage as defined how often sky pixel was seen"            >> $html
 echo "       (sky pixels are half of LMT beam size)"                      >> $html
 echo "           <br><IMG SRC=$base1.wt.png>"                             >> $html
+echo "         <IMG SRC=first_$base1.wt.png>"                             >> $html
 # temp PJT
 echo "  <LI> moment-0 estimate (see also <A HREF=index_admit>ADMIT</A>)"  >> $html
 echo "           <br><IMG SRC=$base1.mom0.png>"                           >> $html
+echo "         <IMG SRC=first_$base1.mom0.png>"                           >> $html
 echo "</OL>"                                                              >> $html
+echo "<br>Last updated $update"                                           >> $html
 
 html=index_admit.html
 echo Writing $html # in $pwd
@@ -87,6 +122,7 @@ echo "        <A HREF=$base1.nf.admit>$base1.nf.admit</A>"                >> $ht
 echo "   <LI> Smoothed ('nfs') spatially and spectrally: "                >> $html
 echo "        <A HREF=$base1.nfs.admit>$base1.nfs.admit</A>"              >> $html
 echo "</OL>"                                                              >> $html
+echo "<br>Last updated $update"                                           >> $html
 
 html=index_pars.html
 echo Writing $html # in $pwd
@@ -94,7 +130,7 @@ echo "<H1> Parameter summary for $ProjectId/$obsnum for $src </H1>"        > $ht
 echo "<pre>"                                                              >> $html
 cat lmtoy_*.rc                                                            >> $html
 echo "</pre>"                                                             >> $html
-
+echo "<br>Last updated $update"                                           >> $html
 
 html=index_log.html
 echo Writing $html # in $pwd
@@ -104,3 +140,4 @@ for log in *.log; do
     echo "<LI> <A HREF=$log>$log</A>"                                     >> $html
 done
 echo "</OL>"                                                              >> $html
+echo "<br>Last updated $update"                                           >> $html
