@@ -16,11 +16,17 @@ if len(sys.argv) > 2:
     plane = int(sys.argv[2])
 else:
     plane = -1
+
+try:
+    if plane < 0:
+        f = aplpy.FITSFigure(fitsfile)
+    else:
+        f = aplpy.FITSFigure(fitsfile, slices=[plane], dimensions=dims)
+except:
+    print("Cannot find %s in %s" % (fitsfile,os.getcwd()))
+    sys.exit(0)
+
     
-if plane < 0:
-    f = aplpy.FITSFigure(fitsfile)
-else:
-    f = aplpy.FITSFigure(fitsfile, slices=[plane], dimensions=dims)
     
 f.show_grayscale()
 f.show_colorscale(cmap='gist_heat')
