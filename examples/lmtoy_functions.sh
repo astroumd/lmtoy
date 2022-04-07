@@ -367,9 +367,14 @@ function lmtoy_seq1 {
 		ccdplot $s_on.wtn.ccd  yapp=$s_on.wtn.$dev/$dev
 		ccdplot $s_on.wtr.ccd  yapp=$s_on.wtr.$dev/$dev
 	    fi
+
 	    
 	    # Plotting via APLPY
 	    if [ 1 = 1 ]; then
+		ccdfits $s_on.mom0.ccd  $s_on.mom0.fits
+		ccdfits $s_on.mom1.ccd  $s_on.mom1.fits
+		ccdfits $s_on.mom2.ccd  $s_on.mom2.fits
+		ccdfits $s_on.wt.ccd    $s_on.wt.fits
 		fitsplot.py $s_on.mom0.fits
 		fitsplot.py $s_on.mom1.fits
 		fitsplot.py $s_on.mom2.fits
@@ -380,10 +385,6 @@ function lmtoy_seq1 {
 		fitsplot.py $s_on.wtr.fits
 	    fi
 
-	    # Just a MOM0 plot for the pipeline summary
-	    ccdfits $s_on.mom0.ccd  $s_on.mom0.fits
-	    fitsplot.py $s_on.mom0.fits
-	    
 	    # remove useless files
 	    if [ $clean -eq 1 ]; then
 		rm -f $s_on.n.fits $s_on.head1 $s_on.data1 *.ccd
