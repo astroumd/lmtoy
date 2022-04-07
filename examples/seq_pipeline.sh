@@ -207,6 +207,11 @@ fi
 
 #             derived parameters (you should not have to edit these)
 p_dir=${path}
+#             redo CLI again
+for arg in $*; do
+    export $arg
+done
+
 
 #             pick one bank, or loop over all allowed banks
 if [ $bank != -1 ]; then
