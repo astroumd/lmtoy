@@ -10,7 +10,7 @@
 #
 
 
-version="seq_combine: 17-dec-2021"
+version="seq_combine: 6-apr-2022"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=ON1,ON2,..."
@@ -62,7 +62,7 @@ edge=0
 unset vlsr
 
 #             simple keyword=value command line parser for bash - don't make any changing below
-for arg in $*; do\
+for arg in $*; do
   export $arg
 done
 
@@ -145,6 +145,10 @@ echo "FILES: s_nc: $s_nc"
 makespec=0
 viewspec=0
 makewf=0
+# override CLI again
+for arg in $*; do
+  export $arg
+done
 lmtoy_seq1
 
 echo "LMTOY>> Created $s_fits and $w_fits"
