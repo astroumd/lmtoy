@@ -130,7 +130,7 @@ if [ -e $pidir/PI_pars.rc ]; then
     source $pidir/PI_pars.rc
 fi
 
-# warning: we're not using obsgoal
+# warning: we're not using obsgoal, but our own goal=
 if [ $goal == "Science" ]; then
 
 if [ $obspgm == "Map" ] || [ $obspgm == "Lissajous" ]; then
