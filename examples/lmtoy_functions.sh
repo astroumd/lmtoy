@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="11-mar-2022"
+lmtoy_version="6-apr-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -375,6 +375,7 @@ function lmtoy_seq1 {
 		ccdfits $s_on.mom1.ccd  $s_on.mom1.fits
 		ccdfits $s_on.mom2.ccd  $s_on.mom2.fits
 		ccdfits $s_on.wt.ccd    $s_on.wt.fits
+		ccdfits $s_on.wtn.ccd   $s_on.wtn.fits
 		fitsplot.py $s_on.mom0.fits
 		fitsplot.py $s_on.mom1.fits
 		fitsplot.py $s_on.mom2.fits
