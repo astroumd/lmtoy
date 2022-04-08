@@ -1,6 +1,7 @@
 #! /bin/bash
 #
-#  create nice looking index.html for LMT/ADMIT products from pipeline
+#  create nice looking index.html for LMT/ADMIT products from pipeline for Sequoia
+#  this needs to be executed from the $ProjectId/$obsnum directory 
 #
 
 # set -e
