@@ -3,7 +3,7 @@
 #  create nice looking index.html for LMT/ADMIT products from pipeline
 #
 
-set -e
+# set -e
 pwd=$(pwd)
 update="$(date) on $(hostname)"
 
@@ -64,7 +64,7 @@ echo Writing $html # in $pwd
 
 
 # if "first" figures don't exist, copy them from existing
-first="$base2.1.png $base2.6.png $base2.2.png $base2.3.png $base3.1.png $base3.2.png $base2.5.png $base1.wt.png $base1.mom0.png"
+first="$base2.1.png $base2.6.png $base2.2.png $base2.3.png $base3.1.png $base3.2.png $base2.5.png $base1.wt.png $base1.mom0.png $base1.rms.png"
 for f in $first; do
     if [ ! -e first_$f ]; then
 	cp $f  first_$f
@@ -106,9 +106,12 @@ echo "       (sky pixels are half of LMT beam size)"                      >> $ht
 echo "           <br><IMG SRC=$base1.wt.png>"                             >> $html
 echo "         <IMG SRC=first_$base1.wt.png>"                             >> $html
 # temp PJT
-echo "  <LI> moment-0 estimate (see also <A HREF=index_admit>ADMIT</A>)"  >> $html
+echo "  <LI> moment-0 estimate [K.m/s] (<A HREF=index_admit>ADMIT</A>)"   >> $html
 echo "           <br><IMG SRC=$base1.mom0.png>"                           >> $html
 echo "         <IMG SRC=first_$base1.mom0.png>"                           >> $html
+echo "  <LI> RMS estimate [K]"                                            >> $html
+echo "           <br><IMG SRC=$base1.rms.png>"                            >> $html
+echo "         <IMG SRC=first_$base1.rms.png>"                            >> $html
 echo "</OL>"                                                              >> $html
 echo "<br>Last updated $update"                                           >> $html
 

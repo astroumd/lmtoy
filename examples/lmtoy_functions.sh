@@ -302,10 +302,10 @@ function lmtoy_seq1 {
 	echo "LMTOY>> Some NEMO post-processing"
 
 	# cleanup from a previous run
-	rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.mom2.ccd $s_on.head1 \
+	rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.rms.ccd $s_on.head1 \
 	   $s_on.data1 $s_on.n.fits $s_on.nfs.fits $s_on.mom0.ccd $s_on.mom1.ccd \
 	   $s_on.wt2.fits $s_on.wt3.fits $s_on.wtn.fits $s_on.wtr.fits \
-	   $s_on.mom0.fits $s_on.mom1.fits $s_on.mom2.fits
+	   $s_on.mom0.fits $s_on.mom1.fits $s_on.rms.fits
 
 	if [ -e $s_fits ]; then
 	    fitsccd $s_fits $s_on.ccd    axistype=1
@@ -326,7 +326,7 @@ function lmtoy_seq1 {
 	    ccdmath $s_on.ccd,$s_on.wtn.ccd $s_on.n.ccd '%1*%2' replicate=t
 	    ccdmom $s_on.n.ccd $s_on.mom0.ccd  mom=0	
 	    ccdmom $s_on.n.ccd $s_on.mom1.ccd  mom=1 rngmsk=t
-	    ccdmom $s_on.n.ccd $s_on.mom2.ccd  mom=-2
+	    ccdmom $s_on.n.ccd $s_on.rms.ccd  mom=-2
 	    
 	    ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "ifne(%1,0,2/(%1*%1),0)"
 	    ccdfits $s_on.wt2.ccd $s_on.wt2.fits fitshead=$w_fits
@@ -360,7 +360,7 @@ function lmtoy_seq1 {
 		dev=$(yapp_query png ps)
 		ccdplot $s_on.mom0.ccd yapp=$s_on.mom0.$dev/$dev
 		ccdplot $s_on.mom1.ccd yapp=$s_on.mom1.$dev/$dev
-		ccdplot $s_on.mom2.ccd yapp=$s_on.mom2.$dev/$dev
+		ccdplot $s_on.rms.ccd  yapp=$s_on.rms.$dev/$dev
 		ccdplot $s_on.wt.ccd   yapp=$s_on.wt.$dev/$dev
 		ccdplot $s_on.wt2.ccd  yapp=$s_on.wt2.$dev/$dev
 		ccdplot $s_on.wt3.ccd  yapp=$s_on.wt3.$dev/$dev
@@ -373,11 +373,11 @@ function lmtoy_seq1 {
 	    if [ 1 = 1 ]; then
 		ccdfits $s_on.mom0.ccd  $s_on.mom0.fits
 		ccdfits $s_on.mom1.ccd  $s_on.mom1.fits
-		ccdfits $s_on.mom2.ccd  $s_on.mom2.fits
+		ccdfits $s_on.rms.ccd   $s_on.rms.fits
 		ccdfits $s_on.wtn.ccd   $s_on.wtn.fits
 		fitsplot.py $s_on.mom0.fits
 		fitsplot.py $s_on.mom1.fits
-		fitsplot.py $s_on.mom2.fits
+		fitsplot.py $s_on.rms.fits
 		fitsplot.py $s_on.wt.fits
 		fitsplot.py $s_on.wt2.fits
 		fitsplot.py $s_on.wt3.fits
