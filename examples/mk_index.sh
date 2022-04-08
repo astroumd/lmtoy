@@ -139,7 +139,7 @@ html=index_log.html
 echo Writing $html # in $pwd
 echo "<H1> Logfiles for $ProjectId/$obsnum for $src </H1>"                 > $html
 echo "<OL>"                                                               >> $html
-for log in *.log; do
+for log in *.log *.ifproc; do
     echo "<LI> <A HREF=$log>$log</A>"                                     >> $html
 done
 echo "</OL>"                                                              >> $html

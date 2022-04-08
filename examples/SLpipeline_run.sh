@@ -6,13 +6,14 @@
 # trap errors
 #set -e
 
-version="SLpipeline: 6-apr-2022"
+version="SLpipeline: 7-apr-2022"
 
 rsync1=teuben@lma.astro.umd.edu:/lma1/lmt/TAP_lmt
-rsync2=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt
+rsync2=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s
 rsync=$rsync1
 dryrun=0
 key=Science
+new=1
 
 
 # source lmtoy_functions.sh
@@ -40,6 +41,12 @@ if [ ! -d $run ]; then
     exit 0
 fi
 
+#  force a new run
+if [ $new = 1 ]; then
+    rm -f $run/data_lmt.log
+fi
+
+#  
 if [ ! -e $run/data_lmt.log ]; then
     echo Creating $run/data_lmt.log, be patient, this could be some time
     lmtinfo.py $data | grep ^2 | grep -v failed | sort > $run/data_lmt.log
@@ -64,10 +71,19 @@ while [ $sleep -ne 0 ]; do
     if [ $on1 != $on2 ]; then
 	tail -1 $run/data_lmt.lag
 	echo Found new obsnum=$on2
-	if [ $dryrun = 0 ]; then
-	    SLpipeline.sh obsnum=$on2 restart=1 rsync=$rsync
-	    cp $run/data_lmt.lag $run/data_lmt.log
+	if [ -e SLpipeline.in ]; then
+	    extra=$(grep -v ^# SLpipeline.in)
+
+	else
+	    extra=""
 	fi
+	echo "Found extra args:   $extra"
+	if [ $dryrun = 0 ]; then
+	    SLpipeline.sh obsnum=$on2 restart=1 rsync=$rsync $extra
+	else
+	    echo SLpipeline.sh obsnum=$on2 restart=1 rsync=$rsync $extra
+	fi
+	cp $run/data_lmt.lag $run/data_lmt.log
 	on1=$on2
     fi
     sleep $sleep

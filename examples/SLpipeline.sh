@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 6-apr-2022"
+version="SLpipeline: 7-apr-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -51,8 +51,8 @@ if [ -z "$1" ]; then
     echo "  rc=$rc"
     echo "  goal=$goal    (Science, or override with: Pointing Focus)"
     echo "Optional instrument specific pipeline can be added as well but are not known here"
-    echo "  To Unity:  rsync=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt"
-    echo "  To UMD:    rsync=teuben@lma.astro.umd.edu:/lma1/teuben/LMT/work_lmt/"
+    echo "  To Unity:  rsync=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s"
+    echo "  To UMD:    rsync=teuben@lma.astro.umd.edu:/lma1/teuben/LMT/work_lmt/%s"
 
     exit 0
 fi
@@ -250,11 +250,14 @@ if [ $raw != 0 ]; then
     lmtar $ProjectId/${obsnum}_RAW.tar $calobsnum $obsnum
 fi
 
+rsync1=$(printf $rsync $ProjectId)
+echo Using rsync1=$rsync1
+
 #  rsync TAP data to a remote?   e.g. rsync=teuben@lma.astro.umd.edu:/lma1/lmt/TAP_lmt
 if [ -n "$rsync" ]; then
     ls -l ${pdir}_TAP.tar
-    echo rsync -av ${pdir}_TAP.tar $rsync
-    rsync -av ${pdir}_TAP.tar $rsync    
+    echo rsync -av ${pdir}_TAP.tar $rsync1
+    rsync -av ${pdir}_TAP.tar $rsync1
 fi
 
 # final reminder of parameters
