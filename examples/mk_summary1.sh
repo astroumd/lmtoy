@@ -40,6 +40,9 @@ echo "    </th>"
 echo "    <th>"
 echo "      mom0"
 echo "    </th>"
+echo "    <th>"
+echo "      comments"
+echo "    </th>"
 echo "  </tr>"
 
 n=0
@@ -51,7 +54,11 @@ for o in ????? ?????_?????; do
     date_obs=$(grep date_obs $rc | awk -F= '{print $2}')
     rms=$(grep QAC_STATS $log | tail -1 | awk '{print $4}')
     n=$(expr $n + 1)
-
+    if [ -e comments.txt ]; then
+	comments=$(grep -w ^$obsnum comments.txt | cut -d' ' -f2-)
+    else
+	comments=""
+    fi
   
     echo "  <tr>"
     echo "    <td>"
@@ -91,6 +98,9 @@ for o in ????? ?????_?????; do
 	echo "      N/A"
     fi  
 
+    echo "    </td>"
+    echo "    <td>"
+    echo "      $comments"
     echo "    </td>"
     echo "  </tr>"
 
