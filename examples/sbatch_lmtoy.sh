@@ -1,5 +1,12 @@
 #! /bin/bash
 #
+#  SLURM control for LMTOY (we use the "toltec-cpu" )
+#     sinfo
+#     sbatch
+#     squeue
+#     srun
+#
+# https://unity.rc.umass.edu/docs/#slurm/   IECK, this also stopped working.
 
 obsnum=0
 
@@ -44,7 +51,7 @@ cat <<EOF > $run
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=16G
-#SBATCH --partition toltec_cpu
+#SBATCH --partition toltec-cpu
 #SBATCH --parsable
 
 /usr/bin/time SLpipeline.sh $*
@@ -59,3 +66,4 @@ sbatch $run
 sleep 2
 ls -ltr $WORK_LMT/sbatch/slurm*.out | tail -6
 squeue -u lmtslr_umass_edu
+# squeue -u toltec_umass_edu
