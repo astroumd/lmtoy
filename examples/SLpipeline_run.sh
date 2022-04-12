@@ -10,7 +10,7 @@ version="SLpipeline: 7-apr-2022"
 
 rsync1=teuben@lma.astro.umd.edu:/lma1/lmt/TAP_lmt
 rsync2=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s
-rsync=$rsync1
+rsync=$rsync2
 dryrun=0
 key=Science
 new=1
@@ -66,6 +66,8 @@ while [ $sleep -ne 0 ]; do
     ls -ltr $DATA_LMT/ifproc/ | tail -3
     echo -n "checking "
     lmtinfo.py $data | grep ^2 | grep -v failed | sort > $run/data_lmt.lag
+    echo ""
+    tail -3 $run/data_lmt.lag
     on2=$(grep $key $run/data_lmt.lag | tail -1 | awk '{print $2}')
     echo "$on2"
     if [ $on1 != $on2 ]; then
@@ -73,7 +75,6 @@ while [ $sleep -ne 0 ]; do
 	echo Found new obsnum=$on2
 	if [ -e SLpipeline.in ]; then
 	    extra=$(grep -v ^# SLpipeline.in)
-
 	else
 	    extra=""
 	fi
