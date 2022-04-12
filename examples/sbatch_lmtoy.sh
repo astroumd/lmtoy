@@ -1,11 +1,11 @@
 #! /bin/bash
 #
-#  SLURM control for LMTOY (we use the "toltec-cpu" )
+#  SLURM cheat list for LMTOY (we use the "toltec-cpu" )
 #     sinfo
-#     sbatch
-#     squeue
-#     srun
-#
+#     sbatch myscript.sh 
+#     squeue -u lmtslr_umass_edu
+#     srun -n 1 -c 4 --mem=16G -p toltec-cpu --x11 --pty bash
+
 # https://unity.rc.umass.edu/docs/#slurm/   IECK, this also stopped working.
 
 obsnum=0
@@ -15,7 +15,7 @@ for arg in $*; do
 done
 
 #                     version
-version="21-mar-2022"
+version="9-apr-2022"
 
 
 #                     sbatch run file

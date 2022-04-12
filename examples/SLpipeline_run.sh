@@ -15,6 +15,12 @@ dryrun=0
 key=Science
 new=1
 
+function printf_red {
+    # could also use the tput command?
+    RED='\033[0;31m'
+    NC='\033[0m' # No Color
+    echo -e "${RED}$*${NC}"
+}
 
 # source lmtoy_functions.sh
 
@@ -72,7 +78,7 @@ while [ $sleep -ne 0 ]; do
     echo "$on2"
     if [ $on1 != $on2 ]; then
 	tail -1 $run/data_lmt.lag
-	echo Found new obsnum=$on2
+	printf_red Found new obsnum=$on2
 	if [ -e SLpipeline.in ]; then
 	    extra=$(grep -v ^# SLpipeline.in)
 	else
