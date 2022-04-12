@@ -324,8 +324,8 @@ function lmtoy_seq1 {
 	    
 	    ccdmath $s_on.wt.ccd $s_on.wtn.ccd "sqrt(%1/$wmax)"
 	    ccdmath $s_on.ccd,$s_on.wtn.ccd $s_on.n.ccd '%1*%2' replicate=t
-	    ccdmom $s_on.n.ccd $s_on.mom0.ccd  mom=0	
-	    ccdmom $s_on.n.ccd $s_on.mom1.ccd  mom=1 rngmsk=t
+	    ccdmom $s_on.n.ccd - mom=0	        | ccdmath - $s_on.mom0.ccd %1/1000
+	    ccdmom $s_on.n.ccd - mom=1 rngmsk=t | ccdmath - $s_on.mom1.ccd %1/1000
 	    ccdmom $s_on.n.ccd $s_on.rms.ccd  mom=-2
 	    
 	    ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "ifne(%1,0,2/(%1*%1),0)"
