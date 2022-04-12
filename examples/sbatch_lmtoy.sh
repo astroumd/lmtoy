@@ -53,6 +53,7 @@ cat <<EOF > $run
 #SBATCH --mem=16G
 #SBATCH --partition toltec-cpu
 #SBATCH --parsable
+#SBATCH --x11
 
 /usr/bin/time SLpipeline.sh $*
 
