@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 7-apr-2022"
+version="SLpipeline: 12-apr-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -250,12 +250,10 @@ if [ $raw != 0 ]; then
     lmtar $ProjectId/${obsnum}_RAW.tar $calobsnum $obsnum
 fi
 
-rsync1=$(printf $rsync $ProjectId)
-echo Using rsync1=$rsync1
-
 #  rsync TAP data to a remote?   e.g. rsync=teuben@lma.astro.umd.edu:/lma1/lmt/TAP_lmt
 if [ -n "$rsync" ]; then
     ls -l ${pdir}_TAP.tar
+    rsync1=$(printf $rsync $ProjectId)
     echo rsync -av ${pdir}_TAP.tar $rsync1
     rsync -av ${pdir}_TAP.tar $rsync1
 fi
