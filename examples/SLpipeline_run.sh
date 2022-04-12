@@ -10,11 +10,17 @@ version="SLpipeline: 7-apr-2022"
 
 rsync1=teuben@lma.astro.umd.edu:/lma1/lmt/TAP_lmt
 rsync2=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s
-rsync=$rsync1
+rsync=$rsync2
 dryrun=0
 key=Science
 new=1
 
+function printf_red {
+    # could also use the tput command?
+    RED='\033[0;31m'
+    NC='\033[0m' # No Color
+    echo -e "${RED}$*${NC}"
+}
 
 # source lmtoy_functions.sh
 
@@ -70,7 +76,7 @@ while [ $sleep -ne 0 ]; do
     echo "$on2"
     if [ $on1 != $on2 ]; then
 	tail -1 $run/data_lmt.lag
-	echo Found new obsnum=$on2
+	printf_red Found new obsnum=$on2
 	if [ -e SLpipeline.in ]; then
 	    extra=$(grep -v ^# SLpipeline.in)
 
