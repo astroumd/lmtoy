@@ -2,8 +2,8 @@
 #
 #  SLURM cheat list for LMTOY (we use the "toltec-cpu" )
 #     sinfo
-#     sbatch myscript.sh 
-#     squeue -u lmtslr_umass_edu
+#     sbatch run_12345.sh               (this example)
+#     squeue -u lmtslr_umass_edun
 #     srun -n 1 -c 4 --mem=16G -p toltec-cpu --x11 --pty bash
 
 # https://unity.rc.umass.edu/docs/#slurm/   IECK, this also stopped working.
@@ -15,7 +15,7 @@ for arg in $*; do
 done
 
 #                     version
-version="9-apr-2022"
+version="12-apr-2022"
 
 
 #                     sbatch run file
@@ -55,7 +55,7 @@ cat <<EOF > $run
 #SBATCH --parsable
 #SBATCH --x11
 
-/usr/bin/time SLpipeline.sh $*
+/usr/bin/time xvfb-run -a SLpipeline.sh $*
 
 EOF
 
