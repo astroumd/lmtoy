@@ -30,6 +30,11 @@ echo $base1
 echo $base2
 echo $base3
 
+if [ -d $base1.nf.admit ]; then
+    admit=""
+else
+    admit="(Looks like no ADMIT was produced)"
+fi
 
 dev=$(yapp_query png ps)
 
@@ -37,14 +42,14 @@ html=index.html
 echo Writing $html # in $pwd
 echo "<H1> $ProjectId/$obsnum for $src </H1>"                              > $html
 echo "<H2>  <A HREF=index_pipeline.html>SL Pipeline summary</A> </H2>"    >> $html
-echo "<H2>  <A HREF=index_admit.html>ADMIT summary</A>          </H2>"    >> $html
+echo "<H2>  <A HREF=index_admit.html>ADMIT summary</A> $admit   </H2>"    >> $html
 echo "<H2>  <A HREF=index_pars.html>parameters</A>              </H2>"    >> $html
 echo "<H2>  <A HREF=index_log.html>log files</A>                </H2>"    >> $html
-echo "<H2>  FITS files:   </H2>"    >> $html
-echo "<OL>"                                       >> $html
+echo "<H2>  Select FITS files:   </H2>"                                   >> $html
+echo "<OL>"                                                               >> $html
 
-c=("final reduced data cube"  "per pixel weights map"    "waterfall cube")
-f="${base1}.fits              ${base1}.wt.fits           ${base1}.wf.fits"
+c=("final reduced data cube"  "per pixel weights map"    "waterfall cube"     "full SRDP tar"         "TAP data")
+f="${base1}.fits              ${base1}.wt.fits           ${base1}.wf.fits     ../${obsnum}_SRDP.tar   ../${obsnum}_TAP.tar"
 i=0
 for ff in $f ; do
     if [ -e $ff ]; then
@@ -54,7 +59,8 @@ for ff in $f ; do
     fi
     ((i=i+1))
 done
-echo "<LI> These and other files are also available via the SRDP.tar"     >> $html
+echo "<LI> These and other files are also available via the _SRDP.tar,"   >> $html
+echo "     if available"                                                  >> $html
 echo "</OL>"                                                              >> $html
 echo "<br>Last updated $update"                                           >> $html
 
@@ -76,44 +82,72 @@ done
 echo "<H1> SL Pipeline summary for $ProjectId/$obsnum for $src </H1>"      > $html
 echo "The figures in the right column are those generated from the first" >> $html
 echo "pass of the pipeline, those on the left are the latest iteration."  >> $html
+echo "<br>"                                                               >> $html
+echo "If no figure shown, the pipeline did not produce it"                >> $html
 echo "<OL>"                                                               >> $html
-echo "  <LI> sky coverage for all 16 beams"                               >> $html
+
+# 1.
+echo "  <LI> Sky coverage for all 16 beams"                               >> $html
 echo "       (sky coordinates in arcsec w.r.t. map center)"               >> $html
+if [ -e $base2.1.png ]; then
 echo "           <br><IMG SRC=$base2.1.png>"                              >> $html
 echo "         <IMG SRC=first_$base2.1.png>"                              >> $html
+else
+echo "         N/A"                                                       >> $html
+fi
+
+# 2.
 echo "  <LI> Tsys for each beam in 4x4 panels"                            >> $html
 echo "       (VLSR vs. TA*)"                                              >> $html
+if [ -e $base2.6.png ]; then
 echo "           <br><IMG SRC=$base2.6.png>"                              >> $html
 echo "         <IMG SRC=first_$base2.6.png>"                              >> $html
-echo "  <LI> waterfall plot for each beam in 4x4 panels"                  >> $html
+fi
+    
+
+# 3.
+echo "  <LI> Waterfall plot for each beam in 4x4 panels"                  >> $html
 echo "       (VLSR vs. SAMPLE TIME)"                                      >> $html
 echo "           <br><IMG SRC=$base2.2.png>"                              >> $html
 echo "         <IMG SRC=first_$base2.2.png>"                              >> $html
-echo "  <LI> RMS $b_order order baseline fit for each beam in 4x4 panels" >> $html
+
+# 4.
+echo "  <LI> RMS $b_order order baseline fit (in K) for each beam"        >> $html
 echo "           <br><IMG SRC=$base2.3.png>"                              >> $html
 echo "         <IMG SRC=first_$base2.3.png>"                              >> $html
-echo "  <LI> spectra for the whole map, overplotted for each beam"        >> $html
+
+# 5.
+echo "  <LI> Spectra for the whole map, overplotted for each beam"        >> $html
 echo "           <br><IMG SRC=$base3.1.png>"                              >> $html
 echo "         <IMG SRC=first_$base3.1.png>"                              >> $html
-echo "  <LI> spectra for center beam, overplotted for each beam"          >> $html
+
+# 6.
+echo "  <LI> Spectra for center beam, overplotted for each beam"          >> $html
 echo "           <br><IMG SRC=$base3.2.png>"                              >> $html
 echo "         <IMG SRC=first_$base3.2.png>"                              >> $html
-#    unclear if we want to do this one
+
+# 7.
 echo "  <LI> mean_spectra_plot for each beam"                             >> $html
 echo "           <br><IMG SRC=$base2.5.png>"                              >> $html
 echo "         <IMG SRC=first_$base2.5.png>"                              >> $html
-echo "  <LI> coverage as defined how often sky pixel was seen"            >> $html
+
+# 8.
+echo "  <LI> Sky coverage as defined how often sky pixel was seen"        >> $html
 echo "       (sky pixels are half of LMT beam size)"                      >> $html
 echo "           <br><IMG SRC=$base1.wt.png>"                             >> $html
 echo "         <IMG SRC=first_$base1.wt.png>"                             >> $html
-# temp PJT
-echo "  <LI> moment-0 estimate [K.m/s] (<A HREF=index_admit>ADMIT</A>)"   >> $html
+
+# 9.
+echo "  <LI> Moment-0 estimate [K.m/s] (<A HREF=index_admit>ADMIT</A>)"   >> $html
 echo "           <br><IMG SRC=$base1.mom0.png>"                           >> $html
 echo "         <IMG SRC=first_$base1.mom0.png>"                           >> $html
+
+# 10.
 echo "  <LI> RMS estimate [K]"                                            >> $html
 echo "           <br><IMG SRC=$base1.rms.png>"                            >> $html
 echo "         <IMG SRC=first_$base1.rms.png>"                            >> $html
 echo "</OL>"                                                              >> $html
+
 echo "<br>Last updated $update"                                           >> $html
 
 html=index_admit.html
