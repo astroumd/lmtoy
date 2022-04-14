@@ -62,7 +62,7 @@ EOF
 
 
 chmod +x $run
-echo "JOBID=$run  (use scancel to kill this one)"
+echo "$run      - use scancel JOBID to kill this one, JOBID is:"
 sbatch $run
 #   report last few
 sleep 2
