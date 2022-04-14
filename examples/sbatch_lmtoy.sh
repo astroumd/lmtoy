@@ -3,8 +3,10 @@
 #  SLURM cheat list for LMTOY (we use the "toltec-cpu" )
 #     sinfo
 #     sbatch run_12345.sh               (this example)
-#     squeue -u lmtslr_umass_edun
+#     squeue -u lmtslr_umass_edu       (shows your JOBID's)
+#     scancel JOBID
 #     srun -n 1 -c 4 --mem=16G -p toltec-cpu --x11 --pty bash
+
 
 # https://unity.rc.umass.edu/docs/#slurm/   IECK, this also stopped working.
 
@@ -60,7 +62,7 @@ EOF
 
 
 chmod +x $run
-echo $run
+echo "JOBID=$run  (use scancel to kill this one)"
 sbatch $run
 #   report last few
 sleep 2
