@@ -15,7 +15,7 @@ for arg in $*; do
 done
 
 #                     version
-version="12-apr-2022"
+version="14-apr-2022"
 
 
 #                     sbatch run file
@@ -53,7 +53,6 @@ cat <<EOF > $run
 #SBATCH --mem=16G
 #SBATCH --partition toltec-cpu
 #SBATCH --parsable
-#SBATCH --x11
 
 /usr/bin/time xvfb-run -a SLpipeline.sh $*
 
@@ -67,4 +66,5 @@ sbatch $run
 sleep 2
 ls -ltr $WORK_LMT/sbatch/slurm*.out | tail -6
 squeue -u lmtslr_umass_edu
-# squeue -u toltec_umass_edu
+echo "squeue -u lmtslr_umass_edu"
+
