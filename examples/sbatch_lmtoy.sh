@@ -1,9 +1,11 @@
 #! /bin/bash
 #
+#  LMTOY's simple frontend for sbatch 
+#
 #  SLURM cheat list for LMTOY (we use the "toltec-cpu" )
 #     sinfo
 #     sbatch run_12345.sh               (this example)
-#     squeue -u lmtslr_umass_edu       (shows your JOBID's)
+#     squeue -u lmtslr_umass_edu        (also shows your JOBID's)
 #     scancel JOBID
 #     srun -n 1 -c 4 --mem=16G -p toltec-cpu --x11 --pty bash
 
@@ -11,22 +13,32 @@
 # https://unity.rc.umass.edu/docs/#slurm/   IECK, this also stopped working.
 
 obsnum=0
+obsnums=0
 
 for arg in $*; do
     export $arg
 done
 
-#                     version
+#                                        version
 version="14-apr-2022"
 
+#                                        prefix to run
+prefix="/usr/bin/time xvfb-run -a"
 
-#                     sbatch run file
-run=run_$obsnum.sh
+#                                        figure out the run ID
+if [ $obsnums != 0 ]; then
+    runid=$(echo $obsnums | awk -F, '{printf("%s_%s\n",$1,$NF)}')
+else
+    runid=$obsnum
+fi
+
+#                                        sbatch run file
+run=run_$runid.sh
 
 
-if [ $obsnum == 0 ]; then
+if [ $runid == 0 ]; then
     echo "$0 version=$version"
-    echo "ERROR: Needs obsnum=, then creates $run and uses sbatch to submit work"
+    echo "ERROR: Needs obsnum= or obsnums=o1,o2,...   then creates $run and uses sbatch to submit work"
     exit 0
 fi
 
@@ -34,19 +46,19 @@ if [ "$(which sbatch)" != "/usr/bin/sbatch" ]; then
     echo "$0 version=$version"    
     echo "run=$run"
     echo "ERROR:  No sbatch system here on $(hostname)"
-    exit 0
+    #exit 0
 fi
 
 #                     do all sbatch work in $WORK_LMT/sbatch
 cd $WORK_LMT/sbatch
-
+#             
 
 cat <<EOF > $run
 #! /bin/bash
 #
 #   $0 version=$version
 #
-#SBATCH -J $obsnum
+#SBATCH -J $runid
 #SBATCH -o slurm-%j-%x.out
 #SBATCH -t 01:00:00
 #SBATCH --nodes=1
@@ -56,7 +68,7 @@ cat <<EOF > $run
 #SBATCH --partition toltec-cpu
 #SBATCH --parsable
 
-/usr/bin/time xvfb-run -a SLpipeline.sh $*
+$prefix $*
 
 EOF
 
