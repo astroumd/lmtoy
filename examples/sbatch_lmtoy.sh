@@ -12,6 +12,17 @@
 
 # https://unity.rc.umass.edu/docs/#slurm/   IECK, this also stopped working.
 
+# catch the single argument batch call first
+if [ -e "$1" ]; then
+    echo Processing lines from $1 line by line
+    while IFS= read -r line; do
+	sbatch_lmtoy.sh $line
+    done < $1
+    exit 1
+fi
+
+# process it as pipeline script, either obsnum= or obsnums= (but not both) should be present on CLI
+
 obsnum=0
 obsnums=0
 
