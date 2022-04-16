@@ -14,7 +14,7 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="seq_pipeline: 14-apr-2022"
+version="seq_pipeline: 15-apr-2022"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -175,16 +175,16 @@ if [ $newrc = 1 ]; then
     if [ $extent != 0 ]; then
 	echo x_extent=$extent       >> $rc
 	echo y_extent=$extent       >> $rc
+    else
+        # deal with gridding bug
+        if [ $x_extent -gt $y_extent ]; then
+    	 echo y_extent=$x_extent    >> $rc
+        fi
+        if [ $x_extent -lt $y_extent ]; then
+	 echo x_extent=$y_extent    >> $rc
+        fi
+        echo "#xy_extent should be same">> $rc
     fi
-    # deal with gridding bug
-    if [ $x_extent -gt $y_extent ]; then
-	echo y_extent=$x_extent     >> $rc
-    fi
-    if [ $x_extent -lt $y_extent ]; then
-	echo x_extent=$y_extent     >> $rc
-    fi
-    echo "#xy_extent should be same">> $rc
-
     
     echo pix_list=$pix_list         >> $rc
     
