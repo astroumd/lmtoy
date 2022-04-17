@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="6-apr-2022"
+lmtoy_version="17-apr-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -331,7 +331,7 @@ function lmtoy_seq1 {
 	    ccdmath $s_on.ccd,$s_on.wtn.ccd $s_on.n.ccd '%1*%2' replicate=t
 	    ccdmom $s_on.n.ccd - mom=0	        | ccdmath - $s_on.mom0.ccd %1/1000
 	    ccdmom $s_on.n.ccd - mom=1 rngmsk=t | ccdmath - $s_on.mom1.ccd %1/1000
-	    ccdsub $s_on.n.ccd - 1:$nz1,$nz2:$nz | ccdmom -  $s_on.rms.ccd  mom=-2
+	    ccdsub $s_on.n.ccd - z=1:$nz1,$nz2:$nz | ccdmom -  $s_on.rms.ccd  mom=-2
 	    # ccdmom $s_on.n.ccd - $s_on.rms.ccd  mom=-2 arange=0:$nz1,$nz2:$nz-1
 	    
 	    ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "ifne(%1,0,2/(%1*%1),0)"
