@@ -310,6 +310,11 @@ function lmtoy_seq1 {
 	if [ -e $s_fits ]; then
 	    fitsccd $s_fits $s_on.ccd    axistype=1
 	    fitsccd $w_fits $s_on.wt.ccd axistype=1
+
+	    # get size and use nz1-nz2 to exclude from the axis for the rms (mom=-2) map
+	    nz=$(ccdhead $s_on.ccd | txtpar - p0=Size,1,4)
+	    nz1=$(nemoinp $nz/3 format=%d)
+	    nz2=$(nemoinp 2*$nz/3 format=%d)
 	    
 	    ccdspec $s_on.ccd > $s_on.spectab
 	    ccdstat $s_on.ccd bad=0 robust=t planes=0 > $s_on.cubestat
@@ -326,7 +331,8 @@ function lmtoy_seq1 {
 	    ccdmath $s_on.ccd,$s_on.wtn.ccd $s_on.n.ccd '%1*%2' replicate=t
 	    ccdmom $s_on.n.ccd - mom=0	        | ccdmath - $s_on.mom0.ccd %1/1000
 	    ccdmom $s_on.n.ccd - mom=1 rngmsk=t | ccdmath - $s_on.mom1.ccd %1/1000
-	    ccdmom $s_on.n.ccd $s_on.rms.ccd  mom=-2
+	    ccdsub $s_on.n.ccd - 1:$nz1,$nz2:$nz | ccdmom -  $s_on.rms.ccd  mom=-2
+	    # ccdmom $s_on.n.ccd - $s_on.rms.ccd  mom=-2 arange=0:$nz1,$nz2:$nz-1
 	    
 	    ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "ifne(%1,0,2/(%1*%1),0)"
 	    ccdfits $s_on.wt2.ccd $s_on.wt2.fits fitshead=$w_fits
