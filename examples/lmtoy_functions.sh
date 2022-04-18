@@ -312,9 +312,11 @@ function lmtoy_seq1 {
 	    fitsccd $w_fits $s_on.wt.ccd axistype=1
 
 	    # get size and use nz1-nz2 to exclude from the axis for the rms (mom=-2) map
+	    # @todo should use dv/dw:
+	    # with m=nz/2/(1+dv/dw)    nz1=m nz2=nz-m
 	    nz=$(ccdhead $s_on.ccd | txtpar - p0=Size,1,4)
-	    nz1=$(nemoinp $nz/3 format=%d)
-	    nz2=$(nemoinp 2*$nz/3 format=%d)
+	    nz1=$(nemoinp $nz/4 format=%d)
+	    nz2=$(nemoinp $nz-$nz1)
 	    
 	    ccdspec $s_on.ccd > $s_on.spectab
 	    ccdstat $s_on.ccd bad=0 robust=t planes=0 > $s_on.cubestat
