@@ -49,7 +49,10 @@ plt.figure()
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
 for chassis in range(4):
-    nc = RedshiftNetCDFFile(make_generic_filename(obsnum,chassis))
+    try:
+        nc = RedshiftNetCDFFile(make_generic_filename(obsnum,chassis))
+    except:
+        continue
     if Qspec:
         nc.hdu.process_scan()
     else:
