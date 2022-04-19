@@ -52,7 +52,8 @@ for o in ????? ?????_?????; do
     log=$o/lmtoy_*$o.log
     source $rc
     date_obs=$(grep date_obs $rc | awk -F= '{print $2}')
-    rms=$(grep QAC_STATS $log | tail -1 | awk '{print $4}')
+    rms=$(grep QAC_STATS $log | txtpar - p0=-cent,1,4)
+    rms0=$(grep QAC_STATS $log | txtpar - p0=radiometer,1,3)
     n=$(expr $n + 1)
     if [ -e comments.txt ]; then
 	comments=$(grep -w ^$obsnum comments.txt | cut -d' ' -f2-)
