@@ -304,7 +304,7 @@ function lmtoy_seq1 {
 	# cleanup from a previous run
 	rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.rms.ccd $s_on.head1 \
 	   $s_on.data1 $s_on.n.fits $s_on.nfs.fits $s_on.mom0.ccd $s_on.mom1.ccd \
-	   $s_on.wt2.fits $s_on.wt3.fits $s_on.wtn.fits $s_on.wtr.fits \
+	   $s_on.wt2.fits $s_on.wt3.fits $s_on.wtn.fits $s_on.wtr.fits $s_on.wtr3.fits $s_on.wtr4.fits \
 	   $s_on.mom0.fits $s_on.mom1.fits $s_on.rms.fits
 
 	if [ -e $s_fits ]; then
@@ -333,18 +333,24 @@ function lmtoy_seq1 {
 	    ccdmath $s_on.ccd,$s_on.wtn.ccd $s_on.n.ccd '%1*%2' replicate=t
 	    ccdmom $s_on.n.ccd - mom=0	        | ccdmath - $s_on.mom0.ccd %1/1000
 	    ccdmom $s_on.n.ccd - mom=1 rngmsk=t | ccdmath - $s_on.mom1.ccd %1/1000
-	    ccdsub $s_on.n.ccd - z=1:$nz1,$nz2:$nz | ccdmom -  $s_on.rms.ccd  mom=-2
+	    #ccdsub $s_on.n.ccd - z=1:$nz1,$nz2:$nz | ccdmom -  $s_on.rms.ccd  mom=-2
+	    ccdsub $s_on.ccd - z=1:$nz1,$nz2:$nz | ccdmom -  $s_on.rms.ccd  mom=-2
 	    # ccdmom $s_on.n.ccd - $s_on.rms.ccd  mom=-2 arange=0:$nz1,$nz2:$nz-1
 	    
-	    ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "ifne(%1,0,2/(%1*%1),0)"
+	    #ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "ifne(%1,0,2/(%1*%1),0)"
+	    ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "%1/sqrt(2)"
 	    ccdfits $s_on.wt2.ccd $s_on.wt2.fits fitshead=$w_fits
 	    # e.g. [[-646,-396],[-196,54]] -> -646,-396,-196,54
 	    zslabs=$(echo $b_regions | sed 's/\[//g' | sed 's/\]//g')
 	    echo SLABS: $b_regions == $zslabs
-	    ccdslice $s_on.ccd - zslabs=$zslabs zscale=1000 | ccdmom - - mom=-2  | ccdmath - $s_on.wt3.ccd "ifne(%1,0,1/(%1*%1),0)"
-	    ccdfits $s_on.wt3.ccd $s_on.wt3.fits fitshead=$w_fits
-	    ccdmath $s_on.wt2.ccd,$s_on.wt3.ccd $s_on.wtr.ccd %2/%1
-	    ccdfits $s_on.wtr.ccd $s_on.wtr.fits fitshead=$w_fits
+	    ccdslice $s_on.ccd - zslabs=$zslabs zscale=1000 | ccdmom - - mom=-2  | ccdmath - $s_on.wt3.ccd "%1"
+	    ccdfits $s_on.wt3.ccd               $s_on.wt3.fits  fitshead=$w_fits
+	    ccdmath $s_on.wt2.ccd,$s_on.wt3.ccd $s_on.wtr.ccd   %2/%1
+	    ccdfits $s_on.wtr.ccd               $s_on.wtr.fits  fitshead=$w_fits
+	    ccdmath $s_on.rms.ccd,$s_on.wt3.ccd $s_on.wtr3.ccd  %2/%1
+	    ccdfits $s_on.wtr3.ccd              $s_on.wtr3.fits fitshead=$w_fits
+	    fitsccd radiometer.rms.fits - | ccdmath -,$s_on.rms.ccd $s_on.wtr4.ccd %2/%1
+	    ccdfits $s_on.wtr4.ccd              $s_on.wtr4.fits fitshead=$w_fits	    
 
 	    scanfits $s_fits $s_on.head1 select=header
 	    ccdfits $s_on.n.ccd  $s_on.n.fits
@@ -356,7 +362,8 @@ function lmtoy_seq1 {
 	    
 	    # QAC_STATS: 
 	    printf_red $(ccdstat $s_on.ccd bad=0 qac=t robust=t label="${s_on}-full")
-	    printf_red $(ccdsub  $s_on.ccd -  centerbox=0.5,0.5 | ccdstat - bad=0 qac=t robust=t label="${s_on}-cent")
+	    printf_red $(ccdsub  $s_on.ccd  - centerbox=0.5,0.5 | ccdstat - bad=0 qac=t robust=t label="${s_on}-cent")
+	    printf_red $(ccdsub  $s_on.wtr4.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 qac=t robust=t label="RMS/radiometer")	    
 
 	    # hack
 	    fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.specstab
@@ -374,8 +381,9 @@ function lmtoy_seq1 {
 		ccdplot $s_on.wt3.ccd  yapp=$s_on.wt3.$dev/$dev
 		ccdplot $s_on.wtn.ccd  yapp=$s_on.wtn.$dev/$dev
 		ccdplot $s_on.wtr.ccd  yapp=$s_on.wtr.$dev/$dev
+		ccdplot $s_on.wtr3.ccd yapp=$s_on.wtr3.$dev/$dev
+		ccdplot $s_on.wtr4.ccd yapp=$s_on.wtr4.$dev/$dev
 	    fi
-
 	    
 	    # Plotting via APLPY
 	    if [ 1 = 1 ]; then
@@ -391,6 +399,8 @@ function lmtoy_seq1 {
 		fitsplot.py $s_on.wt3.fits
 		fitsplot.py $s_on.wtn.fits
 		fitsplot.py $s_on.wtr.fits
+		fitsplot.py $s_on.wtr3.fits
+		fitsplot.py $s_on.wtr4.fits
 	    fi
 
 	    # remove useless files
