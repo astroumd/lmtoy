@@ -26,19 +26,19 @@ echo "    <th>"
 echo "      RestFreq"
 echo "    </th>"
 echo "    <th>"
-echo "      inttime"
+echo "      inttime [s]"
 echo "    </th>"
 echo "    <th>"
 echo "      tau"
 echo "    </th>"
 echo "    <th>"
-echo "      RMS"
+echo "      RMS [mK]"
 echo "    </th>"
 echo "    <th>"
 echo "      RMS (expected)"
 echo "    </th>"
 echo "    <th>"
-echo "      mom0"
+echo "      aPlot"
 echo "    </th>"
 echo "    <th>"
 echo "      comments"
@@ -52,8 +52,15 @@ for o in ????? ?????_?????; do
     log=$o/lmtoy_*$o.log
     source $rc
     date_obs=$(grep date_obs $rc | awk -F= '{print $2}')
-    rms=$(grep QAC_STATS $log | txtpar - p0=-cent,1,4)
-    rms0=$(grep QAC_STATS $log | txtpar - p0=radiometer,1,3)
+    if [ $instrument == "RSR" ]; then
+	# RSR
+	rms=$(grep QAC_STATS $log | txtpar - exp='1000*0.5*(%1+%2)' p0=1,4 p1=1,4)
+	rms0=$(nemoinp "1000*100/sqrt(4*32500000*$inttime)")" /100K"
+    else
+	# SEQ
+	rms=$(grep QAC_STATS $log | txtpar - p0=-cent,1,4)
+	rms0=$(grep QAC_STATS $log | txtpar - p0=radiometer,1,3)
+    fi
     n=$(expr $n + 1)
     if [ -e comments.txt ]; then
 	comments=$(grep -w ^$obsnum comments.txt | cut -d' ' -f2-)
@@ -95,6 +102,8 @@ for o in ????? ?????_?????; do
 	echo "      <A HREF=${o}/${src}_${o}.nfs.admit/x.csm.png> <IMG SRC=${o}/${src}_${o}.nfs.admit/x.csm.png height=100></A>"
     elif [ -e ${o}/${src}_${o}.mom0.png ]; then
 	echo "      <A HREF=${o}/${src}_${o}.mom0.png> <IMG SRC=${o}/${src}_${o}.mom0.png height=100></A>"
+    elif [ -e ${o}/rsr.spectra.png ]; then
+	echo "      <A HREF=${o}/rsr.spectra.png> <IMG SRC=${o}/rsr.spectra.png height=100></A>"	
     else
 	echo "      N/A"
     fi  
