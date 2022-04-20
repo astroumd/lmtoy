@@ -5,6 +5,7 @@
 #  2015-01-21T23:12:07 	33551 	 	I10565 	0.00162684 
 
 #set -e
+#set -x
 
 echo "<html>"
 echo "Summary of all obsnum's:"
@@ -54,11 +55,11 @@ for o in ????? ?????_?????; do
     date_obs=$(grep date_obs $rc | awk -F= '{print $2}')
     if [ $instrument == "RSR" ]; then
 	# RSR
-	rms=$(grep QAC_STATS $log | txtpar - exp='1000*0.5*(%1+%2)' p0=1,4 p1=1,4)
-	rms0=$(nemoinp "1000*100/sqrt(4*32500000*$inttime)")" /100K"
+	rms=$(grep QAC_STATS $log | txtpar - '1000*0.5*(%1+%2)' p0=1,4 p1=2,4)
+	rms0=$(nemoinp "$rms*sqrt(4*32500000*$inttime)/1000/100")" /100K"
     else
-	# SEQ
-	rms=$(grep QAC_STATS $log | txtpar - p0=-cent,1,4)
+	# SEQ and other mapping instruments
+	rms=$(grep QAC_STATS $log | txtpar - "%1*1000" p0=-cent,1,4)
 	rms0=$(grep QAC_STATS $log | txtpar - p0=radiometer,1,3)
     fi
     n=$(expr $n + 1)
