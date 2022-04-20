@@ -30,6 +30,7 @@ echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstra
 
 echo "<div class='container'>"
 echo "<center>"
+echo "<!--  File created by $0 -->"
 echo "<h1> Timely Analysis Products (Obsnum = $obsnum)</h1>"
 echo "</center>"
 
