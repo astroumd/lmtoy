@@ -3,6 +3,12 @@
 #    creates the README.html file for a standard RSR "TAP"
 #
 
+if [ "x$1" == "x" ]; then
+    echo "Creates the README.html file for standard RSR TAP"
+    echo "Usage:   $1  obsnum  src"
+    exit 0
+fi
+
 #            required:   2 arguments
 obsnum=$1
    src=$2
