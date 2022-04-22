@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 12-apr-2022"
+version="SLpipeline: 21-apr-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -118,7 +118,13 @@ if [ $obsnums = 0 ]; then
 else
     pdir=$pidir/${on0}_${on1}
 fi
-if [ $restart != 0 ]; then
+if [ $restart = "-1" ]; then
+    if [ -d $pdir ]; then
+	echo "Warning: restart=-1 and $pdir already exists"
+	exit 0
+    fi
+fi
+if [ $restart = "1" ]; then
     echo Cleaning $pdir in $sleep seconds....
     sleep $sleep
     rm -rf $pdir
@@ -147,12 +153,12 @@ if [ $obspgm == "Map" ] || [ $obspgm == "Lissajous" ]; then
     sleep $sleep
     if [ $obsnums = 0 ]; then
 	echo "LMTOY>> seq_pipeline.sh pdir=$pdir $*"
-	$time seq_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	$time         seq_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
     else
 	obsnum=${on0}_${on1}
 	cd $work
 	echo "LMTOY>> seq_combine.sh             $*"
-	$time seq_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	$time         seq_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
     fi
     seq_summary.sh $pdir/lmtoy_$obsnum.log
     date >> $pdir/date.log	
@@ -163,7 +169,7 @@ elif [ $instrument = "RSR" ]; then
 	first=0
 	date                             >> $pdir/date.log
     else
-	echo "Processing $obspgm RSR for $ProjectId $obsnum $src"
+	echo "Processing $obspgm RSR for $ProjectId $obsnum $src in $pdir"
 	first=1
 	mkdir -p $pdir
 	if [ $obsnums = 0 ]; then
@@ -175,13 +181,15 @@ elif [ $instrument = "RSR" ]; then
     sleep $sleep
     if [ $obsnums = 0 ]; then
 	echo "LMTOY>> rsr_pipeline.sh pdir=$pdir $*"
-	$time  rsr_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	$time         rsr_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
     else
 	obsnum=${on0}_${on1}
+	cd $work
 	echo "LMTOY>> rsr_combine.sh             $*"
-	$time rsr_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	$time         rsr_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
     fi
     rsr_summary.sh $pdir/lmtoy_$obsnum.log
+    date >> $pdir/date.log
     echo Logfile in: $pdir/lmtoy_$obsnum.log
 elif [ $instrument = "1MM" ]; then
     # @todo   only tested for one case
