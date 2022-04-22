@@ -6,7 +6,7 @@
 # trap errors
 #set -e
 
-version="SLpipeline: 7-apr-2022"
+version="SLpipeline: 21-apr-2022"
 
 rsync1=teuben@lma.astro.umd.edu:/lma1/lmt/TAP_lmt
 rsync2=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s
@@ -23,7 +23,7 @@ function printf_red {
     echo -e "${RED}$*${NC}"
 }
 
-# source lmtoy_functions.sh
+# source lmtoy_functions.sh - not needed (yet)
 
 # default input parameters
 data=${DATA_LMT:-data_lmt}
@@ -91,6 +91,7 @@ while [ $sleep -ne 0 ]; do
 	fi
 	echo "Found extra args:   $extra"
 	if [ $dryrun = 0 ]; then
+	    # @todo   ensure the rsync directory exists
 	    SLpipeline.sh obsnum=$on2 restart=1 rsync=$rsync $extra
 	else
 	    echo SLpipeline.sh obsnum=$on2 restart=1 rsync=$rsync $extra
