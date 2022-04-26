@@ -8,9 +8,9 @@
 #          2. combine the weighted maps  (comes with assumptions)     [not implemented yet]
 #             this assumes OBJECT_OBSNUM.fits and OBJECT_OBSNUM.wt.fits for all OBSNUM
 #
-#  Example:   rsr_combine.sh obsnum=33551,71610,92068 
+#  Example:   rsr_combine.sh obsnums=33551,71610,92068 
 
-version="rsr_combine: 6-jan-2022"
+version="rsr_combine: 21-apr-2022"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnums=ON1,ON2,..."
@@ -39,11 +39,11 @@ output=""
 admit=1
 #            - parameters that directly match the SLR scripts
 
-# unset a view things, since setting them will give a new meaning
+# unset a few things, since setting them will give a new meaning
 unset vlsr
 
 #             simple keyword=value command line parser for bash - don't make any changing below
-for arg in $*; do\
+for arg in $*; do
   export $arg
 done
 
@@ -67,17 +67,18 @@ if [ $obsnums = 0 ]; then
 fi
 lmtoy_decipher_obsnums
 
+echo PJT=$(pwd)
 rc=0
 for on in $obsnums1; do
-    files=$(*/$on/lmtoy_$on.rc)
+    files=(*/$on/lmtoy_$on.rc)
     echo $on : ${#files[@]} ${files[@]}
     if [ ${#files[@]} != 1 ]; then
 	echo Too many matching files for $on : ${files[@]}
 	exit 0
     fi	
     if [ $rc = 0 ]; then
-	if [ -e $file ]; then
-	    rc=$file
+	if [ -e $files ]; then
+	    rc=$files
 	fi
     fi
 done
@@ -110,6 +111,10 @@ blanking=rsr.${on0}_${on1}.blanking
    rfile=rsr.${on0}_${on1}.rfile
  badlags=rsr.${on0}_${on1}.badlags
 
+# override CLI again
+for arg in $*; do
+  export $arg
+done
 lmtoy_rsr1
 
 echo OBSNUM range: $on0 .. $on1
