@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 21-apr-2022"
+version="SLpipeline: 27-apr-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -23,7 +23,7 @@ path=${DATA_LMT:-data_lmt}
 work=${WORK_LMT:-.}
 debug=0
 restart=0
-tap=1
+tap=0
 srdp=0
 raw=0
 admit=1
