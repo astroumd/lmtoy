@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="17-apr-2022"
+lmtoy_version="27-apr-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -78,7 +78,6 @@ function lmtoy_rsr1 {
 
     # log the version
     lmtoy_version > lmtoy.rc 
-    
 
     # FIRST get the badlags - this is a file that can be edited by the user in later re-runs
     # output: rsr.$obsnum.badlags badlags.png
@@ -339,18 +338,18 @@ function lmtoy_seq1 {
 	    
 	    #ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "ifne(%1,0,2/(%1*%1),0)"
 	    ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "%1/sqrt(2)"
-	    ccdfits $s_on.wt2.ccd $s_on.wt2.fits fitshead=$w_fits
+	    ccdfits $s_on.wt2.ccd $s_on.wt2.fits fitshead=$w_fits ndim=2
 	    # e.g. [[-646,-396],[-196,54]] -> -646,-396,-196,54
 	    zslabs=$(echo $b_regions | sed 's/\[//g' | sed 's/\]//g')
 	    echo SLABS: $b_regions == $zslabs
 	    ccdslice $s_on.ccd - zslabs=$zslabs zscale=1000 | ccdmom - - mom=-2  | ccdmath - $s_on.wt3.ccd "%1"
-	    ccdfits $s_on.wt3.ccd               $s_on.wt3.fits  fitshead=$w_fits
+	    ccdfits $s_on.wt3.ccd               $s_on.wt3.fits  fitshead=$w_fits  ndim=2
 	    ccdmath $s_on.wt2.ccd,$s_on.wt3.ccd $s_on.wtr.ccd   %2/%1
-	    ccdfits $s_on.wtr.ccd               $s_on.wtr.fits  fitshead=$w_fits
+	    ccdfits $s_on.wtr.ccd               $s_on.wtr.fits  fitshead=$w_fits  ndim=2
 	    ccdmath $s_on.rms.ccd,$s_on.wt3.ccd $s_on.wtr3.ccd  %2/%1
-	    ccdfits $s_on.wtr3.ccd              $s_on.wtr3.fits fitshead=$w_fits
+	    ccdfits $s_on.wtr3.ccd              $s_on.wtr3.fits fitshead=$w_fits  ndim=2
 	    fitsccd radiometer.rms.fits - | ccdmath -,$s_on.rms.ccd $s_on.wtr4.ccd %2/%1
-	    ccdfits $s_on.wtr4.ccd              $s_on.wtr4.fits fitshead=$w_fits	    
+	    ccdfits $s_on.wtr4.ccd              $s_on.wtr4.fits fitshead=$w_fits  ndim=2
 
 	    scanfits $s_fits $s_on.head1 select=header
 	    ccdfits $s_on.n.ccd  $s_on.n.fits
@@ -387,10 +386,10 @@ function lmtoy_seq1 {
 	    
 	    # Plotting via APLPY
 	    if [ 1 = 1 ]; then
-		ccdfits $s_on.mom0.ccd  $s_on.mom0.fits
-		ccdfits $s_on.mom1.ccd  $s_on.mom1.fits
-		ccdfits $s_on.rms.ccd   $s_on.rms.fits
-		ccdfits $s_on.wtn.ccd   $s_on.wtn.fits
+		ccdfits $s_on.mom0.ccd  $s_on.mom0.fits ndim=2
+		ccdfits $s_on.mom1.ccd  $s_on.mom1.fits ndim=2
+		ccdfits $s_on.rms.ccd   $s_on.rms.fits  ndim=2
+		ccdfits $s_on.wtn.ccd   $s_on.wtn.fits  ndim=2
 		fitsplot.py $s_on.mom0.fits
 		fitsplot.py $s_on.mom1.fits
 		fitsplot.py $s_on.rms.fits
