@@ -1,0 +1,12 @@
+Summary of the option for lmtoy
+   help      - this help
+   pull      - update LMTOY and all sub-git via "git pull"
+   build     - should build database via lmtinfo.py
+
+Summary of commands in the LMTOY environment
+
+SLpipeline.sh     - pipeline (needs at least obsnum= or obsnums=)
+lmtinfo.py        - report (or build) entries of database what your $DATA_LMT has
+lmtar             - create tar file of raw data for given obsnums
+sbatch_lmtoy.sh   - help sending lots of commands to Unity's sbatch queue
+
