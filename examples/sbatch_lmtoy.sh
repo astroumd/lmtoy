@@ -71,7 +71,7 @@ cat <<EOF > $run
 #
 #SBATCH -J $runid
 #SBATCH -o slurm-%j-%x.out
-#SBATCH -t 01:00:00
+#SBATCH -t 04:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
