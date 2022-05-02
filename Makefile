@@ -293,8 +293,8 @@ bench1:
 
 bench2:
 	$(TIME) SLpipeline.sh obsnum=79448 restart=1
-	@echo "QAC_STATS: IRC+10216_79448-full 0.0154308 0.436052 -55.9662 45.8299 72030.6 0.0721877 [expected]"
-	@echo "QAC_STATS: IRC+10216_79448-cent 0.0394178 0.373722 -0.947408 15.264 67897.1 0.213951 [expected]"
+	@echo "QAC_STATS: IRC+10216_79448-full 0.00231775 0.215314 -55.9662 45.8299 72030.6 0.0721877 [expected]"
+	@echo "QAC_STATS: IRC+10216_79448-cent 0.00240622 0.183928 -0.947408 15.264 67897.1 0.213951 [expected]"
 	@echo "========================================================================================"
 	@echo xdg-open  $(WORK_LMT)/2018S1SEQUOIACommissioning/79448/README.html
 
