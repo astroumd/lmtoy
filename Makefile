@@ -141,6 +141,7 @@ sculpt:
 
 RSR_driver:
 	git clone --branch teuben1 $(URL8a)
+	(cd RSR_driver; git remote add upstream https://github.com/LMTdevs/RSR_driver)
 
 aplpy:
 	git clone --branch fix_block_reduce $(URL17)

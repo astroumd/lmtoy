@@ -3,6 +3,11 @@
 #    report the LMTOY environment
 #
 
+if [ "$1" == help ]; then
+    cat $LMTOY/docs/lmtoy.help
+    exit 0
+fi
+
 if [ -z $LMTOY ]; then
     echo "LMTOY environment not loaded (odd)"
     exit 0
