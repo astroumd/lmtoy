@@ -16,6 +16,7 @@
 if [ -e "$1" ]; then
     echo Processing lines from $1 line by line
     while IFS= read -r line; do
+	echo "LINE: $line"
 	sbatch_lmtoy.sh $line
     done < $1
     exit 1
@@ -26,12 +27,15 @@ fi
 obsnum=0
 obsnums=0
 
+# processing CLI when key=var
 for arg in $*; do
-    export $arg
+    if [[ "$arg" =~ "=" ]]; then
+	export $arg
+    fi
 done
 
 #                                        version
-version="14-apr-2022"
+version="15-apr-2022"
 
 #                                        prefix to run
 prefix="/usr/bin/time xvfb-run -a"
