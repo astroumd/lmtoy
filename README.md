@@ -47,7 +47,7 @@ if this [worked](install_results.md), activate it in your shell:
 	  
 Assuming you have the raw data in your $DATA_LMT tree, you can check an RSR benchmark with
 
-      lmtinfo.py $DATA_LMT 33551
+      lmtinfo.py 33551
 	  
 you can proceed running the SLpipeline:
 
