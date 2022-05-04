@@ -1,7 +1,7 @@
 #! /bin/bash
 #
 #    an obsnum watcher, which then runs the pipeline
-#
+#    alternatives to look into:    inotify   entr
 
 # trap errors
 #set -e
