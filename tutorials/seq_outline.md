@@ -1,5 +1,6 @@
 # Introduction to Sequoia Spectral Line data reduction
 
+**NOTE:** *This file can also be found on:* https://github.com/astroumd/lmtoy/blob/master/tutorials/seq_outline.md
 
 Some references:
 
@@ -23,7 +24,7 @@ sample data:     https://www.astro.umd.edu/~teuben/LMT/data_lmt/
 
 
 
-##  M51
+##  1. M51
 
 We have 3 fits file in  https://www.astro.umd.edu/~teuben/LMT/data_lmt/
 
@@ -35,14 +36,17 @@ We have 3 fits file in  https://www.astro.umd.edu/~teuben/LMT/data_lmt/
 
 these are related (but a demo version of) the data discussed
 in the Heyer et al. (20211;  https://arxiv.org/abs/2204.09613) paper.
+
+A few popular fits viewers are:
  
 
-        ds9:     https://sites.google.com/cfa.harvard.edu/saoimageds9/download
-      carta:     https://cartavis.org/#download
-    glnemo2:     https://projets.lam.fr/projects/glnemo2/wiki/download
+          ds9:     https://sites.google.com/cfa.harvard.edu/saoimageds9/download
+        carta:     https://cartavis.org/#download
+      glnemo2:     https://projets.lam.fr/projects/glnemo2/wiki/download
+    QFitsView:     https://www.mpe.mpg.de/~ott/QFitsView/
 
 
-## LMT (SEQ) data
+## 2. LMT (SEQ) data
 
 1. Raw Data: uncalibrated, seperate calibration and science data - in $DATA_LMT
 
@@ -68,9 +72,9 @@ be *and-ed* together. It only operates on the RAW data in $DATA_LMT
       ...
 
 
-## SLpipeline overview
+## 3. SLpipeline overview
 
-### 
+### where can the data be viewed?
 
 **TAP** = Timely Analysis Products
 
@@ -90,7 +94,7 @@ be *and-ed* together. It only operates on the RAW data in $DATA_LMT
 
 
 
-### SL Pipeline summary
+### 3.1 SL Pipeline summary
 
 The following figures are shown; in two columns representing the first flow (right column)
 and after the latest improvement (left columns).
@@ -108,16 +112,18 @@ https://www.astro.umd.edu/~teuben/work_lmt/2021-S1-US-3/97520/README.html
 9. moment-0 summing all line emission (K.km/s)
 10. RMS accross image (K)
 
-### ADMIT
+### 3.2 ADMIT
 
-### parameters
+### 3.3 parameters
 
-### log files
+### 3.4 log files
 
-### Select FITS files
+### 3.5 Select FITS files
+
+Or download the SRDP tar file
 	  
 	  
-## SLpipeline
+## 4. SLpipeline
 
 Running a single obsnum:
 
@@ -182,7 +188,7 @@ and for sequoia:
 
 	 
 
-## Installing
+## 5. Installing
 
 Installing can be as simple as this:
 
@@ -198,5 +204,9 @@ Users do this to set up your shell (e.g. in you ~/.bashrc file)
 	  
 an example of using a SEQ dataset of M51
 
-      lmtinfo.py $DATA_LMT 91112
+      lmtinfo.py grep 2018-S1-MU-8  Map 115.2712
+
+shows 14 obsnums
+
+      lmtinfo.py 91112
       SLpipeline.sh obsnum=91112
