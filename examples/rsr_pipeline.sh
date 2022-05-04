@@ -38,7 +38,7 @@ obsid=""
 newrc=0
 pdir=""
 badboard=""   # set to a comma separated list of bad boards
-badcb=""      # set to a comma separated list of (chassis,board) combinations
+badcb=""      # set to a comma separated list of (chassis/board) combinations, badcb=2/3,3/5
 #            - procedural
 admit=1
 
@@ -108,6 +108,7 @@ badlags=rsr.$obsnum.badlags       # for  rsr_driver
 rfile=rsr.$obsnum.rfile           # for  rsr_sum
 
 if [ $first == 1 ]; then
+    # bootstrap  $blanking and $rfile
     rsr_blanking $obsnum     > $blanking
     rsr_rfile    $obsnum     > $rfile
     if [[ ! -z "$badboard" ]]; then
