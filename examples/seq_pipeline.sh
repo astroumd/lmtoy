@@ -14,7 +14,7 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="seq_pipeline: 15-apr-2022"
+version="seq_pipeline: 3-may-2022"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -197,7 +197,7 @@ if [ $newrc = 1 ]; then
     echo edge=$edge                 >> $rc
 
     # source again to ensure the changed variables are in
-    source $rc
+    source ./$rc
     
 
     echo "LMTOY>> this is your startup $rc file:"
