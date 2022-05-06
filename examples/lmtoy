@@ -7,6 +7,7 @@ if [ "$1" == help ]; then
     cat $LMTOY/docs/lmtoy.help
     exit 0
 fi
+os=$(uname -s)
 
 if [ -z $LMTOY ]; then
     echo "LMTOY environment not loaded (odd)"
@@ -19,8 +20,14 @@ echo "DATA_LMT:    $DATA_LMT"
 echo "WORK_LMT:    $WORK_LMT"
 echo "python:      $(which python)  - $(python --version)"
 echo "NEMO:        $NEMO  - $(cat $NEMO/VERSION)"
-echo "lsb_release  $(lsb_release  -d)"
-
+if [ $os == Linux ]; then
+    echo "OS_release:  $os $(lsb_release  -d)"
+elif [ $os == Darwin ]; then
+    echo "OS_release:  $os $(sw_vers -productVersion)"
+else
+    echo "OS_release:  $os (unknown)"
+fi
+    
 (cd $LMTOY; make branch)
 
 
