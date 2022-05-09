@@ -65,6 +65,7 @@ help install:
 	@echo "Other useful targets:"
 	@echo "    make pull                  update all git repos"
 	@echo "    make status                view git status in all repos"
+	@echo "    make update                recompile updated repos"
 	@echo ""
 
 git:  $(GIT_DIRS)
@@ -117,6 +118,9 @@ update1: SpectralLineReduction
 	@echo "Depending on your python environment you should now do one of:"
 	@echo "   make install_lmtslr"
 	@echo "   make install_lmtslr_venv"
+
+update: update_lmtslr update_nemo
+	(cd $(NEMO); make check)
 
 SpectralLineReduction:
 	git clone $(URL1)
