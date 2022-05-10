@@ -7,6 +7,9 @@
 #set -e
 #set -x
 
+csv=summary.csv
+
+
 echo "<html>"
 echo "Summary of all obsnum's:"
 echo "<table border=1>"
@@ -46,6 +49,9 @@ echo "      comments"
 echo "    </th>"
 echo "  </tr>"
 
+echo "obsnum,date,source,inttime,tau,rms"   > $csv
+
+
 n=0
 for o in ????? ?????_?????; do
 #for o in ????? ; do
@@ -68,6 +74,7 @@ for o in ????? ?????_?????; do
     else
 	comments=""
     fi
+    echo "$obsnum,$date_obs,$src,$inttime,$tau,$rms" >> $csv
   
     echo "  <tr>"
     echo "    <td>"
@@ -121,5 +128,6 @@ if [ -e TAP ]; then
     echo "TAPs copied from LMT <A HREF=TAP>here<br>"
 fi
 echo "Last written on:  $(date)"
+echo "$csv written"
 echo "<hr>"  
 
