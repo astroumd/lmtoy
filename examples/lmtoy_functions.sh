@@ -14,7 +14,7 @@ function lmtoy_version {
 }
 
 function lmtoy_report {
-    printf_red "LMTOY>> ProjectId=$ProjectId  obsnum=$obsnum  obspgm=$obspgm  obsgoal=$obsgoal"
+    printf_red "LMTOY>> ProjectId=$ProjectId  obsnum=$obsnum  obspgm=$obspgm  obsgoal=$obsgoal oid=$oid"
     
 }
 
@@ -135,9 +135,13 @@ function lmtoy_rsr1 {
 	dev=$(yapp_query png ps)
 	tabplot  $spec1 line=1,1 color=2 ycoord=0        yapp=${spec1}.sp.$dev/$dev  debug=-1
 	tabplot  $spec2 line=1,1 color=2 ycoord=0        yapp=${spec2}.sp.$dev/$dev  debug=-1
-	tabtrend $spec1 2 | tabhist - robust=t xcoord=0  yapp=${spec1}.rms.$dev/$dev debug=-1
-	tabtrend $spec2 2 | tabhist - robust=t xcoord=0  yapp=${spec2}.rms.$dev/$dev debug=-1
+	tabhist $spec1 2              robust=t xcoord=0  yapp=${spec1}.rms0.$dev/$dev debug=-1
+	tabhist $spec2 2              robust=t xcoord=0  yapp=${spec2}.rms0.$dev/$dev debug=-1
+	tabtrend $spec1 2 | tabhist - robust=t xcoord=0  yapp=${spec1}.rms1.$dev/$dev debug=-1
+	tabtrend $spec2 2 | tabhist - robust=t xcoord=0  yapp=${spec2}.rms1.$dev/$dev debug=-1
 	# QAC_STATS
+	printf_red $(tabtrend $spec1 2 | tabstat - bad=0 robust=t qac=t)
+	printf_red $(tabtrend $spec2 2 | tabstat - bad=0 robust=t qac=t)
 	printf_red $(tabstat  $spec1 2 bad=0 robust=t qac=t)
 	printf_red $(tabstat  $spec2 2 bad=0 robust=t qac=t)
     else

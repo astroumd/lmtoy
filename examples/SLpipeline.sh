@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 27-apr-2022"
+version="SLpipeline: 4-may-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -31,6 +31,7 @@ sleep=2
 nproc=1
 rsync=""
 rc=""
+oid=""
 goal=Science
 
 if [ -z "$1" ]; then
@@ -49,6 +50,7 @@ if [ -z "$1" ]; then
     echo "  nproc=$nproc"
     echo "  rsync=$rsync"
     echo "  rc=$rc"
+    echo "  oid=$oid"
     echo "  goal=$goal    (Science, or override with: Pointing Focus)"
     echo "Optional instrument specific pipeline can be added as well but are not known here"
     echo "  To Unity:  rsync=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s"
@@ -262,9 +264,15 @@ fi
 if [ -n "$rsync" ]; then
     ls -l ${pdir}_TAP.tar
     rsync1=$(printf $rsync $ProjectId)
+    # ensure the directory exists
+    ud=$(echo $rsync1 | awk -F: '{print $1,$2}')
+    ssh ${ud[0]} mkdir -p ${ud[1]}
     echo rsync -av ${pdir}_TAP.tar $rsync1
     rsync -av ${pdir}_TAP.tar $rsync1
 fi
+
+# rename using $oid
+echo "TEST: Renaming $pdir $oid in `pwd`"
 
 # final reminder of parameters
 lmtoy_report
