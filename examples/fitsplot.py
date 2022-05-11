@@ -5,17 +5,35 @@
 import os
 import sys
 import aplpy
+import argparse
 
-#   dims for an [ra,dec,vel] cube
-dims = [0,1]   # ra-dec
-#dims = [1,2]   # dec-vel
-#dims = [0,2]   # ra-vel
 
-fitsfile = sys.argv[1]
-if len(sys.argv) > 2:
-    plane = int(sys.argv[2])
+parser = argparse.ArgumentParser(description="Simple color plot of a FITS image",
+                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument('fitsfile',    help="input FITS file",        default=None)
+parser.add_argument('--plane',     help="plane (if cube)",        default=-1,            type=int)
+parser.add_argument('--pvar',      help="plane var (x,y,z)",      default='z')
+parser.add_argument('--color',     help="color map",              default='gist_ncar')
+parser.add_argument('--ext',       help="plot type (png,pdf)",    default='png')
+
+args  = parser.parse_args()
+
+
+fitsfile = args.fitsfile
+plane    = args.plane
+color    = args.color
+ext      = args.ext
+pvar     = args.pvar
+
+if pvar == 'z':
+    dims = [0,1]   # ra-dec
+elif pvar == 'y':
+    dims = [0,2]   # ra-vel
+elif pvar == 'x':
+    dims = [1,2]   # dec-vel
 else:
-    plane = -1
+    dims = [0,1]
 
 try:
     if plane < 0:
@@ -34,7 +52,8 @@ f.show_grayscale()
 #f.show_colorscale(cmap='gist_rainbow') -- no, it's red at low
 #f.show_colorscale(cmap='jet')
 #f.show_colorscale(cmap='nipy_spectral')
-f.show_colorscale(cmap='gist_ncar')
+#f.show_colorscale(cmap='gist_ncar')
+f.show_colorscale(cmap=color)
 f.add_colorbar()
 # Cannot show beam when WCS is not celestial
 # perhaps doesn't lke VRAD, but our fits files are not good enough
@@ -50,8 +69,8 @@ f.add_grid()
 
 idx = fitsfile.rfind('.fits')
 if plane < 0:
-    pfile = fitsfile[:idx] + ".png"
+    pfile = fitsfile[:idx] + ".%s" % ext
 else:
-    pfile = fitsfile[:idx] + ".%04d.png" % plane
+    pfile = fitsfile[:idx] + ".%04d.%s" % (plane,ext)
 f.save(pfile)
 print("Writing ",pfile)
