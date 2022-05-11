@@ -29,7 +29,12 @@ except:
     
     
 f.show_grayscale()
-f.show_colorscale(cmap='gist_heat')
+#f.show_colorscale(cmap='gist_heat')
+#f.show_colorscale(cmap='rainbow')
+#f.show_colorscale(cmap='gist_rainbow') -- no, it's red at low
+#f.show_colorscale(cmap='jet')
+#f.show_colorscale(cmap='nipy_spectral')
+f.show_colorscale(cmap='gist_ncar')
 f.add_colorbar()
 # Cannot show beam when WCS is not celestial
 # perhaps doesn't lke VRAD, but our fits files are not good enough
