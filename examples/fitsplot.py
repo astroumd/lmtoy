@@ -9,13 +9,19 @@ import argparse
 
 
 parser = argparse.ArgumentParser(description="Simple color plot of a FITS image",
-                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+                                 formatter_class=argparse.RawTextHelpFormatter)
+                                 # formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+color_help =  ['Popular colors: viridis, gist_heat gist_ncar (default)',
+               '                rainbow, jet, nipy_spectral', 
+               'https://matplotlib.org/stable/tutorials/colors/colormaps.html']
+               
 
 parser.add_argument('fitsfile',    help="input FITS file",        default=None)
-parser.add_argument('--plane',     help="plane (if cube)",        default=-1,            type=int)
-parser.add_argument('--pvar',      help="plane var (x,y,z)",      default='z')
-parser.add_argument('--color',     help="color map",              default='gist_ncar')
-parser.add_argument('--ext',       help="plot type (png,pdf)",    default='png')
+parser.add_argument('--plane',     help="plane (if cube) [-1]",   default=-1,            type=int)
+parser.add_argument('--pvar',      help="plane var (x,y,[z])",    default='z')
+parser.add_argument('--color',     help="\n".join(color_help),    default='gist_ncar')
+parser.add_argument('--ext',       help="plot type ([png],pdf)",  default='png')
 
 args  = parser.parse_args()
 
@@ -43,16 +49,8 @@ try:
 except:
     print("Cannot find %s in %s" % (fitsfile,os.getcwd()))
     sys.exit(0)
-
-    
     
 f.show_grayscale()
-#f.show_colorscale(cmap='gist_heat')
-#f.show_colorscale(cmap='rainbow')
-#f.show_colorscale(cmap='gist_rainbow') -- no, it's red at low
-#f.show_colorscale(cmap='jet')
-#f.show_colorscale(cmap='nipy_spectral')
-#f.show_colorscale(cmap='gist_ncar')
 f.show_colorscale(cmap=color)
 f.add_colorbar()
 # Cannot show beam when WCS is not celestial
