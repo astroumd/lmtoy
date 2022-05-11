@@ -11,7 +11,7 @@ csv=summary.csv
 
 
 echo "<html>"
-echo "Summary of all obsnum's:"
+echo "<A HREF=$csv>Summary of all obsnum's:</A>"
 echo "<table border=1>"
 echo "  <tr>"
 echo "    <th>"
@@ -125,9 +125,9 @@ for o in ????? ?????_?????; do
 done
 echo "</table>"
 if [ -e TAP ]; then
-    echo "TAPs copied from LMT <A HREF=TAP>here<br>"
+    echo "TAPs copied from LMT <A HREF=TAP>here</A><br>"
 fi
 echo "Last written on:  $(date)"
-echo "$csv written"
+echo "<A HREF=$csv>$csv</A>"
 echo "<hr>"  
 
