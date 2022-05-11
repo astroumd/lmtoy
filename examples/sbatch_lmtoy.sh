@@ -35,7 +35,7 @@ for arg in $*; do
 done
 
 #                                        version
-version="15-apr-2022"
+version="10-may-2022"
 
 #                                        prefix to run
 prefix="/usr/bin/time xvfb-run -a"
@@ -50,10 +50,14 @@ fi
 #                                        sbatch run file
 run=run_$runid.sh
 
+#                                        max sbatch time 
+tmax=04:00:00
 
 if [ $runid == 0 ]; then
     echo "$0 version=$version"
-    echo "ERROR: Needs obsnum= or obsnums=o1,o2,...   then creates $run and uses sbatch to submit work"
+    echo "ERROR: Needs obsnum= or obsnums=o1,o2,...   then creates $run and uses sbatch to submit work."
+    echo "Alternatively, a filename with bash commands can be given. Each line will then be submitted to SLURM."
+    echo "Also note the clock limit:    SBATCH -t $tmax"
     exit 0
 fi
 
@@ -75,7 +79,7 @@ cat <<EOF > $run
 #
 #SBATCH -J $runid
 #SBATCH -o slurm-%j-%x.out
-#SBATCH -t 04:00:00
+#SBATCH -t $tmax
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
