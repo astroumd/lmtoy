@@ -8,19 +8,27 @@ import aplpy
 import argparse
 
 
-parser = argparse.ArgumentParser(description="Simple color plot of a FITS image",
+help_main = ["Simple color plot of a FITS image",
+             "with options to pick a plane (if a cube) or slicing method",
+             "colormaps and plot file extension can also be changed",
+             "plot file name is derived from input FITS file",
+             ]
+
+help_color =  ['Popular colors: viridis, gist_heat gist_ncar (default)',
+               '                rainbow, jet, nipy_spectral', 
+               'https://matplotlib.org/stable/tutorials/colors/colormaps.html']
+
+
+parser = argparse.ArgumentParser(description="\n".join(help_main),
                                  formatter_class=argparse.RawTextHelpFormatter)
                                  # formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-color_help =  ['Popular colors: viridis, gist_heat gist_ncar (default)',
-               '                rainbow, jet, nipy_spectral', 
-               'https://matplotlib.org/stable/tutorials/colors/colormaps.html']
                
 
 parser.add_argument('fitsfile',    help="input FITS file",        default=None)
 parser.add_argument('--plane',     help="plane (if cube) [-1]",   default=-1,            type=int)
 parser.add_argument('--pvar',      help="plane var (x,y,[z])",    default='z')
-parser.add_argument('--color',     help="\n".join(color_help),    default='gist_ncar')
+parser.add_argument('--color',     help="\n".join(help_color),    default='gist_ncar')
 parser.add_argument('--ext',       help="plot type ([png],pdf)",  default='png')
 
 args  = parser.parse_args()
