@@ -6,6 +6,9 @@ import os
 import sys
 import aplpy
 import argparse
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.io import fits
 
 
 help_main = ["Simple color plot of a FITS image",
@@ -30,6 +33,7 @@ parser.add_argument('--plane',     help="plane (if cube) [-1]",   default=-1,   
 parser.add_argument('--pvar',      help="plane var (x,y,[z])",    default='z')
 parser.add_argument('--color',     help="\n".join(help_color),    default='gist_ncar')
 parser.add_argument('--ext',       help="plot type ([png],pdf)",  default='png')
+parser.add_argument('--hist',      help="add histogram",          action="store_true")
 
 args  = parser.parse_args()
 
@@ -49,34 +53,67 @@ elif pvar == 'x':
 else:
     dims = [0,1]
 
+hdu = fits.open(fitsfile)
+if plane < 0:
+    data = hdu[0].data
+else:
+    data = hdu[0].data[plane]
+
+dmin = np.nanmin(data)
+dmax = np.nanmax(data)
+print("Data min/max: %g %g" % (dmin,dmax))
+print('Shape:',data.shape)
+dmin = -2
+dmax =  2
+
+bins = np.linspace(dmin, dmax, 16)
+print("Data min/max: %g %g" % (dmin,dmax))
+print("BINS: ",bins)
+
+box1 = [0.1,0.1,0.5,0.5]
+box2 = [0.1,0.1,0.8,0.8]
+box3 = [0.6,0.1,0.8,0.4]
+box3 = [0.7,0.15,0.2,0.4]
+
 try:
+    fig = plt.figure(figsize=(8, 8))
     if plane < 0:
-        f = aplpy.FITSFigure(fitsfile)
+        if args.hist:
+            f1 = aplpy.FITSFigure(fitsfile, figure=fig, subplot=box1)
+            ax_hist = fig.add_axes(box3)
+            ax_hist.hist(data, bins=bins, orientation='horizontal', facecolor='blue')
+        else:
+            f1 = aplpy.FITSFigure(fitsfile, figure=fig, subplot=box2)
     else:
-        f = aplpy.FITSFigure(fitsfile, slices=[plane], dimensions=dims)
+        if args.hist:
+            f1 = aplpy.FITSFigure(fitsfile, slices=[plane], dimensions=dims, figure=fig, subplot=box1)
+            ax_hist = fig.add_axes(box3)
+            ax_hist.hist(data, bins=bins, orientation='horizontal', facecolor='blue')
+        else:
+            f1 = aplpy.FITSFigure(fitsfile, slices=[plane], dimensions=dims, figure=fig, subplot=box2)
 except:
     print("Cannot find %s in %s" % (fitsfile,os.getcwd()))
     sys.exit(0)
     
-f.show_grayscale()
-f.show_colorscale(cmap=color)
-f.add_colorbar()
-# Cannot show beam when WCS is not celestial
-# perhaps doesn't lke VRAD, but our fits files are not good enough
-# f.add_beam()
+f1.show_grayscale()
+f1.show_colorscale(cmap=color)
+f1.add_colorbar()
 
 try:
-    f.add_beam()
+    f1.add_beam()
 except:
     pass
 
 # f.show_contour(fitsfile, levels=10)
-f.add_grid()
+f1.add_grid()
+fig.canvas.draw()
 
 idx = fitsfile.rfind('.fits')
 if plane < 0:
     pfile = fitsfile[:idx] + ".%s" % ext
 else:
     pfile = fitsfile[:idx] + ".%04d.%s" % (plane,ext)
-f.save(pfile)
+# fig.subplots_adjust(right=0.15)   
+fig.savefig(pfile)
 print("Writing ",pfile)
+# plt.show()
