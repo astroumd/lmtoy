@@ -64,13 +64,13 @@ data = data[data != 0]
 
 dmin = np.min(data)
 dmax = np.max(data)
+dmean = np.mean(data)
+dstd  = np.std(data)
+print("Data min/max/mean/sig: %g %g %g %g" % (dmin,dmax,dmean,dstd))
+dmin = dmean - 3*dstd;
+dmax = dmean + 3*dstd;
 print("Data min/max: %g %g" % (dmin,dmax))
-print('Shape:',data.shape)
-#dmin = -3
-#dmax =  3
-
 bins = np.linspace(dmin, dmax, 32)
-print("Data min/max: %g %g" % (dmin,dmax))
 if args.hist:
     print("BINS: ",bins)
 
@@ -85,14 +85,14 @@ try:
         if args.hist:
             f1 = aplpy.FITSFigure(fitsfile, figure=fig, subplot=box1)
             ax_hist = fig.add_axes(box3)
-            ax_hist.hist(data, bins=bins, orientation='horizontal', facecolor='blue')
+            ax_hist.hist(data, bins=bins, orientation='horizontal', facecolor='blue',log=True)
         else:
             f1 = aplpy.FITSFigure(fitsfile, figure=fig, subplot=box2)
     else:
         if args.hist:
             f1 = aplpy.FITSFigure(fitsfile, slices=[plane], dimensions=dims, figure=fig, subplot=box1)
             ax_hist = fig.add_axes(box3)
-            ax_hist.hist(data, bins=bins, orientation='horizontal', facecolor='blue')
+            ax_hist.hist(data, bins=bins, orientation='horizontal', facecolor='blue',log=True)
         else:
             f1 = aplpy.FITSFigure(fitsfile, slices=[plane], dimensions=dims, figure=fig, subplot=box2)
 except:
