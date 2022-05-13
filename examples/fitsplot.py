@@ -59,16 +59,20 @@ if plane < 0:
 else:
     data = hdu[0].data[plane]
 
-dmin = np.nanmin(data)
-dmax = np.nanmax(data)
+data = data[~np.isnan(data)]
+data = data[data != 0]
+
+dmin = np.min(data)
+dmax = np.max(data)
 print("Data min/max: %g %g" % (dmin,dmax))
 print('Shape:',data.shape)
-dmin = -2
-dmax =  2
+#dmin = -3
+#dmax =  3
 
-bins = np.linspace(dmin, dmax, 16)
+bins = np.linspace(dmin, dmax, 32)
 print("Data min/max: %g %g" % (dmin,dmax))
-print("BINS: ",bins)
+if args.hist:
+    print("BINS: ",bins)
 
 box1 = [0.1,0.1,0.5,0.5]
 box2 = [0.1,0.1,0.8,0.8]
@@ -92,7 +96,7 @@ try:
         else:
             f1 = aplpy.FITSFigure(fitsfile, slices=[plane], dimensions=dims, figure=fig, subplot=box2)
 except:
-    print("Cannot find %s in %s" % (fitsfile,os.getcwd()))
+    print("problem processing %s in %s" % (fitsfile,os.getcwd()))
     sys.exit(0)
     
 f1.show_grayscale()
