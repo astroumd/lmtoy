@@ -71,69 +71,77 @@ echo Writing $html # in $pwd
 
 
 # if "first" figures don't exist, copy them from existing
-first="$base2.1.png $base2.6.png $base2.2.png $base2.3.png $base3.1.png $base3.2.png $base2.5.png $base1.wt.png $base1.mom0.png $base1.rms.png"
+first="$base2.1.png $base2.6.png $base2.2.png $base2.3.png $base3.1.png $base3.2.png $base2.5.png $base1.wt.png $base1.mom0.png $base1.peak.png $base1.rms.png"
 for f in $first; do
-    if [ ! -e first_$f ]; then
-	cp $f  first_$f
+    if [ -e $f ]; then
+	if [ ! -e first_$f ]; then
+	    cp $f  first_$f
+	fi
     fi
 done
-
 
 echo "<H1> SL Pipeline summary for $ProjectId/$obsnum for $src </H1>"      > $html
 echo "The figures in the right column are those generated from the first" >> $html
 echo "pass of the pipeline, those on the left are the latest iteration."  >> $html
 echo "<br>"                                                               >> $html
-echo "If no figure shown, the pipeline did not produce it"                >> $html
+echo "If no figure shown, the pipeline did not produce it,"               >> $html
+echo "e.g. a combination obsnums will not have figures 1..7"              >> $html
 echo "<OL>"                                                               >> $html
 
-# 1.
-echo "  <LI> Sky coverage for all 16 beams"                               >> $html
-echo "       (sky coordinates in arcsec w.r.t. map center)"               >> $html
 if [ -e $base2.1.png ]; then
-echo "           <br><IMG SRC=$base2.1.png>"                              >> $html
-echo "         <IMG SRC=first_$base2.1.png>"                              >> $html
-else
-echo "         N/A"                                                       >> $html
-fi
-
-# 2.
-echo "  <LI> Tsys for each beam in 4x4 panels"                            >> $html
-echo "       (VLSR vs. TA*)"                                              >> $html
-if [ -e $base2.6.png ]; then
-echo "           <br><IMG SRC=$base2.6.png>"                              >> $html
-echo "         <IMG SRC=first_$base2.6.png>"                              >> $html
-fi
+    # assume single obsnum
+    # 1.
+    echo "  <LI> Sky coverage for all 16 beams"                               >> $html
+    echo "       (sky coordinates in arcsec w.r.t. map center)"               >> $html
+    echo "           <br><IMG SRC=$base2.1.png>"                              >> $html
+    echo "         <IMG SRC=first_$base2.1.png>"                              >> $html
     
-
-# 3.
-echo "  <LI> Waterfall plot for each beam in 4x4 panels"                  >> $html
-echo "       (VLSR vs. SAMPLE TIME)"                                      >> $html
-echo "           <br><IMG SRC=$base2.2.png>"                              >> $html
-echo "         <IMG SRC=first_$base2.2.png>"                              >> $html
-
-# 4.
-echo "  <LI> RMS $b_order order baseline fit (in K) for each beam"        >> $html
-echo "           <br><IMG SRC=$base2.3.png>"                              >> $html
-echo "         <IMG SRC=first_$base2.3.png>"                              >> $html
-
-# 5.
-echo "  <LI> Spectra for the whole map, overplotted for each beam"        >> $html
-echo "           <br><IMG SRC=$base3.1.png>"                              >> $html
-echo "         <IMG SRC=first_$base3.1.png>"                              >> $html
-
-# 6.
-echo "  <LI> Spectra for center beam, overplotted for each beam"          >> $html
-echo "           <br><IMG SRC=$base3.2.png>"                              >> $html
-echo "         <IMG SRC=first_$base3.2.png>"                              >> $html
-
-# 7.
-echo "  <LI> mean_spectra_plot for each beam"                             >> $html
-echo "           <br><IMG SRC=$base2.5.png>"                              >> $html
-echo "         <IMG SRC=first_$base2.5.png>"                              >> $html
+    # 2.
+    echo "  <LI> Tsys for each beam in 4x4 panels"                            >> $html
+    echo "       (VLSR vs. TA*)"                                              >> $html
+    echo "           <br><IMG SRC=$base2.6.png>"                              >> $html
+    echo "         <IMG SRC=first_$base2.6.png>"                              >> $html
+    
+    # 3.
+    echo "  <LI> Waterfall plot for each beam in 4x4 panels"                  >> $html
+    echo "       (VLSR vs. SAMPLE TIME)"                                      >> $html
+    echo "           <br><IMG SRC=$base2.2.png>"                              >> $html
+    echo "         <IMG SRC=first_$base2.2.png>"                              >> $html
+    
+    # 4.
+    echo "  <LI> RMS $b_order order baseline fit (in K) for each beam"        >> $html
+    echo "           <br><IMG SRC=$base2.3.png>"                              >> $html
+    echo "         <IMG SRC=first_$base2.3.png>"                              >> $html
+    
+    # 5.
+    echo "  <LI> Spectra for the whole map, overplotted for each beam"        >> $html
+    echo "           <br><IMG SRC=$base3.1.png>"                              >> $html
+    echo "         <IMG SRC=first_$base3.1.png>"                              >> $html
+    
+    # 6.
+    echo "  <LI> Spectra for center beam, overplotted for each beam"          >> $html
+    echo "           <br><IMG SRC=$base3.2.png>"                              >> $html
+    echo "         <IMG SRC=first_$base3.2.png>"                              >> $html
+    
+    # 7.
+    echo "  <LI> mean_spectra_plot for each beam"                             >> $html
+    echo "           <br><IMG SRC=$base2.5.png>"                              >> $html
+    echo "         <IMG SRC=first_$base2.5.png>"                              >> $html
+else
+    echo "  <LI> N/A"  >> $html
+    echo "  <LI> N/A"  >> $html
+    echo "  <LI> N/A"  >> $html
+    echo "  <LI> N/A"  >> $html
+    echo "  <LI> N/A"  >> $html
+    echo "  <LI> N/A"  >> $html
+    echo "  <LI> N/A"  >> $html
+    echo "  <LI> N/A"  >> $html
+    echo "  <br>obsnums=${obsnums}<br><br>"                               >> $html
+fi    
 
 # 8.
 echo "  <LI> Sky coverage as defined how often sky pixel was seen"        >> $html
-echo "       (sky pixels are half of LMT beam size)"                      >> $html
+echo "       (sky pixels are about half of LMT beam size)"                >> $html
 echo "           <br><IMG SRC=$base1.wt.png>"                             >> $html
 echo "         <IMG SRC=first_$base1.wt.png>"                             >> $html
 
@@ -143,6 +151,12 @@ echo "           <br><IMG SRC=$base1.mom0.png>"                           >> $ht
 echo "         <IMG SRC=first_$base1.mom0.png>"                           >> $html
 
 # 10.
+echo "  <LI> Peak temperature [K]"                                        >> $html
+echo "           <br><IMG SRC=$base1.peak.png>"                           >> $html
+echo "         <IMG SRC=first_$base1.peak.png>"                           >> $html
+echo "</OL>"                                                              >> $html
+
+# 11.
 echo "  <LI> RMS estimate [K]"                                            >> $html
 echo "           <br><IMG SRC=$base1.rms.png>"                            >> $html
 echo "         <IMG SRC=first_$base1.rms.png>"                            >> $html
