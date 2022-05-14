@@ -69,6 +69,7 @@ if [ "$(which sbatch)" != "/usr/bin/sbatch" ]; then
 fi
 
 #                     do all sbatch work in $WORK_LMT/sbatch
+mkdir -p $WORK_LMT/sbatch
 cd $WORK_LMT/sbatch
 #             
 
