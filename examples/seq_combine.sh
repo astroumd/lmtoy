@@ -128,6 +128,7 @@ s_nc=../../$(echo $ons | sed 's| |,../../|g')
 mkdir -p $pdir
 cp $rc $pdir/lmtoy_${on0}_${on1}.rc
 obsnum=${on0}_${on1}
+echo obsnums=$obsnums >> $pdir/lmtoy_${on0}_${on1}.rc
 echo obsnum=${obsnum} >> $pdir/lmtoy_${on0}_${on1}.rc
 cd $pdir
 
