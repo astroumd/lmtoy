@@ -35,7 +35,7 @@ for arg in $*; do
 done
 
 #                                        version
-version="10-may-2022"
+version="14-may-2022"
 
 #                                        prefix to run
 prefix="/usr/bin/time xvfb-run -a"
