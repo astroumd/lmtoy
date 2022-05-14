@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="27-apr-2022"
+lmtoy_version="14-may-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -308,7 +308,8 @@ function lmtoy_seq1 {
 	rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.rms.ccd $s_on.head1 \
 	   $s_on.data1 $s_on.n.fits $s_on.nfs.fits $s_on.mom0.ccd $s_on.mom1.ccd \
 	   $s_on.wt2.fits $s_on.wt3.fits $s_on.wtn.fits $s_on.wtr.fits $s_on.wtr3.fits $s_on.wtr4.fits \
-	   $s_on.mom0.fits $s_on.mom1.fits $s_on.rms.fits
+	   $s_on.mom0.fits $s_on.mom1.fits $s_on.rms.fits \
+	   $s_on.peak.fits $s_on.ccd.fits
 
 	if [ -e $s_fits ]; then
 	    fitsccd $s_fits $s_on.ccd    axistype=1
@@ -336,6 +337,7 @@ function lmtoy_seq1 {
 	    ccdmath $s_on.ccd,$s_on.wtn.ccd $s_on.n.ccd '%1*%2' replicate=t
 	    ccdmom $s_on.n.ccd - mom=0	        | ccdmath - $s_on.mom0.ccd %1/1000
 	    ccdmom $s_on.n.ccd - mom=1 rngmsk=t | ccdmath - $s_on.mom1.ccd %1/1000
+	    ccdmom $s_on.n.ccd - mom=8	        | ccdmath - $s_on.peak.ccd %1/1000	    
 	    #ccdsub $s_on.n.ccd - z=1:$nz1,$nz2:$nz | ccdmom -  $s_on.rms.ccd  mom=-2
 	    ccdsub $s_on.ccd - z=1:$nz1,$nz2:$nz | ccdmom -  $s_on.rms.ccd  mom=-2
 	    # ccdmom $s_on.n.ccd - $s_on.rms.ccd  mom=-2 arange=0:$nz1,$nz2:$nz-1
@@ -377,6 +379,7 @@ function lmtoy_seq1 {
 	    if [ $viewnemo = 1 ]; then
 		dev=$(yapp_query png ps)
 		ccdplot $s_on.mom0.ccd yapp=$s_on.mom0.$dev/$dev
+		ccdplot $s_on.peak.ccd yapp=$s_on.peak.$dev/$dev		
 		ccdplot $s_on.mom1.ccd yapp=$s_on.mom1.$dev/$dev
 		ccdplot $s_on.rms.ccd  yapp=$s_on.rms.$dev/$dev
 		ccdplot $s_on.wt.ccd   yapp=$s_on.wt.$dev/$dev
@@ -391,26 +394,26 @@ function lmtoy_seq1 {
 	    # Plotting via APLPY
 	    if [ 1 = 1 ]; then
 		ccdfits $s_on.mom0.ccd  $s_on.mom0.fits ndim=2
+		ccdfits $s_on.peak.ccd  $s_on.peak.fits ndim=2
 		ccdfits $s_on.mom1.ccd  $s_on.mom1.fits ndim=2
 		ccdfits $s_on.rms.ccd   $s_on.rms.fits  ndim=2
 		ccdfits $s_on.wtn.ccd   $s_on.wtn.fits  ndim=2
-		fitsplot.py $s_on.mom0.fits
-		fitsplot.py $s_on.mom1.fits
-		fitsplot.py $s_on.rms.fits
-		fitsplot.py $s_on.wt.fits
-		fitsplot.py $s_on.wt2.fits
-		fitsplot.py $s_on.wt3.fits
-		fitsplot.py $s_on.wtn.fits
-		fitsplot.py $s_on.wtr.fits
-		fitsplot.py $s_on.wtr3.fits
-		fitsplot.py $s_on.wtr4.fits
+		fitsplot.py $s_on.mom0.fits --hist
+		fitsplot.py $s_on.peak.fits --hist
+		fitsplot.py $s_on.mom1.fits --hist
+		fitsplot.py $s_on.rms.fits --hist
+		fitsplot.py $s_on.wt.fits --hist
+		fitsplot.py $s_on.wt2.fits --hist
+		fitsplot.py $s_on.wt3.fits --hist
+		fitsplot.py $s_on.wtn.fits --hist
+		fitsplot.py $s_on.wtr.fits --hist
+		fitsplot.py $s_on.wtr3.fits --hist
+		fitsplot.py $s_on.wtr4.fits --hist
 	    fi
 
 	    # remove useless files
 	    if [ $clean -eq 1 ]; then
 		rm -f $s_on.n.fits $s_on.head1 $s_on.data1 *.ccd
-		#$s_on.ccd $s_on.wt.ccd $s_on.wt2.ccd  $s_on.wt3.ccd \
-	        #   $s_on.n.ccd $s_on.wtr.ccd
 	    fi
 	    
 	    echo "LMTOY>> Created $s_on.nf.fits and $s_on.nfs.fits"
