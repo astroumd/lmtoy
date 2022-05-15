@@ -13,14 +13,14 @@
 #    22-jul-2021:     better bootstrap on missing DATA_LMT
 #     2-dec-2021:     add admit, use embedded DATA_LMT and WORK_LMT if none else given
 
-version=29-jan-2021
+version=15-may-2022
 
 
 lmtoy=lmtoy                       # root directory name where to install (probably should not change it)
 branch=master                     # branch
 wget=wget                         # use wgetc if you have my caching version
 venv=0                            # set to 1 if you want to bypass a new anaconda3 and use venv
-nemo=1                            # set to 0 if you don't need NEMO (not recommended)
+nemo=1                            # set to 0 if you don't need NEMO (not recommended) or use existing $NEMO
 pgplot=1                          # set to 1 if you want PGPLOT in NEMO, instead of simple PS driver
 data_lmt=${DATA_LMT:-data_lmt}    # give sensible default for $DATA_LMT   lma:/lma1/lmt/data_lmt/
 work_lmt=${WORK_LMT:-work_lmt}    # give sensible default for $WORK_LMT
@@ -31,7 +31,7 @@ docs=0                            # make docs? (produces the html tree)
 debug=0                           # shell in debug mode?
 
 #             simple keyword=value command line parser for bash - don't make any changing below
-for arg in $*; do\
+for arg in $*; do
   export $arg
 done
 
@@ -56,6 +56,11 @@ rm -rf $lmtoy
 git clone https://github.com/astroumd/lmtoy $lmtoy
 cd $lmtoy
 git checkout $branch
+
+#  symlinks where we allow them
+if [ -e $nemo/nemo_start.sh ]; then
+    ln -s $nemo nemo
+fi
 
 #  get everything we need from github
 make git
