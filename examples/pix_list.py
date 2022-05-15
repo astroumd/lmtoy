@@ -10,6 +10,10 @@ if len(sys.argv) == 1:
     
 pl=sys.argv[1]
 
+if pl == '-h' or pl == '--help':
+    print("Construct a pix_list with beams taken out, e.g. use -4,5,6")
+    sys.exit(0)
+
 bl = list(range(1,17))
 
 if pl[0] == '-':
