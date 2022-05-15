@@ -10,7 +10,7 @@
 #
 
 
-version="seq_combine: 6-apr-2022"
+version="seq_combine: 14-may-2022"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=ON1,ON2,..."
@@ -128,7 +128,8 @@ s_nc=../../$(echo $ons | sed 's| |,../../|g')
 mkdir -p $pdir
 cp $rc $pdir/lmtoy_${on0}_${on1}.rc
 obsnum=${on0}_${on1}
-echo obsnum=${obsnum} >> $pdir/lmtoy_${on0}_${on1}.rc
+echo obsnums=${obsnums} >> $pdir/lmtoy_${on0}_${on1}.rc
+echo obsnum=${obsnum}   >> $pdir/lmtoy_${on0}_${on1}.rc
 cd $pdir
 
 s_on=${src}_${on0}_${on1}
