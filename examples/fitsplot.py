@@ -34,6 +34,7 @@ parser.add_argument('--pvar',      help="plane var (x,y,[z])",    default='z')
 parser.add_argument('--color',     help="\n".join(help_color),    default='gist_ncar')
 parser.add_argument('--ext',       help="plot type ([png],pdf)",  default='png')
 parser.add_argument('--hist',      help="add histogram",          action="store_true")
+parser.add_argument('--size',      help="plot size (inch)",       default=8,             type=float)
 
 args  = parser.parse_args()
 
@@ -43,6 +44,7 @@ plane    = args.plane
 color    = args.color
 ext      = args.ext
 pvar     = args.pvar
+size     = args.size
 
 if pvar == 'z':
     dims = [0,1]   # ra-dec
@@ -74,27 +76,26 @@ bins = np.linspace(dmin, dmax, 32)
 if args.hist:
     print("BINS: ",bins)
 
-box1 = [0.1,0.1,0.5,0.5]
-box2 = [0.1,0.1,0.8,0.8]
-box3 = [0.6,0.1,0.8,0.4]
-box3 = [0.7,0.15,0.2,0.4]
+box1 = [0.1,0.1,0.8,0.8]   # full size, image
+box2 = [0.1,0.1,0.5,0.5]   # left side, image
+box3 = [0.7,0.15,0.2,0.4]  # right side, histo
 
 try:
-    fig = plt.figure(figsize=(8, 8))
+    fig = plt.figure(figsize=(size, size))
     if plane < 0:
         if args.hist:
-            f1 = aplpy.FITSFigure(fitsfile, figure=fig, subplot=box1)
+            f1 = aplpy.FITSFigure(fitsfile, figure=fig, subplot=box2)
             ax_hist = fig.add_axes(box3)
             ax_hist.hist(data, bins=bins, orientation='horizontal', facecolor='blue',log=True)
         else:
-            f1 = aplpy.FITSFigure(fitsfile, figure=fig, subplot=box2)
+            f1 = aplpy.FITSFigure(fitsfile, figure=fig, subplot=box1)
     else:
         if args.hist:
-            f1 = aplpy.FITSFigure(fitsfile, slices=[plane], dimensions=dims, figure=fig, subplot=box1)
+            f1 = aplpy.FITSFigure(fitsfile, slices=[plane], dimensions=dims, figure=fig, subplot=box2)
             ax_hist = fig.add_axes(box3)
             ax_hist.hist(data, bins=bins, orientation='horizontal', facecolor='blue',log=True)
         else:
-            f1 = aplpy.FITSFigure(fitsfile, slices=[plane], dimensions=dims, figure=fig, subplot=box2)
+            f1 = aplpy.FITSFigure(fitsfile, slices=[plane], dimensions=dims, figure=fig, subplot=box1)
 except:
     print("problem processing %s in %s" % (fitsfile,os.getcwd()))
     sys.exit(0)
