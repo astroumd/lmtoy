@@ -154,7 +154,6 @@ echo "         <IMG SRC=first_$base1.mom0.png>"                           >> $ht
 echo "  <LI> Peak temperature [mK]"                                       >> $html
 echo "           <br><IMG SRC=$base1.peak.png>"                           >> $html
 echo "         <IMG SRC=first_$base1.peak.png>"                           >> $html
-echo "</OL>"                                                              >> $html
 
 # 11.
 echo "  <LI> RMS estimate [mK]"                                           >> $html
