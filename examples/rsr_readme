@@ -1,6 +1,8 @@
 #! /usr/bin/env bash
 #
 #    creates the README.html file for a standard RSR "TAP"
+#    https://www.lmtobservatory.org/help/user/calculation_rsr   (factor 1.291 is also explained here)
+#    
 #
 
 if [ "x$1" == "x" ]; then
@@ -19,7 +21,7 @@ source=`grep "Source:" $file |awk '{print $NF}'`
 RA=`grep "RA:" $file |awk '{print $NF}'`
 DEC=`grep "DEC:" $file |awk '{print $NF}'`
 itime=`grep "Integration Time:" $file |awk '{printf("%.2f",$(NF-1))}'`
-rms=$(grep Integration rsr.$obsnum.driver.sum.txt | awk '{printf("%.3f mK\n",1000*100/sqrt(4*32500000*$4))}')
+rms=$(grep Integration $file | awk '{printf("%.3f mK\n",1.291*1000*100/sqrt(3*31000000*$4))}')
 tau=`grep "Opacity" $file |awk '{printf $NF}'`
 inobs=`grep "Input Observations:" $file |awk '{print $NF}'`
 reddate=`grep "Date of Reduction" $file |awk '{print $NF}'`
@@ -130,7 +132,7 @@ echo "<h4 class='card-title'>Spectrum from rsr_sum: (Author: M.Yun)</h4>"
 echo "<p class='card-text'>The rsr_sum version of the average spectrum has optional blanking and sections to avoid for baseline fitting."
 echo "Below are the spectra from rsr_sum (orange) and rsr_driver (blue). If there is a significant difference between the two, then there is some subtle difference in how the scripts work.</p>"
 echo "<p class='card-text'>Statistics on individual spectra</p><table class='table table-borderless w-auto'><tbody>$qac_stats"
-echo "<tr><td>Expected noise for Tsys=100 K</td><td class='text-start'>rms=$rms </td></tr></tbody></table>"
+echo "<tr><td>Expected noise (3C) for Tsys=100K</td><td class='text-start'>rms=$rms </td></tr></tbody></table>"
 echo "<div class='row'>"
 echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra.png'><img src='rsr.spectra.png' width='90%'></a><figcaption>The rsr_driver (blue) and rsr_sum (orange) spectra combined in a single plot</figcaption></figure></div>"
 echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra_co.png'><img src='rsr.spectra_co.png' width='90%'></a><figcaption>Zoomed in version of combined spectral plot [rsr_driver (blue), rsr_sum (orange)].</figcaption></figure></div>"
