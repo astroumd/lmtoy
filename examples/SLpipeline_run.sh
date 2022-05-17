@@ -6,7 +6,7 @@
 # trap errors
 #set -e
 
-version="SLpipeline: 27-apr-2022"
+version="SLpipeline: 17-may-2022"
 
 rsync1=teuben@lma.astro.umd.edu:/lma1/lmt/TAP_lmt
 rsync2=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s
@@ -91,7 +91,7 @@ while [ $sleep -ne 0 ]; do
 	    # @todo   ensure the rsync directory exists
 	    SLpipeline.sh obsnum=$on2 restart=1 tap=1 rsync=$rsync $extra
 	    source $WORK_LMT/*/$on2/lmtoy_${on2}.rc
-	    (cd $ProjectId; mk_summary1.sh > README.html)
+	    (cd $WORK_LMT/$ProjectId; mk_summary1.sh > README.html)
 	else
 	    echo SLpipeline.sh obsnum=$on2 restart=1 rsync=$rsync $extra
 	fi
