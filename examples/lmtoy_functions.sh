@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="14-may-2022"
+lmtoy_version="17-may-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -140,8 +140,8 @@ function lmtoy_rsr1 {
 	tabtrend $spec1 2 | tabhist - robust=t xcoord=0  yapp=${spec1}.rms1.$dev/$dev debug=-1
 	tabtrend $spec2 2 | tabhist - robust=t xcoord=0  yapp=${spec2}.rms1.$dev/$dev debug=-1
 	# QAC_STATS
-	printf_red $(tabtrend $spec1 2 | tabstat - bad=0 robust=t qac=t)
-	printf_red $(tabtrend $spec2 2 | tabstat - bad=0 robust=t qac=t)
+	printf_red $(tabtrend $spec1 2 | tabstat - bad=0 robust=t qac=t label="trend_driver")
+	printf_red $(tabtrend $spec2 2 | tabstat - bad=0 robust=t qac=t label="trend_blanking")
 	printf_red $(tabstat  $spec1 2 bad=0 robust=t qac=t)
 	printf_red $(tabstat  $spec2 2 bad=0 robust=t qac=t)
     else
