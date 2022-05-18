@@ -12,14 +12,14 @@ operating at mm wavelengths. See also http://lmtgtm.org/
 LMT software is very instrument specific:
 
 
-* LMT heterodyne: SEQUOIA, MSIP 1mm and OMAyA
-  * [LMTSLR](https://github.com/lmt-heterodyne/SpectralLineReduction)   (SpectralLineReduction)  
+* LMT heterodyne: SEQUOIA, MSIP 1mm and future OMAyA
+  * [LMTSLR](https://github.com/lmt-heterodyne/SpectralLineReduction)   (SpectralLineReduction)
 
 * RSR (Redshift Search Receiver)
   * [dreampy3](https://github.com/lmt-heterodyne/dreampy3)
   * [RSR_driver](https://github.com/LMTdevs/RSR_driver)
 
-* TolTEC (later in 2021) - [private](https://github.com/toltec-astro)
+* TolTEC - [private](https://github.com/toltec-astro)
   * TolTecA
   * CitLali
   * Dash
@@ -30,26 +30,29 @@ LMT software is very instrument specific:
 * MUSCAT: 1mm camera (Mexico-UK)
   *  4' FOV with 5.5" resolution
   *  Will use TolTecA
+  
+* CHARM ( <1mm) RAL space (Mexico-UK )
+  * 345 GHz
 
 
 ## Installation
 
 There are expanded notes in [INSTALL.md](INSTALL.md), and also check out the
 Makefile for specific targets that simplify the install and updates. Probably the most automated/simple
-way to install (if you have all the preconditions, most importantly the **cfitsio** and **netcdf** library) is:
+way to install (if you have all the preconditions, most importantly the **cfitsio**, **netcdf** and **pgplot** library) is:
 
       wget https://astroumd.github.io/lmtoy/install_lmtoy
       bash install_lmtoy
 
-if this [worked](install_results.md), activate it in your shell:
+if this [worked](install_results.md), activate it in your terminal/shell:
 
       source lmtoy/lmtoy_start.sh
 	  
-Assuming you have the raw data in your $DATA_LMT tree, you can check an RSR benchmark with
+Assuming you have the raw data in your $DATA_LMT tree, you can check an RSR benchmark with the following shell command
 
       lmtinfo.py 33551
 	  
-you can proceed running the SLpipeline:
+you can proceed running the SLpipeline, again from the terminal:
 
       SLpipeline.sh obsnum=33551
 	  
@@ -81,7 +84,7 @@ The LMT software will typically calibrate and convert (grid) these data to the m
 
 ## Manual
 
-A manual is in preparation, but is far from done. Here is a link of which the contents changes faster than
+A manual is in preparation. Here is a link of which the contents changes faster than
 the github source. At the bottom of the index page it lists the last built time.
 https://www.astro.umd.edu/~teuben/LMT/lmtoy/html
        
