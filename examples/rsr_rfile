@@ -8,8 +8,10 @@ obsnum=$1
 # source lmtoy_$obsnum.rc
 
 echo '# This is an rfile for rsr_driver'
+echo "#    created by $0"
 echo '#  only full obsnum,chassis,band combinations can be removed from the spectrum sum'
-echo '#  obsnum,chassis,band (the comma is currently required)'
+echo '#  OBSNUM,CHASSIS,BOARD (the comma is currently required)'
 echo '# Example:'
 echo "# $obsnum,0,0      # comments here" 
 echo "# $obsnum,3,5"
+echo "# ----"
