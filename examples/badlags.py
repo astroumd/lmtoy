@@ -2,8 +2,8 @@
 # 
 # This is the bad channel searcher, formerly called seek_bad_channels.py
 #
-# F P Schloerb 
-# March 4, 2014
+# F P Schloerb   March 4, 2014
+# P Teuben       2021/2022 changes for SLpipeline
 #
 # Revision 2014-03-04: Fixed problem with variable for number of channels.  Now always do 256 channels
 #          2021-02-23: Converted for dreampy3/python3
@@ -93,6 +93,8 @@ plot_max = 10
 
 # set the threshold for a bad channel (3 is not bad, but look at plot and experiment!)
 bc_threshold = 3.0
+bc_threshold = 2.0
+
 
 # min RMS_diff needed for full acceptance
 rms_min = 0.01
@@ -210,6 +212,7 @@ print('-----------------------')
 
 ftab = open('rsr.badlags','w')
 ftab.write('# Bad Channel Threshold = %6.1f\n'%(bc_threshold))
+ftab.write('# Note these are chassis/board/channel numbers')
 ftab.write('# -----------------------\n')
 ftab.write('#  c  b  ch   scan metric\n')
 ftab.write('# -----------------------\n')
