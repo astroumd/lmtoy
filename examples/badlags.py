@@ -2,6 +2,11 @@
 # 
 # This is the bad channel searcher, formerly called seek_bad_channels.py
 #
+# It does two things:
+#     - identify lags where the RMS is too high, (or has a spike - @todo)
+#     - identify Chassic/Board combos that should be flagged alltogether
+#       (the same as badcb= keyword to the pipeline)
+#
 # F P Schloerb   March 4, 2014
 # P Teuben       2021/2022 changes for SLpipeline
 #
@@ -10,6 +15,7 @@
 #          2021-10-28: write badlags file. use docopt for CLI parsing
 #          2021-11-30: better labeling, rms_diff masking ?
 #          2021-12-01: renamed to badlags.py
+#          2022-05-18: also flag when rms < bc_low
 #
 #
 # Possible CLI:
@@ -47,10 +53,10 @@ from matplotlib import pyplot as pl
 from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 
 
-def rmsdiff(data):
+def rmsdiff(data, robust=True):
     """   guess the RMS based on a robust neighbor differences
     """
-    if True:
+    if robust:
         factor = 2.0
         Q1 = np.percentile(data,25)
         Q3 = np.percentile(data,75)
@@ -85,20 +91,22 @@ nchassis = 4
 nboards  = 6
 nchan    = 256
 chassis_list = (0,1,2,3)     # CHASSIS IDENTIFIERS
-board_list   = (0,1,2,3,4,5) # BOARD (NOT FREQUENCY BAND) IDENTIFIERS 
+board_list   = (0,1,2,3,4,5) # BOARD (NOT FREQUENCY BAND) IDENTIFIERS
 
 # The program produces a plot showing the maximum value of the standard deviation
 # for each channel.  You can set the maximum for the y axis in the plots (10 is good) 
 plot_max = 10
 
 # set the threshold for a bad channel (3 is not bad, but look at plot and experiment!)
-bc_threshold = 3.0
 bc_threshold = 2.0
+bc_threshold = 3.0
+bc_threshold = 2.5
+bc_low = 0.01
 
 
-# min RMS_diff needed for full acceptance
+# min RMS_diff needed for full acceptance of a C/B pair
 rms_min = 0.01
-rms_max = 0.1
+rms_max = 0.2
 
 # more debugging output ?
 debug = True
@@ -145,6 +153,7 @@ else:
 
 # set up an array to hold the maximum values of std dev for a channel
 findmax = np.zeros((nchassis,nboards,nchan))
+findmin = np.ones((nchassis,nboards,nchan)) * 999
 # set up an array to hold obsnum for the maximum value
 scanmax = np.zeros((nchassis,nboards,nchan))
 
@@ -184,6 +193,8 @@ for iobs in range(len(o_list)):
                 if sigma>findmax[ic,ib,chan]:
                     scanmax[ic,ib,chan] = o_list[iobs]
                     findmax[ic,ib,chan] = sigma
+                if sigma<findmin[ic,ib,chan]:
+                    findmin[ic,ib,chan] = sigma
             if debug:
                 for chan in range(1,nchan-1):
                     if findmax[ic,ib,chan] > bc_threshold:
@@ -237,6 +248,12 @@ for ic in range(nchassis):
                 print(msg)
                 ftab.write("%s\n" % msg)
                 peaks.append((ic,ib,chan))
+            if findmin[ic,ib,chan] < bc_low:
+                msg = '%2d %2d %3d %6d %6.1f [min]'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmin[ic,ib,chan])
+                print(msg)
+                ftab.write("%s [min]\n" % msg)
+                peaks.append((ic,ib,chan))
+                
 
 if True:        
     plot_max = bc_threshold
@@ -252,7 +269,9 @@ if debug:
             print('RMS_diff %2d %2d  %.3f %s' % (ic,ib,rms0,note))
             
 
+
 # for each chassis and each board, we plot maximum standard deviations found for all channels
+# @todo  plot the badlags
 nbadcb = 0
 for ic in range(nchassis):
     for ib1 in range(nboards):
@@ -274,6 +293,11 @@ for ic in range(nchassis):
             pl.title('chassis=%d band=%d'%(chassis_list[ic],board_list[b2b[ib]]),fontsize=6)                    
         # pl.title('chassis=%d board=%d'%(chassis_list[ic],board_list[ib]),fontsize=6)
         # pl.axis([-10,nchan+10,0,plot_max])
+        for p in peaks:
+            if ic == p[0] and ib == p[1]:
+                pl.plot([p[2],p[2]], [0.0, 0.2], '-', color='black')
+                    
+        
         ax.set(xlim=(-10, nchan+10), ylim=(0,plot_max))
         ax.set(xticks=(0,64,128,192,256))
         if ib==0 and ic==nchassis-1:
