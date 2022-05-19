@@ -222,6 +222,7 @@ print(' c  b  ch   scan metric')
 print('-----------------------')
 
 ftab = open('rsr.badlags','w')
+ftab.write('# File written by %s\n' % sys.argv[0]);
 ftab.write('# Bad Channel Threshold = %6.1f\n'%(bc_threshold))
 ftab.write('# Note these are chassis/board/channel numbers')
 ftab.write('# -----------------------\n')
