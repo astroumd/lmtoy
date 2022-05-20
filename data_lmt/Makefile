@@ -20,6 +20,7 @@ new:
 	echo "# LAST UPDATED: `date` on `hostname`"   > data_lmt.log
 	sort -r data_lmt.new                         >> data_lmt.log
 	rm data_lmt.new
+	@echo "Created: $(DATA_LMT)/data_lmt.log"
 
 data:   ifproc RedshiftChassis0
 

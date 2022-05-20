@@ -147,10 +147,12 @@ function lmtoy_rsr1 {
 
 	if [ $obsgoal = "LineCheck" ]; then
 	    echo "LMTOY>> LineCheck"
-	    echo "# fit=gauss1d $spec1"     > linecheck.log
-	    tabnllsqfit $spec1 fit=gauss1d >> linecheck.log
-	    echo "# fit=gauss1d $spec2"    >> linecheck.log
-	    tabnllsqfit $spec2 fit=gauss1d >> linecheck.log
+	    #  good for I17208, I12112, I10565
+	    xrange=105:111
+	    echo "# fit=gauss1d $spec1 xrange=$xrange"     > linecheck.log
+	    tabnllsqfit $spec1 fit=gauss1d xrange=$xrange >> linecheck.log
+	    echo "# fit=gauss1d $spec2 xrange=$xrange"    >> linecheck.log
+	    tabnllsqfit $spec2 fit=gauss1d xrange=$xrange >> linecheck.log
 	fi
     else
 	echo "LMTOY>> Skipping NEMO post-processing"

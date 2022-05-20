@@ -2,14 +2,21 @@
 # 
 # This is the bad channel searcher, formerly called seek_bad_channels.py
 #
-# F P Schloerb 
-# March 4, 2014
+# It does two things:
+#     - identify lags where the RMS is too high or too low
+#     - @todo: lags that are obviously spiky
+#     - identify Chassic/Board combos that should be flagged alltogether
+#       (the same as badcb= keyword to the pipeline)
+#
+# F P Schloerb   March 4, 2014   (as seek_bad_channels.py)
+# P Teuben       2021/2022 various changes for SLpipeline integration (as badlags.py)
 #
 # Revision 2014-03-04: Fixed problem with variable for number of channels.  Now always do 256 channels
 #          2021-02-23: Converted for dreampy3/python3
 #          2021-10-28: write badlags file. use docopt for CLI parsing
 #          2021-11-30: better labeling, rms_diff masking ?
 #          2021-12-01: renamed to badlags.py
+#          2022-05-18: also flag when rms < bc_low
 #
 #
 # Possible CLI:
@@ -36,7 +43,7 @@ badlags.py is a program that can create it.
 
 """
 
-
+_version = "19-may-2022"
 
 import os
 import sys
@@ -47,10 +54,10 @@ from matplotlib import pyplot as pl
 from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 
 
-def rmsdiff(data):
+def rmsdiff(data, robust=True):
     """   guess the RMS based on a robust neighbor differences
     """
-    if True:
+    if robust:
         factor = 2.0
         Q1 = np.percentile(data,25)
         Q3 = np.percentile(data,75)
@@ -85,18 +92,31 @@ nchassis = 4
 nboards  = 6
 nchan    = 256
 chassis_list = (0,1,2,3)     # CHASSIS IDENTIFIERS
-board_list   = (0,1,2,3,4,5) # BOARD (NOT FREQUENCY BAND) IDENTIFIERS 
+board_list   = (0,1,2,3,4,5) # BOARD (NOT FREQUENCY BAND) IDENTIFIERS
 
 # The program produces a plot showing the maximum value of the standard deviation
 # for each channel.  You can set the maximum for the y axis in the plots (10 is good) 
 plot_max = 10
 
 # set the threshold for a bad channel (3 is not bad, but look at plot and experiment!)
+#     -at short lags the RMS is often (naturally) higher. Cutting out those can result in bad spectra
+bc_threshold = 2.0
+bc_threshold = 2.5
 bc_threshold = 3.0
+#bc_threshold = 1.5
+bc_low = 0.01
+bc_low = 0.0
 
-# min RMS_diff needed for full acceptance
+# spike threshold (doesn't seem to work too well, often works bad on short lags)
+Qspike = False
+spike_threshold = 3.0
+
+# min RMS_diff needed for full acceptance of a C/B pair
 rms_min = 0.01
-rms_max = 0.1
+rms_max = 0.2
+
+# where to start checking for bad lags
+min_chan = 32
 
 # more debugging output ?
 debug = True
@@ -143,6 +163,7 @@ else:
 
 # set up an array to hold the maximum values of std dev for a channel
 findmax = np.zeros((nchassis,nboards,nchan))
+findmin = np.ones((nchassis,nboards,nchan)) * 999
 # set up an array to hold obsnum for the maximum value
 scanmax = np.zeros((nchassis,nboards,nchan))
 
@@ -182,6 +203,8 @@ for iobs in range(len(o_list)):
                 if sigma>findmax[ic,ib,chan]:
                     scanmax[ic,ib,chan] = o_list[iobs]
                     findmax[ic,ib,chan] = sigma
+                if sigma<findmin[ic,ib,chan]:
+                    findmin[ic,ib,chan] = sigma
             if debug:
                 for chan in range(1,nchan-1):
                     if findmax[ic,ib,chan] > bc_threshold:
@@ -209,7 +232,9 @@ print(' c  b  ch   scan metric')
 print('-----------------------')
 
 ftab = open('rsr.badlags','w')
-ftab.write('# Bad Channel Threshold = %6.1f\n'%(bc_threshold))
+ftab.write('# File written by %s - version %s\n' % (sys.argv[0],_version))
+ftab.write('# Bad Channel Thresholds:  RMS < %g or RMS > %g\n'%(bc_low,bc_threshold))
+ftab.write('# Note these are chassis/board/channel numbers\n')
 ftab.write('# -----------------------\n')
 ftab.write('#  c  b  ch   scan metric\n')
 ftab.write('# -----------------------\n')
@@ -227,13 +252,30 @@ for ic in range(nchassis):
     for ib1 in range(nboards):
         #ib = board2band[ib1]
         ib = ib1
-        for chan in range(nchan):
+        for chan in range(min_chan,nchan):
             # check the value of the standard deviation against threshold and print if above threshold
             if findmax[ic,ib,chan] > bc_threshold:
-                msg = '%2d %2d %3d %6d %6.1f'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmax[ic,ib,chan])
+                msg = '%2d %2d %3d %6d %6.1f    # max'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmax[ic,ib,chan])
                 print(msg)
                 ftab.write("%s\n" % msg)
                 peaks.append((ic,ib,chan))
+                continue
+            if findmin[ic,ib,chan] < bc_low:
+                msg = '%2d %2d %3d %6d %6.1f    # min'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmin[ic,ib,chan])
+                print(msg)
+                ftab.write("%s\n" % msg)
+                peaks.append((ic,ib,chan))
+                continue
+            if Qspike and chan>1 and chan <nchan-2:
+                n1 = 0.5 * (findmax[ic,ib,chan-1]+findmax[ic,ib,chan-2])
+                n2 = findmax[ic,ib,chan]
+                if n2/n1 > spike_threshold:
+                    msg = '%2d %2d %3d %6d %6.1f    # spike'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmin[ic,ib,chan])
+                    print(msg)
+                    ftab.write("%s\n" % msg)
+                    peaks.append((ic,ib,chan))
+                    
+                
 
 if True:        
     plot_max = bc_threshold
@@ -249,7 +291,9 @@ if debug:
             print('RMS_diff %2d %2d  %.3f %s' % (ic,ib,rms0,note))
             
 
+
 # for each chassis and each board, we plot maximum standard deviations found for all channels
+ftab.write("# rms_min/max = %g %g\n" % (rms_min,rms_max))
 nbadcb = 0
 for ic in range(nchassis):
     for ib1 in range(nboards):
@@ -271,6 +315,11 @@ for ic in range(nchassis):
             pl.title('chassis=%d band=%d'%(chassis_list[ic],board_list[b2b[ib]]),fontsize=6)                    
         # pl.title('chassis=%d board=%d'%(chassis_list[ic],board_list[ib]),fontsize=6)
         # pl.axis([-10,nchan+10,0,plot_max])
+        for p in peaks:
+            if ic == p[0] and ib == p[1]:
+                pl.plot([p[2],p[2]], [0.0, 0.2], '-', color='black')
+                    
+        
         ax.set(xlim=(-10, nchan+10), ylim=(0,plot_max))
         ax.set(xticks=(0,64,128,192,256))
         if ib==0 and ic==nchassis-1:
