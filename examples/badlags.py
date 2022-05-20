@@ -3,12 +3,13 @@
 # This is the bad channel searcher, formerly called seek_bad_channels.py
 #
 # It does two things:
-#     - identify lags where the RMS is too high, (or has a spike - @todo)
+#     - identify lags where the RMS is too high or too low
+#     - @todo: lags that are obviously spiky
 #     - identify Chassic/Board combos that should be flagged alltogether
 #       (the same as badcb= keyword to the pipeline)
 #
-# F P Schloerb   March 4, 2014
-# P Teuben       2021/2022 changes for SLpipeline
+# F P Schloerb   March 4, 2014   (as seek_bad_channels.py)
+# P Teuben       2021/2022 various changes for SLpipeline integration (as badlags.py)
 #
 # Revision 2014-03-04: Fixed problem with variable for number of channels.  Now always do 256 channels
 #          2021-02-23: Converted for dreampy3/python3
@@ -42,7 +43,7 @@ badlags.py is a program that can create it.
 
 """
 
-
+_version = "19-may-2022"
 
 import os
 import sys
@@ -98,15 +99,24 @@ board_list   = (0,1,2,3,4,5) # BOARD (NOT FREQUENCY BAND) IDENTIFIERS
 plot_max = 10
 
 # set the threshold for a bad channel (3 is not bad, but look at plot and experiment!)
+#     -at short lags the RMS is often (naturally) higher. Cutting out those can result in bad spectra
 bc_threshold = 2.0
-bc_threshold = 3.0
 bc_threshold = 2.5
+bc_threshold = 3.0
+#bc_threshold = 1.5
 bc_low = 0.01
+bc_low = 0.0
 
+# spike threshold (doesn't seem to work too well, often works bad on short lags)
+Qspike = False
+spike_threshold = 3.0
 
 # min RMS_diff needed for full acceptance of a C/B pair
 rms_min = 0.01
 rms_max = 0.2
+
+# where to start checking for bad lags
+min_chan = 32
 
 # more debugging output ?
 debug = True
@@ -222,9 +232,9 @@ print(' c  b  ch   scan metric')
 print('-----------------------')
 
 ftab = open('rsr.badlags','w')
-ftab.write('# File written by %s\n' % sys.argv[0]);
-ftab.write('# Bad Channel Threshold = %6.1f\n'%(bc_threshold))
-ftab.write('# Note these are chassis/board/channel numbers')
+ftab.write('# File written by %s - version %s\n' % (sys.argv[0],_version))
+ftab.write('# Bad Channel Thresholds:  RMS < %g or RMS > %g\n'%(bc_low,bc_threshold))
+ftab.write('# Note these are chassis/board/channel numbers\n')
 ftab.write('# -----------------------\n')
 ftab.write('#  c  b  ch   scan metric\n')
 ftab.write('# -----------------------\n')
@@ -242,18 +252,29 @@ for ic in range(nchassis):
     for ib1 in range(nboards):
         #ib = board2band[ib1]
         ib = ib1
-        for chan in range(nchan):
+        for chan in range(min_chan,nchan):
             # check the value of the standard deviation against threshold and print if above threshold
             if findmax[ic,ib,chan] > bc_threshold:
-                msg = '%2d %2d %3d %6d %6.1f'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmax[ic,ib,chan])
+                msg = '%2d %2d %3d %6d %6.1f    # max'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmax[ic,ib,chan])
                 print(msg)
                 ftab.write("%s\n" % msg)
                 peaks.append((ic,ib,chan))
+                continue
             if findmin[ic,ib,chan] < bc_low:
-                msg = '%2d %2d %3d %6d %6.1f [min]'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmin[ic,ib,chan])
+                msg = '%2d %2d %3d %6d %6.1f    # min'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmin[ic,ib,chan])
                 print(msg)
-                ftab.write("%s [min]\n" % msg)
+                ftab.write("%s\n" % msg)
                 peaks.append((ic,ib,chan))
+                continue
+            if Qspike and chan>1 and chan <nchan-2:
+                n1 = 0.5 * (findmax[ic,ib,chan-1]+findmax[ic,ib,chan-2])
+                n2 = findmax[ic,ib,chan]
+                if n2/n1 > spike_threshold:
+                    msg = '%2d %2d %3d %6d %6.1f    # spike'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmin[ic,ib,chan])
+                    print(msg)
+                    ftab.write("%s\n" % msg)
+                    peaks.append((ic,ib,chan))
+                    
                 
 
 if True:        
@@ -272,7 +293,7 @@ if debug:
 
 
 # for each chassis and each board, we plot maximum standard deviations found for all channels
-# @todo  plot the badlags
+ftab.write("# rms_min/max = %g %g\n" % (rms_min,rms_max))
 nbadcb = 0
 for ic in range(nchassis):
     for ib1 in range(nboards):
