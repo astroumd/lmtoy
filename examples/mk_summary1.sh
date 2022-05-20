@@ -53,8 +53,10 @@ echo "obsnum,date,source,inttime,tau,rms"   > $csv
 
 
 n=0
-for o in ????? ?????_?????; do
-#for o in ????? ; do
+for o in $(find . -maxdepth 1 -type d | sed s+./++); do
+    if [ ! -e $o/lmtoy.rc ]; then
+	continue
+    fi
     rc=$o/lmtoy_*$o.rc
     log=$o/lmtoy_*$o.log
     source $rc
