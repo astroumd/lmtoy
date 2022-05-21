@@ -166,7 +166,7 @@ rsr1b:
 	-grep -v 0.000000 rsr1.blanking.sum.txt | tabtrend - 2 | tabhist - 1  -16 16   scale=1000 robust=t bins=32 yapp=2/xs
 
 rsr1c:
-	$(TIME) python seek_bad_channels.py 33551
+	$(TIME) python badlags.py 33551
 
 # typical timing for 300 obsnums (one still bad)
 # all procs:    2206.00user 123.86system 15:19.56elapsed 253%CPU
