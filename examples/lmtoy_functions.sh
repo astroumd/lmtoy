@@ -102,22 +102,26 @@ function lmtoy_rsr1 {
     o="-o $spec1"
     w="-w rsr.wf.pdf"
     blo=0
+    #   note, we're not using all the options for rsr_driver, .e.g
+    #   -t, -f, -s, -r, -n 
     if [[ $first == 1 ]]; then
 	# first time, do a run with no badlags or rfile and no exlude baseline portions
 	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo    > rsr_driver0.log 2>&1	
     fi
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo          > rsr_driver.log 2>&1
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo          > rsr_driver.log  2>&1
     #  ImageMagick:   this step can fail with some weird security policy error :-(
-    #  edit /etc/ImageMagick-*/policy.xml    
+    #  edit /etc/ImageMagick-*/policy.xml:     rights="read | write" pattern="PDF"    
     convert rsr.wf.pdf rsr.wf.png
     
     # spec2: output spectrum rsr.$obsnum.blanking.sum.txt
     spec2=${blanking}.sum.txt
     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo                         > rsr_sum.log 2>&1
 
-    # Tsys plot:  rsr.tsys.png  - only for single obsnum
+    # Tsys plot:  rsr.tsys.png  - only done for single obsnum
+    #             rsr.spectrum.png - another way to view each chassis spectrum
     if [[ -z "$obsnums" ]]; then
-	python $LMTOY/examples/rsr_tsys.py -s $obsnum                                     > rsr_tsys.log 2>&1
+	python $LMTOY/examples/rsr_tsys.py -s $obsnum                                     > rsr_tsys.log  2>&1
+	python $LMTOY/examples/rsr_tsys.py -t -s $obsnum                                  > rsr_tsys2.log 2>&1
     fi
 
     # plot the two in one spectrum, one full range, one the last band, closest to "CO"
