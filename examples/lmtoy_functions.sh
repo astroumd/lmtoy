@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="18-may-2022"
+lmtoy_version="28-may-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -105,6 +105,8 @@ function lmtoy_rsr1 {
     o="-o $spec1"
     w="-w rsr.wf.pdf"
     blo=0
+    #   note, we're not using all the options for rsr_driver, .e.g
+    #   -t, -f, -s, -r, -n 
     if [[ $first == 1 ]]; then
 	# first time, do a run with no badlags or rfile and no exlude baseline portions
 	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo    > rsr_driver0.log 2>&1	
@@ -112,7 +114,7 @@ function lmtoy_rsr1 {
     echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo"
     python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo          > rsr_driver.log 2>&1
     #  ImageMagick:   this step can fail with some weird security policy error :-(
-    #  edit /etc/ImageMagick-*/policy.xml    
+    #  edit /etc/ImageMagick-*/policy.xml:     rights="read | write" pattern="PDF"    
     convert rsr.wf.pdf rsr.wf.png
     
     # spec2: output spectrum rsr.$obsnum.blanking.sum.txt
@@ -120,9 +122,11 @@ function lmtoy_rsr1 {
     echo "LMTOY>>     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo"
     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo                         > rsr_sum.log 2>&1
 
-    # Tsys plot:  rsr.tsys.png  - only for single obsnum
+    # Tsys plot:  rsr.tsys.png  - only done for single obsnum
+    #             rsr.spectrum.png - another way to view each chassis spectrum
     if [[ -z "$obsnums" ]]; then
-	python $LMTOY/examples/rsr_tsys.py -s $obsnum                                     > rsr_tsys.log 2>&1
+	python $LMTOY/examples/rsr_tsys.py -s $obsnum                                     > rsr_tsys.log  2>&1
+	python $LMTOY/examples/rsr_tsys.py -t -s $obsnum                                  > rsr_tsys2.log 2>&1
     fi
 
     # plot the two in one spectrum, one full range, one the last band, closest to "CO"
@@ -152,10 +156,12 @@ function lmtoy_rsr1 {
 
 	if [ $obsgoal = "LineCheck" ]; then
 	    echo "LMTOY>> LineCheck"
-	    echo "# fit=gauss1d $spec1"     > linecheck.log
-	    tabnllsqfit $spec1 fit=gauss1d >> linecheck.log
-	    echo "# fit=gauss1d $spec2"    >> linecheck.log
-	    tabnllsqfit $spec2 fit=gauss1d >> linecheck.log
+	    #  good for I17208, I12112, I10565
+	    xrange=105:111
+	    echo "# fit=gauss1d $spec1 xrange=$xrange"     > linecheck.log
+	    tabnllsqfit $spec1 fit=gauss1d xrange=$xrange >> linecheck.log
+	    echo "# fit=gauss1d $spec2 xrange=$xrange"    >> linecheck.log
+	    tabnllsqfit $spec2 fit=gauss1d xrange=$xrange >> linecheck.log
 	fi
     else
 	echo "LMTOY>> Skipping NEMO post-processing"
