@@ -74,7 +74,7 @@ function qac_select {
 }
 
 function lmtoy_rsr1 {
-    # input:  first, obsnum, badlags, blanking, ....
+    # input:  first, obsnum, badlags, blanking, rfile, ....
 
     # log the version
     lmtoy_version > lmtoy.rc 
@@ -84,6 +84,8 @@ function lmtoy_rsr1 {
     #         rsr.$obsnum.rfile and rsr.$obsnum.blanking  - can be modified if #BADCB's have been found
     if [[ ! -e $badlags ]]; then
 	python $LMTOY/examples/badlags.py -s $obsnum   > rsr_badlags.log 2>&1
+	#  -b bc_threshold
+	#  -p plotmax
 	mv rsr.badlags $badlags
 	rsr_badcb -r $badlags >> $rfile 
 	rsr_badcb -b $badlags >> $blanking
@@ -98,7 +100,8 @@ function lmtoy_rsr1 {
     spec1="rsr.${obsnum}.driver.sum.txt"
     b="--badlags $badlags"
     r="--rfile $rfile"
-    l="--exclude 110.51 0.15 108.65 0.3 85.2 0.4"
+    l="--exclude 110.51 0.15 108.65 0.3 85.2 0.4"    # for I10565
+    l=""
     o="-o $spec1"
     w="-w rsr.wf.pdf"
     blo=0
@@ -106,6 +109,7 @@ function lmtoy_rsr1 {
 	# first time, do a run with no badlags or rfile and no exlude baseline portions
 	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo    > rsr_driver0.log 2>&1	
     fi
+    echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo"
     python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo          > rsr_driver.log 2>&1
     #  ImageMagick:   this step can fail with some weird security policy error :-(
     #  edit /etc/ImageMagick-*/policy.xml    
@@ -113,6 +117,7 @@ function lmtoy_rsr1 {
     
     # spec2: output spectrum rsr.$obsnum.blanking.sum.txt
     spec2=${blanking}.sum.txt
+    echo "LMTOY>>     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo"
     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo                         > rsr_sum.log 2>&1
 
     # Tsys plot:  rsr.tsys.png  - only for single obsnum
