@@ -154,9 +154,9 @@ function lmtoy_rsr1 {
 	    #  good for I17208, I12112, I10565
 	    xrange=105:111
 	    echo "# fit=gauss1d $spec1 xrange=$xrange"     > linecheck.log
-	    tabnllsqfit $spec1 fit=gauss1d xrange=$xrange >> linecheck.log
+	    tabnllsqfit $spec1 fit=gauss1d xrange=$xrange >> linecheck.log  2>&1
 	    echo "# fit=gauss1d $spec2 xrange=$xrange"    >> linecheck.log
-	    tabnllsqfit $spec2 fit=gauss1d xrange=$xrange >> linecheck.log
+	    tabnllsqfit $spec2 fit=gauss1d xrange=$xrange >> linecheck.log  2>&1
 	fi
     else
 	echo "LMTOY>> Skipping NEMO post-processing"
@@ -464,3 +464,43 @@ function lmtoy_seq1 {
     mv index.html README.html
     
 } # lmtoy_seq1
+
+function lmtoy_bs1 {
+    # input: obsnum, ... (lots)
+    # this will process a single band in an $obsnum
+
+    # log the version
+    lmtoy_version > lmtoy.rc
+    ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
+
+
+    # for a waterfall -> bs-2.png
+    process_bs.py --obs_list $obsnum -o junk2.txt --pix_list $pix_list --use_cal --block -2
+
+    # full average -> bs-1.png
+    process_bs.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1
+    seq_spectra.py -s ${src}_${obsnum}.txt
+    
+    if [ -n "$NEMO" ]; then
+	echo "LMTOY>> Some NEMO post-processing"
+
+    fi
+    
+    if [ $admit == 1 ]; then
+	echo "LMTOY>> ADMIT post-processing (TBD)"
+    else
+	echo "LMTOY>> skipping ADMIT post-processing"
+    fi
+    
+    
+    echo "LMTOY>> Parameter file used: $rc"
+    
+    # seq_readme > $pdir/README.html
+    # cp $LMTOY/docs/README_sequoia.md README_files.md
+    
+    echo "LMTOY>> Making summary index.html:"
+    # mk_index.sh
+    # cheat and rename it for all files access
+    # mv index.html README.html
+    
+} # lmtoy_bs1

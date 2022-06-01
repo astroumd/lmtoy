@@ -41,7 +41,7 @@ if [ -z "$1" ]; then
     echo "  path=$path"
     echo "  work=$work"
     echo "  debug=$debug"
-    echo "  restart=$restart"
+    echo "  restart=$restart   (use -1 to enforce non-existent obsnum)"
     echo "  tap=$tap"
     echo "  srdp=$srdp"
     echo "  raw=$raw"
@@ -49,8 +49,8 @@ if [ -z "$1" ]; then
     echo "  sleep=$sleep"
     echo "  nproc=$nproc"
     echo "  rsync=$rsync"
-    echo "  rc=$rc"
-    echo "  oid=$oid"
+    echo "  rc=$rc        (global rc file)"
+    echo "  oid=$oid      (experimental)"
     echo "  goal=$goal    (Science, or override with: Pointing Focus)"
     echo "Optional instrument specific pipeline can be added as well but are not known here"
     echo "  To Unity:  rsync=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s"
@@ -165,6 +165,7 @@ if [ $obspgm == "Map" ] || [ $obspgm == "Lissajous" ]; then
     seq_summary.sh $pdir/lmtoy_$obsnum.log
     date >> $pdir/date.log	
     echo Logfile in: $pdir/lmtoy_$obsnum.log
+    
 elif [ $instrument = "RSR" ]; then
     if [ -d $pdir ]; then
 	echo "Re-Processing $obspgm RSR in $pdir for $src (use restart=1 if you need a fresh start)"
@@ -207,6 +208,14 @@ elif [ $instrument = "1MM" ]; then
     else
 	echo "Skipping unknown obspgm=$obspgm"
     fi
+elif [ $instrument = "SEQ" ] && [ $obspgm = "Bs" ]; then
+    if [ -d $pdir ]; then
+	echo Already there
+    else
+	mkdir -p $pdir	
+    fi
+    echo "LMTOY>> seqbs_pipeline.sh pdir=$pdir $*"
+    $time         seqbs_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
 else
     echo "Unknown instrument $instrument"
     tar=0
