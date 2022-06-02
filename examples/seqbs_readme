@@ -1,0 +1,164 @@
+#! /usr/bin/env bash
+#
+#    creates the README.html file for a standard SEQ Bs "TAP"
+#    
+#
+
+if [ "x$1" == "x" ]; then
+    echo "Creates the README.html file for standard SEQ/Bs TAP"
+    echo "Usage:   $1  obsnum  src"
+    exit 0
+fi
+
+#            required:   2 arguments
+obsnum=$1
+   src=$2
+
+# get data for the header section
+file="$src.$obsnum.txt"
+source=$src
+RA=Unknown
+DEC=Unknown
+itime=Unknown
+rms=$(tabstat $file 2 qac=t robust=t |  txtpar - %1*1000 p0=1,4)
+tau=Unknown
+inobs=Unknown
+reddate=Unknown
+
+# get QAC stats for the spectral section
+#qac_stats=`grep QAC_STATS lmtoy_${obsnum}.log | awk '{printf("%-40s rms=%.3f mK<br>",$2,$4*1000)}'`
+#qac_stats=$(grep QAC_STATS lmtoy_${obsnum}.log | awk '{printf("<tr><td>%s</td><td>rms=%.3f mK</td></tr>",$2,$4*1000)}')
+
+# discover if there are any ADMIT directories
+adirs=$(ls -d *.admit) || adirs=""
+
+echo '<!doctype html><html lang="en"> <head> <meta charset="UTF-8"> <title>Timely Analysis Products (Obsnum=33551)</title> '
+echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">'
+
+echo "<div class='container'>"
+echo "<center>"
+echo "<!--  File created by $0 -->"
+echo "<h1> Timely Analysis Products (Obsnum = $obsnum)</h1>"
+echo "</center>"
+
+echo " <table class='table'><thead></thead><tbody>"
+echo " <tr><th scope='row'>Source</th><td>$source</td></tr>"
+echo " <tr><th scope='row'>RA</th><td>$RA</td></tr>"
+echo " <tr><th scope='row'>DEC</th><td>$DEC</td></tr>"
+echo " <tr><th scope='row'>Input Observations</th><td>$inobs</td></tr>"
+echo " <tr><th scope='row'>Integration Time (s)</th><td>$itime</td></tr>"
+echo " <tr><th scope='row'>220 GHz Opacity</th><td>$tau</td></tr>"
+echo " <tr><th scope='row'>Date of Reduction</th><td>$reddate</td></tr>"
+echo "</tbody></table>"
+
+echo "<div class='row'>"
+echo " <div class='col'>"
+echo "<p class='text-muted'>See <a href=\"#seqnotes\">below</a> for notes on the <a HREF=\"http://lmtgtm.org/telescope/instrumentation/instruments/sequoia/\">SEQ/Bs</a></p>"
+echo " </div> <!-- col-->"
+echo "</div> <!-- row-->"
+   
+echo "<hr>"
+echo "<h2>SEQ/Bs pipeline data products for obsnum=$obsnum</h2>"
+echo "<hr>"
+
+echo "<div class='row'>"
+echo " <div class='col'>"
+echo "  <div class='card'><div class='card-body'>"
+echo "<h4 class='card-title'>System Temperature</h4>"
+echo "<img class='card-img-top' alt='System Temperature' src='tsys.png'>"
+echo "  </div> <!-- cardbody -->"
+echo "  </div> <!-- card-->"
+echo " </div> <!-- col-->"
+echo "</div> <!-- row-->"
+
+echo "<div class='row'>"
+echo " <div class='col'>"
+echo "  <div class='card'><div class='card-body'>"
+echo "<h4 class='card-title'>Waterfall Plot</h4>"
+echo "<p class='card-text'> The Waterfall Plot is a spectrum for each time-sampla and each beam."
+echo "We keep two versions: <a href='bs-1.png'> just each beam </a> and <a href='bs-2.png'>showing all blocks</a> "
+
+echo "<div class='row'>"
+echo "<div class='col-md'> <a href='bs-1.png'><img src='bs-1.png'></a></div>"
+echo "<div class='col-md'> <a href='bs-2.png'><img src='bs-2.png'></a></div>"
+echo "</div><div class='row'>"
+echo "<div class='col-md'> <a href='bs-1.png'><img src='bs-1.png'></a></div>"
+echo "<div class='col-md'> <a href='bs-2.png'><img src='bs-2.png'></div></a></div>"
+echo "</div><!-- row -->"
+echo "<ul class='list-group list-group-flush'> "
+echo "<li class='list-group-item'><a href='rsr_driver.log'>rsr_drive log file</a></li>"
+echo "<li class='list-group-item'> <a href=rsr.$obsnum.rfile>rsr_driver $obsnum parameters file (aka rfile)</a></li>"
+echo "<li class='list-group-item'><a href='rsr.$obsnum.driver.sum.txt'> ASCII table of final bandmerged spectrum</a></li></ul>"
+echo "  </div> <!-- cardbody -->"
+echo "  </div><!-- card -->"
+echo "  </div><!-- col -->"
+#   technically, we should do all rsr.wf-?.png and rsr.wf-?? and rsr.wf-???
+#   but this would fill up the page too much, plus one could argue these are already displayed
+#   on the individual obsnum page, so could just be skipped here !!!
+if [ -e rsr.wf-5.png ]; then
+    echo "<div class='row'><div class='col'><p>Skipping remaining plots, see individual obsnum pages<p></div></div>"
+fi
+
+
+cat $LMTOY/examples/template.svg.html | sed s/template.svg/seq.spectra.svg/g > seq.spectra.svg.html
+rsync -a $LMTOY/etc/resources .
+
+echo "<div class='row'><div class='col'>"
+echo "<div class='card'><div class='card-body'>"
+echo "<h4 class='card-title'>Spectrum from rsr_sum: (Author: M.Yun)</h4>"
+echo "<p class='card-text'>The rsr_sum version of the average spectrum has optional blanking and sections to avoid for baseline fitting."
+echo "Below are the spectra from rsr_sum (orange) and rsr_driver (blue). If there is a significant difference between the two, then there is some subtle difference in how the scripts work.</p>"
+echo "<p class='card-text'>Statistics on individual spectra</p><table class='table table-borderless w-auto'><tbody>$qac_stats"
+echo "<tr><td>Expected noise (3C) for Tsys=100K</td><td class='text-start'>rms=$rms </td></tr>"
+if [ -e linecheck.log ]; then
+    ls1=$(txtpar linecheck.log %5*1000,%1*1000,%2*1000,%3,%4 p0=a=,1,2 p1=b=,1,2 p2=c=,1,2 p3=d=,1,2 p4=rms=,1,2)
+    ls2=$(txtpar linecheck.log %5*1000,%1*1000,%2*1000,%3,%4 p0=a=,2,2 p1=b=,2,2 p2=c=,2,2 p3=d=,2,2 p4=rms=,2,2)
+    fmt1=$(printf "rms=%.3f mK  base=%.3f mK peak=%.3f mK line=%s GHz sigma=%s GHz" $ls1)
+    fmt2=$(printf "rms=%.3f mK  base=%.3f mK peak=%.3f mK line=%s GHz sigma=%s GHz" $ls2)
+    echo "<tr><td>LineCheck driver</td>   <td> $fmt1 </td></tr>"
+    echo "<tr><td>LineCheck blanking</td> <td> $fmt2 </td></tr>"
+fi
+
+echo "</tbody></table>"
+echo "<div class='row'>"
+echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra.png'><img src='rsr.spectra.png' width='90%'></a><figcaption>The rsr_driver (blue) and rsr_sum (orange) spectra combined in a single plot</figcaption></figure></div>"
+echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra_co.png'><img src='rsr.spectra_co.png' width='90%'></a><figcaption>Zoomed in version of combined spectral plot [rsr_driver (blue), rsr_sum (orange)].</figcaption></figure></div>"
+echo "</div><!-- row -->"
+echo "<ul class='list-group list-group-flush'> "
+echo "<li class='list-group-item'> <a href='rsr_sum.log'>rsr_sum log file</a></li>"
+echo "<li class='list-group-item'><a href='rsr.$obsnum.blanking'>blanking file</a></li>"
+echo "<li class='list-group-item'><a href='rsr.$obsnum.blanking.sum.txt'> ASCII table of final bandmerged spectrum</a></li></ul>"
+echo "<li class='list-group-item'><a href='seq.spectra.svg.html'>Experimental SVG version of figure.</a> </li></ul>"
+echo "  </div> <!-- cardbody -->"
+echo "  </div><!-- card -->"
+echo "  </div><!-- col -->"
+echo "</div><!-- row -->"
+
+echo "<div class='card'><div class='card-body'>"
+if [ "$adirs" != "" ];then 
+
+    echo "<h4 class='card-title'>Results of ALMA Data Mining Toolkit (ADMIT)</h4>"
+    echo "<ul class='list-group list-group-flush'> "
+    for adir in $adirs; do
+        echo "<li class='list-group-item'><a href='$adir'>$adir</a></li>"
+    done
+    echo "</ul>"
+else
+    echo "<h4 class='card-title'>No ALMA Data Mining Toolkit (ADMIT) results available</h4>" 
+fi
+echo "  </div> <!-- cardbody -->"
+echo "  </div><!-- card -->"
+echo "  </div><!-- col -->"
+echo "</div><!-- row -->"
+echo "</div> <!-- container-->"
+echo "<div class='container'>"
+echo "<hr>"
+echo '<a name="seqnotes">'
+echo '<h5>Notes on the <a HREF="http://lmtgtm.org/telescope/instrumentation/instruments/sequoia/">SEQ Bs mode</a> </h5>'
+echo "<ol>"
+echo "<li> the two beams; they are normally averaged to increase S/N"
+echo "</li><li> ..."
+echo "</li><li> ..."
+echo "</li></ol>"
+echo "<hr>"
+echo "Updated: `date`</div><!-- container -->"
