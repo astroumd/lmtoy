@@ -104,11 +104,11 @@ bc_threshold = 2.0
 bc_threshold = 2.5
 bc_threshold = 3.0
 #bc_threshold = 1.5
-bc_low = 0.01
 bc_low = 0.0
+bc_low = 0.01
 
 # spike threshold (doesn't seem to work too well, often works bad on short lags)
-Qspike = False
+Qspike = True
 spike_threshold = 3.0
 
 # min RMS_diff needed for full acceptance of a C/B pair
