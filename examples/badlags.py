@@ -116,7 +116,7 @@ rms_min = 0.01
 rms_max = 0.2
 
 # where to start checking for bad lags
-min_chan = 32
+min_chan = 64
 
 # more debugging output ?
 debug = True
