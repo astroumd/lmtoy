@@ -480,6 +480,12 @@ function lmtoy_bs1 {
     # full average -> bs-1.png
     process_bs.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1
     seq_spectra.py -s ${src}_${obsnum}.txt
+    seq_spectra.py -s -z ${src}_${obsnum}.txt    
+    
+    # tsys
+    dev=$(yapp_query png vps)
+    tabplot ${src}_${obsnum}.txt ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  yapp=tsys.$dev/$dev
+    convert tsys.$dev tsys.jpg
     
     if [ -n "$NEMO" ]; then
 	echo "LMTOY>> Some NEMO post-processing"
@@ -495,7 +501,7 @@ function lmtoy_bs1 {
     
     echo "LMTOY>> Parameter file used: $rc"
     
-    # seq_readme > $pdir/README.html
+    seqbs_readme $obsnum $src > $pdir/README.html
     # cp $LMTOY/docs/README_sequoia.md README_files.md
     
     echo "LMTOY>> Making summary index.html:"
