@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 4-may-2022"
+version="SLpipeline: 1-jun-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -116,9 +116,12 @@ fi
 
 pidir=$work/$ProjectId
 if [ $obsnums = 0 ]; then
-    pdir=$pidir/$obsnum
+    pdir=$pidir/${obsnum}
 else
     pdir=$pidir/${on0}_${on1}
+fi
+if [ "$oid" != "" ]; then
+    pdir=${pdir}_${oid}
 fi
 if [ $restart = "-1" ]; then
     if [ -d $pdir ]; then
@@ -279,9 +282,6 @@ if [ -n "$rsync" ]; then
     echo rsync -av ${pdir}_TAP.tar $rsync1
     rsync -av ${pdir}_TAP.tar $rsync1
 fi
-
-# rename using $oid
-echo "TEST: Renaming $pdir $oid in `pwd`"
 
 # final reminder of parameters
 lmtoy_report
