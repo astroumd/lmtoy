@@ -14,20 +14,23 @@ fi
 obsnum=$1
    src=$2
 
+source ./lmtoy_${obsnum}.rc
+
 # get data for the header section
-file="$src.$obsnum.txt"
-source=$src
+file="${src}_${obsnum}.txt"
+source=${src}
 RA=Unknown
 DEC=Unknown
-itime=Unknown
+itime=${inttime}
 rms=$(tabstat $file 2 qac=t robust=t |  txtpar - %1*1000 p0=1,4)
-tau=Unknown
-inobs=Unknown
+tau=${tau}
+inobs=${date_obs}
 reddate=Unknown
 
 # get QAC stats for the spectral section
 #qac_stats=`grep QAC_STATS lmtoy_${obsnum}.log | awk '{printf("%-40s rms=%.3f mK<br>",$2,$4*1000)}'`
 #qac_stats=$(grep QAC_STATS lmtoy_${obsnum}.log | awk '{printf("<tr><td>%s</td><td>rms=%.3f mK</td></tr>",$2,$4*1000)}')
+qac_stats=""
 
 # discover if there are any ADMIT directories
 adirs=$(ls -d *.admit) || adirs=""
@@ -65,7 +68,11 @@ echo "<div class='row'>"
 echo " <div class='col'>"
 echo "  <div class='card'><div class='card-body'>"
 echo "<h4 class='card-title'>System Temperature</h4>"
-echo "<img class='card-img-top' alt='System Temperature' src='tsys.png'>"
+if [ -e tsys.png ]; then
+    echo "<img class='card-img-top' alt='System Temperature' src='tsys.png'>"
+else
+    echo "<img class='card-img-top' alt='System Temperature' src='tsys.jpg'>"
+fi
 echo "  </div> <!-- cardbody -->"
 echo "  </div> <!-- card-->"
 echo " </div> <!-- col-->"
@@ -75,20 +82,17 @@ echo "<div class='row'>"
 echo " <div class='col'>"
 echo "  <div class='card'><div class='card-body'>"
 echo "<h4 class='card-title'>Waterfall Plot</h4>"
-echo "<p class='card-text'> The Waterfall Plot is a spectrum for each time-sampla and each beam."
-echo "We keep two versions: <a href='bs-1.png'> just each beam </a> and <a href='bs-2.png'>showing all blocks</a> "
+echo "<p class='card-text'> The Waterfall Plot is a spectrum for each block of time-samples and each beam."
+echo "We keep two versions: <a href='bs-1.png'> each beam averages </a> and <a href='bs-2.png'>showing all integration blocks</a> "
 
 echo "<div class='row'>"
-echo "<div class='col-md'> <a href='bs-1.png'><img src='bs-1.png'></a></div>"
 echo "<div class='col-md'> <a href='bs-2.png'><img src='bs-2.png'></a></div>"
-echo "</div><div class='row'>"
 echo "<div class='col-md'> <a href='bs-1.png'><img src='bs-1.png'></a></div>"
+echo "</div><div class='row'>"
 echo "<div class='col-md'> <a href='bs-2.png'><img src='bs-2.png'></div></a></div>"
+echo "<div class='col-md'> <a href='bs-1.png'><img src='bs-1.png'></a></div>"
 echo "</div><!-- row -->"
 echo "<ul class='list-group list-group-flush'> "
-echo "<li class='list-group-item'><a href='rsr_driver.log'>rsr_drive log file</a></li>"
-echo "<li class='list-group-item'> <a href=rsr.$obsnum.rfile>rsr_driver $obsnum parameters file (aka rfile)</a></li>"
-echo "<li class='list-group-item'><a href='rsr.$obsnum.driver.sum.txt'> ASCII table of final bandmerged spectrum</a></li></ul>"
 echo "  </div> <!-- cardbody -->"
 echo "  </div><!-- card -->"
 echo "  </div><!-- col -->"
@@ -105,11 +109,10 @@ rsync -a $LMTOY/etc/resources .
 
 echo "<div class='row'><div class='col'>"
 echo "<div class='card'><div class='card-body'>"
-echo "<h4 class='card-title'>Spectrum from rsr_sum: (Author: M.Yun)</h4>"
-echo "<p class='card-text'>The rsr_sum version of the average spectrum has optional blanking and sections to avoid for baseline fitting."
-echo "Below are the spectra from rsr_sum (orange) and rsr_driver (blue). If there is a significant difference between the two, then there is some subtle difference in how the scripts work.</p>"
+echo "<h4 class='card-title'>Final Spectrum </h4>"
+echo "<p class='card-text'>This version of the average spectrum has optional blanking and sections to avoid for baseline fitting."
 echo "<p class='card-text'>Statistics on individual spectra</p><table class='table table-borderless w-auto'><tbody>$qac_stats"
-echo "<tr><td>Expected noise (3C) for Tsys=100K</td><td class='text-start'>rms=$rms </td></tr>"
+echo "<tr><td>Noise: </td><td class='text-start'>rms=$rms </td></tr>"
 if [ -e linecheck.log ]; then
     ls1=$(txtpar linecheck.log %5*1000,%1*1000,%2*1000,%3,%4 p0=a=,1,2 p1=b=,1,2 p2=c=,1,2 p3=d=,1,2 p4=rms=,1,2)
     ls2=$(txtpar linecheck.log %5*1000,%1*1000,%2*1000,%3,%4 p0=a=,2,2 p1=b=,2,2 p2=c=,2,2 p3=d=,2,2 p4=rms=,2,2)
@@ -121,13 +124,10 @@ fi
 
 echo "</tbody></table>"
 echo "<div class='row'>"
-echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra.png'><img src='rsr.spectra.png' width='90%'></a><figcaption>The rsr_driver (blue) and rsr_sum (orange) spectra combined in a single plot</figcaption></figure></div>"
-echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra_co.png'><img src='rsr.spectra_co.png' width='90%'></a><figcaption>Zoomed in version of combined spectral plot [rsr_driver (blue), rsr_sum (orange)].</figcaption></figure></div>"
+echo "<div class='col-sm'> <figure class='figure'><a href='seq.spectra.png'><img src='seq.spectra.png' width='90%'></a><figcaption>The final spectrum </figcaption></figure></div>"
 echo "</div><!-- row -->"
 echo "<ul class='list-group list-group-flush'> "
-echo "<li class='list-group-item'> <a href='rsr_sum.log'>rsr_sum log file</a></li>"
-echo "<li class='list-group-item'><a href='rsr.$obsnum.blanking'>blanking file</a></li>"
-echo "<li class='list-group-item'><a href='rsr.$obsnum.blanking.sum.txt'> ASCII table of final bandmerged spectrum</a></li></ul>"
+echo "<li class='list-group-item'><a href='${file}'> ASCII table of final spectrum</a></li></ul>"
 echo "<li class='list-group-item'><a href='seq.spectra.svg.html'>Experimental SVG version of figure.</a> </li></ul>"
 echo "  </div> <!-- cardbody -->"
 echo "  </div><!-- card -->"
@@ -152,6 +152,7 @@ echo "  </div><!-- col -->"
 echo "</div><!-- row -->"
 echo "</div> <!-- container-->"
 echo "<div class='container'>"
+
 echo "<hr>"
 echo '<a name="seqnotes">'
 echo '<h5>Notes on the <a HREF="http://lmtgtm.org/telescope/instrumentation/instruments/sequoia/">SEQ Bs mode</a> </h5>'
