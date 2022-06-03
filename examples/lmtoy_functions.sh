@@ -480,7 +480,8 @@ function lmtoy_bs1 {
     # full average -> bs-1.png
     process_bs.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1
     seq_spectra.py -s ${src}_${obsnum}.txt
-    seq_spectra.py -s -z ${src}_${obsnum}.txt    
+    seq_spectra.py -s -z ${src}_${obsnum}.txt
+    printf_red $(tabmath ${src}_${obsnum}.txt - %2*1000 all | tabstat -  qac=t robust=t label=${src}_${obsnum}.txt)
     
     # tsys
     dev=$(yapp_query png vps)
