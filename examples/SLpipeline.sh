@@ -213,12 +213,19 @@ elif [ $instrument = "1MM" ]; then
     fi
 elif [ $instrument = "SEQ" ] && [ $obspgm = "Bs" ]; then
     if [ -d $pdir ]; then
-	echo Already there
+	echo "Re-Processing $obspgm SEQ in $pdir for $src (use restart=1 if you need a fresh start)"
+	first=0
+	date                             >> $pdir/date.log
     else
+	first=1
 	mkdir -p $pdir	
     fi
     echo "LMTOY>> seqbs_pipeline.sh pdir=$pdir $*"
     $time         seqbs_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
+    seq_summary.sh $pdir/lmtoy_$obsnum.log
+    date >> $pdir/date.log	
+    echo Logfile in: $pdir/lmtoy_$obsnum.log
+    
 else
     echo "Unknown instrument $instrument"
     tar=0
