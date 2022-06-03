@@ -109,7 +109,8 @@ if [ -e $base2.1.png ]; then
     echo "         <IMG SRC=first_$base2.2.png>"                              >> $html
     
     # 4.
-    echo "  <LI> RMS $b_order order baseline fit (in K) for each beam"        >> $html
+    echo "  <LI> RMS $b_order order baseline fit (in K) for each beam."       >> $html
+    echo "       Each beam should give roughly the same RMS."                 >> $html
     echo "           <br><IMG SRC=$base2.3.png>"                              >> $html
     echo "         <IMG SRC=first_$base2.3.png>"                              >> $html
     
@@ -124,7 +125,9 @@ if [ -e $base2.1.png ]; then
     echo "         <IMG SRC=first_$base3.2.png>"                              >> $html
     
     # 7.
-    echo "  <LI> mean_spectra_plot for each beam"                             >> $html
+    echo "  <LI> mean_spectra_plot for each beam."                            >> $html
+    echo "       Unless there is strong signal, each spectrum should look"    >> $html
+    echo "       the same kind of noisy with zero baseline"                   >> $html
     echo "           <br><IMG SRC=$base2.5.png>"                              >> $html
     echo "         <IMG SRC=first_$base2.5.png>"                              >> $html
 else
@@ -140,23 +143,26 @@ else
 fi    
 
 # 8.
-echo "  <LI> Sky coverage as defined how often sky pixel was seen"        >> $html
-echo "       (sky pixels are about half of LMT beam size)"                >> $html
-echo "           <br><IMG SRC=$base1.wt.png>"                             >> $html
-echo "         <IMG SRC=first_$base1.wt.png>"                             >> $html
+echo "  <LI> Sky coverage + histogram as defined how often sky pixel was seen"  >> $html
+echo "       (sky pixels are about half of LMT beam size)"                      >> $html
+echo "           <br><IMG SRC=$base1.wt.png>"                                   >> $html
+echo "         <IMG SRC=first_$base1.wt.png>"                                   >> $html
 
 # 9.
 echo "  <LI> Moment-0 estimate [K.m/s] (<A HREF=index_admit>ADMIT</A>)"   >> $html
+echo "       plus histogram."                                             >> $html
 echo "           <br><IMG SRC=$base1.mom0.png>"                           >> $html
 echo "         <IMG SRC=first_$base1.mom0.png>"                           >> $html
 
 # 10.
 echo "  <LI> Peak temperature [mK]"                                       >> $html
+echo "       plus histogram."                                             >> $html
 echo "           <br><IMG SRC=$base1.peak.png>"                           >> $html
 echo "         <IMG SRC=first_$base1.peak.png>"                           >> $html
 
 # 11.
 echo "  <LI> RMS estimate [mK]"                                           >> $html
+echo "       plus histogram."                                             >> $html
 echo "           <br><IMG SRC=$base1.rms.png>"                            >> $html
 echo "         <IMG SRC=first_$base1.rms.png>"                            >> $html
 echo "</OL>"                                                              >> $html
