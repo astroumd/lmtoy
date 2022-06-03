@@ -1,6 +1,6 @@
 #! /bin/bash
 #
-#  create nice looking index.html for LMT/ADMIT products from pipeline for Sequoia
+#  create nice looking index.html for LMT/ADMIT products from pipeline for SEQ/Map
 #  this needs to be executed from the $ProjectId/$obsnum directory 
 #
 
@@ -20,6 +20,9 @@ echo "Making index.html for obsnum=$obsnum"
 base1="${src}_${obsnum}"
 base2="${src}_${obsnum}_specviews"
 base3="${src}_${obsnum}_specpoint"
+
+log="lmtoy_${obsnum}.log"
+rms=$(txtpar $log %1*1000 p0=-cent,1,4)
 
 #base1="${src}_${obsnum}_?"
 #base2="${src}_${obsnum}_?_specviews"
@@ -161,7 +164,7 @@ echo "           <br><IMG SRC=$base1.peak.png>"                           >> $ht
 echo "         <IMG SRC=first_$base1.peak.png>"                           >> $html
 
 # 11.
-echo "  <LI> RMS estimate [mK]"                                           >> $html
+echo "  <LI> RMS estimate [mK] (central value: $rms mK)"                  >> $html
 echo "       plus histogram."                                             >> $html
 echo "           <br><IMG SRC=$base1.rms.png>"                            >> $html
 echo "         <IMG SRC=first_$base1.rms.png>"                            >> $html
