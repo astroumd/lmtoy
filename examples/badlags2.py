@@ -2,11 +2,25 @@
 # 
 # hardcoded badchannels
 #
+# this is like badlags.py - but now completely manually where you
+# specificy both the bad Chassis/Board/Channel's, as well as
+# the bad Chassis/Board on the command line
+#
+# Example use:
+#       badlags2.py 12345  0/0/10 0/0/40 2/4/110  1/1 3/5   >  rsr.12345.badlags
+#       rsr_badcb -r rsr.12345.badlags > rsr.12345.rfile 
+#       rsr_badcb -b rsr.12345.badlags > rsr.12345.blanking
+#
 
 import os
 import sys
 import numpy as np
 from docopt import docopt
+
+if len(sys.argv) == 1:
+    print("Usage: %s obsnum C/B/ch ...   C/B" % sys.argv[0])
+    print("E.g.      badlags2.py 12345  0/0/10 0/0/40 2/4/110  1/1 3/5")
+    sys.exit(0)
 
 obsnum = sys.argv[1]
 print("# c b ch obsnum metric")

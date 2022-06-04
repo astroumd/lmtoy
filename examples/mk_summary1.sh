@@ -53,7 +53,7 @@ echo "obsnum,date,source,inttime,tau,rms"   > $csv
 
 
 n=0
-for o in $(find . -maxdepth 1 -type d | sed s+./++); do
+for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     if [ ! -e $o/lmtoy.rc ]; then
 	continue
     fi
@@ -65,6 +65,9 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++); do
 	# RSR
 	rms=$(grep QAC_STATS $log | txtpar - '1000*0.5*(%1+%2)' p0=1,4 p1=2,4)
 	rms0=$(nemoinp "$rms*sqrt(4*32500000*$inttime)/1000/100")" /100K"
+    elif [ $instrument == "SEQ" ] && [ $obspgm == "Bs" ]; then
+	rms=$(grep QAC_STATS $log | txtpar - "%1" p0=1,4)
+	rms0=TBD
     else
 	# SEQ and other mapping instruments
 	rms=$(grep QAC_STATS $log | txtpar - "%1*1000" p0=-cent,1,4)
@@ -114,6 +117,8 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++); do
 	echo "      <A HREF=${o}/${src}_${o}.mom0.png> <IMG SRC=${o}/${src}_${o}.mom0.png height=100></A>"
     elif [ -e ${o}/rsr.spectra.png ]; then
 	echo "      <A HREF=${o}/rsr.spectra.png> <IMG SRC=${o}/rsr.spectra.png height=100></A>"	
+    elif [ -e ${o}/seq.spectra.png ]; then
+	echo "      <A HREF=${o}/seq.spectra.png> <IMG SRC=${o}/seq.spectra.png height=100></A>"	
     else
 	echo "      N/A"
     fi  

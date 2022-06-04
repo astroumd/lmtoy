@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 4-may-2022"
+version="SLpipeline: 1-jun-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -41,7 +41,7 @@ if [ -z "$1" ]; then
     echo "  path=$path"
     echo "  work=$work"
     echo "  debug=$debug"
-    echo "  restart=$restart"
+    echo "  restart=$restart   (use -1 to enforce non-existent obsnum)"
     echo "  tap=$tap"
     echo "  srdp=$srdp"
     echo "  raw=$raw"
@@ -49,8 +49,8 @@ if [ -z "$1" ]; then
     echo "  sleep=$sleep"
     echo "  nproc=$nproc"
     echo "  rsync=$rsync"
-    echo "  rc=$rc"
-    echo "  oid=$oid"
+    echo "  rc=$rc        (global rc file)"
+    echo "  oid=$oid      (experimental)"
     echo "  goal=$goal    (Science, or override with: Pointing Focus)"
     echo "Optional instrument specific pipeline can be added as well but are not known here"
     echo "  To Unity:  rsync=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s"
@@ -116,9 +116,12 @@ fi
 
 pidir=$work/$ProjectId
 if [ $obsnums = 0 ]; then
-    pdir=$pidir/$obsnum
+    pdir=$pidir/${obsnum}
 else
     pdir=$pidir/${on0}_${on1}
+fi
+if [ "$oid" != "" ]; then
+    pdir=${pdir}_${oid}
 fi
 if [ $restart = "-1" ]; then
     if [ -d $pdir ]; then
@@ -165,6 +168,7 @@ if [ $obspgm == "Map" ] || [ $obspgm == "Lissajous" ]; then
     seq_summary.sh $pdir/lmtoy_$obsnum.log
     date >> $pdir/date.log	
     echo Logfile in: $pdir/lmtoy_$obsnum.log
+    
 elif [ $instrument = "RSR" ]; then
     if [ -d $pdir ]; then
 	echo "Re-Processing $obspgm RSR in $pdir for $src (use restart=1 if you need a fresh start)"
@@ -207,6 +211,21 @@ elif [ $instrument = "1MM" ]; then
     else
 	echo "Skipping unknown obspgm=$obspgm"
     fi
+elif [ $instrument = "SEQ" ] && [ $obspgm = "Bs" ]; then
+    if [ -d $pdir ]; then
+	echo "Re-Processing $obspgm SEQ in $pdir for $src (use restart=1 if you need a fresh start)"
+	first=0
+	date                             >> $pdir/date.log
+    else
+	first=1
+	mkdir -p $pdir	
+    fi
+    echo "LMTOY>> seqbs_pipeline.sh pdir=$pdir $*"
+    $time         seqbs_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
+    seq_summary.sh $pdir/lmtoy_$obsnum.log
+    date >> $pdir/date.log	
+    echo Logfile in: $pdir/lmtoy_$obsnum.log
+    
 else
     echo "Unknown instrument $instrument"
     tar=0
@@ -270,9 +289,6 @@ if [ -n "$rsync" ]; then
     echo rsync -av ${pdir}_TAP.tar $rsync1
     rsync -av ${pdir}_TAP.tar $rsync1
 fi
-
-# rename using $oid
-echo "TEST: Renaming $pdir $oid in `pwd`"
 
 # final reminder of parameters
 lmtoy_report
