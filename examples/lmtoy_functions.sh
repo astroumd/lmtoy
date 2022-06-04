@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="28-may-2022"
+lmtoy_version="4-jun-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -478,12 +478,12 @@ function lmtoy_bs1 {
     lmtoy_version > lmtoy.rc
     ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
 
-
     # for a waterfall -> bs-2.png
-    process_bs.py --obs_list $obsnum -o junk2.txt --pix_list $pix_list --use_cal --block -2
+    process_bs.py --obs_list $obsnum -o junk2.txt --pix_list $pix_list --use_cal --block -2 --stype $stype
 
     # full average -> bs-1.png
-    process_bs.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1
+    echo "LMTOY>> process_bs.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1 --stype $stype"
+    process_bs.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1 --stype $stype
     seq_spectra.py -s ${src}_${obsnum}.txt
     seq_spectra.py -s -z ${src}_${obsnum}.txt
     printf_red $(tabmath ${src}_${obsnum}.txt - %2*1000 all | tabstat -  qac=t robust=t label=${src}_${obsnum}.txt)
