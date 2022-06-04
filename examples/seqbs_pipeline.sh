@@ -12,7 +12,7 @@
 # that's perhaps for a more advanced pipeline
 #
 
-version="seqbs_pipeline: 1-jun-2022"
+version="seqbs_pipeline: 4-jun-2022"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=OBSNUM ..."
@@ -45,6 +45,7 @@ dv=100
 dw=250
 #            - parameters that directly match the SLR scripts
 pix_list=8,10
+stype=2
 rms_cut=-4
 bank=-1           # -1 means all banks 0..numbands-1
 
@@ -148,6 +149,7 @@ if [ $newrc = 1 ]; then
     echo slice=$slice               >> $rc
     echo v_range=$v_range           >> $rc
     echo pix_list=$pix_list         >> $rc
+    echo stype=$stype               >> $rc
     
     # source again to ensure the changed variables are in
     source ./$rc
