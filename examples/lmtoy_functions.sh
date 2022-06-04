@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="18-may-2022"
+lmtoy_version="4-jun-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -74,7 +74,7 @@ function qac_select {
 }
 
 function lmtoy_rsr1 {
-    # input:  first, obsnum, badlags, blanking, ....
+    # input:  first, obsnum, badlags, blanking, rfile, ....
 
     # log the version
     lmtoy_version > lmtoy.rc 
@@ -84,6 +84,8 @@ function lmtoy_rsr1 {
     #         rsr.$obsnum.rfile and rsr.$obsnum.blanking  - can be modified if #BADCB's have been found
     if [[ ! -e $badlags ]]; then
 	python $LMTOY/examples/badlags.py -s $obsnum   > rsr_badlags.log 2>&1
+	#  -b bc_threshold
+	#  -p plotmax
 	mv rsr.badlags $badlags
 	rsr_badcb -r $badlags >> $rfile 
 	rsr_badcb -b $badlags >> $blanking
@@ -98,7 +100,8 @@ function lmtoy_rsr1 {
     spec1="rsr.${obsnum}.driver.sum.txt"
     b="--badlags $badlags"
     r="--rfile $rfile"
-    l="--exclude 110.51 0.15 108.65 0.3 85.2 0.4"
+    l="--exclude 110.51 0.15 108.65 0.3 85.2 0.4"    # for I10565
+    l=""
     o="-o $spec1"
     w="-w rsr.wf.pdf"
     blo=0
@@ -108,13 +111,15 @@ function lmtoy_rsr1 {
 	# first time, do a run with no badlags or rfile and no exlude baseline portions
 	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo    > rsr_driver0.log 2>&1	
     fi
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo          > rsr_driver.log  2>&1
+    echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo"
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo          > rsr_driver.log 2>&1
     #  ImageMagick:   this step can fail with some weird security policy error :-(
     #  edit /etc/ImageMagick-*/policy.xml:     rights="read | write" pattern="PDF"    
     convert rsr.wf.pdf rsr.wf.png
     
     # spec2: output spectrum rsr.$obsnum.blanking.sum.txt
     spec2=${blanking}.sum.txt
+    echo "LMTOY>>     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo"
     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo                         > rsr_sum.log 2>&1
 
     # Tsys plot:  rsr.tsys.png  - only done for single obsnum
@@ -473,12 +478,12 @@ function lmtoy_bs1 {
     lmtoy_version > lmtoy.rc
     ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
 
-
     # for a waterfall -> bs-2.png
-    process_bs.py --obs_list $obsnum -o junk2.txt --pix_list $pix_list --use_cal --block -2
+    process_bs.py --obs_list $obsnum -o junk2.txt --pix_list $pix_list --use_cal --block -2 --stype $stype
 
     # full average -> bs-1.png
-    process_bs.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1
+    echo "LMTOY>> process_bs.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1 --stype $stype"
+    process_bs.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1 --stype $stype
     seq_spectra.py -s ${src}_${obsnum}.txt
     seq_spectra.py -s -z ${src}_${obsnum}.txt
     printf_red $(tabmath ${src}_${obsnum}.txt - %2*1000 all | tabstat -  qac=t robust=t label=${src}_${obsnum}.txt)
