@@ -22,6 +22,7 @@ Qshow = True
 Qspec = False
 ext   = 'png'
 n     = 0
+rms_min = 25.0
 
 for f in sys.argv[1:]:
     if f == '-s':
@@ -47,6 +48,7 @@ else:
     
 plt.figure()
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+label = "badcb="
 
 for chassis in range(4):
     try:
@@ -63,6 +65,11 @@ for chassis in range(4):
             y = 1000*np.mean(nc.hdu.spectrum[:,board,:], axis=0)
         else:
             y = nc.hdu.cal.Tsys[board, :]
+            dy = y[1:] - y[:-1]
+            rms = dy.std()
+            if rms > rms_min:
+                print("#BADCB",obsnum,chassis,board,rms,'Tsys');
+                label = label + "%d/%d," % (chassis,board)
         ch = nc.hdu.header.ChassisNumber
         if board == 0:
             plt.step(freqs,y,c=colors[chassis], where='mid', label="chassis %d" % chassis)
@@ -71,7 +78,7 @@ for chassis in range(4):
     nc.close()
 
 plt.xlim([72,112])
-plt.title("obsnum=%d" % obsnum)
+plt.title("obsnum=%d %s" % (obsnum,label))
 plt.xlabel("Frequency (GHz)")
 if Qspec:
     plt.ylabel("Spectrum (mK)")
