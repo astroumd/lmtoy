@@ -43,7 +43,7 @@ badlags.py is a program that can create it.
 
 """
 
-_version = "19-may-2022"
+_version = "8-jun-2022"
 
 import os
 import sys
@@ -252,7 +252,7 @@ for ic in range(nchassis):
     for ib1 in range(nboards):
         #ib = board2band[ib1]
         ib = ib1
-        for chan in range(min_chan,nchan):
+        for chan in range(nchan):
             # check the value of the standard deviation against threshold and print if above threshold
             if findmax[ic,ib,chan] > bc_threshold:
                 msg = '%2d %2d %3d %6d %6.1f    # max'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmax[ic,ib,chan])
@@ -266,14 +266,18 @@ for ic in range(nchassis):
                 ftab.write("%s\n" % msg)
                 peaks.append((ic,ib,chan))
                 continue
-            if Qspike and chan>1 and chan <nchan-2:
+            if Qspike:   #  and chan > min_chan+1 and chan < nchan-2:
                 n1 = 0.5 * (findmax[ic,ib,chan-1]+findmax[ic,ib,chan-2])
                 n2 = findmax[ic,ib,chan]
                 if n2/n1 > spike_threshold:
-                    msg = '%2d %2d %3d %6d %6.1f    # spike'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmin[ic,ib,chan])
+                    if chan > min_chan+1 and chan < nchan-2:
+                        comment=''
+                        peaks.append((ic,ib,chan))
+                    else:
+                        comment='# '
+                    msg = '%s%2d %2d %3d %6d %6.1f    # spike'%(comment,chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmin[ic,ib,chan])
                     print(msg)
                     ftab.write("%s\n" % msg)
-                    peaks.append((ic,ib,chan))
                     
                 
 
@@ -291,7 +295,7 @@ if debug:
             print('RMS_diff %2d %2d  %.3f %s' % (ic,ib,rms0,note))
             
 
-
+label="badcb="
 # for each chassis and each board, we plot maximum standard deviations found for all channels
 ftab.write("# rms_min/max = %g %g\n" % (rms_min,rms_max))
 nbadcb = 0
@@ -309,6 +313,7 @@ for ic in range(nchassis):
             pl.plot(findmax[ic,ib,:], c='black')
             pl.title('BAD chassis=%d band=%d'%(chassis_list[ic],board_list[b2b[ib]]),fontsize=6,color='red')
             ftab.write("#BADCB %d %d %d %g\n" % (obsnum,ic,ib,rms0))
+            label = label + "%d/%d," % (ic,ib)
             
         else:
             pl.plot(findmax[ic,ib,:], c=colors[ib])
@@ -346,7 +351,8 @@ if len(o_list) > 1:
     omore = "... %d" % o_list[len(o_list)-1]
 else:
     omore = ""
-pl.suptitle("RMS in Auto Correlation Function as function of lag channels (%d samples) obsnum=%d %s" % (nons,obsnum,omore))
+#pl.suptitle("RMS in Auto Correlation Function as function of lag channels (%d samples) obsnum=%d %s" % (nons,obsnum,omore))
+pl.suptitle("obsnum=%d %s" % (obsnum,label))
 
 print('-----------------------')
 ftab.close()
