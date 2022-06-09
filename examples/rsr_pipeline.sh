@@ -103,9 +103,9 @@ else
     first=1
 fi
 
-blanking=rsr.$obsnum.blanking     # for  rsr_driver
-badlags=rsr.$obsnum.badlags       # for  rsr_driver
-rfile=rsr.$obsnum.rfile           # for  rsr_sum
+blanking=rsr.$obsnum.blanking     # for  rsr_sum    - produced by rsr_blanking
+badlags=rsr.$obsnum.badlags       # for  rsr_xxx    - produced by badlags.py
+rfile=rsr.$obsnum.rfile           # for  rsr_driver - produced by rsr_rfile
 
 if [ $first == 1 ]; then
     # bootstrap  $blanking and $rfile
