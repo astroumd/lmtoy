@@ -77,8 +77,15 @@ function lmtoy_rsr1 {
     # input:  first, obsnum, badlags, blanking, rfile, ....
 
     # log the version
-    lmtoy_version > lmtoy.rc 
+    lmtoy_version > lmtoy.rc
 
+    # Tsys plot:  rsr.tsys.png  - only done for single obsnum - also lists BADCB's
+    #             rsr.spectrum.png - another way to view each chassis spectrum
+    if [[ -z "$obsnums" ]]; then
+	python $LMTOY/examples/rsr_tsys.py -s $obsnum                                     > rsr_tsys.log  2>&1
+	python $LMTOY/examples/rsr_tsys.py -t -s $obsnum                                  > rsr_tsys2.log 2>&1
+    fi
+    
     # FIRST get the badlags - this is a file that can be edited by the user in later re-runs
     # output: rsr.$obsnum.badlags badlags.png
     #         rsr.$obsnum.rfile and rsr.$obsnum.blanking  - can be modified if #BADCB's have been found
@@ -87,6 +94,7 @@ function lmtoy_rsr1 {
 	#  -b bc_threshold
 	#  -p plotmax
 	mv rsr.badlags $badlags
+	grep '#BADCB' rsr_tsys.log >> $badlags
 	rsr_badcb -r $badlags >> $rfile 
 	rsr_badcb -b $badlags >> $blanking
     fi
@@ -105,6 +113,7 @@ function lmtoy_rsr1 {
     o="-o $spec1"
     w="-w rsr.wf.pdf"
     blo=0
+
     #   note, we're not using all the options for rsr_driver, .e.g
     #   -t, -f, -s, -r, -n 
     if [[ $first == 1 ]]; then
@@ -121,13 +130,6 @@ function lmtoy_rsr1 {
     spec2=${blanking}.sum.txt
     echo "LMTOY>>     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo"
     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo                         > rsr_sum.log 2>&1
-
-    # Tsys plot:  rsr.tsys.png  - only done for single obsnum
-    #             rsr.spectrum.png - another way to view each chassis spectrum
-    if [[ -z "$obsnums" ]]; then
-	python $LMTOY/examples/rsr_tsys.py -s $obsnum                                     > rsr_tsys.log  2>&1
-	python $LMTOY/examples/rsr_tsys.py -t -s $obsnum                                  > rsr_tsys2.log 2>&1
-    fi
 
     # plot the two in one spectrum, one full range, one the last band, closest to "CO"
     # the -z version makes an svg file for an alternative way to zoom in (TBD)

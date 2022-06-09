@@ -13,7 +13,7 @@
 # that's perhaps for a more advanced pipeline
 #
 
-version="rsr_pipeline: 1-dec-2021"
+version="rsr_pipeline: 5-may-2021"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=OBSNUM ..."
@@ -98,6 +98,7 @@ fi
 # -----------------------------------------------------------------------------------------------------------------
 
 if [ -e rsr.wf0.pdf ]; then
+    # anything to check to see from a previous run
     first=0
 else
     first=1
@@ -111,6 +112,11 @@ if [ $first == 1 ]; then
     # bootstrap  $blanking and $rfile
     rsr_blanking $obsnum     > $blanking
     rsr_rfile    $obsnum     > $rfile
+fi
+
+if [ $obsnum != 0 ]; then
+    echo "LMTOY>> Processing badboard=$badboard and badcb=$badcb"
+    
     if [[ ! -z "$badboard" ]]; then
 	echo "# setting badboard=$badboard" >> $blanking
 	echo "# setting badboard=$badboard" >> $rfile
