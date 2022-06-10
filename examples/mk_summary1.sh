@@ -116,7 +116,8 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     elif [ -e ${o}/${src}_${o}.mom0.png ]; then
 	echo "      <A HREF=${o}/${src}_${o}.mom0.png> <IMG SRC=${o}/${src}_${o}.mom0.png height=100></A>"
     elif [ -e ${o}/rsr.spectra.png ]; then
-	echo "      <A HREF=${o}/rsr.spectra.png> <IMG SRC=${o}/rsr.spectra.png height=100></A>"	
+	echo "      <A HREF=${o}/rsr.spectra.png> <IMG SRC=${o}/rsr.spectra.png height=100></A>"
+	echo "      <A HREF=${o}/rsr.spectra_co.png> <IMG SRC=${o}/rsr.spectra_co.png height=100></A>"		
     elif [ -e ${o}/seq.spectra.png ]; then
 	echo "      <A HREF=${o}/seq.spectra.png> <IMG SRC=${o}/seq.spectra.png height=100></A>"	
     else
