@@ -11,9 +11,11 @@ csv=summary.csv
 
 
 echo "<html>"
-echo "<A HREF=$csv>Summary of all obsnum's:</A>"
-echo "<table border=1>"
-echo "  <tr>"
+echo '<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>'
+
+echo "<A HREF=$csv>Summary of all obsnum's:   (click on column name to sort by that column)</A>"
+echo '<table border=1 class="sortable">'
+echo '  <tr class="item">'
 echo "    <th>"
 echo "      #"
 echo "    </th>"
@@ -81,7 +83,7 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     fi
     echo "$obsnum,$date_obs,$src,$inttime,$tau,$rms" >> $csv
   
-    echo "  <tr>"
+    echo '  <tr class="item">'
     echo "    <td>"
     echo "     ${n}."
     echo "    </td>"
