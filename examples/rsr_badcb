@@ -1,8 +1,8 @@
 #! /usr/bin/env bash
 #
 #    transfer the BADCB's found in the badlags file to other formats
-#    -r     rfile format that rsr_sum uses
-#    -b     blanking format that rsr_driver uses
+#    -r     rfile format that rsr_driver uses (simple obsnum,chassis,board)
+#    -b     blanking format that rsr_sum uses (more complex)
 
 set -e
 tmp=tmp$$
@@ -24,6 +24,7 @@ done
 
 if [[ -z "$badlags" || -z "$opt" ]]; then
     echo "Usage: $0 [-b|-r] rsr.badlags"
+    echo "Transfer BADCD's from a badlags file to blanking/rfile format"
     exit 0
 fi
 
