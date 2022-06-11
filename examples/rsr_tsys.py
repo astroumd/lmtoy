@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 #
-#    inspect the chassis and band based Tsys (or with -t the Spectrum)
+#    inspect and plot the chassis and band (C/B) based Tsys (or with -t the Spectrum)
 #
 #    Usage:
 #    rsr_tsys.py [-s] [-z] [-t] obsnum
