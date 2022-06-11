@@ -112,7 +112,7 @@ function lmtoy_rsr1 {
     l=""
     o="-o $spec1"
     w="-w rsr.wf.pdf"
-    blo=0
+    blo=1
 
     #   note, we're not using all the options for rsr_driver, .e.g
     #   -t, -f, -s, -r, -n 
