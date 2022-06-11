@@ -1,8 +1,12 @@
 #! /bin/bash
 #
-#  create nice looking README.html for ProjectId
+#  create nice looking README.html for a given ProjectId
+#  run this script in the ProjectId directory where all the obsnums's are.
 #
-#  2015-01-21T23:12:07 	33551 	 	I10565 	0.00162684 
+#  Typical usage:
+#        mk_summary1.sh > README.html
+#  After this, make a symlink from index.html to README.html if you enforce noindex.
+#
 
 #set -e
 #set -x
@@ -13,7 +17,7 @@ csv=summary.csv
 echo "<html>"
 echo '<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>'
 
-echo "<A HREF=$csv>Summary of all obsnum's:   (click on column name to sort by that column)</A>"
+echo "<A HREF=$csv>Summary of all obsnum's:</A> (click on column name to sort by that column)"
 echo '<table border=1 class="sortable">'
 echo '  <tr class="item">'
 echo "    <th>"
