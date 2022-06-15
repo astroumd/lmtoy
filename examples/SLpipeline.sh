@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 1-jun-2022"
+version="SLpipeline: 15-jun-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -26,7 +26,7 @@ restart=0
 tap=0
 srdp=0
 raw=0
-admit=1
+admit=0
 sleep=2
 nproc=1
 rsync=""
@@ -97,7 +97,8 @@ fi
 echo "OMP_NUM_THREADS=$OMP_NUM_THREADS"
 
 #             bootstrap
-rc=/tmp/lmtoy_${obsnum}.$$.rc
+[ ! -d $WORK_LMT/tmp ] && mkdir -p $WORK_LMT/tmp
+rc=$WORK_LMT/tmp/lmtoy_${obsnum}.$$.rc
 lmtinfo.py $obsnum > $rc
 source $rc
 rm -f $rc
