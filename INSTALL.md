@@ -262,6 +262,36 @@ The following linux distributions are being used in the consortium (e.g. via the
 6. xps13 (Peter's laptop) - Ubuntu 21.10
 7. (Peter's rogue mac) - Mac 10.15.7 w/ brew
 
+### lmtoy on LMT machines
+
+    Node    DATA_LMT                            WORK_LMT
+
+    unity   /nese/toltec/data_lmt
+    unity   /home/lmtslr_umass_edu/data_lmt     /nese/toltec/dataprod_lmtslr/work_lmt
+    malt    /home/lmtslr/data_lmt3              /home/lmtslr/work_lmt 
+            /home/lmtmc/data_lmt
+	cln
+    lma     /n/lma1/lmt/data_lmt/               /lma1/teuben/LMT/work_lmt/
+
+
+## A slurm primer
+
+The slurm package is used to submit jobs on unity :  https://unity.rc.umass.edu/docs/#slurm/
+
+Typical commands:
+
+`   # info on partitions and nodes
+	sinfo
+	#  LMT uses partition 'toltec_cpu', and we have node99-node100 for data reduction purposes
+    squeue -u lmtslr_umass_edu
+	#  for brief interactive jobs, one at a time
+	srun -n 1 -c 1 --mem=16G -p toltec_cpu --x11 --pty bash
+	#  to run non-blocking scripts
+	sbatch runfile.sh
+	sbatch_lmtoy.sh obsnum=12345
+	#  to cancel (kill)
+	scancel $JOBID
+
 # Other packages
 
 A few popular 3rd party tools for cube analysis

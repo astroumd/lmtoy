@@ -43,7 +43,7 @@ badlags.py is a program that can create it.
 
 """
 
-_version = "8-jun-2022"
+_version = "10-jun-2022"
 
 import os
 import sys
@@ -101,8 +101,8 @@ plot_max = 10
 # set the threshold for a bad channel (3 is not bad, but look at plot and experiment!)
 #     -at short lags the RMS is often (naturally) higher. Cutting out those can result in bad spectra
 bc_threshold = 2.0
-bc_threshold = 2.5
 bc_threshold = 3.0
+bc_threshold = 2.5
 #bc_threshold = 1.5
 bc_low = 0.0
 bc_low = 0.01
@@ -117,6 +117,7 @@ rms_max = 0.2
 
 # where to start checking for bad lags
 min_chan = 64
+min_chan = 32
 
 # more debugging output ?
 debug = True
