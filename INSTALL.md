@@ -20,11 +20,15 @@ Instructions for installing **LMTOY**:
    (e.g. on a mac via brew).  Things can and will massively and confusingly fail
    if these are not in tip top shape :-)
 
-   For python3 we also provide a manual install of anaconda3 before lmtoy is installed.
+   For python3 we also provide a manual install of anaconda3 before lmtoy is installed. This is the default.
    
-   Example ubuntu packages:  build-essential gfortran xorg-dev git tcsh cmake pgplot5 libcfitsio-dev autoconf libnetcdf-dev netcdf-bin
+   Example ubuntu packages:  build-essential gfortran xorg-dev git tcsh cmake pgplot5 libcfitsio-dev autoconf libnetcdf-dev netcdf-bin imagemagick
    Example centos packages:  gcc-gfortran tcsh gcc-c++ cmake libXext-devel libtirpc-devel netcdf-devel cfitsio-devel
 
+   Make sure you can convert a pdf to png, on some machines the file /etc/ImageMagick-6/policy.xml did not give
+   mortal users enough permission.
+               <policy domain="coder" rights="read | write" pattern="PDF" />
+	       
 1) Make a small shadow tree of the official $DATA_LMT on your laptop. If not on
    an official machine (cln, wares, lma), use the recommended ~/LMT/data_lmt
    since it is one of the options in configure:
