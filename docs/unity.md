@@ -1,10 +1,14 @@
-# Using LMTOY on unity
+# Using LMTOY on Unity
+
+Here we summarize how LMTOY can be used on Unity from the unix shell
 
 ## Your Unity account
 
-The account name is 
+There is a single account for the helpdesk
 
     lmthelpdesk_umass_edu
+	
+which means different helpdesk users will need to ensure they are not working on the same *ProjectId*.
 	
 In your local ~/.ssh/config file you will need a shortcut to be able to ssh into the unity account
 
