@@ -222,7 +222,7 @@ function lmtoy_seq1 {
 	    --b_regions $b_regions \
 	    --l_region $l_regions \
 	    --slice $slice \
-	    --eliminate_list 0
+	    --eliminate_list $birdies
     fi
     #		    --slice [-1000,1000] \
 	#		    --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
