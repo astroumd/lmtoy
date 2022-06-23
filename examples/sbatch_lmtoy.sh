@@ -35,7 +35,7 @@ for arg in $*; do
 done
 
 #                                        version
-version="14-may-2022"
+version="23-jun-2022"
 
 #                                        prefix to run
 prefix="/usr/bin/time xvfb-run -a"
@@ -69,7 +69,7 @@ if [ "$(which sbatch)" != "/usr/bin/sbatch" ]; then
 fi
 
 #                     do all sbatch work in $WORK_LMT/sbatch
-mkdir -p $WORK_LMT/sbatch
+mkdir -p $WORK_LMT/sbatch $WORK_LMT/tmp
 cd $WORK_LMT/sbatch
 #             
 
