@@ -64,10 +64,17 @@ echo "<hr>"
 
 echo "<div class='row'>"
 echo " <div class='col'>"
+
 echo "  <div class='card'><div class='card-body'>"
-echo "<h4 class='card-title'>System Temperature</h4>"
+echo "<h4 class='card-title'>System Temperature (no badlags)</h4>"
+echo "<img class='card-img-top' alt='System Temperature0' src='rsr.tsys0.png'>"
+echo "  </div> <!-- cardbody -->"
+
+echo "  <div class='card'><div class='card-body'>"
+echo "<h4 class='card-title'>System Temperature (with badlags)</h4>"
 echo "<img class='card-img-top' alt='System Temperature' src='rsr.tsys.png'>"
 echo "  </div> <!-- cardbody -->"
+
 echo "  </div> <!-- card-->"
 echo " </div> <!-- col-->"
 echo "</div> <!-- row-->"
