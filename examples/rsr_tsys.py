@@ -21,7 +21,8 @@ from dreampy3.redshift.plots import RedshiftPlot
 Qshow = True
 Qspec = False
 ext   = 'png'
-n     = 0
+nopt  = 0
+#                    trigger "badcb" on the RMS in the adjacent-channel differences
 rms_min = 25.0
 
 for f in sys.argv[1:]:
@@ -34,10 +35,10 @@ for f in sys.argv[1:]:
     if f == '-t':
         Qspec = True
         continue
-    n = n + 1
+    nopt = nopt + 1
     obsnum = int(f)
 
-if n==0:
+if nopt==0:
     sys.exit(0)
 
 if Qspec:
@@ -50,16 +51,16 @@ plt.figure()
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 label = "badcb="
 
-for chassis in range(4):
+for chassis in range(4):    # loop over all chassis 0..3
     try:
         nc = RedshiftNetCDFFile(make_generic_filename(obsnum,chassis))
     except:
         continue
     if Qspec:
-        nc.hdu.process_scan()
+        nc.hdu.process_scan()     # spectrum
     else:
-        nc.hdu.get_cal()
-    for board in range(6):
+        nc.hdu.get_cal()          # tsys
+    for board in range(6):  # loop over all boards 0..5
         freqs = nc.hdu.frequencies[board, :]
         if Qspec:
             y = 1000*np.mean(nc.hdu.spectrum[:,board,:], axis=0)
@@ -70,6 +71,8 @@ for chassis in range(4):
             if rms > rms_min:
                 print("#BADCB",obsnum,chassis,board,rms,'Tsys');
                 label = label + "%d/%d," % (chassis,board)
+            else:
+                print("#OKCB",obsnum,chassis,board,rms,'Tsys');                
         ch = nc.hdu.header.ChassisNumber
         if board == 0:
             plt.step(freqs,y,c=colors[chassis], where='mid', label="chassis %d" % chassis)
