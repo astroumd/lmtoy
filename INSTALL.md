@@ -218,6 +218,15 @@ I had some strange experiences with a python venv.  For one, any bins that are n
 could not be executed. Made no sense, since it's in my path, and /usr/bin/env python  even pointed to the venv.
 I gave up, I bypass venv and install directly. This is a bit easier in a locally grown anaconda3. YMMV.
 
+## DeadSnakes
+
+On ubuntu the following method allows you to upgrade the system version of python:
+
+     sudo add-apt-repository ppa:deadsnakes/ppa 
+     sudo apt update
+	 sudo apt install python3.9
+
+
 ### Updates
 
 Since we run from a set of github repos, each with their own update procedures, here some reminders.
