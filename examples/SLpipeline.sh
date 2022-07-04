@@ -169,6 +169,9 @@ if [ $obspgm == "Map" ] || [ $obspgm == "Lissajous" ]; then
     seq_summary.sh $pdir/lmtoy_$obsnum.log
     date >> $pdir/date.log	
     echo Logfile in: $pdir/lmtoy_$obsnum.log
+    if [[ $first == 1 ]]; then
+	cp $pdir/lmtoy_$obsnum.log   $pdir/first.lmtoy_$obsnum.log	
+    fi
     
 elif [ $instrument = "RSR" ]; then
     if [ -d $pdir ]; then
@@ -198,6 +201,7 @@ elif [ $instrument = "RSR" ]; then
     rsr_summary.sh $pdir/lmtoy_$obsnum.log
     date >> $pdir/date.log
     echo Logfile in: $pdir/lmtoy_$obsnum.log
+
 elif [ $instrument = "1MM" ]; then
     # @todo   only tested for one case
     if [ -d $pdir ]; then
