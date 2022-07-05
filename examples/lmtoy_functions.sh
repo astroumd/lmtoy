@@ -136,9 +136,13 @@ function lmtoy_rsr1 {
 
 	# this step could be debatable
 	grep '#BADCB' rsr_tsys.log >> $badlags
-	
 	rsr_badcb -r $badlags >> $rfile 
 	rsr_badcb -b $badlags >> $blanking
+    else
+	#  @todo initial settings lost
+	echo "Using existing $badlags - forgetting initial settings"
+	rsr_badcb -r $badlags > $rfile 
+	rsr_badcb -b $badlags > $blanking	
     fi
 
     #   We have two similar scripts of difference provenance that produce a final spectrum
