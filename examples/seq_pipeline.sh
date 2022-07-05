@@ -14,7 +14,7 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="seq_pipeline: 21-jun-2022"
+version="seq_pipeline: 5-jul-2022"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -48,7 +48,7 @@ makewf=1
 viewspec=1
 viewcube=0
 viewnemo=1
-admit=1
+admit=0
 clean=1
 #            - meta parameters that will compute other parameters for SLR scripts
 extent=0
