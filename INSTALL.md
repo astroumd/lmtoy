@@ -20,11 +20,15 @@ Instructions for installing **LMTOY**:
    (e.g. on a mac via brew).  Things can and will massively and confusingly fail
    if these are not in tip top shape :-)
 
-   For python3 we also provide a manual install of anaconda3 before lmtoy is installed.
+   For python3 we also provide a manual install of anaconda3 before lmtoy is installed. This is the default.
    
-   Example ubuntu packages:  build-essential gfortran xorg-dev git tcsh cmake pgplot5 libcfitsio-dev autoconf libnetcdf-dev netcdf-bin
+   Example ubuntu packages:  build-essential gfortran xorg-dev git tcsh cmake pgplot5 libcfitsio-dev autoconf libnetcdf-dev netcdf-bin imagemagick
    Example centos packages:  gcc-gfortran tcsh gcc-c++ cmake libXext-devel libtirpc-devel netcdf-devel cfitsio-devel
 
+   Make sure you can convert a pdf to png, on some machines the file /etc/ImageMagick-6/policy.xml did not give
+   mortal users enough permission.
+               <policy domain="coder" rights="read | write" pattern="PDF" />
+	       
 1) Make a small shadow tree of the official $DATA_LMT on your laptop. If not on
    an official machine (cln, wares, lma), use the recommended ~/LMT/data_lmt
    since it is one of the options in configure:
@@ -217,6 +221,15 @@ an example.
 I had some strange experiences with a python venv.  For one, any bins that are not in setup.py (e.g. a new one)
 could not be executed. Made no sense, since it's in my path, and /usr/bin/env python  even pointed to the venv.
 I gave up, I bypass venv and install directly. This is a bit easier in a locally grown anaconda3. YMMV.
+
+## DeadSnakes
+
+On ubuntu the following method allows you to upgrade the system version of python:
+
+     sudo add-apt-repository ppa:deadsnakes/ppa 
+     sudo apt update
+	 sudo apt install python3.9
+
 
 ### Updates
 

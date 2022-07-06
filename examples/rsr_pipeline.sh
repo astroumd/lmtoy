@@ -13,7 +13,7 @@
 # that's perhaps for a more advanced pipeline
 #
 
-version="rsr_pipeline: 5-may-2021"
+version="rsr_pipeline: 23-jun-2022"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: obsnum=OBSNUM ..."
@@ -40,7 +40,7 @@ pdir=""
 badboard=""   # set to a comma separated list of bad boards
 badcb=""      # set to a comma separated list of (chassis/board) combinations, badcb=2/3,3/5
 #            - procedural
-admit=1
+admit=0
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do
@@ -109,14 +109,15 @@ badlags=rsr.$obsnum.badlags       # for  rsr_xxx    - produced by badlags.py
 rfile=rsr.$obsnum.rfile           # for  rsr_driver - produced by rsr_rfile
 
 if [ $first == 1 ]; then
-    # bootstrap  $blanking and $rfile
+    # bootstrap  $blanking and $rfile; these are just commented lines w/ examples
     rsr_blanking $obsnum     > $blanking
     rsr_rfile    $obsnum     > $rfile
 fi
 
 if [ $obsnum != 0 ]; then
     echo "LMTOY>> Processing badboard=$badboard and badcb=$badcb"
-    
+
+    # should deprecate badboard <--------------------------------------------  deprecate?
     if [[ ! -z "$badboard" ]]; then
 	echo "# setting badboard=$badboard" >> $blanking
 	echo "# setting badboard=$badboard" >> $rfile

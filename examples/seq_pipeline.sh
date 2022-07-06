@@ -14,7 +14,7 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="seq_pipeline: 3-may-2022"
+version="seq_pipeline: 5-jul-2022"
 
 if [ -z $1 ]; then
     echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
@@ -48,12 +48,14 @@ makewf=1
 viewspec=1
 viewcube=0
 viewnemo=1
-admit=1
+admit=0
 clean=1
 #            - meta parameters that will compute other parameters for SLR scripts
 extent=0
 dv=100
 dw=250
+#            - birdies (list of channels, e.g.   10,200,1021)
+birdies=0
 #            - parameters that directly match the SLR scripts
 pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 rms_cut=-4
@@ -155,10 +157,15 @@ if [ $newrc = 1 ]; then
     source ./$rc
     
     #   w0   v0   v1     w1
-    v0=$(echo $vlsr - $dv | bc -l)
-    v1=$(echo $vlsr + $dv | bc -l)
-    w0=$(echo $v0 - $dw | bc -l)
-    w1=$(echo $v1 + $dw | bc -l)
+    #v0=$(echo $vlsr - $dv | bc -l)
+    #v1=$(echo $vlsr + $dv | bc -l)
+    #w0=$(echo $v0 - $dw | bc -l)
+    #w1=$(echo $v1 + $dw | bc -l)
+
+    v0=$(nemoinp $vlsr-$dv)
+    v1=$(nemoinp $vlsr+$dv)
+    w0=$(nemoinp $v0-$dw)
+    w1=$(nemoinp $v1+$dw)
 
     b_order=$b_order
     b_regions=[[$w0,$v0],[$v1,$w1]]

@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="4-jun-2022"
+lmtoy_version="4-jul-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -76,34 +76,18 @@ function qac_select {
 function lmtoy_rsr1 {
     # input:  first, obsnum, badlags, blanking, rfile, ....
 
+    # New order of reduction for single obsnum cases
+    #  1. clear the badlags, run rsr_driver to get a "first" spectrum 
+    #  2. get Tsys0, which also gives some badcb0= (which we ignore)
+    #  3. run baglags, this also gives some badcb1=
+    #  4. try rsr_driver, just to apply these badlags
+    #  5. get Tsys1, now done with the badlags. these also give a badcb2=, which we could use
+    #  6. final rsr_driver, using badlags and badcb1,badcb2
+    #  7. final rsr_sum,    using badlags and badcb1,badcb2
+
     # log the version
     lmtoy_version > lmtoy.rc
 
-    # Tsys plot:  rsr.tsys.png  - only done for single obsnum - also lists BADCB's
-    #             rsr.spectrum.png - another way to view each chassis spectrum
-    if [[ -z "$obsnums" ]]; then
-	python $LMTOY/examples/rsr_tsys.py -s $obsnum                                     > rsr_tsys.log  2>&1
-	python $LMTOY/examples/rsr_tsys.py -t -s $obsnum                                  > rsr_tsys2.log 2>&1
-    fi
-    
-    # FIRST get the badlags - this is a file that can be edited by the user in later re-runs
-    # output: rsr.$obsnum.badlags badlags.png
-    #         rsr.$obsnum.rfile and rsr.$obsnum.blanking  - can be modified if #BADCB's have been found
-    if [[ ! -e $badlags ]]; then
-	python $LMTOY/examples/badlags.py -s $obsnum   > rsr_badlags.log 2>&1
-	#  -b bc_threshold
-	#  -p plotmax
-	mv rsr.badlags $badlags
-	grep '#BADCB' rsr_tsys.log >> $badlags
-	rsr_badcb -r $badlags >> $rfile 
-	rsr_badcb -b $badlags >> $blanking
-    fi
-
-    #   We have two similar scripts of difference provenance that produce a final spectrum
-    #   they only differ in the way blanking and baseline subtraction happens, and the idea
-    #   is that this should become one final program.
-    #   On the other hand, it's a good check if the two are producing the same spectrum
-    
     # spec1:    output spectrum rsr.$obsnum.driver.txt
     spec1="rsr.${obsnum}.driver.sum.txt"
     b="--badlags $badlags"
@@ -113,23 +97,76 @@ function lmtoy_rsr1 {
     o="-o $spec1"
     w="-w rsr.wf.pdf"
     blo=1
-
-    #   note, we're not using all the options for rsr_driver, .e.g
-    #   -t, -f, -s, -r, -n 
+    
+    # first make a fake badlags entry in dreampy config with no bad lags
     if [[ $first == 1 ]]; then
-	# first time, do a run with no badlags or rfile and no exlude baseline portions
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo    > rsr_driver0.log 2>&1	
+	# 1.
+	echo '# fake badlags' > rsr.badlags
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo --badlags rsr.badlags   > rsr_driver0.log 2>&1
+	# 2.
+	python $LMTOY/examples/rsr_tsys.py -s $obsnum            > rsr_tsys0.log  2>&1
+	mv rsr.tsys.png rsr.tsys0.png
     fi
+
+    # FIRST get the badlags - this is a file that can be edited by the user in later re-runs
+    # output: rsr.$obsnum.badlags badlags.png
+    #         rsr.$obsnum.rfile and rsr.$obsnum.blanking  - can be modified if #BADCB's have been found
+    if [[ ! -e $badlags ]]; then
+	# 3.
+	python $LMTOY/examples/badlags.py -s $obsnum   > rsr_badlags.log 2>&1
+	#  -b bc_threshold
+	#  -p plotmax
+	
+	# 4.
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo --badlags rsr.badlags   > rsr_driver1.log 2>&1	
+
+	mv rsr.badlags $badlags
+
+	# Tsys plot:  rsr.tsys.png  - only done for single obsnum - also lists BADCB's
+	#             rsr.spectrum.png - another way to view each chassis spectrum
+	if [[ -z "$obsnums" ]]; then
+	    # 5.
+	    python $LMTOY/examples/rsr_tsys.py -s $obsnum            > rsr_tsys.log  2>&1
+	    python $LMTOY/examples/rsr_tsys.py -t -s $obsnum         > rsr_tsys2.log 2>&1
+	    grep CB rsr_tsys0.log  > tab0
+	    grep CB rsr_tsys.log   > tab1
+	    paste tab0 tab1 | awk '{print $0," ratio:",$11/$5}'  > rsr_tsys_badcb.log 
+	    
+	fi	
+
+	# this step could be debatable
+	grep '#BADCB' rsr_tsys.log >> $badlags
+	rsr_badcb -r $badlags >> $rfile 
+	rsr_badcb -b $badlags >> $blanking
+    else
+	#  @todo initial settings lost
+	echo "Using existing $badlags - forgetting initial settings"
+	rsr_badcb -r $badlags > $rfile 
+	rsr_badcb -b $badlags > $blanking	
+    fi
+
+    #   We have two similar scripts of difference provenance that produce a final spectrum
+    #   they only differ in the way blanking and baseline subtraction happens, and the idea
+    #   is that this should become one final program.
+    #   On the other hand, it's a good check if the two are producing the same spectrum
+    
+
+    # 6.
+    #   note, we're not using all the options for rsr_driver, .e.g
+    #   -t, -f, -s, -r, -n
     echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo"
     python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo          > rsr_driver.log 2>&1
     #  ImageMagick:   this step can fail with some weird security policy error :-(
     #  edit /etc/ImageMagick-*/policy.xml:     rights="read | write" pattern="PDF"    
     convert rsr.wf.pdf rsr.wf.png
-    
+
+    # 7.
     # spec2: output spectrum rsr.$obsnum.blanking.sum.txt
     spec2=${blanking}.sum.txt
     echo "LMTOY>>     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo"
     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo                         > rsr_sum.log 2>&1
+
+    
 
     # plot the two in one spectrum, one full range, one the last band, closest to "CO"
     # the -z version makes an svg file for an alternative way to zoom in (TBD)
@@ -222,7 +259,7 @@ function lmtoy_seq1 {
 	    --b_regions $b_regions \
 	    --l_region $l_regions \
 	    --slice $slice \
-	    --eliminate_list 0
+	    --eliminate_list $birdies
     fi
     #		    --slice [-1000,1000] \
 	#		    --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
