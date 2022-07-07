@@ -37,6 +37,7 @@ obsnum=0
 obsid=""
 newrc=0
 pdir=""
+xlines=""     # set to a comma separated list of freq,dfreq pairs where strong lines are
 badboard=""   # set to a comma separated list of bad boards
 badcb=""      # set to a comma separated list of (chassis/board) combinations, badcb=2/3,3/5
 #            - procedural
