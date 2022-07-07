@@ -79,7 +79,7 @@ function lmtoy_rsr1 {
     # New order of reduction for single obsnum cases
     #  1. clear the badlags, run rsr_driver to get a "first" spectrum 
     #  2. get Tsys0, which also gives some badcb0= (which we ignore)
-    #  3. run baglags, this also gives some badcb1=
+    #  3. run badlags, this also gives some badcb1=
     #  4. try rsr_driver, just to apply these badlags
     #  5. get Tsys1, now done with the badlags. these also give a badcb2=, which we could use
     #  6. final rsr_driver, using badlags and badcb1,badcb2
@@ -89,14 +89,18 @@ function lmtoy_rsr1 {
     lmtoy_version > lmtoy.rc
 
     # spec1:    output spectrum rsr.$obsnum.driver.txt
+    #       xlines=110.51,0.15,108.65,0.3,85.2,0.4    - example for I10565
     spec1="rsr.${obsnum}.driver.sum.txt"
     b="--badlags $badlags"
     r="--rfile $rfile"
-    l="--exclude 110.51 0.15 108.65 0.3 85.2 0.4"    # for I10565
-    l=""
     o="-o $spec1"
     w="-w rsr.wf.pdf"
     blo=1
+    if [ "$xlines" != "" ]; then
+	l="--exclude $(echo $xlines | sed 's/,/ /g')"
+    else
+	l=""
+    fi
     
     # first make a fake badlags entry in dreampy config with no bad lags
     if [[ $first == 1 ]]; then
