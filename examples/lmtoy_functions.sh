@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="4-jul-2022"
+lmtoy_version="10-jul-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -201,10 +201,13 @@ function lmtoy_rsr1 {
 	    echo "LMTOY>> LineCheck"
 	    #  good for I17208, I12112, I10565
 	    xrange=105:111
-	    echo "# fit=gauss1d $spec1 xrange=$xrange"     > linecheck.log
-	    tabnllsqfit $spec1 fit=gauss1d xrange=$xrange >> linecheck.log  2>&1
-	    echo "# fit=gauss1d $spec2 xrange=$xrange"    >> linecheck.log
-	    tabnllsqfit $spec2 fit=gauss1d xrange=$xrange >> linecheck.log  2>&1
+	    echo  "# tabnllsqfit $spec1 fit=gauss1d xrange=$xrange"     > linecheck.log
+	    tabnllsqfit $spec1 fit=gauss1d xrange=$xrange              >> linecheck.log  2>&1
+	    echo  "# tabnllsqfit $spec2 fit=gauss1d xrange=$xrange"    >> linecheck.log
+	    tabnllsqfit $spec2 fit=gauss1d xrange=$xrange              >> linecheck.log  2>&1
+	    #   catch bad fits
+	    echo  "rms= 0"                                             >> linecheck.log
+	    echo  "rms= 0"                                             >> linecheck.log
 	fi
     else
 	echo "LMTOY>> Skipping NEMO post-processing"
