@@ -200,14 +200,20 @@ function lmtoy_rsr1 {
 	if [ $obsgoal = "LineCheck" ]; then
 	    echo "LMTOY>> LineCheck"
 	    #  good for I17208, I12112, I10565
-	    xrange=105:111
-	    echo  "# tabnllsqfit $spec1 fit=gauss1d xrange=$xrange"     > linecheck.log
-	    tabnllsqfit $spec1 fit=gauss1d xrange=$xrange              >> linecheck.log  2>&1
-	    echo  "# tabnllsqfit $spec2 fit=gauss1d xrange=$xrange"    >> linecheck.log
-	    tabnllsqfit $spec2 fit=gauss1d xrange=$xrange              >> linecheck.log  2>&1
+	    xrange=106:111
+	    echo  "# tabnllsqfit $spec1 fit=gauss1d xrange=$xrange"      > linecheck.log
+	    tabnllsqfit $spec1 fit=gauss1d xrange=$xrange out=spec1.tab >> linecheck.log  2>&1
+	    echo  "# tabnllsqfit $spec2 fit=gauss1d xrange=$xrange"     >> linecheck.log
+	    tabnllsqfit $spec2 fit=gauss1d xrange=$xrange out=spec2.tab >> linecheck.log  2>&1
 	    #   catch bad fits
-	    echo  "rms= 0"                                             >> linecheck.log
-	    echo  "rms= 0"                                             >> linecheck.log
+	    echo  "rms= 0"                                              >> linecheck.log
+	    echo  "rms= 0"                                              >> linecheck.log
+	    if [ -s spec1.tab ]; then
+		tabplot spec1.tab 1 2,3,4 111-4 111 line=1,1 color=2,3,4 ycoord=0 yapp=spec1.$dev/$dev
+	    fi
+	    if [ -s spec2.tab ]; then
+		tabplot spec2.tab 1 2,3,4 111-4 111 line=1,1 color=2,3,4 ycoord=0 yapp=spec2.$dev/$dev
+	    fi
 	fi
     else
 	echo "LMTOY>> Skipping NEMO post-processing"
