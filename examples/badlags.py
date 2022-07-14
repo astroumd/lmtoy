@@ -109,6 +109,7 @@ bc_low = 0.01
 
 # spike threshold (doesn't seem to work too well, often works bad on short lags)
 Qspike = True
+spike_threshold = 1.5
 spike_threshold = 3.0
 
 # min RMS_diff needed for full acceptance of a C/B pair
@@ -124,6 +125,9 @@ debug = True
 
 # showing interactive?
 Qshow = True
+
+# also trying to detect high end edge?
+Qedge = True
 
 #  filenames
 badlags = "rsr.badlags"
@@ -268,7 +272,13 @@ for ic in range(nchassis):
                 peaks.append((ic,ib,chan))
                 continue
             if Qspike:   #  and chan > min_chan+1 and chan < nchan-2:
-                n1 = 0.5 * (findmax[ic,ib,chan-1]+findmax[ic,ib,chan-2])
+                if chan==0: continue
+                if chan == nchan-1:
+                    what = 'spike edge'
+                    n1 = findmax[ic,ib,chan-1]
+                else:
+                    what = 'spike'                    
+                    n1 = 0.5 * (findmax[ic,ib,chan-1]+findmax[ic,ib,chan+1])
                 n2 = findmax[ic,ib,chan]
                 if n2/n1 > spike_threshold:
                     if chan > min_chan+1 and chan < nchan-2:
@@ -276,7 +286,7 @@ for ic in range(nchassis):
                         peaks.append((ic,ib,chan))
                     else:
                         comment='# '
-                    msg = '%s%2d %2d %3d %6d %6.1f    # spike'%(comment,chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmin[ic,ib,chan])
+                    msg = '%s%2d %2d %3d %6d %6.1f %6.1f   # %s'%(comment,chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmin[ic,ib,chan],n2/n1,what)
                     print(msg)
                     ftab.write("%s\n" % msg)
                     

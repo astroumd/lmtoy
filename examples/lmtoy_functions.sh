@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="4-jul-2022"
+lmtoy_version="10-jul-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -79,7 +79,7 @@ function lmtoy_rsr1 {
     # New order of reduction for single obsnum cases
     #  1. clear the badlags, run rsr_driver to get a "first" spectrum 
     #  2. get Tsys0, which also gives some badcb0= (which we ignore)
-    #  3. run baglags, this also gives some badcb1=
+    #  3. run badlags, this also gives some badcb1=
     #  4. try rsr_driver, just to apply these badlags
     #  5. get Tsys1, now done with the badlags. these also give a badcb2=, which we could use
     #  6. final rsr_driver, using badlags and badcb1,badcb2
@@ -89,14 +89,18 @@ function lmtoy_rsr1 {
     lmtoy_version > lmtoy.rc
 
     # spec1:    output spectrum rsr.$obsnum.driver.txt
+    #       xlines=110.51,0.15,108.65,0.3,85.2,0.4    - example for I10565
     spec1="rsr.${obsnum}.driver.sum.txt"
     b="--badlags $badlags"
     r="--rfile $rfile"
-    l="--exclude 110.51 0.15 108.65 0.3 85.2 0.4"    # for I10565
-    l=""
     o="-o $spec1"
     w="-w rsr.wf.pdf"
     blo=1
+    if [ "$xlines" != "" ]; then
+	l="--exclude $(echo $xlines | sed 's/,/ /g')"
+    else
+	l=""
+    fi
     
     # first make a fake badlags entry in dreampy config with no bad lags
     if [[ $first == 1 ]]; then
@@ -196,11 +200,20 @@ function lmtoy_rsr1 {
 	if [ $obsgoal = "LineCheck" ]; then
 	    echo "LMTOY>> LineCheck"
 	    #  good for I17208, I12112, I10565
-	    xrange=105:111
-	    echo "# fit=gauss1d $spec1 xrange=$xrange"     > linecheck.log
-	    tabnllsqfit $spec1 fit=gauss1d xrange=$xrange >> linecheck.log  2>&1
-	    echo "# fit=gauss1d $spec2 xrange=$xrange"    >> linecheck.log
-	    tabnllsqfit $spec2 fit=gauss1d xrange=$xrange >> linecheck.log  2>&1
+	    xrange=106:111
+	    echo  "# tabnllsqfit $spec1 fit=gauss1d xrange=$xrange"      > linecheck.log
+	    tabnllsqfit $spec1 fit=gauss1d xrange=$xrange out=spec1.tab >> linecheck.log  2>&1
+	    echo  "# tabnllsqfit $spec2 fit=gauss1d xrange=$xrange"     >> linecheck.log
+	    tabnllsqfit $spec2 fit=gauss1d xrange=$xrange out=spec2.tab >> linecheck.log  2>&1
+	    #   catch bad fits
+	    echo  "rms= 0"                                              >> linecheck.log
+	    echo  "rms= 0"                                              >> linecheck.log
+	    if [ -s spec1.tab ]; then
+		tabplot spec1.tab 1 2,3,4 111-4 111 line=1,1 color=2,3,4 ycoord=0 yapp=spec1.$dev/$dev
+	    fi
+	    if [ -s spec2.tab ]; then
+		tabplot spec2.tab 1 2,3,4 111-4 111 line=1,1 color=2,3,4 ycoord=0 yapp=spec2.$dev/$dev
+	    fi
 	fi
     else
 	echo "LMTOY>> Skipping NEMO post-processing"
