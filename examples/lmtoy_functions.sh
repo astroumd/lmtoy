@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="10-jul-2022"
+lmtoy_version="14-jul-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -258,6 +258,13 @@ function lmtoy_seq1 {
 	else
 	    use_otf_cal=""
 	fi
+	if [ -z $restfreq ]; then
+	    use_restfreq=""
+	else
+	    use_restfreq="--restfreq $restfreq"
+	    #use_restfreq=""	    
+	    echo "WARNING: resetting restfreq not supported yet"
+	fi
 	process_otf_map2.py \
 	    -p $p_dir \
 	    -o $s_nc \
@@ -267,6 +274,7 @@ function lmtoy_seq1 {
 	    --stype $stype \
 	    --use_cal \
 	    $use_otf_cal \
+	    $use_restfreq \
 	    --x_axis VLSR \
 	    --b_order $b_order \
 	    --b_regions $b_regions \
@@ -294,6 +302,7 @@ function lmtoy_seq1 {
 	    --plots ${s_on}_specviews
     
 	# show spectra, each pixel gets a different curve/color
+	echo "LMTOY>> view_spec_point"	
 	view_spec_point.py \
 	    -i $s_nc \
 	    --pix_list $pix_list \
@@ -301,6 +310,7 @@ function lmtoy_seq1 {
 	    --location $location \
 	    --plots ${s_on}_specpoint,png,1
 	
+	echo "LMTOY>> view_spec_point"	
 	view_spec_point.py \
 	    -i $s_nc \
 	    --pix_list $pix_list \
