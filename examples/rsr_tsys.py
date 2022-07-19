@@ -18,12 +18,15 @@ from dreampy3.redshift.utils.fileutils import make_generic_filename
 from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 from dreampy3.redshift.plots import RedshiftPlot
 
-Qshow = True
-Qspec = False
-ext   = 'png'
-nopt  = 0
+
+#                    command line options
+Qshow    = True
+Qspec    = False
+Qbadlags = False
+ext      = 'png'
+nopt     = 0
 #                    trigger "badcb" on the RMS in the adjacent-channel differences
-rms_min = 25.0
+rms_min  = 25.0
 
 for f in sys.argv[1:]:
     if f == '-s':
@@ -35,6 +38,9 @@ for f in sys.argv[1:]:
     if f == '-t':
         Qspec = True
         continue
+    if f == '-b':
+        Qbadlags = True
+        continue
     nopt = nopt + 1
     obsnum = int(f)
 
@@ -45,8 +51,12 @@ if Qspec:
     base  = 'rsr.spectrum'
 else:
     base  = 'rsr.tsys'
-    
-    
+
+
+if Qbadlags:
+    import dreampy3
+    dreampy3.badlags('rsr.badlags')
+  
 plt.figure()
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 label = "badcb="
