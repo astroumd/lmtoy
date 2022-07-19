@@ -96,7 +96,7 @@ function lmtoy_rsr1 {
     o="-o $spec1"
     w="-w rsr.wf.pdf"
     t="-r 0.01"
-    blo="-b 1"
+    blo="1"
     if [ "$xlines" != "" ]; then
 	l="--exclude $(echo $xlines | sed 's/,/ /g')"
     else
@@ -112,9 +112,9 @@ function lmtoy_rsr1 {
 	# 1.
 	if [[ $_old_serial == 1 ]]; then
 	    echo '# empty badlags' > rsr.badlags
-	    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p $blo $t --badlags rsr.badlags   > rsr_driver0.log 2>&1
+	    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t --badlags rsr.badlags   > rsr_driver0.log 2>&1
         else
-	    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p $blo $t > rsr_driver0.log 2>&1
+	    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t > rsr_driver0.log 2>&1
 	fi
 	# 2.
 	python $LMTOY/examples/rsr_tsys.py -s $obsnum            > rsr_tsys0.log  2>&1
@@ -131,7 +131,7 @@ function lmtoy_rsr1 {
 	#  -p plotmax
 	
 	# 4.
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p $blo $t --badlags rsr.badlags   > rsr_driver1.log 2>&1	
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo $t --badlags rsr.badlags   > rsr_driver1.log 2>&1	
 
 	# keep the old one (for the bad rsr_tsys.py parser)
 	cp rsr.badlags $badlags
@@ -168,8 +168,8 @@ function lmtoy_rsr1 {
     # 6.
     #   note, we're not using all the options for rsr_driver, .e.g
     #   -t, -f, -s, -r, -n
-    echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p $blo $t"
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p $blo $t          > rsr_driver.log 2>&1
+    echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t"
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t          > rsr_driver.log 2>&1
     #  ImageMagick:   this step can fail with some weird security policy error :-(
     #  edit /etc/ImageMagick-*/policy.xml:     rights="read | write" pattern="PDF"    
     convert rsr.wf.pdf rsr.wf.png
@@ -177,7 +177,7 @@ function lmtoy_rsr1 {
     # 7.
     # spec2: output spectrum rsr.$obsnum.blanking.sum.txt
     spec2=${blanking}.sum.txt
-    echo "LMTOY>>     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo"
+    echo "LMTOY>>  python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo"
     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo                         > rsr_sum.log 2>&1
 
     
