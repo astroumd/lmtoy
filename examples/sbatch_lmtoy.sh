@@ -35,7 +35,7 @@ for arg in $*; do
 done
 
 #                                        version
-version="23-jun-2022"
+version="14-may-2022"
 
 #                                        prefix to run
 prefix="/usr/bin/time xvfb-run -a"
@@ -45,6 +45,9 @@ if [ $obsnums != 0 ]; then
     runid=$(echo $obsnums | awk -F, '{printf("%s_%s\n",$1,$NF)}')
 else
     runid=$obsnum
+fi
+if [ $obsnum = 1 ]; then
+    shift
 fi
 
 #                                        sbatch run file
@@ -69,9 +72,10 @@ if [ "$(which sbatch)" != "/usr/bin/sbatch" ]; then
 fi
 
 #                     do all sbatch work in $WORK_LMT/sbatch
-mkdir -p $WORK_LMT/sbatch $WORK_LMT/tmp
+mkdir -p $WORK_LMT/sbatch
 cd $WORK_LMT/sbatch
-#             
+#
+
 
 cat <<EOF > $run
 #! /bin/bash
