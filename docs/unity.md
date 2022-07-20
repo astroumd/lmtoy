@@ -12,48 +12,51 @@ which means different helpdesk users will need to ensure they are not working on
 	
 In your local ~/.ssh/config file you will need a shortcut to be able to ssh into the unity account
 
-    Host unity2
+    Host unity
        User lmthelpdesk_umass_edu
        HostName unity.rc.umass.edu
        IdentityFile ~/.ssh/unity_id
 	   
 and assuming your ssh public and private key has been set up (unity_id), the command
 
-    ssh unity2
+    ssh unity
 
 will then log you into unity!
 
 
-Your **.bashrc** will need to point to the already installed LMTOY :
+##  LMTOY on unity
 
-    lmtoysh=/work/lmtslr/lmtoy/lmtoy_start.sh
-    if [ -e $lmtoysh ]; then
-       source $lmtoysh
-       export WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt_helpdesk
-    else
-       echo $lmtoysh does not seem to exist
-    fi
+Your **~lmthelpdesk_umass_edu/.bashrc** has been modified to handle multiple users, each using their own
+$WORK_LMT. But immediately after a login, this variable is unset.  In order to change
+it, use something like
 
-The directory **$WORK_LMT/sbatch** (and tmp?) should exist.
+     work_lmt teuben
+	 
+which will also remind you what projects you are working on, e.g.
+
+	 work_lmt teuben
+	 WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/teuben
+	 2014ARSRCommissioning  sbatch  bench1  bench2  tmp
+
+The directories **sbatch** and **tmp** need to be present, and of course you might see some *ProjectId*'s.
 
 ## Running on unity
 
-You cannot run the pipeline directly on Unity. The *slurm* environment is used
+You cannot run the pipeline directly on Unity, as you can on the laptop. The *slurm* environment is used
 to submit scripts and coordinate when and where the script can run.
 
 ## Benchmark
 
-As an example, a quick standard RSR benchmark could be executed from any directory if you
+As an example, our quick standard RSR benchmark could be executed from any directory if you
 had LMTOY running on a normal Unix environment, viz.
 
-    SLpipeline.sh admit=0 restart=1 obsnum=33551
+    SLpipeline.sh restart=1 obsnum=33551
 	
 after which the pipeline results would be in $WORK_LMT/2014ARSRCommissioning/33551	
 	
 but on Unity this command would be need to be prepended by our **sbatch_lmtoy.sh** script, viz.
 
-    sbatch_lmtoy.sh  SLpipeline.sh admit=0 restart=1 obsnum=33551
-	
+    sbatch_lmtoy.sh  SLpipeline.sh restart=1 obsnum=33551
 	
 this will report a JOBID, and a logfile where you could either cancel this job, e.g.
 
@@ -61,18 +64,28 @@ this will report a JOBID, and a logfile where you could either cancel this job, 
 	
 or watch the progress of the output	that would normally be see in the terminal
 
-    tail -f /nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/sbatch/slurm-3051415-33551.out
+    tail -f /nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/teuben/sbatch/slurm-3051415-33551.out
 	
 (this filename is reported on screen, so it copy+paste can be used. All *slurm*
-for LMTOY will be kept in $WORK_LMT/sbatch and may occasionally have to be cleaed up)
+for LMTOY will be kept in $WORK_LMT/sbatch and may occasionally have to be cleaned up)
+
+If you have many obsnums to process, the script generator would put them in a text file, and you
+would run it as follows
+
+    sbatch_lmtoy.sh  linecheck.run1
+
+
+## Viewing pipeline results
 
 The pipeline output is again in your $WORK_LMT/2014ARSRCommissioning/33551	
 and should be viewable online on 
+
 http://taps.lmtgtm.org/lmtslr/2014ARSRCommissioning/33551/README.html
 
 vs.
 
-http://taps.lmtgtm.org/lmthelpdesk/2014ARSRCommissioning/33551/README.html
+http://taps.lmtgtm.org/lmthelpdesk/peter/2014ARSRCommissioning/33551/README.html
 
 
+(ok, this is not correct yet, need Kamal for this)
 
