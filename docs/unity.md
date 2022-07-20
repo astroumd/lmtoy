@@ -70,10 +70,20 @@ or watch the progress of the output	that would normally be see in the terminal
 for LMTOY will be kept in $WORK_LMT/sbatch and may occasionally have to be cleaned up)
 
 If you have many obsnums to process, the script generator would put them in a text file, and you
-would run it as follows
+would run it as follows (here the example is just one case, we showed above):
 
-    sbatch_lmtoy.sh  linecheck.run1
+    echo "SLpipeline.sh restart=1 obsnum=33551" > bench1
+    sbatch_lmtoy.sh  bench1
+	
+## Interactive shell
 
+Although Unity is not meant to be used in an interactive mode, there is a *blessed* way to start
+an interactive shell, e.g.
+
+    srun -n 1 -c 4 --mem=16G -p toltec-cpu --x11 --pty bash
+	
+in this shell you are using a real unity CPU, and should get much faster response and able to run
+a pipeline instance interactively. You can also use sbatch from here, as discussed before.
 
 ## Viewing pipeline results
 
