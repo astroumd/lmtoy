@@ -2,7 +2,8 @@
 
 Some notes on running the pipeline in real-time at malt (LMT) and unity (UMASS).
 
-malt produces the TAP's, and immediately copies them to unity for public viewing.
+malt produces the TAP's, and immediately copies them to unity for public viewing. Once
+the pipeline runs on unity again, only SRDP's are produced.
 
 ## LMTOY development
 
@@ -13,7 +14,8 @@ gets an update, the others are done "on demand" as follows:
 
       lmtoy pull
 	  
-and if there were changes to the gridder or NEMO, those need a compilation
+and if there were changes to the SpectralLineReductioin gridder or to NEMO, 
+those need a re-compilation, e.g.
 
 	  cd $LMTOY
 	  make update_lmtslr
@@ -33,8 +35,10 @@ commands in window 1:
 
 	  ssh malt
       cd $WORK_LMT/SLpipeline.d
+	  
 	  # rebuild the database (probably good to do daily if observations are taken)
 	  lmtinfo.py build
+	  
 	  # inspect and see if there need to be changes
 	  more SLpipeline.in
 	  SLpipeline_run.sh
@@ -59,7 +63,8 @@ commands in window 3:
 	  SLpipeline.sh admit=0 restart=1 obsnum=99438 extent=120 pix_list=$(pix_list.py -14,-15)
 
 I often run manually a Pointing map (they are not automagially included in the Science run), but
-these need a larger mapsize value, e.g. **extent=120**
+these need a larger mapsize value, e.g. **extent=120**.  This is useful to see which beams are 
+good and bad, so if there is a change from before, the file **SLpipeline.in** can be edited.
 
 ## Setup at unity
 
@@ -93,3 +98,32 @@ so this is still manual labor, but needs to be fully automated.
 
 
 
+## Strategy for reducing SEQ data
+
+This is being implemented in example **mk_runs.py**, which create *run* files.
+
+1. Run all obsnums with no flagging/masking, keep all the bad beams. The plots
+   related to this full restart run are actually very important to compare to
+   any subsequent runs in order to identify bad features that need to be masked
+   out.
+
+2. Review all the plots in the SL pipeline summary. The important ones:
+   * 1: does Tsys look ok? Are there birdies?
+   * 2: review the waterfall plots and note the bad beams
+   * 3: Make sure the RMS plot don't have outliers. See if so, is there something
+      odd looking inthe watefall plot?   If so, probably flag this beam
+   * 7: the mean spectra should be all wel behaving. often bad beams also show
+      bad behavior here.
+   * a birdie obvious in the waterfall plot (e.g. in beams 2 or 6 in 86GHz data)
+     creates bad RMS plots, and probably should be flagged because bad baselines
+	 are now computed.
+	  
+  Set the bad beams, go back to 1. and review the plots again.
+  If the source is detected.
+  
+3. If all of this encoded via **mk_runs.py**, there should be 4 files that
+   can be run in succession:
+   1. run1 - raw single obsnum runs, no flagging
+   2. run2 - combination, no flagging (this can arguably be skipped)
+   3. run1a - raw single obsnum runs, with all flagging
+   4. run2a - combination, no flagging. This produces the final SRDP 
