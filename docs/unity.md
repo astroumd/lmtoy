@@ -1,16 +1,18 @@
 # Using LMTOY on Unity
 
-Here we summarize how LMTOY can be used on Unity from the unix shell
+Here we summarize how LMTOY can be used on Unity from the unix shell using the *slurm*
+environment.
 
 ## Your Unity account
 
-There is a single account for the helpdesk
+There is a single account for all helpdesk users
 
     lmthelpdesk_umass_edu
 	
 which means different helpdesk users will need to ensure they are not working on the same *ProjectId*.
 	
-In your local ~/.ssh/config file you will need a shortcut to be able to ssh into the unity account
+In your local ~/.ssh/config file you will need a shortcut to be able to ssh into the unity account.
+For example:
 
     Host unity
        User lmthelpdesk_umass_edu
@@ -21,8 +23,7 @@ and assuming your ssh public and private key has been set up (unity_id), the com
 
      ssh unity
 
-will then log you into unity!
-
+will then log you into unity without the need for a password.
 
 ##  LMTOY on unity
 
@@ -55,7 +56,7 @@ had LMTOY running on a normal Unix environment, viz.
 	
 after which the pipeline results would be in $WORK_LMT/2014ARSRCommissioning/33551	
 	
-but on Unity you need to submit this via slurm. Within LMTOY we created the **sbatch_lmtoy.sh** script
+but on Unity you need to submit this via *slurm*. Within LMTOY we created the **sbatch_lmtoy.sh** script
 to make this a bit easier, viz.
 
      sbatch_lmtoy.sh  SLpipeline.sh restart=1 obsnum=33551
@@ -68,8 +69,8 @@ and to watch the progress of the output of your command you would use something 
 
      tail -f /nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/teuben/sbatch/slurm-3051415-33551.out
 	
-(this filename is reported on screen, so it copy+paste can be used. All *slurm*
-for LMTOY will be kept in $WORK_LMT/sbatch and may occasionally have to be cleaned up)
+(this filename is reported on screen, so copy+paste can be used. All *slurm* scripts and logfiles
+for LMTOY will be kept in $WORK_LMT/sbatch and will occasionally have to be cleaned up)
 
 If you have many obsnums to process, the script generator would put them in a text file, and you
 would run it as follows (here the example is just the one case we just showed above):
@@ -79,18 +80,18 @@ would run it as follows (here the example is just the one case we just showed ab
 
 ## SEQ benchmark
 
-In the same vain, the Sequoia benchmark is the following:
+In the same vein, the Sequoia benchmark is the following:
 
      sbatch_lmtoy.sh  SLpipeline.sh restart=1 obsnum=79448
 	
 ## Interactive shell
 
-Although Unity is not meant to be used in an interactive mode, there is a *blessed* way to start
+Although Unity is not meant to be used in interactive mode, there is a *blessed* way to start
 an interactive shell, e.g.
 
      srun -n 1 -c 4 --mem=16G -p toltec-cpu --x11 --pty bash
 	
-in this shell you are using a real unity CPU, and should get much faster response and able to run
+in this shell you are using a real unity CPU (4 in fact), and should get much faster response and able to run
 a pipeline instance interactively. You can also use sbatch from here, as discussed before.
 
 ## Viewing pipeline results
@@ -99,3 +100,9 @@ The pipeline output is again in your $WORK_LMT/2014ARSRCommissioning/33551
 and should be viewable online via the following URL
 
      http://taps.lmtgtm.org/lmthelpdesk/teuben/2014ARSRCommissioning/33551
+
+where WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/teuben.
+
+Note the official *lmtslr* results of this obsnum would be on
+
+     http://taps.lmtgtm.org/lmtslr/2014ARSRCommissioning/33551/README.html
