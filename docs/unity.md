@@ -72,7 +72,7 @@ and to watch the progress of the output of your command you would use something 
 for LMTOY will be kept in $WORK_LMT/sbatch and may occasionally have to be cleaned up)
 
 If you have many obsnums to process, the script generator would put them in a text file, and you
-would run it as follows (here the example is just one case, we showed above):
+would run it as follows (here the example is just the one case we just showed above):
 
      echo "SLpipeline.sh restart=1 obsnum=33551" > bench1
      sbatch_lmtoy.sh  bench1
