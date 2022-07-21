@@ -76,6 +76,12 @@ would run it as follows (here the example is just the one case we just showed ab
 
      echo "SLpipeline.sh restart=1 obsnum=33551" > bench1
      sbatch_lmtoy.sh  bench1
+
+## SEQ benchmark
+
+In the same vain, the Sequoia benchmark is the following:
+
+     sbatch_lmtoy.sh  SLpipeline.sh restart=1 obsnum=79448
 	
 ## Interactive shell
 
