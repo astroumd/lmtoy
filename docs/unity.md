@@ -43,7 +43,12 @@ The directories **sbatch** and **tmp** need to be present, and of course you mig
 ## Running on unity
 
 You cannot run the pipeline directly on Unity, as you can on the laptop. The *slurm* environment is used
-to submit scripts and coordinate when and where the script can run.
+to submit scripts and coordinate when and where the script can run. However, to find data using
+**lmtinfo.py** is probably ok, e.g.
+
+     lmtinfo.py grep RSR 2014 I10565
+	 
+(note in this historic data the observing data was not properly encoded in the header and it will claim 1970)
 
 ## Benchmark
 
