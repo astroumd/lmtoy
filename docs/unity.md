@@ -19,7 +19,7 @@ In your local ~/.ssh/config file you will need a shortcut to be able to ssh into
 	   
 and assuming your ssh public and private key has been set up (unity_id), the command
 
-    ssh unity
+     ssh unity
 
 will then log you into unity!
 
@@ -34,37 +34,39 @@ it, use something like
 	 
 which will also remind you what projects you are working on, e.g.
 
-	 work_lmt teuben
-	 WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/teuben
-	 2014ARSRCommissioning  sbatch  bench1  bench2  tmp
+     work_lmt teuben
+     WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/teuben
+     2014ARSRCommissioning  sbatch  bench1  bench2  tmp
 
 The directories **sbatch** and **tmp** need to be present, and of course you might see some *ProjectId*'s.
+Now you are ready to submit scripts on unity!
 
 ## Running on unity
 
 You cannot run the pipeline directly on Unity, as you can on the laptop. The *slurm* environment is used
-to submit scripts and coordinate when and where the script can run.
+to submit scripts and coordinate when and where the script can run. (need reference)
 
-## Benchmark
+## RSR Benchmark
 
-As an example, our quick standard RSR benchmark could be executed from any directory if you
+As an example, our standard RSR benchmark could be executed from any directory if you
 had LMTOY running on a normal Unix environment, viz.
 
-    SLpipeline.sh restart=1 obsnum=33551
+     SLpipeline.sh restart=1 obsnum=33551
 	
 after which the pipeline results would be in $WORK_LMT/2014ARSRCommissioning/33551	
 	
-but on Unity this command would be need to be prepended by our **sbatch_lmtoy.sh** script, viz.
+but on Unity you need to submit this via slurm. Within LMTOY we created the **sbatch_lmtoy.sh** script
+to make this a bit easier, viz.
 
-    sbatch_lmtoy.sh  SLpipeline.sh restart=1 obsnum=33551
+     sbatch_lmtoy.sh  SLpipeline.sh restart=1 obsnum=33551
 	
-this will report a JOBID, and a logfile where you could either cancel this job, e.g.
+this will report a JOBID, and a logfile.   The JOBID is needed if you need to cancel this job, e.g.
 
-    scancel 3051415
+     scancel 3051415
 	
-or watch the progress of the output	that would normally be see in the terminal
+and to watch the progress of the output of your command you would use something like
 
-    tail -f /nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/teuben/sbatch/slurm-3051415-33551.out
+     tail -f /nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/teuben/sbatch/slurm-3051415-33551.out
 	
 (this filename is reported on screen, so it copy+paste can be used. All *slurm*
 for LMTOY will be kept in $WORK_LMT/sbatch and may occasionally have to be cleaned up)
@@ -72,15 +74,15 @@ for LMTOY will be kept in $WORK_LMT/sbatch and may occasionally have to be clean
 If you have many obsnums to process, the script generator would put them in a text file, and you
 would run it as follows (here the example is just one case, we showed above):
 
-    echo "SLpipeline.sh restart=1 obsnum=33551" > bench1
-    sbatch_lmtoy.sh  bench1
+     echo "SLpipeline.sh restart=1 obsnum=33551" > bench1
+     sbatch_lmtoy.sh  bench1
 	
 ## Interactive shell
 
 Although Unity is not meant to be used in an interactive mode, there is a *blessed* way to start
 an interactive shell, e.g.
 
-    srun -n 1 -c 4 --mem=16G -p toltec-cpu --x11 --pty bash
+     srun -n 1 -c 4 --mem=16G -p toltec-cpu --x11 --pty bash
 	
 in this shell you are using a real unity CPU, and should get much faster response and able to run
 a pipeline instance interactively. You can also use sbatch from here, as discussed before.
@@ -88,14 +90,6 @@ a pipeline instance interactively. You can also use sbatch from here, as discuss
 ## Viewing pipeline results
 
 The pipeline output is again in your $WORK_LMT/2014ARSRCommissioning/33551	
-and should be viewable online on 
+and should be viewable online via the following URL
 
-http://taps.lmtgtm.org/lmtslr/2014ARSRCommissioning/33551/README.html
-
-vs.
-
-http://taps.lmtgtm.org/lmthelpdesk/peter/2014ARSRCommissioning/33551/README.html
-
-
-(ok, this is not correct yet, need Kamal for this)
-
+     http://taps.lmtgtm.org/lmthelpdesk/teuben/2014ARSRCommissioning/33551
