@@ -1,13 +1,13 @@
 # Using LMTOY on Unity
 
 Here we summarize how LMTOY can be used on Unity from the unix shell using the *slurm*
-environment.
+environment. The reader is assumed to be familiar with the basic operation of LMTOY.
 
 ## Your Unity account
 
 There is a single account for all helpdesk users
 
-    lmthelpdesk_umass_edu
+        lmthelpdesk_umass_edu
 	
 which means different helpdesk users will need to ensure they are not working on the same *ProjectId*.
 	
@@ -45,7 +45,13 @@ Now you are ready to submit scripts on unity!
 ## Running on unity
 
 You cannot run the pipeline directly on Unity, as you can on the laptop. The *slurm* environment is used
-to submit scripts and coordinate when and where the script can run. (need reference)
+to submit scripts and coordinate when and where the script can run. However, to find data using
+**lmtinfo.py** is probably ok, e.g.
+
+     lmtinfo.py grep RSR 2014 I10565
+	 
+(note in this historic data the observing data was not properly encoded in the header and it will claim 1970)
+
 
 ## RSR Benchmark
 
@@ -106,3 +112,30 @@ where WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/teuben.
 Note the official *lmtslr* results of this obsnum would be on
 
      http://taps.lmtgtm.org/lmtslr/2014ARSRCommissioning/33551/README.html
+
+
+## Script Generator
+
+There is an experimental script generator, one per *ProjectId*, which
+generates the SLpipeline.sh commands to process Spectral Line data. These "run"
+files can be processed by **bash** (serial mode), gnu **parallel** and **sbatch_lmtoy.sh**,
+depending on your computing environment.   Here is an example, where for convenience
+we've placed the script generator below the data tree
+
+      cd $WORK_LMT/2022S1RSRCommissioning
+      git clone https://github.com/teuben/lmtoy_2022S1RSRCommissioning
+	  cd lmtoy_2022S1RSRCommissioning
+	  make runs
+	  sbatch_lmtoy.sh linecheck.run1
+	  
+This has well over 300 obsnum entries. This particular script generator has
+also history 50m and 32m data included in the run file.  If for some reason
+you only want to process historic 32m data, you would make a temporary run file,
+viz.
+
+      grep h32 linecheck.run1 > test1
+	  sbatch_lmtoy.sh test1
+
+which currently has only 199 entries, and only for source **I10565**. In serial
+mode this would take about 60 mins on Unity, but in the new parallel mode,
+it takes about 3-4 minutes.
