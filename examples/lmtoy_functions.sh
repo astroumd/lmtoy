@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="10-jul-2022"
+lmtoy_version="19-jul-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -77,7 +77,7 @@ function lmtoy_rsr1 {
     # input:  first, obsnum, badlags, blanking, rfile, ....
 
     # New order of reduction for single obsnum cases
-    #  1. clear the badlags, run rsr_driver to get a "first" spectrum 
+    #  1. run rsr_driver to get a "first" spectrum, with whatever badlags are in dreampyrc
     #  2. get Tsys0, which also gives some badcb0= (which we ignore)
     #  3. run badlags, this also gives some badcb1=
     #  4. try rsr_driver, just to apply these badlags
@@ -95,18 +95,27 @@ function lmtoy_rsr1 {
     r="--rfile $rfile"
     o="-o $spec1"
     w="-w rsr.wf.pdf"
-    blo=1
+    t="-r 0.01"
+    blo="1"
     if [ "$xlines" != "" ]; then
 	l="--exclude $(echo $xlines | sed 's/,/ /g')"
     else
 	l=""
     fi
     
-    # first make a fake badlags entry in dreampy config with no bad lags
+    # deal with a first run -
+    # Before july-2022 we reset with empty badlags entry in dreampy config with no bad lags
+    # in order to be able to run serially with reproduceable results.
+    # Now we make the dreampy config file read-only so we can run in parallel 
+    _old_serial=0
     if [[ $first == 1 ]]; then
 	# 1.
-	echo '# fake badlags' > rsr.badlags
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo --badlags rsr.badlags   > rsr_driver0.log 2>&1
+	if [[ $_old_serial == 1 ]]; then
+	    echo '# empty badlags' > rsr.badlags
+	    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t --badlags rsr.badlags   > rsr_driver0.log 2>&1
+        else
+	    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t > rsr_driver0.log 2>&1
+	fi
 	# 2.
 	python $LMTOY/examples/rsr_tsys.py -s $obsnum            > rsr_tsys0.log  2>&1
 	mv rsr.tsys.png rsr.tsys0.png
@@ -122,20 +131,21 @@ function lmtoy_rsr1 {
 	#  -p plotmax
 	
 	# 4.
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo --badlags rsr.badlags   > rsr_driver1.log 2>&1	
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo $t --badlags rsr.badlags   > rsr_driver1.log 2>&1	
 
-	mv rsr.badlags $badlags
+	# keep the old one (for the bad rsr_tsys.py parser)
+	cp rsr.badlags $badlags
 
 	# Tsys plot:  rsr.tsys.png  - only done for single obsnum - also lists BADCB's
 	#             rsr.spectrum.png - another way to view each chassis spectrum
+	#             -b will use fixed name 'rsr.badlags' for badlags
 	if [[ -z "$obsnums" ]]; then
 	    # 5.
-	    python $LMTOY/examples/rsr_tsys.py -s $obsnum            > rsr_tsys.log  2>&1
-	    python $LMTOY/examples/rsr_tsys.py -t -s $obsnum         > rsr_tsys2.log 2>&1
+	    python $LMTOY/examples/rsr_tsys.py -b    -s $obsnum         > rsr_tsys.log  2>&1
+	    python $LMTOY/examples/rsr_tsys.py -b -t -s $obsnum         > rsr_tsys2.log 2>&1
 	    grep CB rsr_tsys0.log  > tab0
 	    grep CB rsr_tsys.log   > tab1
 	    paste tab0 tab1 | awk '{print $0," ratio:",$11/$5}'  > rsr_tsys_badcb.log 
-	    
 	fi	
 
 	# this step could be debatable
@@ -158,8 +168,8 @@ function lmtoy_rsr1 {
     # 6.
     #   note, we're not using all the options for rsr_driver, .e.g
     #   -t, -f, -s, -r, -n
-    echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo"
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo          > rsr_driver.log 2>&1
+    echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t"
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t          > rsr_driver.log 2>&1
     #  ImageMagick:   this step can fail with some weird security policy error :-(
     #  edit /etc/ImageMagick-*/policy.xml:     rights="read | write" pattern="PDF"    
     convert rsr.wf.pdf rsr.wf.png
@@ -167,7 +177,7 @@ function lmtoy_rsr1 {
     # 7.
     # spec2: output spectrum rsr.$obsnum.blanking.sum.txt
     spec2=${blanking}.sum.txt
-    echo "LMTOY>>     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo"
+    echo "LMTOY>>  python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo"
     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo                         > rsr_sum.log 2>&1
 
     
@@ -258,6 +268,13 @@ function lmtoy_seq1 {
 	else
 	    use_otf_cal=""
 	fi
+	if [ -z $restfreq ]; then
+	    use_restfreq=""
+	else
+	    use_restfreq="--restfreq $restfreq"
+	    #use_restfreq=""	    
+	    echo "WARNING: resetting restfreq not supported yet"
+	fi
 	process_otf_map2.py \
 	    -p $p_dir \
 	    -o $s_nc \
@@ -267,6 +284,7 @@ function lmtoy_seq1 {
 	    --stype $stype \
 	    --use_cal \
 	    $use_otf_cal \
+	    $use_restfreq \
 	    --x_axis VLSR \
 	    --b_order $b_order \
 	    --b_regions $b_regions \
@@ -294,6 +312,7 @@ function lmtoy_seq1 {
 	    --plots ${s_on}_specviews
     
 	# show spectra, each pixel gets a different curve/color
+	echo "LMTOY>> view_spec_point"	
 	view_spec_point.py \
 	    -i $s_nc \
 	    --pix_list $pix_list \
@@ -301,6 +320,7 @@ function lmtoy_seq1 {
 	    --location $location \
 	    --plots ${s_on}_specpoint,png,1
 	
+	echo "LMTOY>> view_spec_point"	
 	view_spec_point.py \
 	    -i $s_nc \
 	    --pix_list $pix_list \

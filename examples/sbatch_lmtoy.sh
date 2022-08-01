@@ -103,6 +103,6 @@ sbatch $run
 #   report last few
 sleep 2
 ls -ltr $WORK_LMT/sbatch/slurm*.out | tail -6
-squeue -u lmtslr_umass_edu
-echo "squeue -u lmtslr_umass_edu"
+squeue -u $USER
+echo "squeue -u $USER"
 
