@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 15-jun-2022"
+version="SLpipeline: 10-aug-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -201,6 +201,9 @@ elif [ $instrument = "RSR" ]; then
     rsr_summary.sh $pdir/lmtoy_$obsnum.log
     date >> $pdir/date.log
     echo Logfile in: $pdir/lmtoy_$obsnum.log
+    if [[ $first == 1 ]]; then
+	cp $pdir/lmtoy_$obsnum.log   $pdir/first.lmtoy_$obsnum.log	
+    fi
 
 elif [ $instrument = "1MM" ]; then
     # @todo   only tested for one case
