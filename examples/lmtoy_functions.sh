@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="19-jul-2022"
+lmtoy_version="10-aug-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -95,6 +95,7 @@ function lmtoy_rsr1 {
     r="--rfile $rfile"
     o="-o $spec1"
     w="-w rsr.wf.pdf"
+    t=""
     t="-r 0.01"
     blo="1"
     if [ "$xlines" != "" ]; then
@@ -125,6 +126,7 @@ function lmtoy_rsr1 {
     # output: rsr.$obsnum.badlags badlags.png
     #         rsr.$obsnum.rfile and rsr.$obsnum.blanking  - can be modified if #BADCB's have been found
     if [[ ! -e $badlags ]]; then
+	#     only for a single obsnum run
 	# 3.
 	python $LMTOY/examples/badlags.py -s $obsnum   > rsr_badlags.log 2>&1
 	#  -b bc_threshold
@@ -152,13 +154,19 @@ function lmtoy_rsr1 {
 	grep '#BADCB' rsr_tsys.log >> $badlags
 	rsr_badcb -r $badlags >> $rfile 
 	rsr_badcb -b $badlags >> $blanking
+	echo "PJT1 obsnum=$obsnum obsnums=$obsnums"	
+    elif [ ! -z "$obsnums" ]; then
+	#  only for obsnum combinations
+	echo "PJT2 obsnum=$obsnum obsnums=$obsnums"
     else
+	#  only for a single obsnum run
 	#  @todo initial settings lost
 	echo "Using existing $badlags - forgetting initial settings"
-	rsr_badcb -r $badlags > $rfile 
-	rsr_badcb -b $badlags > $blanking	
+	rsr_badcb -r $badlags > $rfile
+	rsr_badcb -b $badlags > $blanking
+	echo "PJT3 obsnum=$obsnum obsnums=$obsnums"
     fi
-
+    
     #   We have two similar scripts of difference provenance that produce a final spectrum
     #   they only differ in the way blanking and baseline subtraction happens, and the idea
     #   is that this should become one final program.
