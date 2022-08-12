@@ -58,14 +58,14 @@ to submit scripts and coordinate when and where the script can run. However, to 
 As an example, our standard RSR benchmark could be executed from any directory if you
 had LMTOY running on a normal Unix environment, viz.
 
-     SLpipeline.sh restart=1 obsnum=33551
+     SLpipeline.sh restart=1 obsnum=33551 xlines=110.51,0.15
 	
 after which the pipeline results would be in $WORK_LMT/2014ARSRCommissioning/33551	
 	
 but on Unity you need to submit this via *slurm*. Within LMTOY we created the **sbatch_lmtoy.sh** script
 to make this a bit easier, viz.
 
-     sbatch_lmtoy.sh  SLpipeline.sh restart=1 obsnum=33551
+     sbatch_lmtoy.sh  SLpipeline.sh restart=1 obsnum=33551 xlines=110.51,0.15
 	
 this will report a JOBID, and a logfile.   The JOBID is needed if you need to cancel this job, e.g.
 
@@ -81,7 +81,7 @@ for LMTOY will be kept in $WORK_LMT/sbatch and will occasionally have to be clea
 If you have many obsnums to process, the script generator would put them in a text file, and you
 would run it as follows (here the example is just the one case we just showed above):
 
-     echo "SLpipeline.sh restart=1 obsnum=33551" > bench1
+     echo "SLpipeline.sh restart=1 obsnum=33551 xlines=110.51,0.15" > bench1
      sbatch_lmtoy.sh  bench1
 
 ## SEQ benchmark
@@ -116,7 +116,7 @@ Note the official *lmtslr* results of this obsnum would be on
 
 ## Script Generator
 
-There is an experimental script generator, one per *ProjectId*, which
+There is an experimental script generator, one for each *ProjectId*, which
 generates the SLpipeline.sh commands to process Spectral Line data. These "run"
 files can be processed by **bash** (serial mode), gnu **parallel** and **sbatch_lmtoy.sh**,
 depending on your computing environment.   Here is an example, where for convenience
@@ -124,17 +124,17 @@ we've placed the script generator below the data tree
 
       cd $WORK_LMT/2022S1RSRCommissioning
       git clone https://github.com/teuben/lmtoy_2022S1RSRCommissioning
-	  cd lmtoy_2022S1RSRCommissioning
-	  make runs
-	  sbatch_lmtoy.sh linecheck.run1
+      cd lmtoy_2022S1RSRCommissioning
+      make runs
+      sbatch_lmtoy.sh linecheck.run1
 	  
 This has well over 300 obsnum entries. This particular script generator has
-also history 50m and 32m data included in the run file.  If for some reason
+also historic 50m and 32m data included in the run file.  If for some reason
 you only want to process historic 32m data, you would make a temporary run file,
 viz.
 
       grep h32 linecheck.run1 > test1
-	  sbatch_lmtoy.sh test1
+      sbatch_lmtoy.sh test1
 
 which currently has only 199 entries, and only for source **I10565**. In serial
 mode this would take about 60 mins on Unity, but in the new parallel mode,
