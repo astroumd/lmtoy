@@ -2,6 +2,9 @@
 
 We differentiate between **generic** and **instrument specific** (RSR, SEQ, 1MM, OMA, ...)
 
+The pipeline and instrument specific script should all have a **--help** or **-h** option
+to inform the users of the keywords and their defaults.
+
 ## Generic
 
 Every instrument will be controlled by the following parameter. We also list their default,
@@ -9,25 +12,25 @@ as only obsnum= *or* obsnums= is required
 
 
     obsnum=o1           single obsnum
-	obsnums=o1,o2,....  combination series
+    obsnums=o1,o2,....  combination series
 	
     debug=0             1:
-	restart=0           1: cleans up old obsnum pipeline results
-	path=$DATA_LMT
-	work=$WORK_LMT
-	tap=0
-	srdp=0
-	raw=0
-	admit=0
-	sleep=2
-	nproc=1
-	rsync=""
-	rc=""
-	oid=""
-	goal=science
-	obsid=
-	newrc=
-	pdir=
+    restart=0           1: cleans up old obsnum pipeline results
+    path=$DATA_LMT      - should not be used
+    work=$WORK_LMT      - should not be used
+    tap=0               produce TAP tar file?
+    srdp=0              produce SRDP tar file?
+    raw=0               produe RAW tar file?
+    admit=0             run admit?
+    sleep=2            
+    nproc=1             number of processors (should stay at 1)
+    rsync=""            - only for running at LMT
+    rc=""               ?
+    oid=""              ?
+    goal=science        ?
+    obsid=              ?
+    newrc=              ?
+    pdir=               ?
 
 ## RSR
 
@@ -45,54 +48,57 @@ SLpipeline.sh
 rsr_pipeline.sh
 ===============
 
-  badcb=2/3,2/2          preset detectors that are bad
-  xlines=110.51,0.15     sections of spectrum not to be used for baseline fit
+    badcb=2/3,2/2          preset detectors that are bad
+    xlines=110.51,0.15     sections of spectrum not to be used for baseline fit
 
 badlags.py
 ----------
-  -b THRESHOLD        0.01
-  -p PLOT_MAX         0.3
-  --badlags           rsr.badlags
-  bc_threshold=3.0
-  bc_low=0.01
-  Qspike = True
-  spike_threshold = 3.0         # or use when > 0
-  min_chan = 32                 
-  Qedge = True                  # try to find high end edge (lag#=255)
+  
+    -b THRESHOLD        0.01
+    -p PLOT_MAX         0.3
+    --badlags           rsr.badlags
+    bc_threshold=3.0
+    bc_low=0.01
+    Qspike = True
+    spike_threshold = 3.0         # or use when > 0
+    min_chan = 32                 
+    Qedge = True                  # try to find high end edge (lag#=255)
 
 rsr_tsys.py  
 -----------
-  rms_min = 25.0      # this will add more badcb's
+    rms_min = 25.0      # this will add more badcb's
 
 rsr_driver.py
 -------------
-  -t 0.01             # --threshold sigma value when coadding all observations
-  -s ???              # --smooth
-  -b 1                # baseline order
-  -r ???              # --repeat_thr  Threshold sigma value when averaging single observations repeats
-  -f ???              # --filter N    Savitzky-Golay filter (SGF) - should be odd and > 21
-  -n ???              # --notch_sigma sigma cut for notch filter (needs -f also)
-  --exclude f1,df1,   # exclude regions from baseline calcs
+    -t 0.01             # --threshold sigma value when coadding all observations
+    -s ???              # --smooth
+    -b 1                # baseline order
+    -r ???              # --repeat_thr  Threshold sigma value when averaging single observations repeats
+    -f ???              # --filter N    Savitzky-Golay filter (SGF) - should be odd and > 21
+    -n ???              # --notch_sigma sigma cut for notch filter (needs -f also)
+    --exclude f1,df1,   # exclude regions from baseline calcs
 
 rsr_sum.py
 ----------
-  -t THRESHOLD_SIGMA  # Threshold sigma in spectrum needed for averaging [0.01]
-  -o1 ORDER1          # Baseline order fit for individual spectra [1]
-  -o1 ORDER2          # Baseline order fit for final combined spectrum [-1]
+    -t THRESHOLD_SIGMA  # Threshold sigma in spectrum needed for averaging [0.01]
+    -o1 ORDER1          # Baseline order fit for individual spectra [1]
+    -o1 ORDER2          # Baseline order fit for final combined spectrum [-1]
 
 
 
 @todo   unified format for rfile/blanking ?
+
 @todo   parallel processing
 
 
-### one
+### steps running
+
 Running RSR pipeline "manually". In this example we use 123456 as the obsnum
 Notation "C/B" means Chassis/Board and "C/B/ch" means Chassis/Board/channel(s)
 
 1. Run the default pipeline
 
-   SLpipeline.sh admit=0 obsnum=123456
+         SLpipeline.sh admit=0 obsnum=123456
 
 2. Inspect the Tsys plots. You might find 
 
@@ -105,9 +111,9 @@ Notation "C/B" means Chassis/Board and "C/B/ch" means Chassis/Board/channel(s)
 3. Optionally there is an alternative way to specify the badlags etc.
    completely manually. For this do this inside the OBSNUM directory:
    
-   badlags2.py OBSNUM  C/B/ch1,ch2,ch3,....      C/B    > *.badlags
-   rsr_badcb -r *.badlags > *.rfile 
-   rsr_badcb -b *.badlags > *.blanking
+         badlags2.py OBSNUM  C/B/ch1,ch2,ch3,....      C/B    > *.badlags
+         rsr_badcb -r *.badlags > *.rfile 
+         rsr_badcb -b *.badlags > *.blanking
 
    In here C/B/ch...   are specific bad lags, whereas C/B means that
    complete Chassis/Board combination needs to be taken out.
@@ -115,16 +121,20 @@ Notation "C/B" means Chassis/Board and "C/B/ch" means Chassis/Board/channel(s)
    then run the pipeline, making sure any old badcb's are not added in
    again:
 
-   SLpipeline.sh admit=0 obsnum=123456 badcb=
+        SLpipeline.sh admit=0 obsnum=123456 badcb=
 
 4. Parameters to control spectrum-making - and their regression defaults
 
-   badlags:     bc_threshold  [3.0]
+   badlags:
+   
+                bc_threshold  [3.0]
                 bc_low        [0.0]
                 rms_min       [0.01]
                 rms_max       [0.1]
 
-   rsr_driver:  --threshold 
+   rsr_driver:
+
+		--threshold 
                 --repeat_thr
                 -b
                 --badlags (-B)
