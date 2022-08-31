@@ -239,6 +239,49 @@ of derived paramers, and in a re-run will not be recomputed!  These are noted
       # unset a view things, since setting them will give a new meaning
     unset vlsr
 
+## Heyer's list 
+
+Discussion document on SEQ reduction parameters. In two sets, for making spec-file, and for make cube
+
+### spec file making
+
+	obsnum
+	makespec
+	pix_list
+	x_axis
+	slice
+	b_order
+	b_regions
+	ztype           0=velocity; 1=frequency; 2=channel
+	otf_cal
+	bank
+	styp
+	Vlsr
+	DeltaV
+	Nbw
+
+### cube making
+
+	x_extent
+	y_extent
+	cell
+	resolution
+	l_regions
+	pix_list
+	otf_select
+	rmax
+	otf_a
+	otf_a
+	otf_a
+	n_samples
+	noise_sigma
+	rms_cut
+	otf_cal
+	Sample
+	Linefreq          new   [f1,f2,....]
+	IncludeRamps      new:  True/False
+	Projection        new   CAR,SIN,TAN,SFL
+
 
 ## duplicates
 
