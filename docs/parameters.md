@@ -70,6 +70,7 @@ rsr_tsys.py
 
 rsr_driver.py
 -------------
+
     -t 0.01             # --threshold sigma value when coadding all observations
     -s ???              # --smooth
     -b 1                # baseline order
@@ -80,6 +81,7 @@ rsr_driver.py
 
 rsr_sum.py
 ----------
+
     -t THRESHOLD_SIGMA  # Threshold sigma in spectrum needed for averaging [0.01]
     -o1 ORDER1          # Baseline order fit for individual spectra [1]
     -o1 ORDER2          # Baseline order fit for final combined spectrum [-1]
@@ -127,82 +129,94 @@ Notation "C/B" means Chassis/Board and "C/B/ch" means Chassis/Board/channel(s)
 
    badlags:
    
-                bc_threshold  [3.0]
-                bc_low        [0.0]
-                rms_min       [0.01]
-                rms_max       [0.1]
+        bc_threshold  [3.0]
+        bc_low        [0.0]
+        rms_min       [0.01]
+        rms_max       [0.1]
 
    rsr_driver:
 
 		--threshold 
-                --repeat_thr
-                -b
-                --badlags (-B)
-                --rfile (-R)
-
+        --repeat_thr
+        -b
+        --badlags (-B)
+        --rfile (-R)
 
 
 
 ### two
 
-usage: rsr_driver.py [-h] [-p] [-t CTHRESH] [-o OUTPUT] [-f FILTER] [-s SMOOTH] [-r RTHR] [-n NOTCH] [--simulate SIMULATE [SIMULATE ...]] [-d DATA_LMT] [-b BASELINE_ORDER] [--exclude EXCLUDE [EXCLUDE ...]] [-j] [-c CHASSIS [CHASSIS ...]]
-                     [-B BADLAGS] [-R RFILE] [-w WATERFALL] [--no-baseline-sub]
-                     obslist
+    usage: rsr_driver.py [-h] [-p] [-t CTHRESH] [-o OUTPUT] [-f FILTER] [-s SMOOTH] [-r RTHR] [-n NOTCH] 
+	       [--simulate SIMULATE [SIMULATE ...]] [-d DATA_LMT] [-b BASELINE_ORDER] 
+		   [--exclude EXCLUDE [EXCLUDE ...]] [-j] [-c CHASSIS [CHASSIS ...]]
+           [-B BADLAGS] [-R RFILE] [-w WATERFALL] [--no-baseline-sub]
+           obslist
 
 Simple wrapper to process RSR spectra
 
-positional arguments:
-  obslist               Text file with obsnums to process. Either one obsnum per row or a range of observation numbers separated by hyphens.
+* positional arguments:
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -p                    Produce default plots
-  -t CTHRESH, --threshold CTHRESH
-                        Thershold sigma value when coadding all observations
-  -o OUTPUT, --output OUTPUT
-                        Output file name containing the spectrum
-  -f FILTER, --filter FILTER
-                        Apply Savitzky-Golay filter (SGF) to reduce large scale trends in the spectrum. Must be an odd integer. This value represent the number of channels used to aproximate the baseline. Recomended values are larger than 21.
-                        Default is to not apply the SGF
-  -s SMOOTH, --smooth SMOOTH
-                        Number of channels of a boxcar lowpass filter applied to the coadded spectrum. Default is to no apply filter
-  -r RTHR, --repeat_thr RTHR
-                        Thershold sigma value when averaging single observations repeats
-  -n NOTCH, --notch_sigma NOTCH
-                        Sigma cut for notch filter to eliminate large frecuency oscillations in spectrum. Needs to be run with -f option.
-  --simulate SIMULATE [SIMULATE ...]
-                        Insert a simulated line into spectrum. The format is a list or a set of three elements Amplitude central_frequency line_velocity_width.
-  -d DATA_LMT, --data_lmt_path DATA_LMT
-                        Path where the LMT data is located (default is to look for the DATA_LMT environment variable or the /data_lmt folder
-  -b BASELINE_ORDER     Baseline calculation order
-  --exclude EXCLUDE [EXCLUDE ...]
-                        A set of frequencies to exclude from baseline calculations. Format is central frequency width. Eg --exclude 76.0 0.2 96.0 0.3 excludes the 75.8-76.2 GHz and the 95.7-96.3 intervals from the baseline calculations.
-  -j                    Perform jacknife simulation
-  -c CHASSIS [CHASSIS ...]
-                        List of chassis to use in reduction. Default is the four chassis
-  -B BADLAGS, --badlags BADLAGS
-                        A bad lags file with list of (chassis,board,channel) tuples as produced by badlags
-  -R RFILE, --rfile RFILE
-                        A file with information of board data to ignore from analysis. The file must include the obsnum, chassis and board number to exclude separated by commas. One board per row
-  -w WATERFALL, --waterfall-file WATERFALL
-                        Request the driver to produce waterfall plot for each input file
-  --no-baseline-sub     Disable subtraction of polinomial baseline. NOT RECOMMENDED.
+        obslist               Text file with obsnums to process. Either one obsnum per row or a range of observation numbers separated by hyphens.
+
+* optional arguments:
+
+        -h, --help            show this help message and exit
+		-p                    Produce default plots
+		-t CTHRESH, --threshold CTHRESH
+							  Thershold sigma value when coadding all observations
+		-o OUTPUT, --output OUTPUT
+							  Output file name containing the spectrum
+		-f FILTER, --filter FILTER
+							  Apply Savitzky-Golay filter (SGF) to reduce large scale trends in the spectrum. 
+							  Must be an odd integer. This value represent the number of channels used to aproximate the baseline. 
+							  Recomended values are larger than 21.
+							  Default is to not apply the SGF
+		-s SMOOTH, --smooth SMOOTH
+							  Number of channels of a boxcar lowpass filter applied to the coadded spectrum. 
+							  Default is to no apply filter
+		-r RTHR, --repeat_thr RTHR
+							  Thershold sigma value when averaging single observations repeats
+		-n NOTCH, --notch_sigma NOTCH
+							  Sigma cut for notch filter to eliminate large frecuency oscillations in spectrum. 
+							  Needs to be run with -f option.
+		--simulate SIMULATE [SIMULATE ...]
+							  Insert a simulated line into spectrum. The format is a list or a set of three elements 
+							  Amplitude central_frequency line_velocity_width.
+		-d DATA_LMT, --data_lmt_path DATA_LMT
+							  Path where the LMT data is located (default is to look for the DATA_LMT environment 
+							  variable or the /data_lmt folder
+		-b BASELINE_ORDER     Baseline calculation order
+		--exclude EXCLUDE [EXCLUDE ...]
+							  A set of frequencies to exclude from baseline calculations. Format is central 
+							  frequency width. Eg --exclude 76.0 0.2 96.0 0.3 excludes the 75.8-76.2 GHz and 
+							  the 95.7-96.3 intervals from the baseline calculations.
+		-j                    Perform jacknife simulation
+		-c CHASSIS [CHASSIS ...]
+							  List of chassis to use in reduction. Default is the four chassis
+		-B BADLAGS, --badlags BADLAGS
+							  A bad lags file with list of (chassis,board,channel) tuples as produced by badlags
+		-R RFILE, --rfile RFILE
+							  A file with information of board data to ignore from analysis. The file must 
+							  include the obsnum, chassis and board number to exclude separated by commas. One board per row
+		-w WATERFALL, --waterfall-file WATERFALL
+							  Request the driver to produce waterfall plot for each input file
+		--no-baseline-sub     Disable subtraction of polinomial baseline. NOT RECOMMENDED.
 
 
 
-"""Usage: rsr_sum.py -b BLANKING_FILE [options]
+* Usage: rsr_sum.py -b BLANKING_FILE [options]
 
--b BLANKING_FILE              Input ASCII blanking file. No default.
--t THRESHOLD_SIGMA            Threshold sigma in spectrum needed for averaging [Default: 0.01]
---badlags BADLAGS_FILE        Input rsr.lags.bad file. Optional.
---o1 ORDER1 -1 ORDER1         Baseline order fit for individual spectra [Default: 1]
---o2 ORDER2 -2 ORDER2         Baseline order fit for final combined spectrum [Default: -1]
-                              Use -1 to skip another fit
--p PATH                       Data path to data_lmt for the raw RedshiftChassis files.
-                              By default $DATA_LMT will be used else '/data_lmt'.
+		-b BLANKING_FILE              Input ASCII blanking file. No default.
+		-t THRESHOLD_SIGMA            Threshold sigma in spectrum needed for averaging [Default: 0.01]
+		--badlags BADLAGS_FILE        Input rsr.lags.bad file. Optional.
+		--o1 ORDER1 -1 ORDER1         Baseline order fit for individual spectra [Default: 1]
+		--o2 ORDER2 -2 ORDER2         Baseline order fit for final combined spectrum [Default: -1]
+									  Use -1 to skip another fit
+		-p PATH                       Data path to data_lmt for the raw RedshiftChassis files.
+									  By default $DATA_LMT will be used else '/data_lmt'.
 
--h --help                     show this help
-"""
+		-h --help                     show this help
+
 
 
 
