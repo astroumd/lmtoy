@@ -10,13 +10,13 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 10-aug-2022"
+version="SLpipeline: 27-aug-2022"
 
 echo ""
 echo "LMTOY>> $version"
 
-
-# default input parameters
+#--HELP   
+#     default input parameters
 obsnum=0                       # obsnum or obsnums can be used for single 
 obsnums=0                      # or combinations of existing obsnums
 path=${DATA_LMT:-data_lmt}
@@ -33,6 +33,15 @@ rsync=""
 rc=""
 oid=""
 goal=Science
+#--HELP   
+
+if [ "$1" == "--help" ];then
+    set +x
+    awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
+    exit 0
+fi
+
+
 
 if [ -z "$1" ]; then
     echo "LMTOY>> Usage: obsnum=OBSNUM             ...         (process a single obsnum)"
