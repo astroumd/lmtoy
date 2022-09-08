@@ -1,28 +1,51 @@
 # SLpipeline.sh parameters
 
-We differentiate between **generic** and **instrument specific** (RSR, SEQ, 1MM, OMA, ...)
+We differentiate between **generic** and **instrument specific** (RSR,
+SEQ, 1MM, OMA, ...) parameters.
 
-The pipeline and instrument specific script should all have a **--help** or **-h** option
-to inform the users of the keywords and their defaults.
+The pipeline and instrument specific scriptS all have a **--help** and **-h** option
+as a reminder to the keywords and their defaults where applicable.
 
-## Generic
+Command line keyword that do not belong to the instrument (e.g. band= for RSR) are just ignored.
 
-Every instrument will be controlled by the following parameter. We also list their default,
-as only obsnum= *or* obsnums= is required
+## Filename Conventions
+
+A reminder on filename conventions:
+
+For a given **obsnum** (or in a combination **obsnumFirst_obsnumLast**) we have the following basenames that
+all exist within the directory **obsnum/**:
+
+* lmtoy_OBSNUM.log - logfile from the pipeline
+* lmtoy_OBSNUM.ifproc - brief ASCII version of the IFPROC header
+* lmtoy_OBSNUM.rc  - pipeline (and derived) parameters
+* SRC_OBSNUM_wf.fits  - SEQ waterfall
+* SRC_OBSNUM_0_wf.fits  - SEQ waterfall for band 0 - in case there are > 1 band (e.g. 1MM and OMA)
+* SRC_OBSNUM_1_wf.fits  - SEQ waterfall for band 1
+* rsr.99862.badlags - RSR bad lags used for spectra
+* README_files.md - explanation of the files in this directory
+* README.html - the entry point for the summary table (index.html needs to symlink to this)
+
+there are many more, most of them instrument specific, but this is the basic structure. The **README_files.md**
+is written by the pipeline to explain their contents.
+
+## 1. Generic
+
+Each instrument is controlled by the following generic parameters. We also list their default.
+Also note that a non-zero value for **obsnum=** *or* **obsnums=** is required.
 
 
-    obsnum=o1           single obsnum
-    obsnums=o1,o2,....  combination series
-	
-    debug=0             1:
+    obsnum=o1           single obsnum run
+    obsnums=o1,o2,....  combination series run
+        
+    debug=0             1: verbosely print all commands and shell expansions
     restart=0           1: cleans up old obsnum pipeline results
-    path=$DATA_LMT      - should not be used
-    work=$WORK_LMT      - should not be used
-    tap=0               produce TAP tar file?
-    srdp=0              produce SRDP tar file?
-    raw=0               produe RAW tar file?
-    admit=0             run admit?
-    sleep=2            
+    path=$DATA_LMT      - should not be used (but will still work)
+    work=$WORK_LMT      - should not be used (but will still work)
+    tap=0               produce TAP tar file?  [0|1]
+    srdp=0              produce SRDP tar file? [0|1]
+    raw=0               produe RAW tar file?   [0|1]
+    admit=0             run admit?             [0|1]
+    sleep=2             sleep before running, in case you change your mind
     nproc=1             number of processors (should stay at 1)
     rsync=""            - only for running at LMT
     rc=""               ?
@@ -32,44 +55,34 @@ as only obsnum= *or* obsnums= is required
     newrc=              ?
     pdir=               ?
 
-## RSR
+## 2. RSR
+
+The **rsr_pipeline.sh** script still uses two scripts to get the same spectrum in two different
+ways. In 
 
 
+    badcb=2/3,2/2          preset Chassis/Board detectors that are bad C=[0..3]  B=[0..5]
+    xlines=110.51,0.15     sections of spectrum not to be used for baseline fit (freq-dfreq..freq+dfreq)
 
-### zero
+### 2.1 badlags.py
 
-pipeline parameters
 
-SLpipeline.sh
-=============
-
-  obsnum=12345
-
-rsr_pipeline.sh
-===============
-
-    badcb=2/3,2/2          preset detectors that are bad
-    xlines=110.51,0.15     sections of spectrum not to be used for baseline fit
-
-badlags.py
-----------
-  
     -b THRESHOLD        0.01
     -p PLOT_MAX         0.3
     --badlags           rsr.badlags
-    bc_threshold=3.0
-    bc_low=0.01
-    Qspike = True
-    spike_threshold = 3.0         # or use when > 0
-    min_chan = 32                 
-    Qedge = True                  # try to find high end edge (lag#=255)
+    bc_threshold    =   3.0
+    bc_low          =   0.01
+    Qspike          =   True
+    spike_threshold =   3.0         # or use when > 0
+    min_chan        =   32                 
+    Qedge           =   True        # try to find high end edge (lag#=255)
 
-rsr_tsys.py  
------------
-    rms_min = 25.0      # this will add more badcb's
+### 2.2 rsr_tsys.py  
 
-rsr_driver.py
--------------
+    rms_min         = 25.0      # this will add more badcb's
+
+### 2.3 rsr_driver.py
+
 
     -t 0.01             # --threshold sigma value when coadding all observations
     -s ???              # --smooth
@@ -79,8 +92,8 @@ rsr_driver.py
     -n ???              # --notch_sigma sigma cut for notch filter (needs -f also)
     --exclude f1,df1,   # exclude regions from baseline calcs
 
-rsr_sum.py
-----------
+### 2.4 rsr_sum.py
+
 
     -t THRESHOLD_SIGMA  # Threshold sigma in spectrum needed for averaging [0.01]
     -o1 ORDER1          # Baseline order fit for individual spectra [1]
@@ -93,7 +106,7 @@ rsr_sum.py
 @todo   parallel processing
 
 
-### steps running
+### 2.1 How to reduce RSR data with this pipeline?
 
 Running RSR pipeline "manually". In this example we use 123456 as the obsnum
 Notation "C/B" means Chassis/Board and "C/B/ch" means Chassis/Board/channel(s)
@@ -136,7 +149,7 @@ Notation "C/B" means Chassis/Board and "C/B/ch" means Chassis/Board/channel(s)
 
    rsr_driver:
 
-		--threshold 
+        --threshold 
         --repeat_thr
         -b
         --badlags (-B)
@@ -146,11 +159,7 @@ Notation "C/B" means Chassis/Board and "C/B/ch" means Chassis/Board/channel(s)
 
 ### two
 
-    usage: rsr_driver.py [-h] [-p] [-t CTHRESH] [-o OUTPUT] [-f FILTER] [-s SMOOTH] [-r RTHR] [-n NOTCH] 
-	       [--simulate SIMULATE [SIMULATE ...]] [-d DATA_LMT] [-b BASELINE_ORDER] 
-		   [--exclude EXCLUDE [EXCLUDE ...]] [-j] [-c CHASSIS [CHASSIS ...]]
-           [-B BADLAGS] [-R RFILE] [-w WATERFALL] [--no-baseline-sub]
-           obslist
+    usage: rsr_driver.py [options] obslist
 
 Simple wrapper to process RSR spectra
 
@@ -160,70 +169,70 @@ Simple wrapper to process RSR spectra
 
 * optional arguments:
 
-        -h, --help            show this help message and exit
-		-p                    Produce default plots
-		-t CTHRESH, --threshold CTHRESH
-							  Thershold sigma value when coadding all observations
-		-o OUTPUT, --output OUTPUT
-							  Output file name containing the spectrum
-		-f FILTER, --filter FILTER
-							  Apply Savitzky-Golay filter (SGF) to reduce large scale trends in the spectrum. 
-							  Must be an odd integer. This value represent the number of channels used to aproximate the baseline. 
-							  Recomended values are larger than 21.
-							  Default is to not apply the SGF
-		-s SMOOTH, --smooth SMOOTH
-							  Number of channels of a boxcar lowpass filter applied to the coadded spectrum. 
-							  Default is to no apply filter
-		-r RTHR, --repeat_thr RTHR
-							  Thershold sigma value when averaging single observations repeats
-		-n NOTCH, --notch_sigma NOTCH
-							  Sigma cut for notch filter to eliminate large frecuency oscillations in spectrum. 
-							  Needs to be run with -f option.
-		--simulate SIMULATE [SIMULATE ...]
-							  Insert a simulated line into spectrum. The format is a list or a set of three elements 
-							  Amplitude central_frequency line_velocity_width.
-		-d DATA_LMT, --data_lmt_path DATA_LMT
-							  Path where the LMT data is located (default is to look for the DATA_LMT environment 
-							  variable or the /data_lmt folder
-		-b BASELINE_ORDER     Baseline calculation order
-		--exclude EXCLUDE [EXCLUDE ...]
-							  A set of frequencies to exclude from baseline calculations. Format is central 
-							  frequency width. Eg --exclude 76.0 0.2 96.0 0.3 excludes the 75.8-76.2 GHz and 
-							  the 95.7-96.3 intervals from the baseline calculations.
-		-j                    Perform jacknife simulation
-		-c CHASSIS [CHASSIS ...]
-							  List of chassis to use in reduction. Default is the four chassis
-		-B BADLAGS, --badlags BADLAGS
-							  A bad lags file with list of (chassis,board,channel) tuples as produced by badlags
-		-R RFILE, --rfile RFILE
-							  A file with information of board data to ignore from analysis. The file must 
-							  include the obsnum, chassis and board number to exclude separated by commas. One board per row
-		-w WATERFALL, --waterfall-file WATERFALL
-							  Request the driver to produce waterfall plot for each input file
-		--no-baseline-sub     Disable subtraction of polinomial baseline. NOT RECOMMENDED.
+        -h, --help                                        show this help message and exit
+        -p                                                Produce default plots
+        -t CTHRESH, --threshold CTHRESH
+                                                          Threshold sigma value when coadding all observations
+        -o OUTPUT, --output OUTPUT
+                                                          Output file name containing the spectrum
+        -f FILTER, --filter FILTER
+                                                          Apply Savitzky-Golay filter (SGF) to reduce large scale trends in the spectrum. 
+                                                          Must be an odd integer. This value represent the number of channels used to aproximate the baseline. 
+                                                          Recomended values are larger than 21.
+                                                          Default is to not apply the SGF
+        -s SMOOTH, --smooth SMOOTH
+                                                          Number of channels of a boxcar lowpass filter applied to the coadded spectrum. 
+                                                          Default is to no apply filter
+        -r RTHR, --repeat_thr RTHR
+                                                          Thershold sigma value when averaging single observations repeats
+        -n NOTCH, --notch_sigma NOTCH
+                                                          Sigma cut for notch filter to eliminate large frecuency oscillations in spectrum. 
+                                                          Needs to be run with -f option.
+        --simulate SIMULATE [SIMULATE ...]
+                                                          Insert a simulated line into spectrum. The format is a list or a set of three elements 
+                                                          Amplitude central_frequency line_velocity_width.
+        -d DATA_LMT, --data_lmt_path DATA_LMT
+                                                          Path where the LMT data is located (default is to look for the DATA_LMT environment 
+                                                          variable or the /data_lmt folder
+        -b BASELINE_ORDER                                 Baseline calculation order
+        --exclude EXCLUDE [EXCLUDE ...]
+                                                          A set of frequencies to exclude from baseline calculations. Format is central 
+                                                          frequency width. Eg --exclude 76.0 0.2 96.0 0.3 excludes the 75.8-76.2 GHz and 
+                                                          the 95.7-96.3 intervals from the baseline calculations.
+        -j                                                Perform jacknife simulation
+        -c CHASSIS [CHASSIS ...]
+                                                          List of chassis to use in reduction. Default is the four chassis
+        -B BADLAGS, --badlags BADLAGS
+                                                          A bad lags file with list of (chassis,board,channel) tuples as produced by badlags
+        -R RFILE, --rfile RFILE
+                                                          A file with information of board data to ignore from analysis. The file must 
+                                                          include the obsnum, chassis and board number to exclude separated by commas. One board per row
+        -w WATERFALL, --waterfall-file WATERFALL
+                                                          Request the driver to produce waterfall plot for each input file
+        --no-baseline-sub                                 Disable subtraction of polinomial baseline. NOT RECOMMENDED.
 
 
 
 * Usage: rsr_sum.py -b BLANKING_FILE [options]
 
-		-b BLANKING_FILE              Input ASCII blanking file. No default.
-		-t THRESHOLD_SIGMA            Threshold sigma in spectrum needed for averaging [Default: 0.01]
-		--badlags BADLAGS_FILE        Input rsr.lags.bad file. Optional.
-		--o1 ORDER1 -1 ORDER1         Baseline order fit for individual spectra [Default: 1]
-		--o2 ORDER2 -2 ORDER2         Baseline order fit for final combined spectrum [Default: -1]
-									  Use -1 to skip another fit
-		-p PATH                       Data path to data_lmt for the raw RedshiftChassis files.
-									  By default $DATA_LMT will be used else '/data_lmt'.
+        -b BLANKING_FILE              Input ASCII blanking file. No default.
+        -T THRESHOLD_SIGMA            Threshold sigma in spectrum needed for averaging [Default: 0.01]
+        --badlags BADLAGS_FILE        Input rsr.lags.bad file. Optional.
+        --o1 ORDER1 -1 ORDER1         Baseline order fit for individual spectra [Default: 1]
+        --o2 ORDER2 -2 ORDER2         Baseline order fit for final combined spectrum [Default: -1]
+                                      Use -1 to skip another fit
+        -p PATH                       Data path to data_lmt for the raw RedshiftChassis files.
+                                      By default $DATA_LMT will be used else '/data_lmt'.
 
-		-h --help                     show this help
-
-
+        -h --help                     show this help
 
 
 
-## SEQ
 
-We list the keywords specific to SEQ and their defaults. Some parameters cause a computation
+
+## 3. SEQ
+
+We list the keywords specific to Seqouia and their defaults. Some parameters cause a computation
 of derived paramers, and in a re-run will not be recomputed!  These are noted
 
 
@@ -269,42 +278,42 @@ Discussion document on SEQ reduction parameters. In two sets, for making spec-fi
 
 ### spec file making
 
-	obsnum
-	makespec
-	pix_list
-	x_axis
-	slice
-	b_order
-	b_regions
-	ztype           0=velocity; 1=frequency; 2=channel
-	otf_cal
-	bank
-	styp
-	Vlsr
-	DeltaV
-	Nbw
+        obsnum
+        makespec
+        pix_list
+        x_axis
+        slice
+        b_order
+        b_regions
+        ztype           0=velocity; 1=frequency; 2=channel
+        otf_cal
+        bank
+        styp
+        Vlsr
+        DeltaV
+        Nbw
 
 ### cube making
 
-	x_extent
-	y_extent
-	cell
-	resolution
-	l_regions
-	pix_list
-	otf_select
-	rmax
-	otf_a
-	otf_a
-	otf_a
-	n_samples
-	noise_sigma
-	rms_cut
-	otf_cal
-	Sample
-	Linefreq          new   [f1,f2,....]
-	IncludeRamps      new:  True/False
-	Projection        new   CAR,SIN,TAN,SFL
+        x_extent
+        y_extent
+        cell
+        resolution
+        l_regions
+        pix_list
+        otf_select
+        rmax
+        otf_a
+        otf_a
+        otf_a
+        n_samples
+        noise_sigma
+        rms_cut
+        otf_cal
+        Sample
+        Linefreq          new   [f1,f2,....]
+        IncludeRamps      new:  True/False
+        Projection        new   CAR,SIN,TAN,SFL
 
 
 ## duplicates
@@ -356,3 +365,7 @@ There are files with duplicate mentions of parameter names.
 
 
 * utils/argparser.py
+
+## 4. 1MM
+
+
