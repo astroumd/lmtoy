@@ -286,6 +286,8 @@ common: lmtoy_venv
 	pip3 install -e dreampy3)
 
 
+# ---------------------------- benchmarks -------------------------------------------------------------------------------------------
+
 ADMIT = 1
 bench:  bench1 bench2
 
@@ -297,6 +299,11 @@ bench1:
 	@echo "================================================================================================================="
 	@echo xdg-open  $(WORK_LMT)/2014ARSRCommissioning/33551/README.html
 
+
+bench1a:
+	$(TIME) SLpipeline.sh obsnums=33551,33551 restart=1 admit=$(ADMIT)
+
+
 bench2:
 	$(TIME) SLpipeline.sh obsnum=79448 restart=1 admit=$(ADMIT)
 	@echo "QAC_STATS: IRC+10216_79448-full 0.00256137 0.242578 -563.449 634.86 85230.4 0.0531463 5696559 [expected]"
@@ -307,10 +314,8 @@ bench2:
 	@echo "========================================================================================"
 	@echo xdg-open  $(WORK_LMT)/2018S1SEQUOIACommissioning/79448/README.html
 
-bench1a:
-	$(MAKE) bench1 ADMIT=0
 bench2a:
-	$(MAKE) bench2 ADMIT=0
+	$(TIME) SLpipeline.sh obsnums=79448,79448 restart=1 admit=$(ADMIT)
 
 # a pure CPU bench from NEMO
 bench5:
