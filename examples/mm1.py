@@ -8,9 +8,14 @@
 import os
 import sys
 
-lmtoy = os.environ['LMTOY']
-sys.path.append(lmtoy + '/maskmoment')
-import maskmoment
+try:
+    lmtoy = os.environ['LMTOY']
+    sys.path.append(lmtoy + '/maskmoment')
+    import maskmoment
+except:
+    print("no maskmoment; skipping")
+    sys.exit(0)
+    
 
 from astropy.io import fits
 from astropy.table import Table
