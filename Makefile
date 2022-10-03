@@ -46,6 +46,7 @@ URL14 = https://github.com/teuben/gbtgridder
 URL15 = https://github.com/lmt-heterodyne/RedshiftPointing
 URL16 = https://github.com/lmt-heterodyne/LinePointing
 URL17 = https://github.com/teuben/aplpy
+URL18 = https://github.com/toltec-astro/dvpipe
 
 .PHONY:  help install build
 
@@ -175,6 +176,9 @@ RedshiftPointing:
 
 LinePointing:
 	git clone $(URL16)
+
+dvpipe:
+	git clone -b mwpdevel $(URL18)
 
 
 # hack for Linux  (@todo Mac)
