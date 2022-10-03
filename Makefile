@@ -261,6 +261,10 @@ install_astropy: specutils pyspeckit
 	(cd specutils; pip3 install -e .)
 	(cd pyspeckit; pip3 install -e .)
 
+install_dvpipe:  dvpipe
+	@echo dvpipe
+	pip3 install -e dvpipe 
+
 # step 4 (optional)
 install_montage:  Montage
 	(cd Montage; make)
