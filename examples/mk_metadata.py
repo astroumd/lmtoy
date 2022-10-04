@@ -1,0 +1,122 @@
+#! /usr/bin/env python
+#
+#  Create the lmtmetadata.yaml (on stdout) for a given obsnum directory
+#
+#  
+
+import os
+import sys
+import json
+import pandas as pd
+import dvpipe.utils as utils
+from dvpipe.pipelines.metadatablock import MetadataBlock
+
+def header(rc, key):
+    """
+    rc     dictionary from the rc file
+    key    keywork from the rc file
+    """
+    if key in rc:
+        print("# PJT: header   ",key,rc[key])
+        return rc[key]
+    else:
+        print("# PJT: unknown key ",key)
+    
+
+def example():
+    """
+    """
+
+    print("# here is an example lmtmetadata.yaml file:")
+    
+    lmtdata = LmtMetadataBlock()
+    #print(lmtdata.name,'\n',lmtdata.datasetFields)
+    #print(type(lmtdata._datasetFields))
+    #print(lmtdata.datasetFields['name'].values)
+    lmtdata.add_metadata("projectID","2021-S1-US-3")
+
+    
+    lmtdata.add_metadata("PIName","Marc Pound")
+    lmtdata.add_metadata("obsnum",12345)
+    lmtdata.add_metadata("RA",123.456)
+    lmtdata.add_metadata("DEC",-43.210)
+    lmtdata.add_metadata("slBand",1)
+    lmtdata.add_metadata("lineName",'CS2-1')
+    lmtdata.add_metadata("frequencyCenter",97.981)
+    lmtdata.add_metadata("bandwidth",2.5)
+    lmtdata.add_metadata("intTime",30.0)
+    lmtdata.add_metadata("projectTitle","Life, the Universe, and Everything")
+    lmtdata.add_metadata("obsDate",utils.now())
+    lmtdata.add_metadata("velocity",321.0)
+    lmtdata.add_metadata("velDef","RADIO")
+    lmtdata.add_metadata("velFrame","LSR")
+    lmtdata.add_metadata("velType","FREQUENCY")
+    lmtdata.add_metadata("z",0.001071)
+    lmtdata.add_metadata("beam",20.0/3600.0)
+    lmtdata.add_metadata("lineSens",0.072)
+    lmtdata.add_metadata("facility","LMT")
+    lmtdata.add_metadata("instrument","SEQUOIA")
+    lmtdata.add_metadata("object","NGC 5948")
+    if False:
+        try:
+            lmtdata.add_metadata("foobar",12345)
+        except KeyError as v:
+            print("Caught as expected: ",v)
+        print(lmtdata.controlledVocabulary)
+        print(lmtdata.check_controlled("velFrame","Foobar"))
+        print(lmtdata.check_controlled("velFrame","LSR"))
+        print(lmtdata.check_controlled("foobar","uhno"))
+        try:
+            lmtdata.add_metadata("velFrame","Foobar")
+        except ValueError as v:
+            print("Caught as expected: ",v)
+    print(lmtdata.to_yaml())
+
+
+class LmtMetadataBlock(MetadataBlock):
+    def __init__(self):
+      self._datacsv = utils.aux_file("LMTMetaDatablock.csv")
+      self._vocabcsv =  utils.aux_file("LMTControlledVocabulary.csv")
+      super().__init__("LMTData",self._datacsv,self._vocabcsv)
+
+if __name__ == "__main__":
+    #
+    if len(sys.argv) < 2:
+        print("Usage: %s ObsnumDirectory" % sys.argv[0])
+        example()
+        sys.exit(0)
+
+    # find and read the rc file and construct the rc {} dictionary
+    pdir = sys.argv[1]
+    obsnum = pdir.split('/')[-1]
+    rcfile = pdir + '/lmtoy_%s.rc' % obsnum
+    rc = {}
+    try:
+        print("# PJT: opening  ",rcfile)
+        fp = open(rcfile)
+        lines = fp.readlines()
+        fp.close()
+        for line in lines:
+            if line[0] == '#':  continue
+            # can either exec() each line when the rc is clean, but it's not yet
+            # until then, manually parse
+            w = line.split('=')
+            #   if w[1] starts with " or ', make it a string
+            #   else pass as string
+            if w[1][0] == '"' or w[1][0] == "'":
+                print("# PJT: stringify",line.strip())
+                exec(line.strip())
+            rc[w[0]] = w[1].strip()
+    except:
+        print("Error processing %s " % rcfile)
+        sys.exit(0)
+
+    # process the rc file to make a header
+    
+    lmtdata = LmtMetadataBlock()
+    lmtdata.add_metadata("obsDate", header(rc,"date_obs"))
+    lmtdata.add_metadata("obsnum",  header(rc,"obsnum"))
+    lmtdata.add_metadata("object",  header(rc,"src"))
+    lmtdata.add_metadata("intTime", float(header(rc,"inttime")))
+    #lmtdata.add_metadata("instrument", header(rc,"instrument"))
+    print(lmtdata.to_yaml())
