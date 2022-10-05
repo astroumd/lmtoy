@@ -9,23 +9,60 @@ import sys
 import json
 import pandas as pd
 import dvpipe.utils as utils
-from dvpipe.pipelines.metadatablock import MetadataBlock
+from dvpipe.pipelines.lmtmetadatablock import LmtMetadataBlock
 
 def header(rc, key):
     """
+    input:
     rc     dictionary from the rc file
-    key    keywork from the rc file
+    key    keyword from the rc file
+    
+    returns:  the string value for the keyword
+    
     """
     if key in rc:
         print("# PJT: header   ",key,rc[key])
         return rc[key]
     else:
         print("# PJT: unknown key ",key)
+
+def get_rc(filename):
+    """
+    input:
+    filename   name of the rc file
+    returns:   the "rc" (string-string) dictionary 
+    """
+    rc = {}
+    try:
+        print("# PJT: opening  ",rcfile)
+        fp = open(rcfile)
+        lines = fp.readlines()
+        fp.close()
+        for line in lines:
+            if line[0] == '#':  continue
+            # can either exec() each line when the rc is clean, but it's not yet
+            # until then, manually parse
+            w = line.split('=')
+            #   if w[1] starts with " or ', make it a string
+            if w[1][0] == '"' or w[1][0] == "'":
+                print("# PJT: stringify",line.strip())
+                exec(line.strip())
+                rc[w[0]] = locals()[w[0]]
+            else:
+                # non-strings only use the first word after =  (i.e. comments allowed)
+                # but save it as string for potential conversion later on
+                rc[w[0]] = w[1].strip().split()[0]
+    except:
+        print("Error processing %s " % rcfile)
+        sys.exit(0)
+    return rc
     
 
 def example():
     """
+    show a reminder lmtmetadata.yaml file 
     """
+    # taken from dvpipe/pipelines/lmtmetadatablock.py
 
     print("# here is an example lmtmetadata.yaml file:")
     
@@ -37,7 +74,7 @@ def example():
 
     
     lmtdata.add_metadata("PIName","Marc Pound")
-    lmtdata.add_metadata("obsnum",12345)
+    lmtdata.add_metadata("obsnum","12345") 
     lmtdata.add_metadata("RA",123.456)
     lmtdata.add_metadata("DEC",-43.210)
     lmtdata.add_metadata("slBand",1)
@@ -73,43 +110,22 @@ def example():
     print(lmtdata.to_yaml())
 
 
-class LmtMetadataBlock(MetadataBlock):
-    def __init__(self):
-      self._datacsv = utils.aux_file("LMTMetaDatablock.csv")
-      self._vocabcsv =  utils.aux_file("LMTControlledVocabulary.csv")
-      super().__init__("LMTData",self._datacsv,self._vocabcsv)
-
 if __name__ == "__main__":
-    #
+    # simple CLI for now
     if len(sys.argv) < 2:
         print("Usage: %s ObsnumDirectory" % sys.argv[0])
         example()
         sys.exit(0)
 
     # find and read the rc file and construct the rc {} dictionary
+    
     pdir = sys.argv[1]
     obsnum = pdir.split('/')[-1]
     rcfile = pdir + '/lmtoy_%s.rc' % obsnum
-    rc = {}
-    try:
-        print("# PJT: opening  ",rcfile)
-        fp = open(rcfile)
-        lines = fp.readlines()
-        fp.close()
-        for line in lines:
-            if line[0] == '#':  continue
-            # can either exec() each line when the rc is clean, but it's not yet
-            # until then, manually parse
-            w = line.split('=')
-            #   if w[1] starts with " or ', make it a string
-            #   else pass as string
-            if w[1][0] == '"' or w[1][0] == "'":
-                print("# PJT: stringify",line.strip())
-                exec(line.strip())
-            rc[w[0]] = w[1].strip()
-    except:
-        print("Error processing %s " % rcfile)
-        sys.exit(0)
+    rc = get_rc(rcfile)
+
+    instrument = header(rc,"instrument")
+
 
     # process the rc file to make a header
     
