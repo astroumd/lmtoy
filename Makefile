@@ -16,7 +16,7 @@ PYTHON = anaconda3
 # git directories we should have here
 
 GIT_DIRS = SpectralLineReduction dreampy3 maskmoment RSR_driver nemo b4r \
-           RedshiftPointing LinePointing
+           RedshiftPointing LinePointing dvpipe
 
 # URLs that we'll need
 
