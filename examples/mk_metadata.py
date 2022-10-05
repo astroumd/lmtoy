@@ -4,12 +4,9 @@
 #
 #  
 
-import os
 import sys
-import json
-import pandas as pd
 import dvpipe.utils as utils
-from dvpipe.pipelines.metadatablock import MetadataBlock
+from dvpipe.pipelines.lmtmetadatablock import LmtMetadataBlock
 
 def header(rc, key):
     """
@@ -37,7 +34,7 @@ def example():
 
     
     lmtdata.add_metadata("PIName","Marc Pound")
-    lmtdata.add_metadata("obsnum",12345)
+    lmtdata.add_metadata("obsnum","12345,43210_43221")
     lmtdata.add_metadata("RA",123.456)
     lmtdata.add_metadata("DEC",-43.210)
     lmtdata.add_metadata("slBand",1)
@@ -58,6 +55,7 @@ def example():
     lmtdata.add_metadata("instrument","SEQUOIA")
     lmtdata.add_metadata("object","NGC 5948")
     if False:
+    # If you try to add something that is not defined you get a ValueError
         try:
             lmtdata.add_metadata("foobar",12345)
         except KeyError as v:
@@ -66,18 +64,13 @@ def example():
         print(lmtdata.check_controlled("velFrame","Foobar"))
         print(lmtdata.check_controlled("velFrame","LSR"))
         print(lmtdata.check_controlled("foobar","uhno"))
+        # If you try to add a value to a controlled variable that is not in
+        # its controlled vocabulary (enum), you get a ValueError 
         try:
             lmtdata.add_metadata("velFrame","Foobar")
         except ValueError as v:
             print("Caught as expected: ",v)
     print(lmtdata.to_yaml())
-
-
-class LmtMetadataBlock(MetadataBlock):
-    def __init__(self):
-      self._datacsv = utils.aux_file("LMTMetaDatablock.csv")
-      self._vocabcsv =  utils.aux_file("LMTControlledVocabulary.csv")
-      super().__init__("LMTData",self._datacsv,self._vocabcsv)
 
 if __name__ == "__main__":
     #
