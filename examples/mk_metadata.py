@@ -71,7 +71,7 @@ def example():
 
     
     lmtdata.add_metadata("PIName","Marc Pound")
-    lmtdata.add_metadata("obsnum","12345,43210_43221")
+    lmtdata.add_metadata("obsnum","43210_43221")
     lmtdata.add_metadata("RA",123.456)
     lmtdata.add_metadata("DEC",-43.210)
     lmtdata.add_metadata("slBand",1)
