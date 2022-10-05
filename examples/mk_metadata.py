@@ -4,6 +4,7 @@
 #
 #  
 
+import os
 import sys
 import dvpipe.utils as utils
 from dvpipe.pipelines.lmtmetadatablock import LmtMetadataBlock
@@ -54,6 +55,15 @@ def get_rc(filename):
         sys.exit(0)
     return rc
     
+def get_version():
+    """
+    return the version of LMTOY (from $LMTOY/VERSION)
+    """
+    fp = open("%s/VERSION" % os.environ['LMTOY'])
+    lines = fp.readlines()
+    fp.close()
+    return lines[0].strip()
+    
 
 def example():
     """
@@ -68,8 +78,6 @@ def example():
     #print(type(lmtdata._datasetFields))
     #print(lmtdata.datasetFields['name'].values)
     lmtdata.add_metadata("projectID","2021-S1-US-3")
-
-    
     lmtdata.add_metadata("PIName","Marc Pound")
     lmtdata.add_metadata("obsnum","43210_43221")
     lmtdata.add_metadata("RA",123.456)
@@ -123,15 +131,52 @@ if __name__ == "__main__":
     rcfile = pdir + '/lmtoy_%s.rc' % obsnum
     rc = get_rc(rcfile)
 
-    instrument = header(rc,"instrument")
-
-
-    # process the rc file to make a header
+    # get version, as comment (or metadata?)
+    print("# LMTOY version %s" % get_version())
     
+
+    # deal with the enum's we use for instrument on the DV side
+    # valid names:  TolTEC, MSIP1mm, SEQUOIA, RSR, OMAYA
+    
+    instrument = header(rc,"instrument")
+    if instrument == "SEQ":
+        instrument = "SEQUOIA"
+
+    # open the LMB and write some common metadata
     lmtdata = LmtMetadataBlock()
-    lmtdata.add_metadata("obsDate", header(rc,"date_obs"))
-    lmtdata.add_metadata("obsnum",  header(rc,"obsnum"))
-    lmtdata.add_metadata("object",  header(rc,"src"))
-    lmtdata.add_metadata("intTime", float(header(rc,"inttime")))
-    #lmtdata.add_metadata("instrument", header(rc,"instrument"))
+    lmtdata.add_metadata("facility",     "LMT")                     # facility -> observatory
+    lmtdata.add_metadata("instrument",   instrument)                # instrument->LMTInstrument
+    lmtdata.add_metadata("projectID",    header(rc,"ProjectId"))
+    lmtdata.add_metadata("projectTitle", "Life, the Universe, and Everything")
+    lmtdata.add_metadata("PIName",       "Unknown")
+    lmtdata.add_metadata("obsnum",       header(rc,"obsnum"))
+    lmtdata.add_metadata("obsDate",      header(rc,"date_obs"))
+    lmtdata.add_metadata("object",       header(rc,"src"))           # object->targetName
+    lmtdata.add_metadata("intTime",float(header(rc,"inttime")))
+
+    if instrument == "SEQUOIA":
+        #lmtdata.add_metadata("origin",  "lmtoy v0.6")
+        #
+        #  below here to be deciphered
+        #
+        lmtdata.add_metadata("RA",123.456)
+        lmtdata.add_metadata("DEC",-43.210)
+        lmtdata.add_metadata("slBand",1)
+        lmtdata.add_metadata("lineName",'CS2-1')
+        lmtdata.add_metadata("frequencyCenter",97.981)
+        lmtdata.add_metadata("bandwidth",2.5)
+        lmtdata.add_metadata("velocity",321.0)
+        lmtdata.add_metadata("velDef","RADIO")
+        lmtdata.add_metadata("velFrame","LSR")
+        lmtdata.add_metadata("velType","FREQUENCY")
+        lmtdata.add_metadata("z",0.001071)
+        lmtdata.add_metadata("beam",20.0/3600.0)
+        lmtdata.add_metadata("lineSens",0.072)
+    elif instrument == "RSR":
+        print("instrument=%s " % instrument)
+    else:
+        print("instrument=%s not implemented yet" % instrument)
+
+
+    
     print(lmtdata.to_yaml())
