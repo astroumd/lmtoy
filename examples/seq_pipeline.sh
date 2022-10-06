@@ -14,33 +14,19 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="seq_pipeline: 5-jul-2022"
+version="seq_pipeline: 27-sep-2022"
 
-if [ -z $1 ]; then
-    echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
-    echo "LMTOY>> $version"    
-    echo ""
-    echo "See lmtoy_reduce.md for examples on usage"
-    exit 0
-else
-    echo "LMTOY>> $version"
-fi
-
-source lmtoy_functions.sh
-
-# debug
-# set -x
-debug=0
-#set -e
+echo "LMTOY>> $version"
 
 
-# input parameters
+#--HELP   
+# input parameters (only obsnum is required)
 #            - start or restart
-path=${DATA_LMT:-data_lmt}
 obsnum=79448
 obsid=""
 newrc=0
 pdir=""
+path=${DATA_LMT:-data_lmt}
 #            - procedural
 makespec=1
 makecube=1
@@ -62,6 +48,7 @@ rms_cut=-4
 location=0,0
 resolution=12.5   # will be computed from skyfreq
 cell=6.25         # will be computed from resolution/2
+nppb=2            # number of points per beam
 rmax=3
 otf_select=1
 otf_a=1.1
@@ -75,13 +62,30 @@ otf_cal=0
 edge=0
 bank=-1           # -1 means all banks 0..numbands-1
 
+#                 debug (set -x)
+debug=0
+
+#--HELP
+
+if [ -z $1 ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
+    set +x
+    awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
+    exit 0
+fi
+
 # unset a view things, since setting them will give a new meaning
 unset vlsr
+unset restfreq
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do
     export $arg
 done
+
+#
+source lmtoy_functions.sh
+
+
 
 #             put in bash debug mode
 if [ $debug = 1 ]; then
@@ -154,8 +158,15 @@ if [ $newrc = 1 ]; then
 
     # lmtinfo grabs some useful parameters from the ifproc file
     lmtinfo.py $obsnum | tee -a $rc
+    # exceptions allowed to be overridden:   vlsr, restfreq
+    if [ ! -z $vlsr ]; then
+	echo "vlsr=$vlsr              # set" >> ./$rc
+    fi
+    if [ ! -z $restfreq ]; then
+	echo "restfreq=$restfreq      # set" >> ./$rc
+    fi
     source ./$rc
-    
+
     #   w0   v0   v1     w1
     #v0=$(echo $vlsr - $dv | bc -l)
     #v1=$(echo $vlsr + $dv | bc -l)
@@ -205,7 +216,6 @@ if [ $newrc = 1 ]; then
 
     # source again to ensure the changed variables are in
     source ./$rc
-    
 
     echo "LMTOY>> this is your startup $rc file:"
     cat $rc
