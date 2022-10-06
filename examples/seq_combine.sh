@@ -10,7 +10,7 @@
 #
 
 
-version="seq_combine: 29-sep-2022"
+version="seq_combine: 6-oct-2022"
 
 echo "LMTOY>> $version"    
 
@@ -36,7 +36,7 @@ debug=0
 #    @todo fix this for combo
 if [ 1 = 1 ]; then
     unset pix_list
-    rms_cut=4
+    rms_cut=-4
     location=0,0
     resolution=12.5   # will be computed from skyfreq
     cell=6.25         # will be computed from resolution/2
