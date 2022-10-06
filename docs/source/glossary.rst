@@ -166,7 +166,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       (the GLS - GLobal Sinusoidal is similar to SFL).
 
     SLR
-      (Spectral Line Receiver) The common name for the (SEQUOIA/1MM/OMAYA) instruments,
+      (Spectral Line Receiver) The common name for the (SEQ/1MM/OMA) instruments,
       since they share WARES hardware. Name is also used in ``lmtslr``, the python module.
 
     Spectrum
@@ -303,7 +303,7 @@ Taking an inventory of current and known future LMT Spectral Line instruments:
 .. note::  If an instrument like RSR would multiplex the (beam,pol) pairs, this would be a challenge
 	   to the assumption of homogeneity, and the SDFITS model would be more appropriate.
 
-* 1MMRx:
+* 1MM:
   one beam, two pols, two sidebands. So here we have nbeam=1, bpol=2, nband=2, nchan=2k
 
 * SEQ:

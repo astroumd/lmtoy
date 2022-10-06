@@ -8,30 +8,15 @@
 #          for subsequent runs
 #          If projectid is set, this is the subdirectory, within which obsnum is set
 #
-# There is no good mechanism here to make a new variable depend on re-running a certain task on which it depends
-# that's perhaps for a more advanced pipeline
+
+version="seqbs_pipeline: 30-sep-2022"
+
+echo "LMTOY>> $version"
+
+#--HELP
+#  A simple LMT Sequoia Bs pipeline 
 #
-
-version="seqbs_pipeline: 4-jun-2022"
-
-if [ -z $1 ]; then
-    echo "LMTOY>> Usage: obsnum=OBSNUM ..."
-    echo "LMTOY>> $version"    
-    echo ""
-    exit 0
-else
-    echo "LMTOY>> $version"
-fi
-
-source lmtoy_functions.sh
-
-# debug
-# set -x
-debug=0
-#set -e
-
-
-# input parameters
+#  input parameters
 #            - start or restart
 path=${DATA_LMT:-data_lmt}
 obsnum=79448
@@ -40,6 +25,7 @@ newrc=0
 pdir=""
 admit=1
 clean=1
+debug=0
 #            - meta parameters that will compute other parameters for SLR scripts
 dv=100
 dw=250
@@ -48,14 +34,25 @@ pix_list=8,10
 stype=2
 rms_cut=-4
 bank=-1           # -1 means all banks 0..numbands-1
+#--HELP
 
 # unset a view things, since setting them will give a new meaning
 unset vlsr
 
-#             simple keyword=value command line parser for bash - don't make any changing below
+#     give help?
+if [ -z $1 ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
+    set +x
+    awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
+    exit 0
+fi
+
+#     simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do
     export $arg
 done
+
+#     load functions
+source lmtoy_functions.sh
 
 #             put in bash debug mode
 if [ $debug = 1 ]; then

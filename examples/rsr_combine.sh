@@ -10,25 +10,16 @@
 #
 #  Example:   rsr_combine.sh obsnums=33551,71610,92068 
 
-version="rsr_combine: 21-apr-2022"
+version="rsr_combine: 27-sep-2022"
 
-if [ -z $1 ]; then
-    echo "LMTOY>> Usage: obsnums=ON1,ON2,..."
-    echo "LMTOY>> $version"
-    echo ""
-    echo "This will combine OBSNUM based RSR data that were reduced with rsr_reduce.sh"
-    echo "Parameters are taken from the first lmtoy_OBSNUM.rc file, but can be overridden here"
-    echo "where we implemented this (TBD)"
-    exit 0
-else
-    echo "LMTOY>> $version"
-fi
+echo "LMTOY>> $version"
 
-source lmtoy_functions.sh
+#--HELP
 
-# debug
-# set -x
-debug=0
+# This will combine OBSNUM based OTF data that were reduced with rsr_pipeline.sh
+# Parameters are taken from the first lmtoy_OBSNUM.rc file in the OBSNUM list,
+# but can be overridden here where we implemented this (TBD)
+
 
 # input parameters
 #            - start or restart
@@ -37,7 +28,15 @@ pdir=""
 output=""
 #            - procedural
 admit=1
+debug=0
 #            - parameters that directly match the SLR scripts
+#--HELP
+
+if  [ -z $1 ] || [ "$1" == "--help" ] || [ "$1" == "-h" ] ;then
+    set +x
+    awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
+    exit 0
+fi
 
 # unset a few things, since setting them will give a new meaning
 unset vlsr
@@ -46,6 +45,8 @@ unset vlsr
 for arg in $*; do
   export $arg
 done
+
+source lmtoy_functions.sh
 
 #             put in bash debug mode
 if [ $debug = 1 ]; then

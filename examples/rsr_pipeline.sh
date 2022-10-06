@@ -1,52 +1,50 @@
 #! /bin/bash
 #
 #  A simple LMT RSR pipeline in bash.
-#  Really should be written in python, but hey, here we go.
 #
-#  Note:   this will only reduce one OBSNUM.   If you place a file "lmtoy_$obsnum.rc"
-#          in the current directory, parameters will be read from it.
-#          If it does not exist, it will be created on the first run and you can edit it
-#          for subsequent runs
-#          If ProjectId is set, this is the subdirectory, within which obsnum is set
+#  Note: this will only reduce one OBSNUM.   If you place a file "lmtoy_$obsnum.rc"
+#        in the current directory, parameters will be read from it.
+#        If it does not exist, it will be created on the first run and you can edit 
+#        it for subsequent runs
+#        If ProjectId is set, this is the subdirectory, within which obsnum is set
 #
-# There is no good mechanism here to make a new variable depend on re-running a certain task on which it depends
-# that's perhaps for a more advanced pipeline
 #
 
-version="rsr_pipeline: 23-jun-2022"
+version="rsr_pipeline: 30-sep-2022"
 
-if [ -z $1 ]; then
-    echo "LMTOY>> Usage: obsnum=OBSNUM ..."
-    echo ""
-    echo "RSR pipeline"
-    exit 0
-else
-    echo "LMTOY>> $version"
-fi
+echo "LMTOY>> $version"
 
-source lmtoy_functions.sh
-
-# debug
-# set -x
-debug=0
-
-# input parameters
+#--HELP   
+# input parameters (only obsnum is required)
 #            - start or restart
-path=${DATA_LMT:-data_lmt}
 obsnum=0
 obsid=""
 newrc=0
 pdir=""
+path=${DATA_LMT:-data_lmt}
+
 xlines=""     # set to a comma separated list of freq,dfreq pairs where strong lines are
 badboard=""   # set to a comma separated list of bad boards
 badcb=""      # set to a comma separated list of (chassis/board) combinations, badcb=2/3,3/5
 #            - procedural
 admit=0
+#            - debug
+debug=0
+#--HELP
+
+if [ -z $1 ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
+    set +x
+    awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
+    exit 0
+fi
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do
     export $arg
 done
+
+# 
+source lmtoy_functions.sh
 
 #             put in bash debug mode
 if [ $debug = 1 ]; then
@@ -144,5 +142,10 @@ if [ $obsnum != 0 ]; then
     fi
     # note $badlags is created by badlags.py
 fi
+
+#             redo CLI again
+for arg in $*; do
+    export $arg
+done
 
 lmtoy_rsr1

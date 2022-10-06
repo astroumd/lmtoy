@@ -10,61 +10,64 @@
 #
 
 
-version="seq_combine: 14-may-2022"
+version="seq_combine: 29-sep-2022"
 
-if [ -z $1 ]; then
-    echo "LMTOY>> Usage: obsnum=ON1,ON2,..."
-    echo "LMTOY>> $version"
-    echo ""
-    echo "This will combine OBSNUM based OTF data that were reduced with lmtoy_reduce.sh"
-    echo "Parameters are taken from the first lmtoy_OBSNUM.rc file, but can be overridden here"
-    echo "where we implemented this (TBD)"
-    echo "See lmtoy_reduce.md for examples on usage"
-    exit 0
-else
-    echo "LMTOY>> $version"    
-fi
+echo "LMTOY>> $version"    
 
-source lmtoy_functions.sh
+#--HELP
 
-# debug
-# set -x
-debug=0
+# This will combine OBSNUM based OTF data that were reduced with seq_pipeline.sh
+# Parameters are taken from the first lmtoy_OBSNUM.rc file in the OBSNUM list,
+# but can be overridden here where we implemented this (TBD)
 
 # input parameters
 #            - start or restart
-obsnums=85776,85778,85824
-pdir=""
-output=""
+obsnums=0                       # comma separated list of obsnums to combine
+pdir=""                         # directory where to work
+output=""    
 #            - procedural
 makecube=1
 viewcube=0
 viewnemo=1
-admit=1
+admit=0
 clean=1
-#            - parameters that directly match the SLR scripts
-unset pix_list
-rms_cut=4
-location=0,0
-resolution=12.5   # will be computed from skyfreq
-cell=6.25         # will be computed from resolution/2
-rmax=3
-otf_select=1
-otf_a=1.1
-otf_b=4.75
-otf_c=2
-noise_sigma=1
-b_order=0
-stype=2
-edge=0
+#                   debug
+debug=0
+#    @todo fix this for combo
+if [ 1 = 1 ]; then
+    unset pix_list
+    rms_cut=4
+    location=0,0
+    resolution=12.5   # will be computed from skyfreq
+    cell=6.25         # will be computed from resolution/2
+    rmax=3
+    otf_select=1
+    otf_a=1.1
+    otf_b=4.75
+    otf_c=2
+    noise_sigma=1
+    b_order=0
+    stype=2
+    edge=0
+fi
+
+#--HELP
+
+if  [ -z $1 ] || [ "$1" == "--help" ] || [ "$1" == "-h" ] ;then
+    set +x
+    awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
+    exit 0
+fi
 
 # unset a view things, since setting them will give a new meaning
-unset vlsr
+# unset vlsr
 
 #             simple keyword=value command line parser for bash - don't make any changing below
 for arg in $*; do
   export $arg
 done
+
+source lmtoy_functions.sh
 
 #             put in bash debug mode
 if [ $debug = 1 ]; then
