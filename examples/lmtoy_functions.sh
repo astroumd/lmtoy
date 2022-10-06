@@ -22,7 +22,13 @@ function lmtoy_report {
 
 function lmtoy_decipher_obsnums {
     # input:    obsnums
-    # output:   on0, on1, obsnum
+    #   obsnums  = comma separated list of obsnum's
+    
+    # output:   on0, on1, obsnum, obsnums1
+    #   on0      = first obsnum in obsnums list
+    #   on1      = last obnnum in obsnums list
+    #   obsnum   = on0
+    #   obsnums1 = space separate version of obsnums=
     
     if [[ $obsnums = 0 ]]; then
 	return
@@ -265,6 +271,7 @@ function lmtoy_seq1 {
 
     # log the version
     lmtoy_version > lmtoy.rc
+    # keep an IFPROC header
     ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
 
     #  convert RAW to SpecFile (hardcoded parameters are hardcoded for a good resaon)
@@ -529,6 +536,8 @@ function lmtoy_seq1 {
 	fi
 	if [ -e $s_on.nf.fits ]; then
 	    lmtoy_admit.sh $s_on.nf.fits
+	    # maskmoment
+	    mm1.py $s_on > maskmoment.log 2>&1
 	else
 	    lmtoy_admit.sh $s_fits
 	fi
