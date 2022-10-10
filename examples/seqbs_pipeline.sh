@@ -9,7 +9,7 @@
 #          If projectid is set, this is the subdirectory, within which obsnum is set
 #
 
-version="seqbs_pipeline: 30-sep-2022"
+version="seqbs_pipeline: 10-oct-2022"
 
 echo "LMTOY>> $version"
 
@@ -47,8 +47,8 @@ if [ -z $1 ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
 fi
 
 #     simple keyword=value command line parser for bash - don't make any changing below
-for arg in $*; do
-    export $arg
+for arg in "$@"; do
+    export "$arg"
 done
 
 #     load functions
@@ -80,8 +80,8 @@ rc=lmtoy_${obsnum}.rc
 if [ -e $rc ] && [ $newrc = 0 ]; then
     echo "LMTOY>> reading $rc"
     echo "# DATE: `date +%Y-%m-%dT%H:%M:%S.%N`" >> $rc
-    for arg in $*; do
-        echo "$arg" >> $rc
+    for arg in "$@"; do
+       export "$arg" >> $rc
     done
     source ./$rc
     newrc=0
@@ -169,8 +169,8 @@ fi
 #             derived parameters (you should not have to edit these)
 p_dir=${path}
 #             redo CLI again
-for arg in $*; do
-    export $arg
+for arg in "$@"; do
+    export "$arg"
 done
 
 

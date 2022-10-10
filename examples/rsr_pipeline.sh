@@ -10,7 +10,7 @@
 #
 #
 
-version="rsr_pipeline: 30-sep-2022"
+version="rsr_pipeline: 10-oct-2022"
 
 echo "LMTOY>> $version"
 
@@ -39,8 +39,8 @@ if [ -z $1 ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
 fi
 
 #             simple keyword=value command line parser for bash - don't make any changing below
-for arg in $*; do
-    export $arg
+for arg in "$@"; do
+  export "$arg"
 done
 
 # 
@@ -66,7 +66,7 @@ rc=lmtoy_${obsnum}.rc
 if [ -e $rc ] && [ $newrc = 0 ]; then
     echo "LMTOY>> reading $rc"
     echo "# DATE: `date +%Y-%m-%dT%H:%M:%S.%N`" >> $rc
-    for arg in $*; do
+    for arg in "$@"; do
         echo "$arg" >> $rc
     done
     source ./$rc
@@ -144,8 +144,8 @@ if [ $obsnum != 0 ]; then
 fi
 
 #             redo CLI again
-for arg in $*; do
-    export $arg
+for arg in "$@"; do
+  export "$arg"
 done
 
 lmtoy_rsr1

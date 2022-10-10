@@ -10,7 +10,7 @@
 #
 #  Example:   rsr_combine.sh obsnums=33551,71610,92068 
 
-version="rsr_combine: 27-sep-2022"
+version="rsr_combine: 10-oct-2022"
 
 echo "LMTOY>> $version"
 
@@ -42,8 +42,8 @@ fi
 unset vlsr
 
 #             simple keyword=value command line parser for bash - don't make any changing below
-for arg in $*; do
-  export $arg
+for arg in "$@"; do
+  export "$arg"
 done
 
 source lmtoy_functions.sh
@@ -113,9 +113,10 @@ blanking=rsr.${on0}_${on1}.blanking
  badlags=rsr.${on0}_${on1}.badlags
 
 # override CLI again
-for arg in $*; do
-  export $arg
+for arg in "$@"; do
+  export "$arg"
 done
+
 lmtoy_rsr1
 
 echo OBSNUM range: $on0 .. $on1
