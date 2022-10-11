@@ -14,7 +14,7 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="seq_pipeline: 27-sep-2022"
+version="seq_pipeline: 10-oct-2022"
 
 echo "LMTOY>> $version"
 
@@ -59,8 +59,8 @@ b_order=0
 stype=2
 sample=-1
 otf_cal=0
-edge=0
-bank=-1           # -1 means all banks 0..numbands-1
+edge=0            #  1:  fuzzy edge  0: good sharp edge where M (mask) > 0 [should be default]
+bank=-1           # -1:  all banks 0..numbands-1; otherwise select that bank (0,1,...)
 
 #                 debug (set -x)
 debug=0
@@ -78,26 +78,28 @@ unset vlsr
 unset restfreq
 
 #             simple keyword=value command line parser for bash - don't make any changing below
-for arg in $*; do
-    export $arg
+for arg in "$@"; do
+  export "$arg"
 done
 
 #
 source lmtoy_functions.sh
 
 
-
+#lmtoy_debug
 #             put in bash debug mode
 if [ $debug = 1 ]; then
     set -x
 fi
 
+#lmtoy_first
 if [ -e lmtoy.rc ]; then
     first=0
 else
     first=1
 fi
 
+#lmtoy_pdir
 #             see if pdir working directory needs to be used
 if [ ! -z $pdir ]; then
     echo Working directory $pdir
@@ -113,7 +115,7 @@ rc=lmtoy_${obsnum}.rc
 if [ -e $rc ] && [ $newrc = 0 ]; then
     echo "LMTOY>> reading $rc"
     echo "# DATE: `date +%Y-%m-%dT%H:%M:%S.%N`" >> $rc
-    for arg in $*; do
+    for arg in "$@"; do
         echo "$arg" >> $rc
     done
     source ./$rc
@@ -214,6 +216,11 @@ if [ $newrc = 1 ]; then
     echo otf_cal=$otf_cal           >> $rc
     echo edge=$edge                 >> $rc
 
+    # new hack to allow resolution/cell > 2
+    echo resolution=$resolution     >> $rc
+    cell=$(nemoinp $resolution/$nppb)
+    echo cell=$cell                 >> $rc
+
     # source again to ensure the changed variables are in
     source ./$rc
 
@@ -234,8 +241,8 @@ fi
 #             derived parameters (you should not have to edit these)
 p_dir=${path}
 #             redo CLI again
-for arg in $*; do
-    export $arg
+for arg in "$@"; do
+  export "$arg"
 done
 
 

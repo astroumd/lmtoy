@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 5-oct-2022"
+version="SLpipeline: 10-oct-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -49,8 +49,8 @@ if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
 fi
 
 #             simple keyword=value command line parser for bash - don't make any changing below
-for arg in $*; do
-  export $arg
+for arg in "$@"; do
+  export "$arg"
 done
 
 # 

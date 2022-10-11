@@ -10,7 +10,7 @@
 #
 
 
-version="seq_combine: 29-sep-2022"
+version="seq_combine: 10-oct-2022"
 
 echo "LMTOY>> $version"    
 
@@ -36,7 +36,7 @@ debug=0
 #    @todo fix this for combo
 if [ 1 = 1 ]; then
     unset pix_list
-    rms_cut=4
+    rms_cut=-4
     location=0,0
     resolution=12.5   # will be computed from skyfreq
     cell=6.25         # will be computed from resolution/2
@@ -63,8 +63,8 @@ fi
 # unset vlsr
 
 #             simple keyword=value command line parser for bash - don't make any changing below
-for arg in $*; do
-  export $arg
+for arg in "$@"; do
+  export "$arg"
 done
 
 source lmtoy_functions.sh
@@ -150,9 +150,10 @@ makespec=0
 viewspec=0
 makewf=0
 # override CLI again
-for arg in $*; do
-  export $arg
+for arg in "$@"; do
+  export "$arg"
 done
+
 lmtoy_seq1
 
 echo "LMTOY>> Created $s_fits and $w_fits"

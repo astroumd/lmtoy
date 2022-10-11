@@ -12,6 +12,9 @@
 
 # https://unity.rc.umass.edu/docs/#slurm/   IECK, this also stopped working.
 
+#                                        version
+version="10-oct-2022"
+
 # catch the single argument batch call first
 if [ -e "$1" ]; then
     echo Processing lines from $1 line by line
@@ -28,14 +31,11 @@ obsnum=0
 obsnums=0
 
 # processing CLI when key=var
-for arg in $*; do
+for arg in "$@"; do
     if [[ "$arg" =~ "=" ]]; then
-	export $arg
+	export "$arg"
     fi
 done
-
-#                                        version
-version="14-may-2022"
 
 #                                        prefix to run
 prefix="/usr/bin/time xvfb-run -a"
