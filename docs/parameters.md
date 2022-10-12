@@ -6,7 +6,7 @@ SEQ, 1MM, OMA, ...) parameters.
 The pipeline and instrument specific scriptS all have a **--help** and **-h** option
 as a reminder to the keywords and their defaults where applicable.
 
-Command line keyword that do not belong to the instrument (e.g. band= for RSR) are just ignored.
+Command line keywords that do not belong to the instrument (e.g. band= for RSR) are just ignored.
 
 ## Filename Conventions
 
@@ -22,11 +22,11 @@ all exist within the directory **obsnum/**:
 * SRC_OBSNUM_0_wf.fits  - SEQ waterfall for band 0 - in case there are > 1 band (e.g. 1MM and OMA)
 * SRC_OBSNUM_1_wf.fits  - SEQ waterfall for band 1
 * rsr.99862.badlags - RSR bad lags used for spectra
-* README_files.md - explanation of the files in this directory
+* README_files.md - explanation of all files in this directory
 * README.html - the entry point for the summary table (index.html needs to symlink to this)
 
 there are many more, most of them instrument specific, but this is the basic structure. The **README_files.md**
-is written by the pipeline to explain their contents.
+is written by the pipeline to explain their contents, and should always contain all used filenames.
 
 ## 1. Generic
 
@@ -34,8 +34,8 @@ Each instrument is controlled by the following generic parameters. We also list 
 Also note that a non-zero value for **obsnum=** *or* **obsnums=** is required.
 
 
-    obsnum=o1           single obsnum run
-    obsnums=o1,o2,....  combination series run
+    obsnum=o1           single obsnum run [0]
+    obsnums=o1,o2,....  combination series run [0]
         
     debug=0             1: verbosely print all commands and shell expansions
     restart=0           1: cleans up old obsnum pipeline results
@@ -48,21 +48,26 @@ Also note that a non-zero value for **obsnum=** *or* **obsnums=** is required.
     sleep=2             sleep before running, in case you change your mind
     nproc=1             number of processors (should stay at 1)
     rsync=""            - only for running at LMT
+
+and experimental (i.e. don't use in production)
+
     rc=""               ?
     oid=""              ?
-    goal=science        ?
+    goal=science        ?pointing,focus,....
     obsid=              ?
-    newrc=              ?
-    pdir=               ?
+    newrc=              ?if you want to add rc parameters
+    pdir=               ?if you want to switch manually for work
 
 ## 2. RSR
 
 The **rsr_pipeline.sh** script still uses two scripts to get the same spectrum in two different
-ways. In 
-
+ways, they really should be merged.
 
     badcb=2/3,2/2          preset Chassis/Board detectors that are bad C=[0..3]  B=[0..5]
     xlines=110.51,0.15     sections of spectrum not to be used for baseline fit (freq-dfreq..freq+dfreq)
+                           normally because there is a (strong) line
+
+Different scripts have different parameters that are currently hardcoded :
 
 ### 2.1 badlags.py
 
@@ -274,7 +279,8 @@ of derived paramers, and in a re-run will not be recomputed!  These are noted
 
 ## Heyer's list 
 
-Discussion document on SEQ reduction parameters. In two sets, for making spec-file, and for make cube
+Discussion document on SEQ reduction parameters. In two sets, for making spec-file, and for make cube.
+See lmtoy_reduce_Parameters_v4.docx
 
 ### spec file making
 
