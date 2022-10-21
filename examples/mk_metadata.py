@@ -146,14 +146,14 @@ if __name__ == "__main__":
 
     # open the LMB and write some common metadata
     lmtdata = LmtMetadataBlock()
-    lmtdata.add_metadata("facility",     "LMT")                     # facility -> observatory
-    lmtdata.add_metadata("instrument",   instrument)                # instrument->LMTInstrument
+    lmtdata.add_metadata("observatory",  "LMT")
+    lmtdata.add_metadata("LMTInstrument",instrument)
     lmtdata.add_metadata("projectID",    header(rc,"ProjectId"))
     lmtdata.add_metadata("projectTitle", "Life, the Universe, and Everything")
     lmtdata.add_metadata("PIName",       "Unknown")
     lmtdata.add_metadata("obsnum",       header(rc,"obsnum"))
     lmtdata.add_metadata("obsDate",      header(rc,"date_obs"))
-    lmtdata.add_metadata("object",       header(rc,"src"))           # object->targetName
+    lmtdata.add_metadata("targetName",   header(rc,"src"))
     lmtdata.add_metadata("intTime",float(header(rc,"inttime")))
 
     if instrument == "SEQUOIA":
