@@ -76,6 +76,12 @@ def example():
     print("# here is an example lmtmetadata.yaml file:")
     
     lmtdata = LmtMetadataBlock()
+    try:
+        lmtdata.example()
+        return
+    except:
+        print("running old example")
+    
     #print(lmtdata.name,'\n',lmtdata.datasetFields)
     #print(type(lmtdata._datasetFields))
     #print(lmtdata.datasetFields['name'].values)
@@ -126,6 +132,8 @@ if __name__ == "__main__":
         example()
         sys.exit(0)
 
+    print("# Warning: mk_metadata does not produce fully certified data yet")
+
     # find and read the rc file and construct the rc {} dictionary
     
     pdir = sys.argv[1]
@@ -163,17 +171,31 @@ if __name__ == "__main__":
         #
         lmtdata.add_metadata("RA",123.456)
         lmtdata.add_metadata("DEC",-43.210)
-        lmtdata.add_metadata("slBand",1)
-        lmtdata.add_metadata("lineName",'CS2-1')
-        lmtdata.add_metadata("frequencyCenter",97.981)
-        lmtdata.add_metadata("bandwidth",2.5)
         lmtdata.add_metadata("velocity",321.0)          # vlsr
         lmtdata.add_metadata("velDef","RADIO")          
         lmtdata.add_metadata("velFrame","LSR")
         lmtdata.add_metadata("velType","FREQUENCY")
         lmtdata.add_metadata("z",0.001071)              # <-vlsr
-        lmtdata.add_metadata("beam",20.0/3600.0)
-        lmtdata.add_metadata("lineSens",0.072)
+        
+        #lmtdata.add_metadata("slBand",1)
+        #lmtdata.add_metadata("lineName",'CS2-1')
+        #lmtdata.add_metadata("frequencyCenter",97.981)
+        #lmtdata.add_metadata("bandwidth",2.5)
+        #lmtdata.add_metadata("beam",20.0/3600.0)
+        #lmtdata.add_metadata("lineSens",0.072)
+
+        band = dict()
+        band["slBand"] = 1
+        band["lineName"]='CS2-1'
+        #   for multiple lines:
+        #band["lineName"] = 'CS2-1,CO1-0,H2CS'
+        band["frequencyCenter"] = 97.981
+        band["bandwidth"] = 2.5
+        band["beam"] = 20.0/3600.0
+        band["lineSens"] = 0.072
+        band["qaGrade"] = "A+++"
+        lmtdata.add_metadata("band",band)
+
     elif instrument == "RSR":
         print("instrument=%s " % instrument)
     else:
