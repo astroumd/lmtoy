@@ -2,8 +2,10 @@
 #
 #  Create the lmtmetadata.yaml (on stdout) for a given obsnum directory
 #
-#  
-
+#  projectTitle
+#  PIName
+#  lineName  - "search for"
+#
 import os
 import sys
 import dvpipe.utils as utils
@@ -165,11 +167,11 @@ if __name__ == "__main__":
         lmtdata.add_metadata("lineName",'CS2-1')
         lmtdata.add_metadata("frequencyCenter",97.981)
         lmtdata.add_metadata("bandwidth",2.5)
-        lmtdata.add_metadata("velocity",321.0)
-        lmtdata.add_metadata("velDef","RADIO")
+        lmtdata.add_metadata("velocity",321.0)          # vlsr
+        lmtdata.add_metadata("velDef","RADIO")          
         lmtdata.add_metadata("velFrame","LSR")
         lmtdata.add_metadata("velType","FREQUENCY")
-        lmtdata.add_metadata("z",0.001071)
+        lmtdata.add_metadata("z",0.001071)              # <-vlsr
         lmtdata.add_metadata("beam",20.0/3600.0)
         lmtdata.add_metadata("lineSens",0.072)
     elif instrument == "RSR":
