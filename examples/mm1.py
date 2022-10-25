@@ -98,7 +98,7 @@ if __name__ == "__main__":
         plt.step(ex1['Velocity'],ex1['Flux'],color='b',label='dilmskpad')
         plt.step(ex2['Velocity'],ex2['Flux'],color='g',label='smomsk')
         plt.step(ex3['Velocity'],ex3['Flux'],color='k',label='dilsmomsk')
-        plt.step(ex4['Velocity'],ex4['Flux'],color='orange',label='msk2d')
+        #plt.step(ex4['Velocity'],ex4['Flux'],color='orange',label='msk2d')
         plt.legend(fontsize='large')
         plt.xlabel(ex0['Velocity'].description+' ['+str(ex0['Velocity'].unit)+']',fontsize='x-large')
         plt.ylabel(ex0['Flux'].description+' ['+str(ex0['Flux'].unit)+']',fontsize='x-large')
