@@ -279,8 +279,9 @@ of derived paramers, and in a re-run will not be recomputed!  These are noted
 
 ## Heyer's list 
 
-Discussion document on SEQ reduction parameters. In two sets, for making spec-file, and for make cube.
-See lmtoy_reduce_Parameters_v4.docx
+In lmtoy_reduce_Parameters_v4.docx the SEQ reduction parameters are described. A table with two subtables,
+describing the parameters for making spec-file, and for making fits-cube.
+
 
 ### spec file making
 
@@ -294,7 +295,7 @@ See lmtoy_reduce_Parameters_v4.docx
         ztype           0=velocity; 1=frequency; 2=channel
         otf_cal
         bank
-        styp
+        stype
         Vlsr
         DeltaV
         Nbw
@@ -310,8 +311,8 @@ See lmtoy_reduce_Parameters_v4.docx
         otf_select
         rmax
         otf_a
-        otf_a
-        otf_a
+        otf_b
+        otf_c
         n_samples
         noise_sigma
         rms_cut
