@@ -21,7 +21,8 @@ set url   = https://repo.anaconda.com/archive/Anaconda3-2020.07-MacOSX-x86_64.sh
 set url   = https://repo.anaconda.com/archive/Anaconda3-2020.07-Linux-x86_64.sh
 set url   = https://repo.anaconda.com/archive/Anaconda3-2020.11-%s-x86_64.sh
 set url   = https://repo.anaconda.com/archive/Anaconda3-2021.04-%s-x86_64.sh
-#set url   = https://repo.anaconda.com/archive/Anaconda3-2021.11-%s-x86_64.sh      # sphinx
+#set url   = https://repo.anaconda.com/archive/Anaconda3-2021.11-%s-x86_64.sh      # sphinx might not work?
+#set url   = https://repo.anaconda.com/archive/Anaconda3-2022.05-%s-x86_64.sh      # sphinx still broken
 
 set dir   = `pwd`/anaconda3
 set wget  = wget
