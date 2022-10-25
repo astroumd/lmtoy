@@ -48,6 +48,10 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       used where **band** is meant, but there is a subtle difference
       where bands are ordered in frequency.
 
+    bufpos
+      WARES variable to denote what type of data is being received.
+      bufpos: 0=on 1=off 2=sky 3=hot.   100 can be added if ...(TBD)...
+
     cell
       (most people would call this a pixel, but at LMT
       **pixel** is an overloaded word for the beams. In the gridder we
@@ -196,7 +200,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 
     WARES
       (Wideband Arrayed ROACH Enabled Spectrometer). The spectrometer used
-      for Sequoia. Also used for the name
+      for Sequoia/1MM/Omaya. Also used for the name
       of the computer that receives data from the 4 (future 8) roach boards.
 
 

@@ -234,3 +234,23 @@ strictly needed, if you take the data to another package that can also do
 this more flexibly.
 
 .. todo:: example needed.  flag not implemented yet.
+
+Collecting pipeline results
+---------------------------
+
+For variables that have been placed in the lmtoy_OBSNUM.rc file, there is a fast
+way to collect a table summarizing the variables using the **nemopars** program.
+Here is an example:
+
+.. code-block::
+
+     cd $WORK_LMT/2021-S1-MX-3
+
+     nemopars  src,obsnum,skytime,inttime,tint_on,nrows */lmtoy_*.rc | sort  > log1
+     awk '{print $3/($5+$6*1.6)}' log1 | tabhist - 1 1 3 bins=20 resid=f qac=t
+
+        
+     nemopars  skytime */lmtoy_*.rc | tabhist -
+
+In the last example the total skytime will be histogrammed, and the screen output
+should contain the line with the Sum (in seconds)
