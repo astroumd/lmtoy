@@ -37,8 +37,8 @@ debug=0                           # shell in debug mode? (set -x)
 
 
 # Usage examples:
-#   install_lmtoy                                              # typical ubuntu with pre-conditions, full test w/ admit
-#   install_lmtoy  mknemos=1 pgplot=2 wget=wgetc admit=0       # unity with no modules loaded, all self-contained
+#   install_lmtoy                                             # typical ubuntu with pre-conditions, full test w/ admit
+#   install_lmtoy  mknemo=1 pgplot=2 wget=wgetc admit=0       # unity with no modules loaded, all self-contained
 
 #--HELP
 
