@@ -100,12 +100,12 @@ fi
 # install_nemo.sh opt=1 mknemos=cfitsio,hdf5,netcdf4 yapp=pglocal
 if [ $nemo = 1 ]; then
     if [ $mknemo = 1 ]; then
-	make install_mknemo MKNEMOS="cfitsio hdf5 netcdf4"
+	make install_mknemos MKNEMOS="cfitsio hdf5 netcdf4"
     fi
     if [ $pgplot = 1 ] ; then
 	make install_nemo YAPP=pgplot
     elif [ $pgplot = 2 ]; then
-	make install_mknemo MKNEMOS="pgplot"
+	make install_mknemos MKNEMOS="pgplot"
 	make install_nemo_pglocal
     else
 	make install_nemo
