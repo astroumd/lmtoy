@@ -274,7 +274,7 @@ install_montage:  Montage
 YAPP = ps
 MKNEMOS = "pgplot cfitsio hdf5 netcdf4"
 install_mknemos: nemo
-	(cd nemo; ./configure; source nemo_start.sh; make mknemos MKNEMOS="$(MKNEMOS)")
+	(cd nemo; ./configure; make build1 ; source nemo_start.sh; make mknemos MKNEMOS="$(MKNEMOS)")
 
 install_nemo:  nemo
 	(cd nemo; ./configure --with-yapp=$(YAPP); make build1 build2 build3 MAKELIBS=corelibs)
