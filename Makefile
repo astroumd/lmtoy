@@ -272,11 +272,16 @@ install_montage:  Montage
 
 # step 5 (optional; pick YAPP=ps or YAPP=pgplot)
 YAPP = ps
+MKNEMOS = "pgplot cfitsio hdf5 netcdf4"
+install_mknemos: nemo
+	(cd nemo; ./configure; source nemo_start.sh; make mknemos MKNEMOS="$(MKNEMOS)")
+
 install_nemo:  nemo
 	(cd nemo; ./configure --with-yapp=$(YAPP); make build1 build2 build3 MAKELIBS=corelibs)
 
-install_nemo_pgplot:  nemo
-	(cd nemo; ./configure --with-yapp=pgplot; make build1 build2 build3 MAKELIBS=corelibs)
+# this needs 'mknemo pgplot'
+install_nemo_pglocal:  nemo
+	(cd nemo; source nemo_start.sh; ./configure --with-yapp=pgplot --enable-png --with-pgplot-prefix=$(NEMOLIB); make build1 build2 build3 MAKELIBS=corelibs)
 
 update_nemo:	nemo
 	(cd nemo; make build2a build3 MAKELIBS=corelibs)
