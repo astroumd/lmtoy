@@ -13,6 +13,7 @@
 #    22-jul-2021:     better bootstrap on missing DATA_LMT
 #     2-dec-2021:     add admit, use embedded DATA_LMT and WORK_LMT if none else given
 #     9-nov-2022:     various overhaul for Unity to allow "mknemo builds for pgplot, cfitsio
+#
 
 version=9-nov-2022
 
@@ -33,6 +34,11 @@ admit=1                           # install ADMIT ?
 pipeline=1                        # full pipeline run on bench files?  If selected, bench=1 is not needed
 docs=0                            # make docs? (produces the html tree)
 debug=0                           # shell in debug mode? (set -x)
+
+
+# Usage examples:
+#   install_lmtoy                                              # typical ubuntu with pre-conditions, full test w/ admit
+#   install_lmtoy  mknemos=1 pgplot=2 wget=wgetc admit=0       # unity with no modules loaded, all self-contained
 
 #--HELP
 
@@ -130,6 +136,9 @@ python --version
 if [ $docs = 1 ]; then
     (cd docs; pip3 install -r requirements.txt; make nbs lastmod html)
 fi
+
+pip3 freeze > freeze.log
+
 
 # this bench will be deprecation, as it is not using the official pipeline
 if [ $bench != 0 ]; then
