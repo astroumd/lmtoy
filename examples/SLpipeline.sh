@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 10-oct-2022"
+version="SLpipeline: 16-nov-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -39,6 +39,10 @@ goal=Science    # Science, or override with: Pointing Focus
 #  Optional instrument specific pipeline can be added as well but are not known here
 #    To Unity:  rsync=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s
 #    To UMD:    rsync=teuben@lma.astro.umd.edu:/lma1/teuben/LMT/work_lmt/%s
+#
+#  Benchmarks:
+#    RSR:        SLpipeline.sh obsnum=33551 restart=1
+#    SEQ:        SLpipeline.sh obsnum=79448 restart=1
 
 #--HELP   
 
