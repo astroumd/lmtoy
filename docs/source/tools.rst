@@ -55,9 +55,9 @@ Here's a very brief reminder on the quirky things of NEMO:
 - NEMO has a large number of programs that are often combined through Unix pipes
 - programs use a series of "keyword=value" command line arguments
 - programs have a man page, e.g.  "man tabhist", for online help
-- programs have --help, help=h, help=M etc. for inline help
+- programs have -h, --help, help=h, help=M etc. for inline help
 - program keywords don't need the "keyword=" part if given in the correct
-  order, as shown with "help="
+  order, as shown with "-h"
 - programs also have system keyword, like help=. They are not listed with help=,
   since each program has them. The important ones are:
 
