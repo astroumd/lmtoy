@@ -42,7 +42,9 @@ NEMO
 ----
 
 Since NEMO is used for some of the infrastructure in LMTOY, there are a number
-of tools that could be useful for specific projects.
+of tools that could be useful for specific projects. Apart from **tabplot** and
+**tabhist**, the **nemopars** and **nemoplot** programs might be the most
+useful tools.
 
 
 NEMO 101
