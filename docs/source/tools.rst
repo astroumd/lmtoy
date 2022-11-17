@@ -60,11 +60,15 @@ Here's a very brief reminder on the quirky things of NEMO:
   order, as shown with "help="
 - programs also have system keyword, like help=. They are not listed with help=,
   since each program has them. The important ones are:
+
   - help= has a few options (use help=? to see them)
   - yapp= designates what plotting (Yet Another Plotting Package) device is used.
+  
     - pgplot interface uses things like yapp=1/xs, 2/xs, fig1.png/png etc.
+    
   - debug= increases the debug level. 0 is the default, 1 has more, -1 would make it really silent etc.
   - error= allows you to bypass normally fatal error message, use at your own risk though!
+  
 - recompiling a program can often be done with **mknemo**, e.g. "mknemo tabhist", equally so
   for selected libraries, e.g. "mknemo cfitsio", would recompile.
 
