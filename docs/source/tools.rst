@@ -42,9 +42,12 @@ NEMO
 ----
 
 Since NEMO is used for some of the infrastructure in LMTOY, there are a number
-of tools that could be useful for specific projects. Apart from **tabplot** and
-**tabhist**, the **nemopars** and **nemoplot** programs might be the most
-useful tools.
+of tools that could be useful for specific projects. Apart from
+`tabplot <https://teuben.github.io/nemo/man_html/tabplot.1.html>`_, and
+`tabhist <https://teuben.github.io/nemo/man_html/tabhist.1.html>`_, the
+`nemopars <https://teuben.github.io/nemo/man_html/nemopars.8.html>`_, and
+`nemoplot <https://teuben.github.io/nemo/man_html/nemoplot.8.html>`_
+programs might be the most useful tools.
 
 
 NEMO 101
