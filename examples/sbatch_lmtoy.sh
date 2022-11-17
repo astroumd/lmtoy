@@ -15,6 +15,7 @@
 #  Typical usage:
 #     sbatch_lmtoy.sh SLpipeline.sh obsnum=12345
 #     sbatch_lmtoy.sh SLpipeline.sh obsnums=12345,12346
+#     sbatch_lmtoy.sh 2021-S1-US-3.run1a
 #
 #--HELP
 
