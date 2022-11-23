@@ -34,7 +34,8 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 
     beam
       The footprint of one receiver horn on the sky. Sequioa as a 
-      4x4 multi-beam receiver. Not to be confused with the
+      4x4 multi-beam receiver, numbered 0 through 15.
+      Not to be confused with the
       **FWHM**.  At 115 GHz the **FWHM** is about 16", at 86 GHz about
       21".  The beam separation is 27.8" for Sequoia.
 
@@ -87,13 +88,17 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
     LMTSLR
       The LMT Spectral Line Reduction modules you will need to reduce
       WARES based data.
+
+    MC
+      Monitor and Control system, the system that runs the online LMT system.
     
     ObsNum
-      Observatation Number. This is not all, obsnum is part of the (**ObsNum** , **SubObsNum** , **ScanNum**) tuple.
+      Observatation Number. This is not all, obsnum is part of the (**ObsNum** , **SubObsNum** , **ScanNum**) tuple,
+      but for most applications you only need to know the **ObsNum**
 
     OMAyA
       (One Millimeter Array Receiver for Astronomy):  200-280 GHz. 8 "pixels" (beams) on sky, each dual
-      polarization, with two sidebands. IF can be 4-12 GHz in each sideband.
+      polarization, with two sidebands. IF can be 4-12 GHz in each sideband. This is a planned instrument.
 
     OMAR
       something with omaya? Or is this another term for OMAYA
@@ -102,21 +107,24 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       (Phased Array Receiver for Millimeter Astronomy): 64 element receiver - prototype.
    
     pixel
-      synonym for **beam** as in multi-beam. The keyword --pix_list= is used to select pixels (0..15) for processing.
+      synonym for **beam** as in multi-beam. The keyword --pix_list= is used to select pixels (0..15)
+      for processing.
 
     plotly
       dash uses plotly, which is a data analytics framework working within a browser environment.
 
     ProjectId
-      Each LMT observing proposal has a unique proposal ID assigned. An example is **2018-S1-MU-46**
+      Each LMT observing proposal has a unique proposal ID assigned. An example is **2018-S1-MU-46**,
+      which contains the proposal year, session, institution and proposal number.
 
     Quick Look data
       At the LMT there are "Quick Look" data that will be used to assess if data will be scientifically
-      viable. See also Timely Analysis Products (TAP)
+      viable. Usually made available via the Shift Report website. See also Timely Analysis Products (TAP)
+      for a view closer to the science data.
 
     ramp
       The ramp is the area where not all beams have
-      been. Within the ramp there is thus a uniform coverage.  The
+      been. Within the ramp there is thus a non-uniform coverage.  The
       ramp covers 3 beams (not FWHM, but pixel), so about 85".  For
       any maps smaller than about 200" there is no good area of
       uniform coverage. Should have a plot of that here, and maybe
@@ -125,7 +133,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
     resolution
       this term is used in the gridder, but it's not
       **FWHM**, it's lambda/D.  Keyword --resolution= is used If
-      selected this way, FWHM is set as 1.15 * resolution. But if
+      selected this way, FWHM is then set as 1.15 * resolution. But if
       resolution is chosen larger, what is the effective FWHM?  It
       would be better to have a dimensionless term for
       **resolution/pixel** and a different name for resolution
@@ -165,6 +173,9 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       Sanson-Flamsteed projection, used in LMT **FITS** files
       (the GLS - GLobal Sinusoidal is similar to SFL).
 
+    Shift Report
+      See Quick Look Data
+
     SLR
       (Spectral Line Receiver) The common name for the (SEQUOIA/1MM/OMAYA) instruments,
       since they share WARES hardware. Name is also used in ``lmtslr``, the python module.
@@ -174,7 +185,6 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       ra, dec, time). Normally the smallest portion of data we can assign. A spectrum is
       defined by its own seting of *(crval, crpix, cdelt)* in a FITS WCS sense.
       See also :ref:`storage`.
-
 
     SRDP
       Science Ready Data Products (SRDP) are the data produced by the pipeline that can be used
@@ -186,7 +196,9 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 
     Timely Analysis Products (TAP)
       The SLpipeline produces a set of Timely Analysis Products, mostly in the form of figures,
-      for the PI to asses the quality of the data. See also SRDP.
+      for the PI to asses the quality of the data. Normally presented on a web server, though
+      the TAP is also available as a tar file. The TAP does not contain  See also SRDP.
+      TAP is also known as the Table Access Protocal in the IVOA world. Not to be confused.
 
     TolTec
       Continuum mapping instrument
