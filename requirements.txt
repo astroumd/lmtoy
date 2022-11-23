@@ -1,4 +1,6 @@
 #
+netCDF4
+docopt
 spectral-cube
 bettermoments
 pvextractor

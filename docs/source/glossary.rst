@@ -49,6 +49,10 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       used where **band** is meant, but there is a subtle difference
       where bands are ordered in frequency.
 
+    bufpos
+      WARES variable to denote what type of data is being received.
+      bufpos: 0=on 1=off 2=sky 3=hot.   100 can be added if ...(TBD)...
+
     cell
       (most people would call this a pixel, but at LMT
       **pixel** is an overloaded word for the beams. In the gridder we
@@ -177,7 +181,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       See Quick Look Data
 
     SLR
-      (Spectral Line Receiver) The common name for the (SEQUOIA/1MM/OMAYA) instruments,
+      (Spectral Line Receiver) The common name for the (SEQ/1MM/OMA) instruments,
       since they share WARES hardware. Name is also used in ``lmtslr``, the python module.
 
     Spectrum
@@ -208,7 +212,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 
     WARES
       (Wideband Arrayed ROACH Enabled Spectrometer). The spectrometer used
-      for Sequoia. Also used for the name
+      for Sequoia/1MM/Omaya. Also used for the name
       of the computer that receives data from the 4 (future 8) roach boards.
 
 
@@ -315,7 +319,7 @@ Taking an inventory of current and known future LMT Spectral Line instruments:
 .. note::  If an instrument like RSR would multiplex the (beam,pol) pairs, this would be a challenge
 	   to the assumption of homogeneity, and the SDFITS model would be more appropriate.
 
-* 1MMRx:
+* 1MM:
   one beam, two pols, two sidebands. So here we have nbeam=1, bpol=2, nband=2, nchan=2k
 
 * SEQ:

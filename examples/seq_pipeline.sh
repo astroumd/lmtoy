@@ -14,33 +14,19 @@
 #
 # @todo   close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-version="seq_pipeline: 5-jul-2022"
+version="seq_pipeline: 10-oct-2022"
 
-if [ -z $1 ]; then
-    echo "LMTOY>> Usage: path=DATA_LMT obsnum=OBSNUM ..."
-    echo "LMTOY>> $version"    
-    echo ""
-    echo "See lmtoy_reduce.md for examples on usage"
-    exit 0
-else
-    echo "LMTOY>> $version"
-fi
-
-source lmtoy_functions.sh
-
-# debug
-# set -x
-debug=0
-#set -e
+echo "LMTOY>> $version"
 
 
-# input parameters
+#--HELP   
+# input parameters (only obsnum is required)
 #            - start or restart
-path=${DATA_LMT:-data_lmt}
 obsnum=79448
 obsid=""
 newrc=0
 pdir=""
+path=${DATA_LMT:-data_lmt}
 #            - procedural
 makespec=1
 makecube=1
@@ -62,6 +48,7 @@ rms_cut=-4
 location=0,0
 resolution=12.5   # will be computed from skyfreq
 cell=6.25         # will be computed from resolution/2
+nppb=2            # number of points per beam
 rmax=3
 otf_select=1
 otf_a=1.1
@@ -72,28 +59,47 @@ b_order=0
 stype=2
 sample=-1
 otf_cal=0
-edge=0
-bank=-1           # -1 means all banks 0..numbands-1
+edge=0            #  1:  fuzzy edge  0: good sharp edge where M (mask) > 0 [should be default]
+bank=-1           # -1:  all banks 0..numbands-1; otherwise select that bank (0,1,...)
+
+#                 debug (set -x)
+debug=0
+
+#--HELP
+
+if [ -z $1 ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
+    set +x
+    awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
+    exit 0
+fi
 
 # unset a view things, since setting them will give a new meaning
 unset vlsr
+unset restfreq
 
 #             simple keyword=value command line parser for bash - don't make any changing below
-for arg in $*; do
-    export $arg
+for arg in "$@"; do
+  export "$arg"
 done
 
+#
+source lmtoy_functions.sh
+
+
+#lmtoy_debug
 #             put in bash debug mode
 if [ $debug = 1 ]; then
     set -x
 fi
 
+#lmtoy_first
 if [ -e lmtoy.rc ]; then
     first=0
 else
     first=1
 fi
 
+#lmtoy_pdir
 #             see if pdir working directory needs to be used
 if [ ! -z $pdir ]; then
     echo Working directory $pdir
@@ -109,7 +115,7 @@ rc=lmtoy_${obsnum}.rc
 if [ -e $rc ] && [ $newrc = 0 ]; then
     echo "LMTOY>> reading $rc"
     echo "# DATE: `date +%Y-%m-%dT%H:%M:%S.%N`" >> $rc
-    for arg in $*; do
+    for arg in "$@"; do
         echo "$arg" >> $rc
     done
     source ./$rc
@@ -154,8 +160,15 @@ if [ $newrc = 1 ]; then
 
     # lmtinfo grabs some useful parameters from the ifproc file
     lmtinfo.py $obsnum | tee -a $rc
+    # exceptions allowed to be overridden:   vlsr, restfreq
+    if [ ! -z $vlsr ]; then
+	echo "vlsr=$vlsr              # set" >> ./$rc
+    fi
+    if [ ! -z $restfreq ]; then
+	echo "restfreq=$restfreq      # set" >> ./$rc
+    fi
     source ./$rc
-    
+
     #   w0   v0   v1     w1
     #v0=$(echo $vlsr - $dv | bc -l)
     #v1=$(echo $vlsr + $dv | bc -l)
@@ -203,9 +216,13 @@ if [ $newrc = 1 ]; then
     echo otf_cal=$otf_cal           >> $rc
     echo edge=$edge                 >> $rc
 
+    # new hack to allow resolution/cell > 2
+    echo resolution=$resolution     >> $rc
+    cell=$(nemoinp $resolution/$nppb)
+    echo cell=$cell                 >> $rc
+
     # source again to ensure the changed variables are in
     source ./$rc
-    
 
     echo "LMTOY>> this is your startup $rc file:"
     cat $rc
@@ -224,8 +241,8 @@ fi
 #             derived parameters (you should not have to edit these)
 p_dir=${path}
 #             redo CLI again
-for arg in $*; do
-    export $arg
+for arg in "$@"; do
+  export "$arg"
 done
 
 

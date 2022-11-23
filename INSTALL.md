@@ -6,9 +6,9 @@
 
 First we go through a guided install example. Please see the sections
 below if you need more information on the pre-conditions or other
-intermediate steps. The script in **docs/install_lmtoy** provides
+intermediate or alternate steps. The script in **docs/install_lmtoy** provides
 some paths to the install described below, and it works in most cases
-on most machines we've tested (Mac, Linux/Ubuntu and Linux/Redhat8). YMMV.
+on most machines we've tested (Mac, Linux/Ubuntu, Unity, Zaratan and Linux/Redhat8). YMMV.
 
 ## Install Example
 
@@ -146,6 +146,7 @@ These are needed for the gridder program (written in C) **spec_driver_fits**
 
 * Ubuntu20:  sudo apt install libnetcdf-dev netcdf-bin libnetcdf15 libcfitsio-dev
 * Ubuntu21:  sudo apt install libnetcdf-dev netcdf-bin libnetcdf18 libcfitsio-dev
+* Ubuntu22:  sudo apt install libnetcdf-dev netcdf-bin libnetcdf19 libcfitsio-dev
 * Centos:  sudo yum install netcdf-devel cfitsio
 * MacBrew: brew install netcdf cfitsio
 
@@ -228,7 +229,27 @@ On ubuntu the following method allows you to upgrade the system version of pytho
 
      sudo add-apt-repository ppa:deadsnakes/ppa 
      sudo apt update
-	 sudo apt install python3.9
+     sudo apt install python3.9
+
+## Internal Build
+
+A standard Ubuntu box will have the available packages (pgplot, cfitsio, netcdf) to compile LMTOY. However, on
+Unity - despite it being Ubuntu20.04 LTS - the powers have decided on a very lightweight environment with
+the **module** command loading the needed packages. Theoretically this should have worked:
+
+      module load pgplot/5.2.2
+      module load cfitsio/4.0.0
+      module load netcdf/4.8.1
+
+but at the time of this writing (Nov 2022) there were a number of failures with this approach. This caused us to
+enable an internal build using NEMO, which places packages in $NEMO/opt:
+
+      mknemo pgplot cfitsio hdf5 netcdf4
+
+where netcdf4 needs to have hdf5 compiled in its environment.  Only cfitsio and netcdf4 will produce pkg-config
+pc files, but hdf5 does not (their bug?). Luckily we don't need this for hdf5. currently: netCDF4-1.6.1
+
+Warning:   our python install also grabs a netcdf4 wheel. better make sure versions agree
 
 
 ### Updates

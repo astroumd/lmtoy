@@ -16,7 +16,7 @@ PYTHON = anaconda3
 # git directories we should have here
 
 GIT_DIRS = SpectralLineReduction dreampy3 maskmoment RSR_driver nemo b4r \
-           RedshiftPointing LinePointing
+           RedshiftPointing LinePointing dvpipe
 
 # URLs that we'll need
 
@@ -46,6 +46,7 @@ URL14 = https://github.com/teuben/gbtgridder
 URL15 = https://github.com/lmt-heterodyne/RedshiftPointing
 URL16 = https://github.com/lmt-heterodyne/LinePointing
 URL17 = https://github.com/teuben/aplpy
+URL18 = https://github.com/toltec-astro/dvpipe
 
 .PHONY:  help install build
 
@@ -176,6 +177,9 @@ RedshiftPointing:
 LinePointing:
 	git clone $(URL16)
 
+dvpipe:
+	git clone -b mwpdevel $(URL18)
+
 
 # hack for Linux  (@todo Mac)
 admit:
@@ -257,6 +261,10 @@ install_astropy: specutils pyspeckit
 	(cd specutils; pip3 install -e .)
 	(cd pyspeckit; pip3 install -e .)
 
+install_dvpipe:  dvpipe
+	@echo dvpipe
+	pip3 install -e dvpipe 
+
 # step 4 (optional)
 install_montage:  Montage
 	(cd Montage; make)
@@ -264,11 +272,16 @@ install_montage:  Montage
 
 # step 5 (optional; pick YAPP=ps or YAPP=pgplot)
 YAPP = ps
+MKNEMOS = "pgplot cfitsio hdf5 netcdf4"
+install_mknemos: nemo
+	(cd nemo; ./configure; make build1 ; source nemo_start.sh; make mknemos MKNEMOS="$(MKNEMOS)")
+
 install_nemo:  nemo
 	(cd nemo; ./configure --with-yapp=$(YAPP); make build1 build2 build3 MAKELIBS=corelibs)
 
-install_nemo_pgplot:  nemo
-	(cd nemo; ./configure --with-yapp=pgplot; make build1 build2 build3 MAKELIBS=corelibs)
+# this needs 'mknemo pgplot'
+install_nemo_pglocal:  nemo
+	(cd nemo; source nemo_start.sh; ./configure --with-yapp=pgplot --enable-png --with-pgplot-prefix=$(NEMOLIB); make build1 build2 build3 MAKELIBS=corelibs)
 
 update_nemo:	nemo
 	(cd nemo; make build2a build3 MAKELIBS=corelibs)
@@ -286,6 +299,8 @@ common: lmtoy_venv
 	pip3 install -e dreampy3)
 
 
+# ---------------------------- benchmarks -------------------------------------------------------------------------------------------
+
 ADMIT = 1
 bench:  bench1 bench2
 
@@ -297,6 +312,11 @@ bench1:
 	@echo "================================================================================================================="
 	@echo xdg-open  $(WORK_LMT)/2014ARSRCommissioning/33551/README.html
 
+
+bench1a:
+	$(TIME) SLpipeline.sh obsnums=33551,33551 restart=1 admit=$(ADMIT)
+
+
 bench2:
 	$(TIME) SLpipeline.sh obsnum=79448 restart=1 admit=$(ADMIT)
 	@echo "QAC_STATS: IRC+10216_79448-full 0.00256137 0.242578 -563.449 634.86 85230.4 0.0531463 5696559 [expected]"
@@ -307,10 +327,8 @@ bench2:
 	@echo "========================================================================================"
 	@echo xdg-open  $(WORK_LMT)/2018S1SEQUOIACommissioning/79448/README.html
 
-bench1a:
-	$(MAKE) bench1 ADMIT=0
 bench2a:
-	$(MAKE) bench2 ADMIT=0
+	$(TIME) SLpipeline.sh obsnums=79448,79448 restart=1 admit=$(ADMIT)
 
 # a pure CPU bench from NEMO
 bench5:

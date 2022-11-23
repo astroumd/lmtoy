@@ -191,7 +191,7 @@ The step from SpecFile to FITS cube has the following parameters:
 
 | Keyword     | Description  |
 | ----------- |:------------ |
-| pixel       | pixel size (should be 1/2 resolution ) |
+| cell        | pixel size (should be 1/2 resolution ) |
 | otf_select  | kernel function |
 | rmax        | convolution size |
 | edge        | fuzzy edge ? |
@@ -200,7 +200,22 @@ The step from SpecFile to FITS cube has the following parameters:
 | sample      | which times to mask out |
 | noise_sigma | ? |
 
+The relationship between cell and edge can be tricky. The idea of cell=0 (the default)
+is that it will not allow to leak information into pixels that had no pointings. However,
+if the distance between scans is less than the default cell = resolution/2, this can
 
+The choice of cell= and edge=0 (the normal default) can be tricky.   edge=0 does not allow
+egregious extrapolation into (typically border) cells that have no neighbors to contribute 
+from. However, with a small cell, one can wind up with pixels that have no contributions,
+and cell=1 then allows interpolation by contributing via hopefully multiple neighboring
+pixels.  In this case the edge will look cerrated and ugly again, but just crop your map
+so your audience doesn't get upset.
+
+The benchmark obsnum=79448 is a good example of this. Running this with cell=2.25 causes
+a lot of NaN's in horizontal stripes in the file, but by adding edge=1 interpolation is
+allowed and the cube fills nicely.
+
+Note FWHM beam = 1.15 * resolution in the code.
 
 
 ## Figures: SLR

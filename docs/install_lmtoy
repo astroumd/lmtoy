@@ -12,27 +12,46 @@
 #    11-may-2021:     use only $DATA_LMT, no more IRC_data
 #    22-jul-2021:     better bootstrap on missing DATA_LMT
 #     2-dec-2021:     add admit, use embedded DATA_LMT and WORK_LMT if none else given
+#     9-nov-2022:     various overhaul for Unity to allow "mknemo builds for pgplot, cfitsio
+#
 
-version=15-may-2022
+version=9-nov-2022
 
-
-lmtoy=lmtoy                       # root directory name where to install (probably should not change it)
+#--HELP
+#   Keywords for installation
+#
+lmtoy=lmtoy                       # root directory name where to install (probably should not change it) [use . for itself]
 branch=master                     # branch
-wget=wget                         # use wgetc if you have my caching version
+wget=wget                         # use wgetc if you have PJT's caching version
 venv=0                            # set to 1 if you want to bypass a new anaconda3 and use venv
 nemo=1                            # set to 0 if you don't need NEMO (not recommended) or use existing $NEMO
-pgplot=1                          # set to 1 if you want PGPLOT in NEMO, instead of simple PS driver
+pgplot=1                          # set to 1 if you want PGPLOT in NEMO, instead of simple PS driver, use 2 for self-built
+mknemo=0                          # use mknemo builds for pgplot, hdf5, netcdf4, cfitsio
 data_lmt=${DATA_LMT:-data_lmt}    # give sensible default for $DATA_LMT   lma:/lma1/lmt/data_lmt/
 work_lmt=${WORK_LMT:-work_lmt}    # give sensible default for $WORK_LMT
 bench=0                           # set to the tar.gz file for bootstrapping IRC benchmark data; 0 skips
 admit=1                           # install ADMIT ?
 pipeline=1                        # full pipeline run on bench files?  If selected, bench=1 is not needed
 docs=0                            # make docs? (produces the html tree)
-debug=0                           # shell in debug mode?
+debug=0                           # shell in debug mode? (set -x)
+
+
+# Usage examples:
+#   install_lmtoy                                             # typical ubuntu with pre-conditions, full test w/ admit
+#   install_lmtoy  mknemo=1 pgplot=2 wget=wgetc admit=0       # unity with no modules loaded, all self-contained
+#                  data_lmt=/nese/toltec/dataprod_lmtslr/data_lmt     # or add the big $DATA_LMT on unity
+#
+#--HELP
+
+if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
+    set +x
+    awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
+    exit 0
+fi
 
 #             simple keyword=value command line parser for bash - don't make any changing below
-for arg in $*; do
-  export $arg
+for arg in "$@"; do
+  export "$arg"
 done
 
 #             put in bash debug mode
@@ -51,13 +70,22 @@ else
     sleep 5
 fi
 
-rm -rf $lmtoy
 
-git clone https://github.com/astroumd/lmtoy $lmtoy
+if [ $lmtoy == "." ]; then
+    if [ ! -e lmtoy_start.sh.in ]; then
+	echo "You are not in the LMTOY root directory: $(pwd)"
+	exit 1
+    fi
+    lmtoy=$(pwd)
+else
+    rm -rf $lmtoy
+    git clone https://github.com/astroumd/lmtoy $lmtoy    
+fi
+
 cd $lmtoy
 git checkout $branch
 
-#  symlinks where we allow them
+#  symlinks where we allow them; this checks if we want to inherit an existing NEMO
 if [ -e $nemo/nemo_start.sh ]; then
     ln -s $nemo nemo
 fi
@@ -71,16 +99,24 @@ if [ $venv = 0 ]; then
   make pip
   make install_lmtslr
   make install_dreampy3
+  make install_dvpipe
 else
   make pip
   make install_lmtslr_venv
   make install_dreampy3_venv
+  make install_dvpipe_venv  
 fi
 
+# install_nemo.sh opt=1 mknemos=cfitsio,hdf5,netcdf4 yapp=pglocal
 if [ $nemo = 1 ]; then
-    echo Installing NEMO with pgplot=$pgplot
+    if [ $mknemo = 1 ]; then
+	make install_mknemos MKNEMOS="cfitsio hdf5 netcdf4"
+    fi
     if [ $pgplot = 1 ] ; then
 	make install_nemo YAPP=pgplot
+    elif [ $pgplot = 2 ]; then
+	make install_mknemos MKNEMOS="pgplot"
+	make install_nemo_pglocal
     else
 	make install_nemo
     fi
@@ -110,6 +146,9 @@ python --version
 if [ $docs = 1 ]; then
     (cd docs; pip3 install -r requirements.txt; make nbs lastmod html)
 fi
+
+pip3 freeze > freeze.log
+
 
 # this bench will be deprecation, as it is not using the official pipeline
 if [ $bench != 0 ]; then

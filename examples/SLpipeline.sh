@@ -10,15 +10,17 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 27-aug-2022"
+version="SLpipeline: 16-nov-2022"
 
 echo ""
 echo "LMTOY>> $version"
 
 #--HELP   
-#     default input parameters
-obsnum=0                       # obsnum or obsnums can be used for single 
-obsnums=0                      # or combinations of existing obsnums
+                               # required input is either obsnum= or obsnums=
+obsnum=0                       #    obsnum=  can be used for a single observation
+obsnums=0                      #    obsnums= for combinations of existing obsnums
+
+                               # the remainder are optional parameters
 path=${DATA_LMT:-data_lmt}
 work=${WORK_LMT:-.}
 debug=0
@@ -30,58 +32,39 @@ admit=0
 sleep=2
 nproc=1
 rsync=""
-rc=""
-oid=""
-goal=Science
+rc=""           # global rc file
+oid=""          # experimental
+goal=Science    # Science, or override with: Pointing Focus
+
+#  Optional instrument specific pipeline can be added as well but are not known here
+#    To Unity:  rsync=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s
+#    To UMD:    rsync=teuben@lma.astro.umd.edu:/lma1/teuben/LMT/work_lmt/%s
+#
+#  Benchmarks:
+#    RSR:        SLpipeline.sh obsnum=33551 restart=1
+#    SEQ:        SLpipeline.sh obsnum=79448 restart=1
+
 #--HELP   
 
-if [ "$1" == "--help" ];then
+if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
     set +x
     awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
     exit 0
 fi
 
-
-
-if [ -z "$1" ]; then
-    echo "LMTOY>> Usage: obsnum=OBSNUM             ...         (process a single obsnum)"
-    echo "               obsnums=ON1,ON2,ON3,...   ...         (combine previously processed obsnums)"
-    echo "Optional SLpipeline parameters:"
-    echo "  path=$path"
-    echo "  work=$work"
-    echo "  debug=$debug"
-    echo "  restart=$restart   (use -1 to enforce non-existent obsnum)"
-    echo "  tap=$tap"
-    echo "  srdp=$srdp"
-    echo "  raw=$raw"
-    echo "  admit=$admit"
-    echo "  sleep=$sleep"
-    echo "  nproc=$nproc"
-    echo "  rsync=$rsync"
-    echo "  rc=$rc        (global rc file)"
-    echo "  oid=$oid      (experimental)"
-    echo "  goal=$goal    (Science, or override with: Pointing Focus)"
-    echo "Optional instrument specific pipeline can be added as well but are not known here"
-    echo "  To Unity:  rsync=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s"
-    echo "  To UMD:    rsync=teuben@lma.astro.umd.edu:/lma1/teuben/LMT/work_lmt/%s"
-
-    exit 0
-fi
-
 #             simple keyword=value command line parser for bash - don't make any changing below
-for arg in $*; do
-  export $arg
+for arg in "$@"; do
+  export "$arg"
 done
+
+# 
+source lmtoy_functions.sh
 
 # global rc ?
 if [ -n "$rc" ]; then
     echo "LMTOY>> source $rc"
     source $rc
 fi
-
-# 
-source lmtoy_functions.sh
-
 
 #             put in bash debug mode
 if [ $debug = 1 ]; then
@@ -268,6 +251,9 @@ else
     lmtoy_report
     exit 0
 fi
+
+# make a metadata yaml file for later ingestion into DataVerse
+mk_metadata.py $pdir > $pdir/lmtmetadata.yaml
 
 # produce TAP, RSRP, RAW tar files, whichever are requested.
 

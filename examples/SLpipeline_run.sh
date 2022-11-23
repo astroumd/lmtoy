@@ -6,7 +6,9 @@
 # trap errors
 #set -e
 
-version="SLpipeline: 17-may-2022"
+version="SLpipeline: 10-oct-2022"
+
+#--HELP
 
 rsync1=teuben@lma.astro.umd.edu:/lma1/lmt/TAP_lmt
 rsync2=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s
@@ -15,6 +17,21 @@ dryrun=0
 key=Science
 new=1
 rsr=0
+data=${DATA_LMT:-data_lmt}
+work=${WORK_LMT:-.}
+debug=0
+sleep=60
+
+#--HELP
+if [ "$1" == "--help" ] || [ "$1" == "-h" ];then
+    set +x
+    awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
+    exit 0
+fi
+#             simple keyword=value command line parser for bash - don't make any changing below
+for arg in "$@"; do
+  export "$arg"
+done
 
 function printf_red {
     # could also use the tput command?
@@ -22,19 +39,7 @@ function printf_red {
     NC='\033[0m' # No Color
     echo -e "${RED}$*${NC}"
 }
-
 # source lmtoy_functions.sh - not needed (yet)
-
-# default input parameters
-data=${DATA_LMT:-data_lmt}
-work=${WORK_LMT:-.}
-debug=0
-sleep=60
-
-#             simple keyword=value command line parser for bash - don't make any changing below
-for arg in $*; do
-    export $arg
-done
 
 #             put in bash debug mode
 if [ $debug = 1 ]; then

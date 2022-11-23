@@ -36,3 +36,16 @@ if [ "$1" == pull ]; then
     cd $LMTOY
     make pull
 fi
+
+if [ "$1" == dev ]; then
+    echo "----------------------------------------------------------"
+    echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+    echo "PKG_CONFIG_PATH: $PKG_CONFIG_PATH"
+    echo "PGPLOT_DIR:      $PGPLOT_DIR"
+    echo "----------------------------------------------------------"
+    echo "spec_driver_fits: "  $(spec_driver_fits)
+    echo "tsf:              "  $(tsf help=V)
+    echo "tabplot:          "  $(tabplot help=V)
+    echo "fitsccd:          "  $(fitsccd help=V)
+    echo "----------------------------------------------------------"    
+fi
