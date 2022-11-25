@@ -29,14 +29,26 @@ def getpars(on):
             pars3[o] = getargs3(o)
 
     #        obsnum.args is alternative single file pars file to set individual parameters
+    #        nov-2022:    favoring combining obsnum.args into coments.txt
     pars4 = {}
     if os.path.exists("obsnum.args"):
+        print("WARNING: obsnum.args is deprecated, please use comments.txt now")
         lines = open("obsnum.args").readlines()
         for line in lines:
             if line[0] == '#': continue
             w = line.split()
             pars4[int(w[0])] = w[1:]
             print('PJT4',w[0],w[1:])
+
+    if os.path.exists("comments.txt"):
+        lines = open("comments").readlines()
+        for line in lines:
+            if line[0] == '#': continue
+            idx = line.find('#')
+            if idx > 0:
+                w = line.split()
+            pars4[int(w[0])] = line[idx+1:]
+            print('PJT4',w[0],line[idx+1:])
 
     return (pars3, pars4)
 
