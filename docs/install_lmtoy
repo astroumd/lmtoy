@@ -72,7 +72,7 @@ fi
 
 
 if [ $lmtoy == "." ]; then
-    if [ ! -e lmtoy_start.in ]; then
+    if [ ! -e lmtoy_start.sh.in ]; then
 	echo "You are not in the LMTOY root directory: $(pwd)"
 	exit 1
     fi
