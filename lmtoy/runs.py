@@ -41,14 +41,14 @@ def getpars(on):
             print('PJT4',w[0],w[1:])
 
     if os.path.exists("comments.txt"):
-        lines = open("comments").readlines()
+        lines = open("comments.txt").readlines()
         for line in lines:
             if line[0] == '#': continue
             idx = line.find('#')
+            w = line.split()
             if idx > 0:
-                w = line.split()
-            pars4[int(w[0])] = line[idx+1:]
-            print('PJT4',w[0],line[idx+1:])
+                pars4[int(w[0])] = line[idx+1:]
+                print('PJT4',w[0],line[idx+1:])
 
     return (pars3, pars4)
 
