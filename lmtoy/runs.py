@@ -4,9 +4,31 @@
 import os
 import sys
 
+def pix_list(pl):
+    """ convert -0,-1 to proper pixlist
+    """
+    if pl[0] == '-':
+        bl = list(range(1,17))
+        # assume they're all < 0
+        beams = pl.split(',')
+        for b in beams:
+            bl[abs(int(b))] = 0
+        msg = ''
+        for i in range(len(bl)):
+            b = bl[i]
+            if b > 0:
+                if len(msg) > 0:
+                    msg = msg + ",%d" % i
+                else:
+                    msg = "%d" % i
+        return msg
+    else:
+        return pl
+
+
 def getpars(on):
     """ get SLpipeline parameters from obsnum.args (deprecated in nov-2022)
-        or comments.txt after the '#' symbol
+n        or comments.txt after the '#' symbol
     """
     pars4 = {}
     if os.path.exists("obsnum.args"):
@@ -24,9 +46,14 @@ def getpars(on):
             if line[0] == '#': continue
             idx = line.find('#')
             w = line.split()
+            # loop over args,  and replace pix_list=-N,....
             if idx > 0:
-                pars4[int(w[0])] = line[idx+1:].strip().split()
-                # print('PJT4',w[0],line[idx+1:].strip().split())
+                pars4[int(w[0])] = []
+                for a in line[idx+1:].strip().split():
+                    kv = a.split('=')
+                    if kv[0] == 'pix_list':
+                        a = 'pix_list=' + pix_list(kv[1])
+                    pars4[int(w[0])].append(a)
 
     return pars4
 
