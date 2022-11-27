@@ -83,7 +83,7 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     if [ -e comments.txt ]; then
 	# nov2022:   we allow obsnum.args to go after the # symbol in comments.txt
 	#comments=$(grep -w ^$obsnum comments.txt | cut -d' ' -f2-)
-	comments=$(grep -w ^$obsnum comments.txt | cut -d' ' -f2- | awk -F\# '{print $2}')
+	comments=$(grep -w ^$obsnum comments.txt | cut -d' ' -f2- | awk -F\# '{print $1}')
     else
 	comments=""
     fi
