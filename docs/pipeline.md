@@ -59,6 +59,14 @@ currently be selected.  The full list of pixels would be:
 
       pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 
+In some places (e.g. in comments.txt) one can shorten a list by removing bad beams, e.g.
+
+      pix_list=-0,-5
+
+is equivalent to
+
+      pix_list=1,2,3,4,6,7,8,9,10,11,12,13,14,15
+
 ### sample
 
 This can be a painfully long parameter,
