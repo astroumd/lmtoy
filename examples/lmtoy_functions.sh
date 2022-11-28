@@ -3,14 +3,15 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="22-nov-2022"
+lmtoy_version="28-nov-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
 function lmtoy_version {
     v=$(cat $LMTOY/VERSION)
     d=$(date -u +%Y-%m-%dT%H:%M:%S)
-    echo "$v   $d"
+    g=$(cd $LMTOY; git rev-list --count HEAD)
+    echo "$v   $d  $g"
 }
 
 function lmtoy_report {
