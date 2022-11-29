@@ -74,7 +74,8 @@ for on in $obsnums1; do
     files=(*/$on/lmtoy_$on.rc)
     echo $on : ${#files[@]} ${files[@]}
     if [ ${#files[@]} != 1 ]; then
-	echo Too many matching files for $on : ${files[@]}
+	echo "Too many matching files for $on : ${files[@]}"
+	# @todo take the most recent one, like we in SEQ ?
 	exit 0
     fi	
     if [ $rc = 0 ]; then
