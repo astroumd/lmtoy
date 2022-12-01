@@ -11,7 +11,8 @@ function lmtoy_version {
     v=$(cat $LMTOY/VERSION)
     d=$(date -u +%Y-%m-%dT%H:%M:%S)
     g=$(cd $LMTOY; git rev-list --count HEAD)
-    echo "$v   $d  $g"
+    h=$(uname -a)
+    echo "$v  $g  $d  $h"
 }
 
 function lmtoy_report {
