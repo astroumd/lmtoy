@@ -11,6 +11,8 @@ import sys
 import dvpipe.utils as utils
 from dvpipe.pipelines.lmtmetadatablock import LmtMetadataBlock, example
 
+_version = "1-dec-2022"
+
 def header(rc, key):
     """
     input:
@@ -70,6 +72,7 @@ if __name__ == "__main__":
     # simple CLI for now
     if len(sys.argv) < 2:
         print("Usage: %s ObsnumDirectory" % sys.argv[0])
+        print("version: %s" % _version)
         example()
         sys.exit(0)
 
@@ -98,8 +101,8 @@ if __name__ == "__main__":
     lmtdata.add_metadata("observatory",  "LMT")
     lmtdata.add_metadata("LMTInstrument",instrument)
     lmtdata.add_metadata("projectID",    header(rc,"ProjectId"))
-    lmtdata.add_metadata("projectTitle", "Life, the Universe, and Everything")
-    lmtdata.add_metadata("PIName",       "Unknown")
+    lmtdata.add_metadata("projectTitle", header(rc,"projectTitle"))
+    lmtdata.add_metadata("PIName",       header(rc,"PIName"))
     lmtdata.add_metadata("obsnum",       header(rc,"obsnum"))
     lmtdata.add_metadata("obsDate",      header(rc,"date_obs"))
     lmtdata.add_metadata("targetName",   header(rc,"src"))
