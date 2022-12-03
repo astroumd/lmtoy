@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="28-nov-2022"
+lmtoy_version="3-dec-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -362,6 +362,8 @@ function lmtoy_seq1 {
 	    -o ${s_on}.wf10.fits \
 	    --pix_list $pix_list \
 	    --binning 10,1
+
+	stats_wf.py  ${s_on}.wf.fits > stats_wf.tab
     fi
     
 
