@@ -28,7 +28,7 @@ def pix_list(pl):
 
 def getpars(on):
     """ get SLpipeline parameters from obsnum.args (deprecated in nov-2022)
-n        or comments.txt after the '#' symbol
+        nor comments.txt after the '#' symbol
     """
     pars4 = {}
     if os.path.exists("obsnum.args"):
