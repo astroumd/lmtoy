@@ -13,9 +13,10 @@
 #    22-jul-2021:     better bootstrap on missing DATA_LMT
 #     2-dec-2021:     add admit, use embedded DATA_LMT and WORK_LMT if none else given
 #     9-nov-2022:     various overhaul for Unity to allow "mknemo builds for pgplot, cfitsio
+#     2-dec-2022:     keep a (dummy?) etc/ProjectId.tab
 #
 
-version=9-nov-2022
+version=2-dec-2022
 
 #--HELP
 #   Keywords for installation
@@ -84,6 +85,7 @@ fi
 
 cd $lmtoy
 git checkout $branch
+touch etc/ProjectId.tab
 
 #  symlinks where we allow them; this checks if we want to inherit an existing NEMO
 if [ -e $nemo/nemo_start.sh ]; then
