@@ -14,7 +14,7 @@ on most machines we've tested (Mac, Linux/Ubuntu, Unity, Zaratan and Linux/Redha
 
 Instructions for installing **LMTOY**:
 
-0) Pre-conditions: We are assuming you have a python3 
+1) Pre-conditions: We are assuming you have a python3 
    (e.g. anaconda3) already in your path. We also assume you have a C
    compiler, and that cfitsio and netcdf libraries have been installed 
    (e.g. on a mac via brew).  Things can and will massively and confusingly fail
@@ -30,36 +30,6 @@ Instructions for installing **LMTOY**:
                <policy domain="coder" rights="read | write" pattern="PDF" />
 
   
-	       
-1) Make a small shadow tree of the official $DATA_LMT on your laptop. If not on
-   an official machine (cln, wares, lma), use the recommended ~/LMT/data_lmt
-   since it is one of the recognize options in configure:
-
-        mkdir -p ~/LMT/data_lmt
-        cd ~/LMT/data_lmt
-
-        scp cln:/home/teuben/LMT/rsr_bench.tar.gz  .
-        tar zxf rsr_bench.tar.gz
-        rm rsr_bench.tar.gz
-
-        scp cln:/home/teuben/LMT/seq_bench.tar.gz  .
-        tar zxf seq_bench.tar.gz
-        rm seq_bench.tar.gz
-
-   At Umass the machine **cln** has to be used. 
-   At UMD the machine **lma** has to be used.
-
-   The SEQ bench is "big" (600MB), if you don't want to use the SLR
-   software, skip it.  The RSR bench is small, 33 MB. Their OBSNUM's
-   are 33550 and 33551 resp. plus the required **data_lmt/rsr**
-   calibration data (also small).
-   
-   Note that the seq_bench 2018 data are compressed from the old
-   double precision raw data, the uncompressed size will be 1600
-   MB. All data in 2020 and before are double precision, but we expect
-   data in 2021 and beyond to be in single precision, where the
-   compression factor won't be as large.
-
 2) Install LMTOY (e.g. do this within the previously created ~/LMT)
 
         cd ~/LMT
