@@ -14,7 +14,7 @@ on most machines we've tested (Mac, Linux/Ubuntu, Unity, Zaratan and Linux/Redha
 
 Instructions for installing **LMTOY**:
 
-0) Pre-conditions: We are assuming you have a python3 
+1) Pre-conditions: We are assuming you have a python3 
    (e.g. anaconda3) already in your path. We also assume you have a C
    compiler, and that cfitsio and netcdf libraries have been installed 
    (e.g. on a mac via brew).  Things can and will massively and confusingly fail
@@ -28,36 +28,8 @@ Instructions for installing **LMTOY**:
    Make sure you can convert a pdf to png, on some machines the file /etc/ImageMagick-6/policy.xml did not give
    mortal users enough permission.
                <policy domain="coder" rights="read | write" pattern="PDF" />
-	       
-1) Make a small shadow tree of the official $DATA_LMT on your laptop. If not on
-   an official machine (cln, wares, lma), use the recommended ~/LMT/data_lmt
-   since it is one of the options in configure:
 
-        mkdir -p ~/LMT/data_lmt
-        cd ~/LMT/data_lmt
-
-        scp cln:/home/teuben/LMT/rsr_bench.tar.gz  .
-        tar zxf rsr_bench.tar.gz
-        rm rsr_bench.tar.gz
-
-        scp cln:/home/teuben/LMT/seq_bench.tar.gz  .
-        tar zxf seq_bench.tar.gz
-        rm seq_bench.tar.gz
-
-   At Umass the machine **cln** has to be used. 
-   At UMD the machine **lma** has to be used.
-
-   The SEQ bench is "big" (600MB), if you don't want to use the SLR
-   software, skip it.  The RSR bench is small, 33 MB. Their OBSNUM's
-   are 33550 and 33551 resp. plus the required **data_lmt/rsr**
-   calibration data (also small).
-   
-   Note that the rsr_bench 2018 data are compressed from the old
-   double precision raw data, the uncompressed size will be 1600
-   MB. All data in 2020 and before are double precision, but we expect
-   data in 2021 and beyond to be in single precision, where the
-   compression factor won't be as large.
-
+  
 2) Install LMTOY (e.g. do this within the previously created ~/LMT)
 
         cd ~/LMT
@@ -102,12 +74,11 @@ Instructions for installing **LMTOY**:
    You can now go back in the examples directory, and run the two benchmarks:
 
         cd $LMTOY/examples
-        make bench
-        make rsr1
-		
-   Or if you want to run the challenging M51 data (which needs 16GB memory):
-   
-        make bench51
+        make bench1
+        make bench2
+
+   where bench1 is the quick RSR benchmark, and bench2 the SEQ bench.   Add the keyword **ADMIT=0** if you want to skip
+   the somewhat laborious ADMIT products.
 		
 4) To clone a select number of obsnums from a machine that has all raw data to a laptop for faster interaction, use the
    *lmtar* type script.  Obviously you will need an ssh session on one of those machines, and scp data back to your
@@ -124,21 +95,10 @@ Instructions for installing **LMTOY**:
 	
 	    cln:  lmtar IRC_bench.tar 79447 79448 
 		
-   If you gzip this file, it decreases in size from 1600 to 600 MB. 
+   If you gzip this file, it decreases in size from 1600 to 600 MB.
+
+   The procedure on Unity is similar.
  
-
-# 1. Installing SpectralLineReduction (old notes)
-
-See also the Makefile, as this has many targets that simplify this, and this is the
-method that I've employed on a few machines (Ubuntu, Centos, and a Mac/brew).
-
-Grab the official source
-
-     git glone https://github.com/lmt-heterodyne/SpectralLineReduction
-     
-or for example another development version (in dec 2020 the better choice)
-
-     git clone --branch teuben1 https://github.com/teuben/SpectralLineReduction
 
 ##  Libraries:   cfitsio, netcdf4
 
@@ -153,11 +113,11 @@ These are needed for the gridder program (written in C) **spec_driver_fits**
 If in a bind, e.g. on a system where you don't have admin privilages, you
 can always Install from source. E.g. borrow NEMO's $NEO/src/scripts/mknemo.d scripts
 
-     mkdir local
-     ./cfitsio wget=wget NEMO=`pwd`
-     ./netcdf4 wget=wget NEMO=`pwd`
+     mknemo hdf5
+     mknemo netcdf4
+     mknemo cfitsio
 
-this will place sources in lmtoy/local, and installed with --prefix=lmtoy/opt
+And note that hdf5 needs to be installed in order for netcdf4 to compile.
 
 Then
 
@@ -300,7 +260,7 @@ The following linux distributions are being used in the consortium (e.g. via the
     unity   /home/lmtslr_umass_edu/data_lmt     /nese/toltec/dataprod_lmtslr/work_lmt
     malt    /home/lmtslr/data_lmt3              /home/lmtslr/work_lmt 
             /home/lmtmc/data_lmt
-	cln
+    cln
     lma     /n/lma1/lmt/data_lmt/               /lma1/teuben/LMT/work_lmt/
 
 
@@ -311,16 +271,16 @@ The slurm package is used to submit jobs on unity :  https://unity.rc.umass.edu/
 Typical commands:
 
 `   # info on partitions and nodes
-	sinfo
-	#  LMT uses partition 'toltec_cpu', and we have node99-node100 for data reduction purposes
+    sinfo
+    #  LMT uses partition 'toltec_cpu', and we have node99-node100 for data reduction purposes
     squeue -u lmtslr_umass_edu
-	#  for brief interactive jobs, one at a time
-	srun -n 1 -c 1 --mem=16G -p toltec_cpu --x11 --pty bash
-	#  to run non-blocking scripts
-	sbatch runfile.sh
-	sbatch_lmtoy.sh obsnum=12345
-	#  to cancel (kill)
-	scancel $JOBID
+    #  for brief interactive jobs, one at a time
+    srun -n 1 -c 1 --mem=16G -p toltec_cpu --x11 --pty bash
+    #  to run non-blocking scripts
+    sbatch runfile.sh
+    sbatch_lmtoy.sh obsnum=12345
+    #  to cancel (kill)
+    scancel $JOBID
 
 # Other packages
 

@@ -3,22 +3,21 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="10-aug-2022"
+lmtoy_version="3-dec-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
 function lmtoy_version {
     v=$(cat $LMTOY/VERSION)
     d=$(date -u +%Y-%m-%dT%H:%M:%S)
-    echo "$v   $d"
+    g=$(cd $LMTOY; git rev-list --count HEAD)
+    h=$(uname -a)
+    echo "$v  $g  $d  $h"
 }
 
 function lmtoy_report {
     printf_red "LMTOY>> ProjectId=$ProjectId  obsnum=$obsnum  obspgm=$obspgm  obsgoal=$obsgoal oid=$oid"
-    
 }
-
-
 
 function lmtoy_decipher_obsnums {
     # input:    obsnums
@@ -273,6 +272,8 @@ function lmtoy_seq1 {
     lmtoy_version > lmtoy.rc
     # keep an IFPROC header
     ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
+    # obsnumrc
+    obsnumrc=lmtoy_$obsnum.rc
 
     #  convert RAW to SpecFile (hardcoded parameters are hardcoded for a good resaon)
     if [ $makespec = 1 ]; then
@@ -361,6 +362,9 @@ function lmtoy_seq1 {
 	    -o ${s_on}.wf10.fits \
 	    --pix_list $pix_list \
 	    --binning 10,1
+
+	stats_wf.py  ${s_on}.wf.fits 0 > stats_wf0.tab
+	stats_wf.py  ${s_on}.wf.fits 1 > stats_wf1.tab
     fi
     
 
@@ -471,10 +475,19 @@ function lmtoy_seq1 {
 	    
 	    ccdsmooth $s_on.n.ccd - dir=xyz nsmooth=5 | ccdfits - $s_on.nfs.fits fitshead=$s_fits
 	    
-	    # QAC_STATS: 
-	    printf_red $(ccdstat $s_on.ccd bad=0 qac=t robust=t label="${s_on}-full")
-	    printf_red $(ccdsub  $s_on.ccd  - centerbox=0.5,0.5 | ccdstat - bad=0 qac=t robust=t label="${s_on}-cent")
-	    printf_red $(ccdsub  $s_on.wtr4.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 qac=t robust=t label="RMS/radiometer")	    
+	    # QAC_STATS:
+	    out1=$(ccdstat $s_on.ccd bad=0 qac=t robust=t label="${s_on}-full")
+	    out2=$(ccdsub  $s_on.ccd  - centerbox=0.5,0.5 | ccdstat - bad=0 qac=t robust=t label="${s_on}-cent")
+	    out3=$(ccdsub  $s_on.wtr4.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 qac=t robust=t label="RMS/radiometer")
+	    
+	    printf_red $out1
+	    printf_red $out2
+	    printf_red $out3
+
+	    rms=$(echo $out2  | txtpar - "%1*1000" p0=-cent,1,4)
+	    rms0=$(echo $out3 | txtpar - p0=radiometer,1,3)
+	    echo "rms=$rms     # rms[mK] in center"      >> $obsnumrc
+	    echo "rms0=$rms0   # RMS/radiometer radio"   >> $obsnumrc
 
 	    # hack
 	    fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.specstab
@@ -575,7 +588,9 @@ function lmtoy_bs1 {
     process_bs.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1 --stype $stype
     seq_spectra.py -s ${src}_${obsnum}.txt
     seq_spectra.py -s -z ${src}_${obsnum}.txt
-    printf_red $(tabmath ${src}_${obsnum}.txt - %2*1000 all | tabstat -  qac=t robust=t label=${src}_${obsnum}.txt)
+
+    out4=$(tabmath ${src}_${obsnum}.txt - %2*1000 all | tabstat -  qac=t robust=t label=${src}_${obsnum}.txt)
+    printf_red $out4
     
     # tsys
     dev=$(yapp_query png vps)
