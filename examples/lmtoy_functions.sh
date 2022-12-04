@@ -363,7 +363,8 @@ function lmtoy_seq1 {
 	    --pix_list $pix_list \
 	    --binning 10,1
 
-	stats_wf.py  ${s_on}.wf.fits > stats_wf.tab
+	stats_wf.py  ${s_on}.wf.fits 0 > stats_wf0.tab
+	stats_wf.py  ${s_on}.wf.fits 1 > stats_wf1.tab
     fi
     
 
