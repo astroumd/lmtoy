@@ -74,7 +74,7 @@ echo Writing $html # in $pwd
 
 
 # if "first" figures don't exist, copy them from existing
-first="$base2.1.png $base2.6.png $base2.2.png $base2.3.png $base3.1.png $base3.2.png $base2.5.png $base1.wt.png $base1.mom0.png $base1.peak.png $base1.rms.png stats_wf.png"
+first="$base2.1.png $base2.6.png $base2.2.png $base2.3.png $base3.1.png $base3.2.png $base2.5.png $base1.wt.png $base1.mom0.png $base1.peak.png $base1.rms.png stats_wf0.png stats_wf1.png"
 for f in $first; do
     if [ -e $f ]; then
 	if [ ! -e first_$f ]; then
