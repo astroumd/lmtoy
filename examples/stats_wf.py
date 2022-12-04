@@ -64,7 +64,7 @@ plt.ylabel('RMS')
 #plt.ylim([0.40,1.65])
 
 plt.legend()
-plt.savefig('stats_wf.png')
+plt.savefig('stats_wf%d.png' % axis)
 # plt.show()
 
 
