@@ -1,6 +1,7 @@
 # realtime pipeline at malt and unity
 
-Some notes on running the pipeline in real-time at malt (LMT) and unity (UMASS).
+Some notes on running the pipeline in real-time at malt (LMT) and unity (UMASS). This
+is only useful for observing staff.
 
 malt produces the TAP's, and immediately copies them to unity for public viewing. Once
 the pipeline runs on unity again, only SRDP's are produced.
@@ -12,14 +13,14 @@ this gives me different levels of speed and debugging. Since everything goes via
 it can become tedious to keep everything in sync. Here's my own recipe, once a machine
 gets an update, the others are done "on demand" as follows:
 
-      lmtoy pull
-	  
-and if there were changes to the SpectralLineReductioin gridder or to NEMO, 
+     lmtoy pull
+
+this is typically sufficient, but if there were changes to the SpectralLineReductioin gridder or to NEMO, 
 those need a re-compilation, e.g.
 
-	  cd $LMTOY
-	  make update_lmtslr
-	  make update_nemo
+      cd $LMTOY
+      make update_lmtslr
+      make update_nemo
 	  
 or if only one NEMO routine needed an update, e.g.
   
@@ -33,15 +34,15 @@ Login as **lmtslr**
 
 commands in window 1:
 
-	  ssh malt
+      ssh malt
       cd $WORK_LMT/SLpipeline.d
+
+      # rebuild the database (probably good to do daily if observations are taken)
+      lmtinfo.py build
 	  
-	  # rebuild the database (probably good to do daily if observations are taken)
-	  lmtinfo.py build
-	  
-	  # inspect and see if there need to be changes
-	  more SLpipeline.in
-	  SLpipeline_run.sh
+      # inspect and see if there need to be changes
+      more SLpipeline.in
+      SLpipeline_run.sh
 	  
 this window will refresh automatically when new obsnum's are seen, and will run the SLpipeline.
 Important information will be displayed in red. A typicaly SEQ map takes about 3-4 minutes
@@ -51,7 +52,7 @@ to compute on malt, well in time for the next map to appear (10-15 mins)
 commands in window 2:
 
       ssh malt
-	  tail -f $WORK_LMT/SLpipeline.d/data_lmt.lag 
+      tail -f $WORK_LMT/SLpipeline.d/data_lmt.lag 
 
 which is useful to review progress overall. The refresh rate can be changed by changing the sleep=
 parameter to  SLpipeline_run.sh. The default is set at 60 seconds.
@@ -60,7 +61,7 @@ parameter to  SLpipeline_run.sh. The default is set at 60 seconds.
 commands in window 3:
 
       ssh malt
-	  SLpipeline.sh admit=0 restart=1 obsnum=99438 extent=120 pix_list=$(pix_list.py -14,-15)
+      SLpipeline.sh admit=0 restart=1 obsnum=99438 extent=120 pix_list=$(pix_list.py -14,-15)
 
 I often run manually a Pointing map (they are not automagially included in the Science run), but
 these need a larger mapsize value, e.g. **extent=120**.  This is useful to see which beams are 
@@ -88,14 +89,13 @@ commands in window 2:
 this will allow you to run commands with some CPU usage where you need direct interaction. 
 An example is the processing of the incoming TAP's.
 
-	  cd $WORK_LMT
-	  ls 2021*/*TAP.tar
-	  # change to the directory where the TAP.tar files 
-	  cd 2021-S1-.....
-	  ../do_untap *TAP.tar
+      cd $WORK_LMT
+      ls 2021*/*TAP.tar
+      # change to the directory where the TAP.tar files 
+      cd 2021-S1-.....
+      ../do_untap *TAP.tar
 	  
 so this is still manual labor, but needs to be fully automated.
-
 
 
 ## Strategy for reducing SEQ data
@@ -108,7 +108,7 @@ This is being implemented in example **mk_runs.py**, which create *run* files.
    out.
 
 2. Review all the plots in the SL pipeline summary. The important ones:
-   * 1: does Tsys look ok? Are there birdies?
+   * 1: does Tsys look ok? Are there birdies? Finding the right birdie= is tricky
    * 2: review the waterfall plots and note the bad beams
    * 3: Make sure the RMS plot don't have outliers. See if so, is there something
       odd looking inthe watefall plot?   If so, probably flag this beam
@@ -123,7 +123,7 @@ This is being implemented in example **mk_runs.py**, which create *run* files.
   
 3. If all of this encoded via **mk_runs.py**, there should be 4 files that
    can be run in succession:
-   1. run1 - raw single obsnum runs, no flagging
-   2. run2 - combination, no flagging (this can arguably be skipped)
-   3. run1a - raw single obsnum runs, with all flagging
-   4. run2a - combination, no flagging. This produces the final SRDP 
+   1. run1a - raw single obsnum runs, no flagging
+   2. run2a - combination, no flagging (this can arguably be skipped)
+   3. run1b - raw single obsnum runs, with all flagging
+   4. run2b - combination, no flagging. This produces the final SRDP 
