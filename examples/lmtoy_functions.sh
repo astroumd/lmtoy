@@ -549,16 +549,17 @@ function lmtoy_seq1 {
 	fi
 	if [ -e $s_on.nf.fits ]; then
 	    lmtoy_admit.sh $s_on.nf.fits
-	    # maskmoment
-	    mm1.py $s_on > maskmoment.log 2>&1
 	else
 	    lmtoy_admit.sh $s_fits
 	fi
     else
 	echo "LMTOY>> skipping ADMIT post-processing"
     fi
-    
-    
+
+    # maskmoment
+    echo "LMTOY>> Running maskmoment vlsr=$vlsr"
+    mm1.py $s_on.nf.fits  $vlsr > maskmoment.nf.log  2>&1
+   
     echo "LMTOY>> Created $s_fits and $w_fits"
     echo "LMTOY>> Parameter file used: $rc"
     
