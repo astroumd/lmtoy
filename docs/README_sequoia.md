@@ -21,14 +21,21 @@ Version:  28-nov-2022
 	SRC_OBSNUM.wf10.fits        waterfall cube - spatially rebinned x10
 	
 	SRC_OBSNUM.fits             gridded science cube ("flux flat cube")
-	SRC_OBSNUM.wt.fits          weight map
-	SRC_OBSNUM.wt2.fits         weight map v2
-	SRC_OBSNUM.wt3.fits         weight map v3
+	SRC_OBSNUM.wt.fits          weight map    - time samples 
+	SRC_OBSNUM.wt2.fits         weight map v2 - RMS of diffs
+	SRC_OBSNUM.wt3.fits         weight map v3 - RMS in line free region
 
+	SRC_OBSNUM.wtn.fits         ...coverage map (normalized) *BAD BEAM*
+	SRC_OBSNUM.wtr.fits         ratio of wt3/wt3
 	SRC_OBSNUM.wtr3.fits        ...
 	SRC_OBSNUM.wtr4.fits        RMS expected from radiometer equation (weighted average of Tsys/sqrt(df.dt))
 	
 	SRC_OBSNUM.nf.fits          noise flat cube (input for ADMIT)
+
+	SRC_OBSNUM.mom0.fits        simple MOM0 of the cube (signal, K.km/s)
+	SRC_OBSNUM.mom1.fits        simple MOM1 of the cube (mean velocity, km/s)
+	SRC_OBSNUM.peak.fits        peak in cube (mK)
+	SRC_OBSNUM.rms.fits         rms in cube (mK)
 
         radiometer.rms.fits         Predicted RMS based on radiometer equation (K)
 	

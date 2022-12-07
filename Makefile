@@ -178,7 +178,7 @@ LinePointing:
 	git clone $(URL16)
 
 dvpipe:
-	git clone -b mwpdevel $(URL18)
+	git clone $(URL18)
 
 
 # hack for Linux  (@todo Mac)

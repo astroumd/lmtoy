@@ -1,11 +1,16 @@
 #   tools useful for the script generator (usually called mk_runs.py)
 #
+#   pix_list(pl)
+#
 
 import os
 import sys
 
 def pix_list(pl):
-    """ convert -0,-1 to proper pixlist
+    """ convert a strong like "-0,-1" to proper pixlist by removing
+        0 and 1 from the 0..15 list.
+        Note:   if the first character is a '-', all numbers are in removed list
+                if not, the list is passed "as is",   so e.g.     "0,1,-2" would be bad
     """
     if pl[0] == '-':
         bl = list(range(1,17))
@@ -23,6 +28,7 @@ def pix_list(pl):
                     msg = "%d" % i
         return msg
     else:
+        # @todo there is no check if there are -beams in this list
         return pl
 
 

@@ -251,10 +251,10 @@ of derived paramers, and in a re-run will not be recomputed!  These are noted
     clean=1
       #            - meta parameters that will compute other parameters for SLR scripts
     extent=0
-    dv=100
-    dw=250
+    dv=100           line cube is +/- dv around VLSR
+    dw=250           baseline is fitted +/-dw outside of the line cube, i.e. from dv to dv+dw on both sides
       #            - birdies (list of channels, e.g.   10,200,1021)
-    birdies=0
+    birdies=0        birdie channels need to be in original channel space, independant of setting dv=
       #            - parameters that directly match the SLR scripts
     pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
     rms_cut=-4

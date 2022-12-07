@@ -9,7 +9,7 @@
 import os
 import sys
 import dvpipe.utils as utils
-from dvpipe.pipelines.lmtmetadatablock import LmtMetadataBlock, example
+from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 
 _version = "1-dec-2022"
 
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         instrument = "SEQUOIA"
 
     # open the LMB and write some common metadata
-    lmtdata = LmtMetadataBlock()
+    lmtdata = LmtMetadataGroup('foobar')
     lmtdata.add_metadata("observatory",  "LMT")
     lmtdata.add_metadata("LMTInstrument",instrument)
     lmtdata.add_metadata("projectID",    header(rc,"ProjectId"))
