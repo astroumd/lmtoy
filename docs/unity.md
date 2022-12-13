@@ -139,3 +139,9 @@ viz.
 which currently has only 199 entries, and only for source **I10565**. In serial
 mode this would take about 60 mins on Unity, but in the new parallel mode,
 it takes about 3-4 minutes.
+
+The script generator maintains a lot more project related into. This was just
+an introduction. See https://github.com/teuben/lmtoy_run/blob/main/README.md for
+the current workflow suggestions.
+
+
