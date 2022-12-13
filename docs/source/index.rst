@@ -103,6 +103,13 @@ Pointing
 
    pointing
 
+Data and TAPs
+=============
+
+.. toctree::
+   :maxdepth: 2
+
+   TAP
 
 
 Markdowns	      
@@ -117,6 +124,7 @@ automagically
 
    masking
    wishlist
+   unity
 	      
 
 Notebook: SLR_example
@@ -140,8 +148,13 @@ This is where the API can eventually be found, but there is not much there yet.
    api
    lmtslr <lmtslr.api>
    dreampy3 <dreampy3.api>
-	      
 
+History
+=======
+
+Instruments and LMT have undergone various transformations, and especially
+when LMT was upgraded with a extra ring, making the dish from effectively
+a 32m telescope to a 50m telescope. This occured somewhere in feb/mar 2018.
 
 Indices
 =======
