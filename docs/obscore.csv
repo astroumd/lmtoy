@@ -4,64 +4,64 @@
 # access_estsize			, , MANDATORY
 access_format			, , MANDATORY
 access_url			, , MANDATORY
-antenna_arrays
-asdm_uid
-authors
-band_list
-bandwidth
-bib_reference
+antenna_arrays                   , ,
+asdm_uid                   , ,
+authors                   , ,
+band_list                   , ,
+bandwidth                   , ,
+bib_reference                   , ,
 calib_level			, , MANDATORY
-cont_sensitivity_bandwidth
+cont_sensitivity_bandwidth                   , ,
 dataproduct_type			, , MANDATORY
-# dataproduct_subtype
-data_rights
+# dataproduct_subtype                   , ,
+data_rights                   , ,
 em_max			, , MANDATORY
 em_min			, , MANDATORY
-em_resolution
+em_resolution                   , ,
 em_res_power			, , MANDATORY
 # em_xel			, , MANDATORY
 facility_name                        , telescope,    LMT   MANDATORY
-first_author
+first_author                   , ,
 frequency			     , , frequency in middle of band
 frequency_support 		     , , lists various bands?
-gal_latitude
-gal_longitude
-group_ous_uid
+gal_latitude                   , ,
+gal_longitude                   , ,
+group_ous_uid                   , ,
 instrument_name                      , instrument  ,       RSR, SEQUIA    MANDATORY
-is_mosaic
-lastModified
-member_ous_uid
+is_mosaic                   , ,
+lastModified                   , ,
+member_ous_uid                   , ,
 obs_collection			, , MANDATORY     
-# obs_creation_date
-# obs_creator_did
-obs_creator_name
+# obs_creation_date                   , ,
+# obs_creator_did                   , ,
+obs_creator_name                   , ,
 obs_id                               , obsnum ,   MANDATORY
 obs_publisher_did			, , MANDATORY
-# obs_publisher_id
-obs_release_date
-obs_title
-# o_calib_status
+# obs_publisher_id                   , ,
+obs_release_date                   , ,
+obs_title                   , ,
+# o_calib_status                   , ,
 o_ucd			, , MANDATORY   phot.flux.density
 pol_states			, , MANDATORY
 pol_xel			, , MANDATORY
-proposal_abstract
-proposal_authors
+proposal_abstract                   , ,
+proposal_authors                   , ,
 proposal_id				,     , e.g. 2018-S1-MU-64
-pub_abstract
-publication_year
-pub_title
-pwv
-qa2_passed
-scan_intent
-schedblock_name
-science_keyword
-science_observation
-scientific_category
+pub_abstract                   , ,
+publication_year                   , ,
+pub_title                   , ,
+pwv                   , ,
+qa2_passed                   , ,
+scan_intent                   , ,
+schedblock_name                   , ,
+science_keyword                   , ,
+science_observation                   , ,
+scientific_category                   , ,
 s_dec			, , MANDATORY
-sensitivity_10kms
+sensitivity_10kms                   , ,
 s_fov			, , MANDATORY
-spatial_resolution
-spatial_scale_max
+spatial_resolution                   , ,
+spatial_scale_max                   , ,
 s_ra			, , MANDATORY
 s_region			, , MANDATORY
 s_resolution			, , MANDATORY
@@ -73,5 +73,5 @@ t_max			, , MANDATORY
 t_min			, , MANDATORY
 t_resolution			, , MANDATORY
 # t_xel			, , MANDATORY
-type
-velocity_resolution
+type                   , ,
+velocity_resolution                   , ,
