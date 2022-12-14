@@ -6,7 +6,7 @@ In this directory you can find the following files:  (SRC=source name   OBSNUM i
 	lmtoy.rc                    ??  reduction history ??
 	lmtoy_OBSNUM.rc             parameter setting for SLpipeline
 	lmtoy_OBSNUM.ifproc         ASCII listing of the ifproc header variables
-	
+	lmtoy_PID.tar.gz            Record of the script generator used by pipeline	
 
 # Quality
 
