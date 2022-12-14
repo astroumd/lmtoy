@@ -6,7 +6,7 @@ In this directory you can find the following files, with the following name conv
    OBSNUM   observation number - either a single OBSNUM, or if OBSNUM1_OBSNUM2
             if a range was used in stacking. OBSNUM is a 5 or 6 digit number.
         
-Version:  28-nov-2022
+Version:  13-dec-2022
 
 
 	SRC_OBSNUM.fits	            FITS cube 

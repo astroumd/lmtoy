@@ -1,7 +1,12 @@
 # RSR files
 
-In this directory you can find the following files:  (SRC=source name   OBSNUM is observation number(s))
+In this directory you can find the following files, with the following name convention
+   PID      the project id
+   SRC      source name, as provided by the PI.   (no spaces allowed)
+   OBSNUM   observation number - either a single OBSNUM, or if OBSNUM1_OBSNUM2
+            if a range was used in stacking. OBSNUM is a 5 or 6 digit number.
 
+Version:  13-dec-2022
 
 	lmtoy.rc                    ??  reduction history ??
 	lmtoy_OBSNUM.rc             parameter setting for SLpipeline
