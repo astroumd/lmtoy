@@ -257,6 +257,7 @@ else
 fi
 
 # make a metadata yaml file for later ingestion into DataVerse
+echo "LMTOY>> make metadata for DataVerse"
 mk_metadata.py $pdir > $pdir/lmtmetadata.yaml
 
 # produce TAP, RSRP, RAW tar files, whichever are requested.
