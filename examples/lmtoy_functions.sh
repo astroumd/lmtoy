@@ -446,7 +446,7 @@ function lmtoy_seq1 {
 	   $s_on.data1 $s_on.n.fits $s_on.nfs.fits $s_on.mom0.ccd $s_on.mom1.ccd \
 	   $s_on.wt2.fits $s_on.wt3.fits $s_on.wtn.fits $s_on.wtr.fits $s_on.wtr3.fits $s_on.wtr4.fits \
 	   $s_on.mom0.fits $s_on.mom1.fits $s_on.rms.fits \
-	   $s_on.peak.fits $s_on.ccd.fits
+	   $s_on.peak.fits $s_on.ccd.fits $s_on.ns.fits
 
 	if [ -e $s_fits ]; then
 	    # convert to CCD, forces new axistype, even though it's the default now
@@ -502,14 +502,14 @@ function lmtoy_seq1 {
 	    cat $s_on.head1 $s_on.data1 > $s_on.nf.fits
 
 	    # hack : a better smooth cube?
-	    rm -rf $s_on.ns.fits
 	    fitsccd $s_on.fits.fits - |\
 		ccdsub - - nzaver=4 |\
 		ccdslice - - zrange=1:$nz:4 |\
 		ccdmath -,$s_on.wtn.ccd - '%1*%2' replicate=t |\
-		ccdfits - $s_on.ns.fits # fitshead=$s_on.fits.fits
-	    
-	    ccdsmooth $s_on.n.ccd - dir=xyz nsmooth=5 | ccdfits - $s_on.nfs.fits fitshead=$s_fits
+		ccdfits - $s_on.nfs.fits # fitshead=$s_on.fits.fits
+
+	    # this was the old smooth, it detects too many lines
+	    ccdsmooth $s_on.n.ccd - dir=xyz nsmooth=5 | ccdfits - $s_on.ns.fits fitshead=$s_fits
 	    
 	    # QAC_STATS:
 	    out1=$(ccdstat $s_on.ccd bad=0 qac=t robust=t label="${s_on}-full")
