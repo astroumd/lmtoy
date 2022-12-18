@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="3-dec-2022"
+lmtoy_version="17-dec-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -370,7 +370,7 @@ function lmtoy_seq1 {
 
     #  convert SpecFile to FITScube
     if [ $makecube = 1 ]; then
-	echo "LMTOY>> grid_data"
+	echo "LMTOY>> grid_data native"
 	grid_data.py \
 	    --program_path spec_driver_fits \
 	    -i $s_nc \
@@ -391,6 +391,32 @@ function lmtoy_seq1 {
 	    --sample      $sample \
 	    --n_samples   256 \
 	    --noise_sigma $noise_sigma
+
+	echo "LMTOY>> grid_data smooth"
+	echo "@todo this needs a new option to bin in channel space"
+	s_fits2=$s_fits.fits
+	w_fits2=$w_fits.fits
+	grid_data.py \
+	    --program_path spec_driver_fits \
+	    -i $s_nc \
+	    -o $s_fits2 \
+	    -w $w_fits2 \
+	    --resolution  $(nemoinp 2*$resolution) \
+	    --cell        $cell \
+	    --pix_list    $pix_list \
+	    --rms_cut     $rms_cut \
+	    --x_extent    $x_extent \
+	    --y_extent    $y_extent \
+	    --otf_select  $otf_select \
+	    --rmax        $rmax \
+	    --otf_a       $otf_a \
+	    --otf_b       $otf_b \
+	    --otf_c       $otf_c \
+	    --edge        $edge \
+	    --sample      $sample \
+	    --n_samples   256 \
+	    --noise_sigma $noise_sigma
+	
     fi
 
     # bug:  when rmax=5  r=12/c=2.4  malloc(): unsorted double linked list corrupted
@@ -413,6 +439,7 @@ function lmtoy_seq1 {
     
     if [ -n "$NEMO" ]; then
 	echo "LMTOY>> Some NEMO post-processing"
+	echo "        @todo rid the code of fits header stealing"
 
 	# cleanup from a previous run
 	rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.rms.ccd $s_on.head1 \
@@ -422,6 +449,7 @@ function lmtoy_seq1 {
 	   $s_on.peak.fits $s_on.ccd.fits
 
 	if [ -e $s_fits ]; then
+	    # convert to CCD, forces new axistype, even though it's the default now
 	    fitsccd $s_fits $s_on.ccd    axistype=1
 	    fitsccd $w_fits $s_on.wt.ccd axistype=1
 
@@ -451,7 +479,7 @@ function lmtoy_seq1 {
 	    #ccdsub $s_on.n.ccd - z=1:$nz1,$nz2:$nz | ccdmom -  $s_on.rms.ccd  mom=-2
 	    ccdsub $s_on.ccd - z=1:$nz1,$nz2:$nz | ccdmom -  - mom=-2 | ccdmath - $s_on.rms.ccd %1*1000
 	    # ccdmom $s_on.n.ccd - $s_on.rms.ccd  mom=-2 arange=0:$nz1,$nz2:$nz-1
-	    
+
 	    #ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "ifne(%1,0,2/(%1*%1),0)"
 	    ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "%1/sqrt(2)"
 	    ccdfits $s_on.wt2.ccd $s_on.wt2.fits fitshead=$w_fits ndim=2
@@ -472,6 +500,14 @@ function lmtoy_seq1 {
 
 	    scanfits $s_on.n.fits $s_on.data1 select=data
 	    cat $s_on.head1 $s_on.data1 > $s_on.nf.fits
+
+	    # hack : a better smooth cube?
+	    rm -rf $s_on.ns.fits
+	    fitsccd $s_on.fits.fits - |\
+		ccdsub - - nzaver=4 |\
+		ccdslice - - zrange=1:$nz:4 |\
+		ccdmath -,$s_on.wtn.ccd - '%1*%2' replicate=t |\
+		ccdfits - $s_on.ns.fits # fitshead=$s_on.fits.fits
 	    
 	    ccdsmooth $s_on.n.ccd - dir=xyz nsmooth=5 | ccdfits - $s_on.nfs.fits fitshead=$s_fits
 	    
@@ -547,6 +583,9 @@ function lmtoy_seq1 {
 	if [ -e $s_on.nfs.fits ]; then
 	    lmtoy_admit.sh $s_on.nfs.fits
 	fi
+	if [ -e $s_on.ns.fits ]; then
+	    lmtoy_admit.sh $s_on.ns.fits
+	fi
 	if [ -e $s_on.nf.fits ]; then
 	    lmtoy_admit.sh $s_on.nf.fits
 	else
@@ -559,6 +598,8 @@ function lmtoy_seq1 {
     # maskmoment
     echo "LMTOY>> Running maskmoment vlsr=$vlsr"
     mm1.py $s_on.nf.fits  $vlsr > maskmoment.nf.log  2>&1
+    # hack
+    mm1.py $s_on.ns.fits  $vlsr > maskmoment.ns.log  2>&1
    
     echo "LMTOY>> Created $s_fits and $w_fits"
     echo "LMTOY>> Parameter file used: $rc"
