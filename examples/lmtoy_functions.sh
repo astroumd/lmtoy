@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="17-dec-2022"
+lmtoy_version="18-dec-2022"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -449,7 +449,7 @@ function lmtoy_seq1 {
 	   $s_on.peak.fits $s_on.ccd.fits $s_on.ns.fits
 
 	if [ -e $s_fits ]; then
-	    # convert to CCD, forces new axistype, even though it's the default now
+	    # convert to CCD
 	    fitsccd $s_fits $s_on.ccd    axistype=1
 	    fitsccd $w_fits $s_on.wt.ccd axistype=1
 
@@ -460,8 +460,8 @@ function lmtoy_seq1 {
 	    nz1=$(nemoinp $nz/4 format=%d)
 	    nz2=$(nemoinp $nz-$nz1)
 	    
-	    ccdspec $s_on.ccd > $s_on.spectab
-	    ccdstat $s_on.ccd bad=0 robust=t planes=0 > $s_on.cubestat
+	    ccdspec $s_on.ccd > $s_on.cubespec.tab
+	    ccdstat $s_on.ccd bad=0 robust=t planes=0 > $s_on.cubestat.tab
 	    echo "LMTOY>> STATS  $s_on.ccd     centerbox robust"
 	    ccdsub  $s_on.ccd -    centerbox=0.5,0.5 | ccdstat - bad=0 robust=t qac=t label=on
 	    echo "LMTOY>> STATS  $s_on.wt.ccd  centerbox robust"
@@ -482,18 +482,18 @@ function lmtoy_seq1 {
 
 	    #ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "ifne(%1,0,2/(%1*%1),0)"
 	    ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "%1/sqrt(2)"
-	    ccdfits $s_on.wt2.ccd $s_on.wt2.fits fitshead=$w_fits ndim=2
+	    ccdfits $s_on.wt2.ccd $s_on.wt2.fits # fitshead=$w_fits ndim=2
 	    # e.g. [[-646,-396],[-196,54]] -> -646,-396,-196,54
 	    zslabs=$(echo $b_regions | sed 's/\[//g' | sed 's/\]//g')
 	    echo SLABS: $b_regions == $zslabs
 	    ccdslice $s_on.ccd - zslabs=$zslabs zscale=1000 | ccdmom - - mom=-2  | ccdmath - $s_on.wt3.ccd "%1"
-	    ccdfits $s_on.wt3.ccd               $s_on.wt3.fits  fitshead=$w_fits  ndim=2
+	    ccdfits $s_on.wt3.ccd               $s_on.wt3.fits  # fitshead=$w_fits  ndim=2
 	    ccdmath $s_on.wt2.ccd,$s_on.wt3.ccd $s_on.wtr.ccd   %2/%1
-	    ccdfits $s_on.wtr.ccd               $s_on.wtr.fits  fitshead=$w_fits  ndim=2
+	    ccdfits $s_on.wtr.ccd               $s_on.wtr.fits  # fitshead=$w_fits  ndim=2
 	    ccdmath $s_on.rms.ccd,$s_on.wt3.ccd $s_on.wtr3.ccd  %2/%1
-	    ccdfits $s_on.wtr3.ccd              $s_on.wtr3.fits fitshead=$w_fits  ndim=2
+	    ccdfits $s_on.wtr3.ccd              $s_on.wtr3.fits # fitshead=$w_fits  ndim=2
 	    fitsccd radiometer.rms.fits - | ccdmath -,$s_on.rms.ccd $s_on.wtr4.ccd %2/%1/1000
-	    ccdfits $s_on.wtr4.ccd              $s_on.wtr4.fits fitshead=$w_fits  ndim=2
+	    ccdfits $s_on.wtr4.ccd              $s_on.wtr4.fits # fitshead=$w_fits  ndim=2
 
 	    scanfits $s_fits $s_on.head1 select=header
 	    ccdfits $s_on.n.ccd  $s_on.n.fits
@@ -509,7 +509,7 @@ function lmtoy_seq1 {
 		ccdfits - $s_on.nfs.fits # fitshead=$s_on.fits.fits
 
 	    # this was the old smooth, it detects too many lines
-	    ccdsmooth $s_on.n.ccd - dir=xyz nsmooth=5 | ccdfits - $s_on.ns.fits fitshead=$s_fits
+	    ccdsmooth $s_on.n.ccd - dir=xyz nsmooth=5 | ccdfits - $s_on.ns.fits # fitshead=$s_fits
 	    
 	    # QAC_STATS:
 	    out1=$(ccdstat $s_on.ccd bad=0 qac=t robust=t label="${s_on}-full")
@@ -526,9 +526,9 @@ function lmtoy_seq1 {
 	    echo "rms0=$rms0   # RMS/radiometer radio"   >> $obsnumrc
 
 	    # hack
-	    fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.specstab
-	    echo -n "spectab : ";  tail -1  $s_on.spectab
-	    echo -n "specstab: ";  tail -1  $s_on.specstab
+	    fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.cubespecs.tab
+	    echo -n "cubespec : ";  tail -1  $s_on.cubespec.tab
+	    echo -n "cubespecs: ";  tail -1  $s_on.cubespecs.tab
 	    
 	    # NEMO plotting ?
 	    if [ $viewnemo = 1 ]; then
@@ -589,6 +589,7 @@ function lmtoy_seq1 {
 	if [ -e $s_on.nf.fits ]; then
 	    lmtoy_admit.sh $s_on.nf.fits
 	else
+	    # this will likely look awful since the edges are more noisy
 	    lmtoy_admit.sh $s_fits
 	fi
     else
@@ -597,9 +598,9 @@ function lmtoy_seq1 {
 
     # maskmoment
     echo "LMTOY>> Running maskmoment vlsr=$vlsr"
-    mm1.py $s_on.nf.fits  $vlsr > maskmoment.nf.log  2>&1
+    mm1.py $s_on.nf.fits   $vlsr > maskmoment.nf.log   2>&1
     # hack
-    mm1.py $s_on.ns.fits  $vlsr > maskmoment.ns.log  2>&1
+    mm1.py $s_on.nfs.fits  $vlsr > maskmoment.nfs.log  2>&1
    
     echo "LMTOY>> Created $s_fits and $w_fits"
     echo "LMTOY>> Parameter file used: $rc"
