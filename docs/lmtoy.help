@@ -39,11 +39,11 @@ SLpipeline.sh admit=1 restart=1 obsnums=99481,99480,99478,99477
 
 #  running pipeline for SEQ/Bs 
 SLpipline.sh admit=0 restart=1 obsnum=99720  pix_list=8,10
-SLpipline.sh admit=0 restart=1 obsnum=99716,99718,99720
+SLpipline.sh admit=0 restart=1 obsnums=99716,99718,99720
 
 #  running pipeline for RSR
 SLpipline.sh admit=0 restart=1 obsnum=99720  badcb=1/1,2/1
-SLpipline.sh admit=0 restart=1 obsnum=99716,99718,99720
+SLpipline.sh admit=0 restart=1 obsnums=99716,99718,99720
 
 #  create a tar file for raw data (cal + 2 maps; check with lmtinfo.py which ones you need)
 lmtar 99481.tar 99479 99480 99481

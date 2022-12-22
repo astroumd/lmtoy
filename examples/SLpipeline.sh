@@ -1,16 +1,14 @@
 #! /bin/bash
 #
-#  SLpipeline:      given an obsnum, figure out what kind of observation it is
+#  SLpipeline:      given an obsnum, figure out what kind of SL observation it is
 #                   and delegate the work to whoever it can do
 #                   $ADMIT allowed to be present. Various tar files can be created as well.
 #
 #
-#  Note:   this will currently only reduce one OBSNUM, combinations done elsewhere
-#
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 28-nov-2022"
+version="SLpipeline: 13-dec-2022"
 
 echo ""
 echo "LMTOY>> $version"
@@ -25,10 +23,11 @@ path=${DATA_LMT:-data_lmt}
 work=${WORK_LMT:-.}
 debug=0
 restart=0
-tap=0
-srdp=0
-raw=0
-admit=0
+tap=0           # save the TAP in a tar file?
+srdp=0          # save the SRDP in a tar file?
+raw=0           # save the RAW data in a tar file?
+grun=1          # save the script generator?
+admit=0         # run ADMIT ?
 sleep=2
 nproc=1
 rsync=""
@@ -258,6 +257,7 @@ else
 fi
 
 # make a metadata yaml file for later ingestion into DataVerse
+echo "LMTOY>> make metadata for DataVerse"
 mk_metadata.py $pdir > $pdir/lmtmetadata.yaml
 
 # produce TAP, RSRP, RAW tar files, whichever are requested.
@@ -277,6 +277,24 @@ if [ $tap != 0 ]; then
     tar cf ${pdir}_TAP.tar `cat $pdir/tar.log`
 fi
  
+if [ $grun != 0 ]; then
+    echo "LMTOY>> Saving the script generator"
+    gsaved=0
+    for d in lmtoy_run $ProjectId; do
+	gdir=$d/lmtoy_${ProjectId}
+	if [ -e $gdir ]; then
+	    gsaved="$gdir"
+	    tar -zchf $ProjectId/$obsnum/lmtoy_${ProjectId}.tar.gz -C $d lmtoy_${ProjectId}
+	    break
+	fi
+    done
+    if [ $gsaved == 0 ]; then
+	echo "LMTOY>> No script generator for lmtoy_${ProjectId} was found"
+    else
+	echo "LMTOY>> Saved $ProjectId/$obsnum/lmtoy_${ProjectId}.tar.gz from $gsaved"
+    fi
+fi
+
 if [ $srdp != 0 ]; then
     echo "Creating Scientific Ready Data Producs (SRDP) in $pidir/${obsnum}_SRDP.tar"
     tar cf $ProjectId/${obsnum}_SRDP.tar $ProjectId/$obsnum
