@@ -131,3 +131,6 @@ assesment and flagging parameters:
    The procedure to find the birdie channel(s) will hopefully be more automated, but
    for now this manual recipe needs to be followed.
    
+# Updates
+
+Software is maintained in https://github.com/astroumd/lmtoy 
