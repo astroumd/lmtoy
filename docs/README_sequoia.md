@@ -83,12 +83,12 @@ Directories only produced if ADMIT was run (admit=1):
 	SRC_OBSNUM.nfs.admit/       ADMIT tree of the noise flat smooth cube
 
 
+Note that both MaskMoment and ADMIT need to run on a noise-flat cube.
 
 
 # Quality
 
-This OTF pipeline suggests the following procedure for quality
-assesment and flagging parameters:
+This OTF pipeline suggests the following procedure for quality assesment and flagging parameters:
 
 1. A **pix_list=** of good beams needs to be established. In the current 2021 cycle often
    beam 0 and 5 were bad. There was a brief period where beams 14 and 15 were
