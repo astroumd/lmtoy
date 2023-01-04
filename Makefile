@@ -51,7 +51,7 @@ URL18 = https://github.com/toltec-astro/dvpipe
 .PHONY:  help install build
 
 
-help install:
+install:
 	@echo "The installation has a few manual steps:"
 	@echo "1. install python (or skip it if you have it)"
 	@echo "  make install_python"
@@ -67,11 +67,20 @@ help install:
 	@echo "    make pull                  update all git repos"
 	@echo "    make status                view git status in all repos"
 	@echo "    make update                recompile updated repos"
+	@echo "For a full list, type:  'make help'"
 	@echo ""
 
+help:
+## help:      This Help
+help : Makefile
+	@sed -n 's/^##//p' $<
+
+
+## git:       Get all git repos for this install
 git:  $(GIT_DIRS)
 	@echo Last git: `date` >> git.log
 
+## pull:      Update all git repos
 pull:
 	@echo -n "lmtoy: "; git pull
 	-@for dir in $(GIT_DIRS); do\
@@ -120,6 +129,7 @@ update1: SpectralLineReduction
 	@echo "   make install_lmtslr"
 	@echo "   make install_lmtslr_venv"
 
+## update:    recompile what needs to be recompiled
 update: update_lmtslr update_nemo
 	(cd $(NEMO); make check)
 
@@ -273,16 +283,19 @@ install_montage:  Montage
 # step 5 (optional; pick YAPP=ps or YAPP=pgplot)
 YAPP = ps
 MKNEMOS = "pgplot cfitsio hdf5 netcdf4"
+# install_mknemos:    install all NEMO 3rd party libraries from source (pgplot cfitsio hdf5 netcdf)
 install_mknemos: nemo
 	(cd nemo; ./configure; make build1 ; source nemo_start.sh; make mknemos MKNEMOS="$(MKNEMOS)")
 
+## install_nemo:           formal NEMO install using YAPP=
 install_nemo:  nemo
 	(cd nemo; ./configure --with-yapp=$(YAPP); make build1 build2 build3 MAKELIBS=corelibs)
 
-# this needs 'mknemo pgplot'
+## install_nemo_pglocal:   install a NEMO with PGPLOT from source (mknemo pgplot)
 install_nemo_pglocal:  nemo
 	(cd nemo; source nemo_start.sh; ./configure --with-yapp=pgplot --enable-png --with-pgplot-prefix=$(NEMOLIB); make build1 build2 build3 MAKELIBS=corelibs)
 
+## update_nemo:            quick update of what we need from NEMO
 update_nemo:	nemo
 	(cd nemo; make build2a build3 MAKELIBS=corelibs)
 
@@ -304,7 +317,7 @@ common: lmtoy_venv
 ADMIT = 1
 bench:  bench1 bench2
 
-
+## bench1:   RSR benchmark (obsnum=33551)
 bench1:
 	$(TIME) SLpipeline.sh obsnum=33551 restart=1 admit=$(ADMIT)
 	@echo "QAC_STATS: rsr.33551.driver.sum.txt 2.0904e-05 0.00095051 -0.00407884 0.0459238 0.173963 0.156462 1186 [expected]"
@@ -312,11 +325,11 @@ bench1:
 	@echo "================================================================================================================="
 	@echo xdg-open  $(WORK_LMT)/2014ARSRCommissioning/33551/README.html
 
-
+## bench1a:  RSR benchmark with identical combination
 bench1a:
 	$(TIME) SLpipeline.sh obsnums=33551,33551 restart=1 admit=$(ADMIT)
 
-
+## bench2:   SEQ benchmark (obsnum=79448)
 bench2:
 	$(TIME) SLpipeline.sh obsnum=79448 restart=1 admit=$(ADMIT)
 	@echo "QAC_STATS: IRC+10216_79448-full 0.00256137 0.242578 -563.449 634.86 85230.4 0.0531463 5696559 [expected]"
@@ -327,14 +340,15 @@ bench2:
 	@echo "========================================================================================"
 	@echo xdg-open  $(WORK_LMT)/2018S1SEQUOIACommissioning/79448/README.html
 
+## bench2a:  SEQ benchmark with identical combination
 bench2a:
 	$(TIME) SLpipeline.sh obsnums=79448,79448 restart=1 admit=$(ADMIT)
 
-# a pure CPU bench from NEMO
+## bench5:   pure CPU bench from NEMO (man 5 bench)
 bench5:
 	(cd $(NEMO); $(TIME) make bench5)
 
-# to be documented and regressed
+## bench99:  to be documented and regressed
 bench99:
 	@echo 1MM PS/Gaincurve
 	SLpipeline.sh obsnum=93562 restart=1
