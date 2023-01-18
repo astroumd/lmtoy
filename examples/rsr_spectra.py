@@ -22,6 +22,7 @@ def my_help():
     print("-s      show interactive plot as well")
     print("-z      use SVG instead of PNG")
     print("-co     show 106..112 GHz (last band)")
+    print("        @todo allow to pick any band")
     print("-h      this help")
 
 
