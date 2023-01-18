@@ -63,7 +63,7 @@ from dreampy3.redshift.utils.fileutils import make_generic_filename
 from blanking import blanking
 
 
-script_version ="0.2.0"
+script_version ="0.2.1"
 
 
 def main(argv):
@@ -124,7 +124,7 @@ def main(argv):
                     print("Process filename %s" % fname)
                     nc = RedshiftNetCDFFile(fname)
             except:
-                print("Skipping %d %d due to an error" % (ObsNum, chassis))
+                print("Warning: skipping %d %d due to an error" % (ObsNum, chassis))
                 continue
             print("Found src=",nc.hdu.header.SourceName)
             nc.hdu.process_scan()
@@ -148,12 +148,16 @@ def main(argv):
             #pl.plot_spectra(nc)
             zz = 1
             #zz = input('To reject observation, type ''r'':')
-            if zz != 'r':
+            #if zz != 'r':
+            if True:
                 hdulist.append(nc.hdu)
                 nc.sync()
                 nc.close()
                 del nc
 
+    if len(hdulist) == 0:
+        print("WARNING: No hdu's were accumulated for rsr_sum")
+        return
     print("Accumulated %d hdu's" % len(hdulist))
     hdu = hdulist[0]
     hdu.average_scans(hdulist[1:],threshold_sigma=threshold_sigma)
