@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="17-jan-2023"
+lmtoy_version="18-jan-2023"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -223,6 +223,7 @@ function lmtoy_rsr1 {
 
 	if [ $obsgoal = "LineCheck" ]; then
 	    echo "LMTOY>> LineCheck"
+	    rm -f spec1.tab spec2.tab
 	    #  good for I17208, I12112, I10565
 	    xrange=106:111
 	    echo  "# tabnllsqfit $spec1 fit=gauss1d xrange=$xrange"      > linecheck.log
