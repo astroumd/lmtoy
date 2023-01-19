@@ -23,7 +23,7 @@ source=`grep "Source:" $file |awk '{print $NF}'`
 RA=`grep "RA:" $file |awk '{print $NF}'`
 DEC=`grep "DEC:" $file |awk '{print $NF}'`
 itime=`grep "Integration Time:" $file |awk '{printf("%.2f",$(NF-1))}'`
-rms=$(grep Integration $file | awk '{printf("%.3f mK\n",1.291*1000*100/sqrt(3*31000000*$4))}')
+rms=$(grep Integration $file | awk '{printf("%.3f mK\n",1.291*1000*100/sqrt(4*31000000*$4))}')
 tau=`grep "Opacity" $file |awk '{printf $NF}'`
 inobs=`grep "Input Observations:" $file |awk '{print $NF}'`
 reddate=`grep "Date of Reduction" $file |awk '{print $NF}'`
@@ -49,7 +49,7 @@ echo " <tr><th scope='row'>Source</th><td>$source</td></tr>"
 echo " <tr><th scope='row'>RA</th><td>$RA</td></tr>"
 echo " <tr><th scope='row'>DEC</th><td>$DEC</td></tr>"
 echo " <tr><th scope='row'>Input Observations</th><td>$inobs</td></tr>"
-echo " <tr><th scope='row'>Integration Time (s)</th><td>$itime</td></tr>"
+echo " <tr><th scope='row'>Integration Time (s) [driver]</th><td>$itime</td></tr>"
 echo " <tr><th scope='row'>220 GHz Opacity</th><td>$tau</td></tr>"
 echo " <tr><th scope='row'>Date of Reduction</th><td>$reddate</td></tr>"
 echo "</tbody></table>"
@@ -141,7 +141,7 @@ echo "<h4 class='card-title'>Spectrum from rsr_sum: (Author: M.Yun)</h4>"
 echo "<p class='card-text'>The rsr_sum version of the average spectrum has optional blanking and sections to avoid for baseline fitting."
 echo "Below are the spectra from rsr_sum (orange) and rsr_driver (blue). If there is a significant difference between the two, then there is some subtle difference in how the scripts work.</p>"
 echo "<p class='card-text'>Statistics on individual spectra</p><table class='table table-borderless w-auto'><tbody>$qac_stats"
-echo "<tr><td>Expected noise (3C) for Tsys=100K</td><td class='text-start'>rms=$rms </td></tr>"
+echo "<tr><td>Expected noise for Tsys=100K</td><td class='text-start'>rms=$rms </td></tr>"
 if [ -e linecheck.log ]; then
     ls1=$(txtpar linecheck.log %5*1000,%1*1000,%2*1000,%3,%4 p0=a=,1,2 p1=b=,1,2 p2=c=,1,2 p3=d=,1,2 p4=rms=,1,2)
     ls2=$(txtpar linecheck.log %5*1000,%1*1000,%2*1000,%3,%4 p0=a=,2,2 p1=b=,2,2 p2=c=,2,2 p3=d=,2,2 p4=rms=,2,2)
