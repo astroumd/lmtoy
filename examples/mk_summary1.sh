@@ -68,9 +68,11 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     source $rc
     date_obs=$(grep date_obs $rc | awk -F= '{print $2}')
     if [ $instrument == "RSR" ]; then
-	# RSR
-	rms=$(grep QAC_STATS $log | txtpar - '1000*0.5*(%1+%2)' p0=1,4 p1=2,4)
-	rms0=$(nemoinp "$rms*sqrt(4*32500000*$inttime)/1000/100")" /100K"
+	# RSR - use average of driver and blanking RMS
+	#rms=$(grep QAC_STATS $log | txtpar - '1000*0.5*(%1+%2)/sqrt(2)' p0=1,4 p1=2,4)  # trend spectrum
+	rms=$(grep QAC_STATS $log | txtpar - '1000*0.5*(%1+%2)'          p0=3,4 p1=4,4)  # straight spectrum
+	rms0=$(nemoinp "1.291*1000*100/sqrt(4*31250000*$inttime)")
+	rms0="$(nemoinp $rms/$rms0) /100K"
     elif [ $instrument == "SEQ" ] && [ $obspgm == "Bs" ]; then
 	rms=$(grep QAC_STATS $log | txtpar - "%1" p0=1,4)
 	rms0=TBD
