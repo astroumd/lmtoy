@@ -8,7 +8,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 13-dec-2022"
+version="SLpipeline: 20-jan-2023"
 
 echo ""
 echo "LMTOY>> $version"
@@ -73,6 +73,7 @@ fi
 #             put in bash debug mode
 if [ $debug = 1 ]; then
     set -x
+    set -e
     python --version
     which python
 fi
