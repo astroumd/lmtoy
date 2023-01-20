@@ -165,10 +165,11 @@ function lmtoy_rsr1 {
 	echo "PJT2 obsnum=$obsnum obsnums=$obsnums"
     else
 	#  only for a single obsnum run
-	#  @todo initial settings lost
+	rsr_blanking $obsnum   > $blanking
+	rsr_rfile    $obsnum   > $rfile
 	echo "Using existing $badlags - forgetting initial settings"
-	rsr_badcb -r $badlags > $rfile
-	rsr_badcb -b $badlags > $blanking
+	rsr_badcb -b $badlags >> $blanking
+	rsr_badcb -r $badlags >> $rfile
 	echo "PJT3 obsnum=$obsnum obsnums=$obsnums"
     fi
     
