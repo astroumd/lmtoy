@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="18-jan-2023"
+lmtoy_version="20-jan-2023"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -183,6 +183,10 @@ function lmtoy_rsr1 {
     #   -t, -f, -s, -r, -n
     echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t"
     python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t          > rsr_driver.log 2>&1
+    #  grab the total integration time from the driver
+    inttime=$(grep "Integration Time" $spec1 | awk '{print $4}')
+    echo "inttime=$(printf %.1f $inttime) # sec" >> $rc
+
     #  ImageMagick:   this step can fail with some weird security policy error :-(
     #  edit /etc/ImageMagick-*/policy.xml:     rights="read | write" pattern="PDF"
     #  One solution:  copy $LMTOY/etc/policy.xml to ~/.config/ImageMagick/policy.xml
