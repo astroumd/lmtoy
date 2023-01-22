@@ -107,9 +107,9 @@ echo "</div> <!-- row-->"
 echo "<div class='row'>"
 echo " <div class='col'>"
 echo "  <div class='card'><div class='card-body'>"
-echo "<h4 class='card-title'>Waterfall Plot</h4>"
+echo "<h4 class='card-title'>Waterfall Plot and Spectrum (Author: D. Sanchez)</h4>"
 echo "<p class='card-text'> The Waterfall Plot is a spectrum for each band, chassis and time sample, color coded by their band."
-echo "We keep two versions: <a href='rsr.wf0.pdf'> the original one with minimal flagging </a> and <a href='rsr.wf.pdf'>one that has the latest flags applied</a> after the pipeline has been re-run. This plot is produced by rsr_driver (Author: D. Sanchez)</p>"
+echo "We keep two versions: <a href='rsr.wf0.pdf'> the original one with minimal flagging </a> and <a href='rsr.wf.pdf'>one that has the latest flags applied</a> after the pipeline has been re-run. These plot are produced by rsr_driver</p>"
 
 echo "<div class='row'>"
 echo "<div class='col-md'> <a href='rsr.wf-0.png'><img src='rsr.wf-0.png'></a></div>"
@@ -117,10 +117,15 @@ echo "<div class='col-md'> <a href='rsr.wf-1.png'><img src='rsr.wf-1.png'></a></
 echo "</div><div class='row'>"
 echo "<div class='col-md'> <a href='rsr.wf-2.png'><img src='rsr.wf-2.png'></a></div>"
 echo "<div class='col-md'> <a href='rsr.wf-3.png'><img src='rsr.wf-3.png'></div></a></div>"
+echo "</div>"
+echo "<p class='card-text'> The final spectrum:</p>"
+echo "<div class='row'>"
+echo "<div class='col-md'> <a href='rsr.driver.png'><img src='rsr.driver.png'></div></a></div>"
 echo "</div><!-- row -->"
+
 echo "<ul class='list-group list-group-flush'> "
 echo "<li class='list-group-item'><a href='rsr_driver.log'>rsr_drive log file</a></li>"
-echo "<li class='list-group-item'> <a href=rsr.$obsnum.rfile>rsr_driver $obsnum parameters file (aka rfile)</a></li>"
+echo "<li class='list-group-item'><a href=rsr.$obsnum.rfile>rsr_driver $obsnum parameters file (aka rfile)</a></li>"
 echo "<li class='list-group-item'><a href='rsr.$obsnum.driver.sum.txt'> ASCII table of final bandmerged spectrum</a></li></ul>"
 echo "  </div> <!-- cardbody -->"
 echo "  </div><!-- card -->"
@@ -151,6 +156,8 @@ if [ -e linecheck.log ]; then
     echo "<tr><td>LineCheck driver</td>   <td> $fmt1   </td></tr>"
     echo "<tr><td>LineCheck blanking</td> <td> $fmt2   </td></tr>"
     echo "<tr><td>xlines:</td>            <td> xlines=$xlines </td></tr>"
+else
+    echo "<B>Fit to two strongest peaks to go here....<B>"
 fi
 
 echo "</tbody></table>"
