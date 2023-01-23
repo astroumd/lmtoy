@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="22-jan-2023"
+lmtoy_version="23-jan-2023"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -248,8 +248,9 @@ function lmtoy_rsr1 {
 
 	# try and fit the 4 strongest peaks
 	echo "LMTOY>> rsr_peaks"
-	rsr_peaks.sh in=$spec1 yapp=$dev  > rsr_peaks.log  2>&1
-	rsr_peaks.sh in=$spec2 yapp=$dev >> rsr_peaks.log  2>&1
+	epeak=${epeak:-1}
+	rsr_peaks.sh in=$spec1 epeak=$epeak fit=fit.driver   yapp=$dev  > rsr_peaks.log  2>&1
+	rsr_peaks.sh in=$spec2 epeak=$epeak fit=fit.blanking yapp=$dev >> rsr_peaks.log  2>&1
 
     else
 	echo "LMTOY>> Skipping NEMO post-processing"
