@@ -11,6 +11,7 @@
 in=spec.tab       # input table (xcol=1 ycol=2)
 peaks=1:4         # which peaks, e.g 1:4
 yapp=xs           # xs,png,ps,_ps
+debug=-1          # not so verbose for NEMO
 
 #--HELP
 
@@ -41,6 +42,8 @@ if [ ! -e $in ]; then
     echo File in=$in does not exist
     exit 1
 fi
+
+export DEBUG=$debug
 
 # loop over each peak finder
 for ipeak in $(nemoinp $peaks); do
