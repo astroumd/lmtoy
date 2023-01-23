@@ -248,8 +248,8 @@ function lmtoy_rsr1 {
 
 	# try and fit the 4 strongest peaks
 	echo "LMTOY>> rsr_peaks"
-	rsr_peaks.sh in=$spec1 yapp=$dev
-	rsr_peaks.sh in=$spec2 yapp=$dev
+	rsr_peaks.sh in=$spec1 yapp=$dev  > rsr_peaks.log  2>&1
+	rsr_peaks.sh in=$spec2 yapp=$dev >> rsr_peaks.log  2>&1
 
     else
 	echo "LMTOY>> Skipping NEMO post-processing"
