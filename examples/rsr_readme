@@ -2,7 +2,7 @@
 #
 #    creates the README.html file for a standard RSR "TAP"
 #    https://www.lmtobservatory.org/help/user/calculation_rsr   (factor 1.291 is also explained here)
-#    
+#    but see also:   http://lmtgtm.org/wp-content/uploads/2022/09/RSR_v2p0_reduced.pdf  
 #
 
 if [ "x$1" == "x" ]; then
@@ -137,7 +137,6 @@ if [ -e rsr.wf-5.png ]; then
     echo "<div class='row'><div class='col'><p>Skipping remaining plots, see indiviual obsnum pages<p></div></div>"
 fi
 
-
 cat $LMTOY/examples/template.svg.html | sed s/template.svg/rsr.spectra.svg/g > rsr.spectra.svg.html
 rsync -a $LMTOY/etc/resources .
 
@@ -146,7 +145,9 @@ echo "<div class='card'><div class='card-body'>"
 echo "<h4 class='card-title'>Spectrum from rsr_sum: (Author: M.Yun)</h4>"
 echo "<p class='card-text'>The rsr_sum version of the average spectrum has optional blanking and sections to avoid for baseline fitting."
 echo "Below are the spectra from rsr_sum (orange) and rsr_driver (blue). If there is a significant difference between the two, then there is some subtle difference in how the scripts work.</p>"
-echo "<p class='card-text'>Statistics on individual spectra</p><table class='table table-borderless w-auto'><tbody>$qac_stats"
+echo "<p class='card-text'>Statistics on individual spectra:</p>"
+echo "<table class='table table-borderless w-auto'>"
+echo "<tbody>$qac_stats"
 echo "<tr><td>Expected noise for Tsys=100K</td><td class='text-start'>rms=$rms </td></tr>"
 if [ -e linecheck.log ]; then
     ls1=$(txtpar linecheck.log %5*1000,%1*1000,%2*1000,%3,%4 p0=a=,1,2 p1=b=,1,2 p2=c=,1,2 p3=d=,1,2 p4=rms=,1,2)
@@ -156,11 +157,9 @@ if [ -e linecheck.log ]; then
     echo "<tr><td>LineCheck driver</td>   <td> $fmt1   </td></tr>"
     echo "<tr><td>LineCheck blanking</td> <td> $fmt2   </td></tr>"
     echo "<tr><td>xlines:</td>            <td> xlines=$xlines </td></tr>"
-else
-    echo "<B>Fit to two strongest peaks to go here....<B>"
 fi
-
 echo "</tbody></table>"
+
 echo "<div class='row'>"
 echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra.png'><img src='rsr.spectra.png' width='90%'></a><figcaption>The rsr_driver (blue) and rsr_sum (orange) spectra combined in a single plot</figcaption></figure></div>"
 echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra_co.png'><img src='rsr.spectra_co.png' width='90%'></a><figcaption>Zoomed in version of combined spectral plot [rsr_driver (blue), rsr_sum (orange)].</figcaption></figure></div>"
@@ -170,6 +169,7 @@ echo "<li class='list-group-item'> <a href='rsr_sum.log'>rsr_sum log file</a></l
 echo "<li class='list-group-item'><a href='rsr.$obsnum.blanking'>blanking file</a></li>"
 echo "<li class='list-group-item'><a href='rsr.$obsnum.blanking.sum.txt'> ASCII table of final bandmerged spectrum</a></li></ul>"
 echo "<li class='list-group-item'><a href='rsr.spectra.svg.html'>Experimental SVG version of figure.</a> </li></ul>"
+echo "<li class='list-group-item'> <a href='rsr_peaks.log'>rsr_peaks log file</a></li>"
 echo "  </div> <!-- cardbody -->"
 echo "  </div><!-- card -->"
 echo "  </div><!-- col -->"
