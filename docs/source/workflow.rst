@@ -101,6 +101,7 @@ in your own local workspace. This assumes the LMTOY toolkit has been installed:
 
       % lmtinfo.py grep 2021-12-17
       % lmtinfo.py grep 2020 NGC5194
+      % lmtinfo.py grep 2021-S1-MX-3
    
 
 ..
@@ -118,7 +119,7 @@ in your own local workspace. This assumes the LMTOY toolkit has been installed:
    this is all rather haphasard
    
     
-2.  Get the data from a full $DATA_LMT archive (e.g. at "cln", or at LMT) via the **rsync_lma** script. Obviously
+2.  Get the data from a full $DATA_LMT archive (usually "unity") via the **rsync_lma** script. Obviously
     only somebody on that archive machine can do this, but this is the easiest way. Here is an example of several
     methods:
 
@@ -136,7 +137,7 @@ in your own local workspace. This assumes the LMTOY toolkit has been installed:
    lma% SLpipeline.sh obsnum=79448
         Processing SEQ in 2018S1SEQUOIACommissioning/79448 for IRC+10216
 
-      # view!   
+      # view the pipeline results
    lma% xdg-open 2018S1SEQUOIACommissioning/79448/
 
 This opens a directory using your favorite file browser, you can inspect figures,
@@ -388,7 +389,7 @@ Workflow
 ~~~~~~~~
 
 UMass Server has the data, a web interface will run the new-style pipeline. Data can be inspected.
-New parameters can be set, and re-imaged.
+New parameters can be set, and re-imaged. This is being worked on (Jan 2023)
 
 The TolTECA data reduction workflow has a high level config file (yaml?) which via a command line
 interface steers the pipeline.
