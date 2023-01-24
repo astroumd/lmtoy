@@ -1,6 +1,6 @@
 # LMT software
 
-1. SpectralLineReduction - for Sequoia, Omaya, 1MMRx (python module:  lmtslr)
+1. SpectralLineReduction - for Sequoia, future Omaya, 1MMRx (python module:  lmtslr)
 2. dreampy3 - for RSR
 3. tolteca/citlali - for TolTEC, Muscat and also old Aztec data (not covered here)
 
@@ -270,17 +270,21 @@ The slurm package is used to submit jobs on unity :  https://unity.rc.umass.edu/
 
 Typical commands:
 
-`   # info on partitions and nodes
-    sinfo
-    #  LMT uses partition 'toltec_cpu', and we have node99-node100 for data reduction purposes
-    squeue -u lmtslr_umass_edu
-    #  for brief interactive jobs, one at a time
-    srun -n 1 -c 1 --mem=16G -p toltec_cpu --x11 --pty bash
-    #  to run non-blocking scripts
-    sbatch runfile.sh
-    sbatch_lmtoy.sh obsnum=12345
-    #  to cancel (kill)
-    scancel $JOBID
+`    # info on partitions and nodes
+     sinfo
+     
+     #  LMT uses partition 'toltec_cpu', and we have node99-node100 for data reduction purposes
+     squeue -u lmtslr_umass_edu
+     
+     #  for brief interactive jobs, one at a time
+     srun -n 1 -c 1 --mem=16G -p toltec_cpu --x11 --pty bash
+     
+     #  to run non-blocking scripts
+     sbatch runfile.sh
+     sbatch_lmtoy.sh obsnum=12345
+     
+     #  to cancel (kill)
+     scancel $JOBID
 
 # Other packages
 
