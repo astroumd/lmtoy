@@ -9,9 +9,11 @@ There is a single account for all helpdesk users
 
         lmthelpdesk_umass_edu
 	
-which means different helpdesk users will need to ensure they are not working on the same *ProjectId*.
+which means different helpdesk users will need to ensure they are not working on the same data.
+We do this by using a different $WORK_LMT for each user, but of course they share the (raw) $DATA_LMT.
+The **lmtoy** command will always show your current settings.
 	
-In your local ~/.ssh/config file you will need a shortcut to be able to ssh into the unity account.
+In your local **~/.ssh/config** file you will need a shortcut to be able to ssh into the unity account.
 For example:
 
     Host unity
@@ -39,14 +41,14 @@ command, where you will see that WORK_LMT is still blank:
       NEMO:        /work/lmtslr/lmtoy/nemo  - 4.4.1
       OS_release:  Linux Description: Ubuntu 20.04.5 LTS
 
-In order to set/change it, use something like
+In order to set/change it, use the **work_lmt** command. For example
 
-     work_lmt teuben
+     work_lmt fred
 	 
-which will also remind you what projects you are working on, e.g.
+will set this for the **fred** user.
 
-     $ work_lmt teuben
-     WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/teuben
+     $ work_lmt fred
+     WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/fred
      2014ARSRCommissioning  sbatch  bench1  bench2  tmp
 
 The directories **sbatch** and **tmp** need to be present, and will have been created for you
@@ -55,11 +57,12 @@ Now you are ready to submit scripts on unity!
 
 ## Running on unity
 
-You cannot run the pipeline directly on Unity, as you would do on the laptop. The *slurm* environment is used
+You cannot run the pipeline directly on Unity, as you would do on a laptop or workstation.
+The *slurm* environment is used
 to submit scripts and coordinate when and where the script can run. However, to find data using
 **lmtinfo.py** is probably ok, e.g.
 
-     lmtinfo.py grep RSR 2014 I10565 LineCheck
+     $ lmtinfo.py grep RSR 2014 I10565 LineCheck
 	 
 (note in this historic data the observing data was not properly encoded in the header and it will claim 1970)
 
@@ -109,7 +112,7 @@ an interactive shell, e.g.
      srun -n 1 -c 4 --mem=16G -p toltec-cpu --x11 --pty bash
 	
 in this shell you are using a real unity CPU (4 in fact), and should get much faster response and able to run
-a pipeline instance interactively. You can also use sbatch from here, as discussed before.
+a pipeline instance interactively. You can also use **sbatch_lmtoy.sh** from here, as discussed before.
 
 ## Viewing pipeline results
 
@@ -127,18 +130,17 @@ Note the official *lmtslr* results of this obsnum would be on
 
 ## Script Generator
 
-There is an experimental script generator, one for each *ProjectId*, which
-generates the SLpipeline.sh commands to process Spectral Line data and puts
-them in a "run" file.. These "run"
+There is a script generator, one for each *ProjectId*, which
+generates the SLpipeline.sh commands in a "run" file. These "run"
 files can be processed by **bash** (serial mode), gnu **parallel** and **sbatch_lmtoy.sh**,
 depending on your computing environment.   Here is an example, where for convenience
 we've placed the script generator below the data tree
 
-      cd $WORK_LMT/2021-S1-MX-34
-      git clone https://github.com/teuben/lmtoy_2021-S1-MX-34
-      cd lmtoy_2021-S1-MX-34
+      cd $WORK_LMT/2022S1RSRCommissioning
+      git clone https://github.com/teuben/lmtoy_2022S1RSRCommissioning
+      cd lmtoy_2022S1RSRCommissioning
       make runs
-      sbatch_lmtoy.sh 2021-S1-MX-34.run1a 
+      sbatch_lmtoy.sh linecheck.run1a
 	  
 This has well over 300 obsnum entries. This particular script generator has
 also historic 50m and 32m data included in the run file.  If for some reason
