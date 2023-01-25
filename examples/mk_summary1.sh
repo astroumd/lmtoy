@@ -6,7 +6,7 @@
 #  Typical usage:
 #        mk_summary1.sh > README.html
 #  After this, make a symlink from index.html to README.html if you enforce noindex.
-#
+#  On unity we do this, on malt and lma we don't, since developers like to see everything
 
 #set -e
 #set -x
@@ -17,7 +17,7 @@ csv=summary.csv
 echo "<html>"
 echo '<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>'
 
-echo "<A HREF=$csv>Summary of all obsnum's:</A> (click on column name to sort by that column)"
+echo "<A HREF=$csv>Summary of all obsnum's and combinations:</A> (click on column name to sort by that column)"
 echo '<table border=1 class="sortable">'
 echo '  <tr class="item">'
 echo "    <th>"
