@@ -145,8 +145,10 @@ if [ $obsnum != 0 ]; then
 fi
 
 if [ $linecheck == 1 ]; then
-    xlines=$(grep ^${src} $LMTOY/etc/linecheck.tab | awk '{print $2}')
-    echo "linecheck for $src : xlines=$xlines"
+    if [ -z "$xlines" ]; then
+	xlines=$(grep ^${src} $LMTOY/etc/linecheck.tab | awk '{print $2}')
+    fi
+    echo "linecheck=1 for $src : xlines=$xlines"
 fi
 
 #             redo CLI again
