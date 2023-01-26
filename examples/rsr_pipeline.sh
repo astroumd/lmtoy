@@ -10,7 +10,7 @@
 #
 #
 
-version="rsr_pipeline: 10-oct-2022"
+version="rsr_pipeline: 25-jan-2023"
 
 echo "LMTOY>> $version"
 
@@ -26,6 +26,7 @@ path=${DATA_LMT:-data_lmt}
 xlines=""     # set to a comma separated list of freq,dfreq pairs where strong lines are
 badboard=""   # set to a comma separated list of bad boards
 badcb=""      # set to a comma separated list of (chassis/board) combinations, badcb=2/3,3/5
+linecheck=0   # set to 1, to use the source name to grab the correct xlines=
 #            - procedural
 admit=0
 #            - debug
@@ -141,6 +142,11 @@ if [ $obsnum != 0 ]; then
 	done
     fi
     # note $badlags is created by badlags.py
+fi
+
+if [ $linecheck == 1 ]; then
+    xlines=$(grep ^${src} $LMTOY/etc/linecheck.tab | awk '{print $2}')
+    echo "linecheck for $src : xlines=$xlines"
 fi
 
 #             redo CLI again
