@@ -10,7 +10,7 @@
 #
 #
 
-version="rsr_pipeline: 25-jan-2023"
+version="rsr_pipeline: 26-jan-2023"
 
 echo "LMTOY>> $version"
 
@@ -105,8 +105,8 @@ else
 fi
 
 blanking=rsr.$obsnum.blanking     # for  rsr_sum    - produced by rsr_blanking
-badlags=rsr.$obsnum.badlags       # for  rsr_xxx    - produced by badlags.py
 rfile=rsr.$obsnum.rfile           # for  rsr_driver - produced by rsr_rfile
+badlags=rsr.$obsnum.badlags       # for  rsr_xxx    - produced by badlags.py
 
 if [ $first == 1 ]; then
     # bootstrap  $blanking and $rfile; these are just commented lines w/ examples
@@ -141,12 +141,14 @@ if [ $obsnum != 0 ]; then
 	    echo "$obsnum,$c,$b"               >> $rfile
 	done
     fi
-    # note $badlags is created by badlags.py
+    # note $badlags is created by badlags.py 
 fi
 
+#  grab a "xlines=" from a sourcename based table for linecheck sources
 if [ $linecheck == 1 ]; then
     if [ -z "$xlines" ]; then
-	xlines=$(grep ^${src} $LMTOY/etc/linecheck.tab | awk '{print $2}')
+	xlines=$(grep ^${src} $LMTOY/etc/linecheck.tab | awk '{print $2}' | awk -F= '{print $2}')
+	echo "xlines=$xlines" >> $rc
     fi
     echo "linecheck=1 for $src : xlines=$xlines"
 fi
