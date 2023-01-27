@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, shell variables are common variables between this and the caller
 
-lmtoy_version="23-jan-2023"
+lmtoy_version="26-jan-2023"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -94,7 +94,7 @@ function lmtoy_rsr1 {
     lmtoy_version > lmtoy.rc
 
     # spec1:    output spectrum rsr.$obsnum.driver.txt
-    #       xlines=110.51,0.15,108.65,0.3,85.2,0.4    - example for I10565
+    # 
     spec1="rsr.${obsnum}.driver.sum.txt"
     b="--badlags $badlags"
     r="--rfile $rfile"
@@ -109,26 +109,29 @@ function lmtoy_rsr1 {
 	l=""
     fi
     
-    # deal with a first run -
+    # FIRST RUN - save initial attempts
     # Before july-2022 we reset with empty badlags entry in dreampy config with no bad lags
     # in order to be able to run serially with reproduceable results.
-    # Now we make the dreampy config file read-only so we can run in parallel 
-    _old_serial=0
+    # Now we make the dreampy config file read-only so we can run in parallel
+    # as well as process old data
     if [[ $first == 1 ]]; then
 	# 1.
-	if [[ $_old_serial == 1 ]]; then
+	_old_serial=0
+	if [[ $_old_serial == 0 ]]; then
+	    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t                         > rsr_driver0.log 2>&1
+        else
+	    # old code
 	    echo '# empty badlags' > rsr.badlags
 	    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t --badlags rsr.badlags   > rsr_driver0.log 2>&1
-        else
-	    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t > rsr_driver0.log 2>&1
 	fi
+	mv rsr.driver.png rsr.driver0.png
 	# 2.
 	python $LMTOY/examples/rsr_tsys.py -s $obsnum            > rsr_tsys0.log  2>&1
 	mv rsr.tsys.png rsr.tsys0.png
     fi
 
     # FIRST get the badlags - this is a file that can be edited by the user in later re-runs
-    # output: rsr.$obsnum.badlags badlags.png
+    # output: $badlags=rsr.$obsnum.badlags and badlags.png
     #         rsr.$obsnum.rfile and rsr.$obsnum.blanking  - can be modified if #BADCB's have been found
     if [[ ! -e $badlags ]]; then
 	#     only for a single obsnum run
@@ -152,7 +155,8 @@ function lmtoy_rsr1 {
 	    python $LMTOY/examples/rsr_tsys.py -b -t -s $obsnum         > rsr_tsys2.log 2>&1
 	    grep CB rsr_tsys0.log  > tab0
 	    grep CB rsr_tsys.log   > tab1
-	    paste tab0 tab1 | awk '{print $0," ratio:",$11/$5}'  > rsr_tsys_badcb.log 
+	    paste tab0 tab1 | awk '{print $0," ratio:",$11/$5}'  > rsr_tsys_badcb.log
+	    rm -f tab0 tab1
 	fi	
 
 	# this step could be debatable
