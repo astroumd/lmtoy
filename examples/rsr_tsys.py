@@ -7,7 +7,8 @@
 #
 #    -s     don't show, just create the png
 #    -z     use "svg" extension
-#    -f     show spectrum instead of tsys
+#    -t     show spectrum instead of tsys
+#    -b     use this badlags file
 
 import sys
 import numpy as np
@@ -25,7 +26,7 @@ Qspec    = False
 Qbadlags = False
 ext      = 'png'
 nopt     = 0
-#                    trigger "badcb" on the RMS in the adjacent-channel differences
+#                    trigger "badcb" on the RMS in the adjacent-channel differences ("jitter")
 rms_min  = 25.0
 
 for f in sys.argv[1:]:
@@ -59,7 +60,7 @@ if Qbadlags:
   
 plt.figure()
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
-label = "badcb="
+label = "jitter badcb="
 
 for chassis in range(4):    # loop over all chassis 0..3
     try:
