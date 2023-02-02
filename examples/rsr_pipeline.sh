@@ -77,7 +77,13 @@ rc=lmtoy_${obsnum}.rc
 if [ -e $rc ] && [ $newrc = 0 ]; then
     echo "LMTOY>> reading $rc"
     echo "# DATE: `date +%Y-%m-%dT%H:%M:%S.%N`" >> $rc
-    cat $rc0 >> $rc
+    if [ $first = 1 ]; then
+	cat $rc0 >> $rc
+    else
+	for arg in "$@"; do
+	    echo "$arg" >> $rc
+	done
+    fi
     source ./$rc
     rm -f $rc0
     newrc=0
