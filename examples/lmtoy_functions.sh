@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="1-feb-2023"
+lmtoy_version="2-feb-2023"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -142,33 +142,32 @@ function lmtoy_rsr1 {
     #         rsr.$obsnum.rfile and rsr.$obsnum.blanking  - can be modified if #BADCB's have been found
     if [[ ! -e $badlags ]]; then
 	#     only for a single obsnum run
-	# 3.
-	python $LMTOY/examples/badlags.py -s $obsnum   > rsr_badlags.log 2>&1
+	# 3.  produces rsr.badlags (currently)
+	python $LMTOY/examples/badlags.py -d -s $obsnum       > rsr_badlags.log 2>&1
 	#  -b bc_threshold
 	#  -p plotmax
-	mv badlags.png badlags.$obsnum.png 
+	mv badlags.png badlags.$obsnum.png
+	mv rsr.badlags $badlags
 	
 	# 4.
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo $t --badlags rsr.badlags   > rsr_driver1.log 2>&1	
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo $t --badlags $badlags   > rsr_driver1.log 2>&1	
 
-	# keep the old one (for the bad rsr_tsys.py parser)
-	cp rsr.badlags $badlags
 
 	# Tsys plot:  rsr.tsys.png  - only done for single obsnum - also lists BADCB's
 	#             rsr.spectrum.png - another way to view each chassis spectrum
 	#             -b will use fixed name 'rsr.badlags' for badlags
 	if [[ -z "$obsnums" ]]; then
 	    # 5.
-	    python $LMTOY/examples/rsr_tsys.py -b    -s $obsnum         > rsr_tsys.log  2>&1
-	    python $LMTOY/examples/rsr_tsys.py -b -t -s $obsnum         > rsr_tsys2.log 2>&1
+	    python $LMTOY/examples/rsr_tsys.py -b $badlags    -s $obsnum         > rsr_tsys1.log 2>&1
+	    python $LMTOY/examples/rsr_tsys.py -b $badlags -t -s $obsnum         > rsr_tsys2.log 2>&1
 	    grep CB rsr_tsys0.log  > tab0
-	    grep CB rsr_tsys.log   > tab1
+	    grep CB rsr_tsys1.log  > tab1
 	    paste tab0 tab1 | awk '{print $0," ratio:",$11/$5}'  > rsr_tsys_badcb.log
 	    rm -f tab0 tab1
 	fi	
 
 	# this step could be debatable
-	grep '#BADCB' rsr_tsys.log >> $badlags
+	grep '^#BADCB' rsr_tsys1.log >> $badlags
 	rsr_badcb -r $badlags >> $rfile 
 	rsr_badcb -b $badlags >> $blanking
 	echo "PJT1 obsnum=$obsnum obsnums=$obsnums"	
