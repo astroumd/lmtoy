@@ -10,7 +10,7 @@
 #
 #
 
-version="rsr_pipeline: 26-jan-2023"
+version="rsr_pipeline: 1-feb-2023"
 
 echo "LMTOY>> $version"
 
@@ -27,6 +27,14 @@ xlines=""     # set to a comma separated list of freq,dfreq pairs where strong l
 badboard=""   # set to a comma separated list of bad boards
 badcb=""      # set to a comma separated list of (chassis/board) combinations, badcb=2/3,3/5
 linecheck=0   # set to 1, to use the source name to grab the correct xlines=
+bandzoom=5    # the band for the zoomed window
+speczoom=""   # override bandzoom with a manual speczoom=CEN,WID pair
+rthr=0.01     # -r option for rsr_driver Threshold sigma value when averaging single observations repeats
+cthr=0.01     # -t                       Threshold sigma value when coadding all observations
+sgf=0         # Savitzky-Golay high pass filter ; odd number > 21
+notch=0       # sigma cut for notch filter to eliminate large frecuency oscillations. Needs sgf > 21
+blo=1         # order of polynomial baseline subtraction
+
 #            - procedural
 admit=0
 #            - debug
@@ -46,6 +54,8 @@ done
 
 # 
 source lmtoy_functions.sh
+rc0=$WORK_LMT/tmp/lmtoy_${obsnum}.rc
+show_vars xlines badcb linecheck bandzoom speczoom rthr cthr sgf notch blo > $rc0
 
 #             put in bash debug mode
 if [ $debug = 1 ]; then
@@ -67,12 +77,12 @@ rc=lmtoy_${obsnum}.rc
 if [ -e $rc ] && [ $newrc = 0 ]; then
     echo "LMTOY>> reading $rc"
     echo "# DATE: `date +%Y-%m-%dT%H:%M:%S.%N`" >> $rc
-    for arg in "$@"; do
-        echo "$arg" >> $rc
-    done
+    cat $rc0 >> $rc
     source ./$rc
+    rm -f $rc0
     newrc=0
 else
+    echo "LMTOY>> newrc=1 $rc"    
     newrc=1
 fi
 
