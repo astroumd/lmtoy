@@ -1,9 +1,11 @@
 #     missing lmtinfo variables that dataverse needs
 # projectID       PIName               projectTitle
 
-
-2023-S1-MX-46     ?                    ?
-2023-S1-US-18     ?                    ?
+2023-S1-MX-44     R.Galvan-Madrid      Establishing the Importance of Magnetic Fields in a Massive Star Cluster in Formation
+2023-S1-MX-46     A.Montana            Identifying Dusty Star-Forming Galaxies in the Early Universe
+2023-S1-UM-10     M.Yun                LMT Study of Planck-selected Luminous Star Forming Galaxies
+2023-S1-US-8      H.Gim                Exploring the evolution of total gas contents with the observations of galaxies within z=0.11-0.17
+2023-S1-US-18     J.Blue.Bird          Total Gas Content at High Redshift with CHILES and LMT
 
 2021-S1-MX-3      S.Sanchez	       edge-survey
 2021-S1-MX-5      Salome	       NGC6946
@@ -37,7 +39,7 @@
 # 2018-S1-MU-8
 # 2018-S1-MU-90
 
-#
+#   any projectId with the string "Commissioning" will be recognized as such
 2014ARSRCommissioning        None  commissioning
 2014AVLBI3mmCommissioning    None  commissioning
 2015ACommissioning    	     None  commissioning
