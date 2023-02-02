@@ -99,6 +99,7 @@ rc=$WORK_LMT/tmp/lmtoy_${obsnum}.$$.rc
 lmtinfo.py $obsnum > $rc
 source $rc
 rm -f $rc
+unset rc
 
 #             ensure again....just in case
 if [ $obsnum = 0 ]; then
