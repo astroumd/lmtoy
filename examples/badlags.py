@@ -1,9 +1,9 @@
 #! /usr/bin/env python
 # 
-# This is the bad channel searcher, formerly called seek_bad_channels.py
+# This is the bad lag searcher, formerly called seek_bad_channels.py
 #
 # It does two things:
-#     - identify lags where the RMS is too high or too low
+#     - identify lags where the RMS in QAC is too high or too low
 #     - @todo: lags that are obviously spiky
 #     - identify Chassic/Board combos that should be flagged alltogether
 #       (the same as badcb= keyword to the pipeline)
@@ -129,7 +129,7 @@ Qshow = True
 # also trying to detect high end edge?
 Qedge = True
 
-#  filenames
+#  filenames   # @todo   should contain the $obsnum
 badlags = "rsr.badlags"
 lagsplot = 'badlags.png'
 
