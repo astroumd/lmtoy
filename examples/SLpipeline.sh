@@ -188,8 +188,8 @@ elif [ $instrument = "RSR" ]; then
     fi
     sleep $sleep
     if [ $obsnums = 0 ]; then
-	echo "LMTOY>> rsr_pipeline.sh pdir=$pdir $*"
-	$time         rsr_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	echo "LMTOY>> rsr_pipeline.sh pdir=$pdir first=$first $*"
+	$time         rsr_pipeline.sh pdir=$pdir first=$first $*     > $pdir/lmtoy_$obsnum.log 2>&1
     else
 	obsnum=${on0}_${on1}
 	cd $work
