@@ -19,6 +19,7 @@
 -p PATH                       Data path to data_lmt for the raw RedshiftChassis files.
                               By default $DATA_LMT will be used else '/data_lmt'.
 
+--version                     show the version
 -h --help                     show this help
 
 
@@ -40,8 +41,8 @@ The format of this blanking file is currently as follows (subject to change):
        30001-30100  2    {4: [(95.,111.)]}   {5: [(95.,111.)]}
 
 A badlags file can be optionally passed in. It will be a file where the first 3 columns
-are tuples of Chassis,Board,Channel that is deemed a bad channel.
-badlags.py is a program that can create it.
+are tuples of Chassis,Board,LagChannel that is deemed a bad lag-channel.
+badlags.py is a program that can create a badlags file.
 
 
 
@@ -63,11 +64,11 @@ from dreampy3.redshift.utils.fileutils import make_generic_filename
 from blanking import blanking
 
 
-script_version ="0.2.1"
+script_version ="0.2.2"
 
 
 def main(argv):
-    av = docopt(__doc__,options_first=True, version='0.1')
+    av = docopt(__doc__,options_first=True, version='0.2')
     print(av)
 
     # -b
