@@ -1,19 +1,27 @@
 #! /usr/bin/env python
 #
 #    inspect and plot the chassis and band (C/B) based Tsys (or with -t the Spectrum)
-#
-#    Usage:
-#    rsr_tsys.py [-s] [-z] [-t] obsnum
-#
-#    -s     don't show, just create the png
-#    -z     use "svg" extension
-#    -t     show spectrum instead of tsys
-#    -b     use this badlags file
+
+"""Usage: rsr_tsys.py [options] OBSNUM
+
+Options:
+  -s                      Don't show interactive plot, save plotfile instead.
+  -b --badlags BADLAGS    Use this badlags file. Optional.
+  -t                      Show spectrum instead of tsys
+  -r --rms RMS            Use this RMS (in K) for Tsys jitter to determine a BADCB [Default: 25.0]
+  -h --help               This help
+  --version               The script version
+
+The saved plotfile has a fixed name, rsr.spectra.png (or rsr.spectra.svg)
+
+"""
+_version = "2-feb-2023"
+
 
 import sys
 import numpy as np
+from docopt import docopt
 import matplotlib.pyplot as plt
-
 
 from dreampy3.redshift.utils.fileutils import make_generic_filename
 from dreampy3.redshift.netcdf import RedshiftNetCDFFile
@@ -23,30 +31,23 @@ from dreampy3.redshift.plots import RedshiftPlot
 #                    command line options
 Qshow    = True
 Qspec    = False
-Qbadlags = False
 ext      = 'png'
-nopt     = 0
 #                    trigger "badcb" on the RMS in the adjacent-channel differences ("jitter")
-rms_min  = 25.0
 
-for f in sys.argv[1:]:
-    if f == '-s':
-        Qshow = False
-        continue
-    if f == '-z':
-        ext = 'svg'
-        continue
-    if f == '-t':
-        Qspec = True
-        continue
-    if f == '-b':
-        Qbadlags = True
-        continue
-    nopt = nopt + 1
-    obsnum = int(f)
 
-if nopt==0:
-    sys.exit(0)
+
+av = docopt(__doc__,options_first=True, version='rsr_spectra.py %s' % _version)
+print(av)
+
+
+if av['-s']:
+    Qshow = False
+if av['-t']:
+    Qspec = True
+badlags = av['--badlags']
+rms_min  = float(av['--rms'])
+obsnum = int(av['OBSNUM'])
+
 
 if Qspec:
     base  = 'rsr.spectrum'
@@ -54,9 +55,9 @@ else:
     base  = 'rsr.tsys'
 
 
-if Qbadlags:
+if badlags != None:
     import dreampy3
-    dreampy3.badlags('rsr.badlags')
+    dreampy3.badlags(badlags)
   
 plt.figure()
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
