@@ -166,7 +166,7 @@ echo "</tbody></table>"
 
 echo "<div class='row'>"
 echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra.png'><img src='rsr.spectra.png' width='90%'></a><figcaption>The rsr_driver (blue) and rsr_sum (orange) spectra combined in a single plot</figcaption></figure></div>"
-echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra_co.png'><img src='rsr.spectra_co.png' width='90%'></a><figcaption>Zoomed in version of combined spectral plot [rsr_driver (blue), rsr_sum (orange)].</figcaption></figure></div>"
+echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra_zoom.png'><img src='rsr.spectra_zoom.png' width='90%'></a><figcaption>Zoomed in version of combined spectral plot [rsr_driver (blue), rsr_sum (orange)].</figcaption></figure></div>"
 echo "</div><!-- row -->"
 echo "<ul class='list-group list-group-flush'> "
 echo "<li class='list-group-item'> <a href='rsr_sum.log'>rsr_sum log file</a></li>"
