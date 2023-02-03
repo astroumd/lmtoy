@@ -93,7 +93,7 @@ function lmtoy_rsr1 {
     #  1. run rsr_driver to get a "first" spectrum, with whatever badlags are in dreampyrc
     #  2. get Tsys0, which also gives some badcb0= (which we ignore)
     #  3. run badlags, this also gives some badcb1=
-    #  4. try rsr_driver, just to apply these badlags
+    #  4. try rsr_driver again, just to apply these badlags
     #  5. get Tsys1, now done with the badlags. these also give a badcb2=, which we could use
     #  6. final rsr_driver, using badlags and badcb1,badcb2
     #  7. final rsr_sum,    using badlags and badcb1,badcb2
@@ -120,21 +120,15 @@ function lmtoy_rsr1 {
     # Before july-2022 we reset with empty badlags entry in dreampy config with no bad lags
     # in order to be able to run serially with reproduceable results.
     # Now we make the dreampy config file read-only so we can run in parallel
-    # as well as process old data
+    # as well as process old data. Thus we want all 'bad_lagsC' in dreampyrc to be ""
     if [[ $first == 1 ]]; then
 	# 1.
-	_old_serial=0
-	if [[ $_old_serial == 0 ]]; then
-	    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t                         > rsr_driver0.log 2>&1
-        else
-	    # old code - should be deprecated
-	    echo '# empty badlags' > rsr.badlags
-	    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t --badlags rsr.badlags   > rsr_driver0.log 2>&1
-	fi
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t                         > rsr_driver0.log 2>&1
 	mv rsr.driver.png rsr.driver0.png
 	# 2.
 	python $LMTOY/examples/rsr_tsys.py -s $obsnum            > rsr_tsys0.log  2>&1
 	mv rsr.tsys.png rsr.tsys0.png
+	# we ignore any 'BADCB0' in here
     fi
 
     # FIRST get the badlags - this is a file that can be edited by the user in later re-runs
@@ -144,10 +138,9 @@ function lmtoy_rsr1 {
 	#     only for a single obsnum run
 	# 3.  produces rsr.badlags (currently)
 	python $LMTOY/examples/badlags.py -d -s $obsnum       > rsr_badlags.log 2>&1
-	#  -b bc_threshold
-	#  -p plotmax
 	mv badlags.png badlags.$obsnum.png
 	mv rsr.badlags $badlags
+	# this gives 'BADCB1'
 	
 	# 4.
 	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo $t --badlags $badlags   > rsr_driver1.log 2>&1	
@@ -155,19 +148,20 @@ function lmtoy_rsr1 {
 
 	# Tsys plot:  rsr.tsys.png  - only done for single obsnum - also lists BADCB's
 	#             rsr.spectrum.png - another way to view each chassis spectrum
-	#             -b will use fixed name 'rsr.badlags' for badlags
+	#             Only make this plot for single obsnum's
 	if [[ -z "$obsnums" ]]; then
 	    # 5.
-	    python $LMTOY/examples/rsr_tsys.py -b $badlags    -s $obsnum         > rsr_tsys1.log 2>&1
-	    python $LMTOY/examples/rsr_tsys.py -b $badlags -t -s $obsnum         > rsr_tsys2.log 2>&1
+	    python $LMTOY/examples/rsr_tsys.py -b $badlags    -s $obsnum         > rsr_tsys2.log 2>&1
+	    python $LMTOY/examples/rsr_tsys.py -b $badlags -t -s $obsnum         > rsr_tsys1.log 2>&1
 	    grep CB rsr_tsys0.log  > tab0
-	    grep CB rsr_tsys1.log  > tab1
+	    grep CB rsr_tsys2.log  > tab2
 	    paste tab0 tab1 | awk '{print $0," ratio:",$11/$5}'  > rsr_tsys_badcb.log
-	    rm -f tab0 tab1
+	    rm -f tab0 tab2
+	    # this Tsys2.log gave 'BADCB2' - and comparing CB0 with CB2 in rsr_tsys_badcb.log
 	fi	
 
-	# this step could be debatable
-	grep '^#BADCB' rsr_tsys1.log >> $badlags
+	# this step could be debatable, combining BADCB2 with BADCB1
+	grep '^#BADCB' rsr_tsys2.log >> $badlags
 	rsr_badcb -r $badlags >> $rfile 
 	rsr_badcb -b $badlags >> $blanking
 	echo "PJT1 obsnum=$obsnum obsnums=$obsnums"	
