@@ -55,7 +55,7 @@ echo "      comments"
 echo "    </th>"
 echo "  </tr>"
 
-echo "obsnum,date,source,inttime,tau,rms"   > $csv
+echo "obsnum,date,source,inttime,tau,rms,rms0"   > $csv
 
 
 n=0
@@ -73,14 +73,16 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
 	rms=$(grep QAC_STATS $log | txtpar - '1000*0.5*(%1+%2)'          p0=3,4 p1=4,4)  # straight spectrum
 	#rms0=$(nemoinp "1.291*1000*100/sqrt(4*31250000*$inttime)")
 	rms0=$(nemoinp "1000*100/sqrt(31250000*$inttime)")
-	rms0="$(nemoinp $rms/$rms0) /100K"
+	rms0r="$(nemoinp $rms/$rms0) /100K"
     elif [ $instrument == "SEQ" ] && [ $obspgm == "Bs" ]; then
 	rms=$(grep QAC_STATS $log | txtpar - "%1" p0=1,4)
 	rms0=TBD
+	rms0r=TBD
     else
 	# SEQ and other mapping instruments
 	rms=$(grep QAC_STATS $log | txtpar - "%1*1000" p0=-cent,1,4)
 	rms0=$(grep QAC_STATS $log | txtpar - p0=radiometer,1,3)
+	rms0r=$rms0
     fi
     n=$(expr $n + 1)
     if [ -e comments.txt ]; then
@@ -90,7 +92,7 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     else
 	comments=""
     fi
-    echo "$obsnum,$date_obs,$src,$inttime,$tau,$rms" >> $csv
+    echo "$obsnum,$date_obs,$src,$inttime,$tau,$rms,$rms0" >> $csv
   
     echo '  <tr class="item">'
     echo "    <td>"
@@ -118,7 +120,7 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     echo "      $rms"
     echo "    </td>"
     echo "    <td>"
-    echo "      $rms0"
+    echo "      $rms0r"
     echo "    </td>"
     echo "    <td>"
     if [ -e ${o}/${src}_${o}.nf.admit/x.csm.png ]; then
