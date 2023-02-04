@@ -3,21 +3,36 @@
 #  find which source/obsnum combinations are in an LMT project
 #
 
-pid=$1
 
-if [ -z "$pid" ]; then
-    echo "Usage: $0 ProjectId"
+if [ -z "$1" ]; then
+    echo "Usage: $0 [-l] ProjectId"
     echo "   Makes a list of obsnums, sorted per source, for a given ProjectId"
+    echo "   -l    report LineCheck instead of Science intent. Useful for RSR only"
+    echo "   -p    report Pointing instead of Science intent."
     exit 0
 fi
+
+intent="Science"
+if [ "$1" == "-l" ]; then
+    intent="LineCheck"
+    shift
+fi
+
+if [ "$1" == "-p" ]; then
+    intent="Pointing"
+    shift
+fi
+
+pid=$1
+
 
 log=$WORK_LMT/tmp/$pid.obsnums.log
 g=1
 
-grep $pid $DATA_LMT/data_lmt.log | grep Science | tabcols - 6,2,7  > $log
+grep $pid $DATA_LMT/data_lmt.log | grep $intent | tabcols - 6,2,7  > $log
 
 for pid in $(tabcols $log 3 | sort | uniq); do
-    echo "# $pid"
+    echo "# $pid - $intent"
 done
 
 echo ""
