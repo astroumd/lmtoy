@@ -21,7 +21,7 @@ for src in $(tabcols $log 1 | sort | uniq); do
 	grep -w $src $log | tabcols - 2 | sort
     else
 	echo "on[\"$src\"] = "
-	for o in $(grep -w $src $log | tabcols - 2 | sort); do
+	for o in $(grep -w $src $log | tabcols - 2 | sort -n); do
 	    printf "%d," $o
 	done
     fi
