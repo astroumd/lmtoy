@@ -12,9 +12,16 @@ if [ -z "$pid" ]; then
 fi
 
 log=$WORK_LMT/tmp/$pid.obsnums.log
-g=0
+g=1
 
-grep $pid $DATA_LMT/data_lmt.log | grep Science | tabcols - 6,2  > $log
+grep $pid $DATA_LMT/data_lmt.log | grep Science | tabcols - 6,2,7  > $log
+
+for pid in $(tabcols $log 3 | sort | uniq); do
+    echo "# $pid"
+done
+
+echo ""
+    
 for src in $(tabcols $log 1 | sort | uniq); do
     if [ $g == 0 ]; then 
 	echo $src
@@ -27,3 +34,15 @@ for src in $(tabcols $log 1 | sort | uniq); do
     fi
 done
 
+echo ""
+echo ""
+
+for src in $(tabcols $log 1 | sort | uniq); do
+    echo "pars1[\"$src\"] = \"\""
+done
+
+echo ""
+
+for src in $(tabcols $log 1 | sort | uniq); do
+    echo "pars2[\"$src\"] = \"\""
+done
