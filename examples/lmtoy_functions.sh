@@ -137,7 +137,7 @@ function lmtoy_rsr1 {
     if [[ ! -e $badlags ]]; then
 	#     only for a single obsnum run
 	# 3.  produces rsr.badlags (currently)
-	echo "LMTOY>>" python $LMTOY/examples/badlags.py -d -s $obsnum"
+	echo "LMTOY>> python $LMTOY/examples/badlags.py -d -s $obsnum"
 	python $LMTOY/examples/badlags.py -d -s $obsnum       > rsr_badlags.log 2>&1
 	mv badlags.png badlags.$obsnum.png
 	mv rsr.badlags $badlags
