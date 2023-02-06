@@ -16,15 +16,16 @@ Options:
   -h --help               This help
   --version               The script version
 
-One or more spectra are needed. By default the full spectrum is plotted,
-but using --zoom or --band (RSR only) a section of the spectrum can be
-plotted instead.
-Using --kscale the normally Kelvin scale factor can be used to plot in mK.
+One or more ASCII spectra are needed, with columns 1 and 2 designating the
+frequency (for RSR in GHz) and amplitude (for RSR in Kelvin).
+By default the full spectrum is plotted, but using --zoom or --band (RSR only)
+a section of the spectrum can be plotted instead.
+Using "--kscale 1000" the assumed Kelvin scale factor can be used to plot in mK.
 
 The saved plotfile has a fixed name, rsr.spectra.png (or rsr.spectra.svg)
 
 """
-_version = "1-feb-2023"
+_version = "3-feb-2023"
 
 import sys
 import numpy as np
