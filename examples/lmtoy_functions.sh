@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="2-feb-2023"
+lmtoy_version="6-feb-2023"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -116,17 +116,17 @@ function lmtoy_rsr1 {
 	l=""
     fi
     
-    # FIRST RUN - save initial attempts
+    # FIRST RUN - save initial attempts without badlags applied
     # Before july-2022 we reset with empty badlags entry in dreampy config with no bad lags
     # in order to be able to run serially with reproduceable results.
     # Now we make the dreampy config file read-only so we can run in parallel
     # as well as process old data. Thus we want all 'bad_lagsC' in dreampyrc to be ""
     if [[ $first == 1 ]]; then
 	# 1.
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t                         > rsr_driver0.log 2>&1
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t   > rsr_driver0.log 2>&1
 	mv rsr.driver.png rsr.driver0.png
 	# 2.
-	python $LMTOY/examples/rsr_tsys.py -s $obsnum            > rsr_tsys0.log  2>&1
+	python $LMTOY/examples/rsr_tsys.py -s $obsnum                                       > rsr_tsys0.log   2>&1
 	mv rsr.tsys.png rsr.tsys0.png
 	# we ignore any 'BADCB0' in here
     fi
@@ -137,6 +137,7 @@ function lmtoy_rsr1 {
     if [[ ! -e $badlags ]]; then
 	#     only for a single obsnum run
 	# 3.  produces rsr.badlags (currently)
+	echo "LMTOY>>" python $LMTOY/examples/badlags.py -d -s $obsnum"
 	python $LMTOY/examples/badlags.py -d -s $obsnum       > rsr_badlags.log 2>&1
 	mv badlags.png badlags.$obsnum.png
 	mv rsr.badlags $badlags
