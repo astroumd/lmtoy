@@ -49,7 +49,7 @@ There are more parameters that are currently hard-coded but can be exposed as pa
 
 """
 
-_version = "2-feb-2023"
+_version = "6-feb-2023"
 
 import os
 import sys
@@ -140,8 +140,6 @@ o_list = [int(av['OBSNUM'])]
 #  filenames   
 badlags = av['--badlags']  
 lagsplot = 'badlags.png'
-
-
 
 if Qdebug:
     print(av)
@@ -238,6 +236,9 @@ print('-----------------------')
 ftab = open('rsr.badlags','w')
 ftab.write('# File written by %s - version %s\n' % (sys.argv[0],_version))
 ftab.write('# Bad Channel Thresholds:  RMS < %g or RMS > %g\n'%(bc_lo,bc_hi))
+ftab.write('# Spike trigger: %g\n' % spike_threshold)
+ftab.write('# Min Channel: %d\n' % (min_chan))
+ftab.write('# Edge: %s\n' % Qedge)
 ftab.write('# Note these are chassis/board/channel numbers\n')
 ftab.write('# -----------------------\n')
 ftab.write('#  c  b  ch   scan metric\n')
@@ -251,6 +252,10 @@ colors = pl.rcParams['axes.prop_cycle'].by_key()['color']
 b2b = [0, 2, 1, 3, 5, 4]
 #colors = [c[b2b[0]], c[b2b[1]], c[b2b[2]], c[b2b[3]], c[b2b[4]], c[b2b[5]]]
 
+count_min = 0
+count_max = 0
+count_spike = 0
+
 peaks = []
 for ic in range(nchassis):
     for ib1 in range(nboards):
@@ -263,12 +268,14 @@ for ic in range(nchassis):
                 print(msg)
                 ftab.write("%s\n" % msg)
                 peaks.append((ic,ib,chan))
+                count_max = count_max + 1
                 continue
             if findmin[ic,ib,chan] < bc_lo:
                 msg = '%2d %2d %3d %6d %6.1f    # min'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmin[ic,ib,chan])
                 print(msg)
                 ftab.write("%s\n" % msg)
                 peaks.append((ic,ib,chan))
+                count_min = count_min + 1
                 continue
             if Qspike:   #  and chan > min_chan+1 and chan < nchan-2:
                 if chan==0: continue
@@ -283,13 +290,16 @@ for ic in range(nchassis):
                     if chan > min_chan+1 and chan < nchan-2:
                         comment=''
                         peaks.append((ic,ib,chan))
+                        count_spike = count_spike + 1
                     else:
                         comment='# '
                     msg = '%s%2d %2d %3d %6d %6.1f %6.1f   # %s'%(comment,chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmin[ic,ib,chan],n2/n1,what)
                     print(msg)
                     ftab.write("%s\n" % msg)
                     
-                
+
+# report findins
+print("Found %d min, %d max and %d spike badlags" % (count_min, count_max, count_spike))
 
 if Qdebug:
     for ic in range(nchassis):
