@@ -1,12 +1,12 @@
 #! /bin/bash
 #
-#    an obsnum watcher, which then runs the pipeline
+#    an obsnum watcher, which then runs the SL pipeline
 #    alternatives to look into:    inotify   entr
 
 # trap errors
 #set -e
 
-version="SLpipeline: 10-oct-2022"
+version="SLpipeline: 25-jan-2023"
 
 #--HELP
 
@@ -93,8 +93,13 @@ while [ $sleep -ne 0 ]; do
 	fi
 	echo "Found extra args:   $extra"
 	if [ $dryrun = 0 ]; then
-	    # @todo   ensure the rsync directory exists
+	    # ensure the rsync directory exists and use a symlink on unity
+	    ssh lmtslr_umass_edu@unity mkdir -p work_lmt/$ProjectId
+	    # run pipeline here and copy TAP accross
 	    SLpipeline.sh obsnum=$on2 restart=1 tap=1 rsync=$rsync $extra
+	    # untap the TAP on unity
+	    ssh lmtslr_umass_edu@unity "(cd work_lmt/$ProjectId; ../do_untap *TAP.tar)"
+	    # get the right variables and make a local summary README.html
 	    source $WORK_LMT/*/$on2/lmtoy_${on2}.rc
 	    (cd $WORK_LMT/$ProjectId; mk_summary1.sh > README.html)
 	else
