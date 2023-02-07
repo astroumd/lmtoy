@@ -34,12 +34,13 @@ fi
 
 # catch the single argument batch call first, but pass addition arguments to each pipeline call
 if [ -e "$1" ]; then
-    echo Processing lines from $1 line by line
+    runfile=$1
+    echo Processing lines from $runfile line by line
     shift
     while IFS= read -r line; do
 	echo "LINE: $line $*"
 	sbatch_lmtoy.sh $line $*
-    done < $1
+    done < $runfile
     exit 1
 fi
 
