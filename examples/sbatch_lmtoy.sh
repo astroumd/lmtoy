@@ -13,16 +13,17 @@
 #     srun -n 1 -c 4 --mem=16G -p toltec-cpu --x11 --pty bash
 #
 #  Typical usage:
-#     sbatch_lmtoy.sh SLpipeline.sh obsnum=12345
+#     sbatch_lmtoy.sh SLpipeline.sh obsnum=12345 
 #     sbatch_lmtoy.sh SLpipeline.sh obsnums=12345,12346
-#     sbatch_lmtoy.sh 2021-S1-US-3.run1a
+#     sbatch_lmtoy.sh 2021-S1-US-3.run1a exist=1
+#     sbatch_lmtoy.sh 2021-S1-US-3.run2a 
 #
 #--HELP
 
 # https://unity.rc.umass.edu/docs/#slurm/   IECK, this also stopped working.
 
 #                                        version
-version="9-nov-2022"
+version="6-feb-2023"
 
 if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
     set +x
@@ -31,12 +32,13 @@ if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
 fi
 
 
-# catch the single argument batch call first
+# catch the single argument batch call first, but pass addition arguments to each pipeline call
 if [ -e "$1" ]; then
     echo Processing lines from $1 line by line
+    shift
     while IFS= read -r line; do
-	echo "LINE: $line"
-	sbatch_lmtoy.sh $line
+	echo "LINE: $line $*"
+	sbatch_lmtoy.sh $line $*
     done < $1
     exit 1
 fi
