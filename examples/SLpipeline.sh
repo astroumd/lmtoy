@@ -8,7 +8,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 20-jan-2023"
+version="SLpipeline: 6-feb-2023"
 
 echo ""
 echo "LMTOY>> $version"
@@ -22,7 +22,8 @@ obsnums=0                      #    obsnums= for combinations of existing obsnum
 path=${DATA_LMT:-data_lmt}
 work=${WORK_LMT:-.}
 debug=0
-restart=0
+restart=0       # if set, force a fresh restart by deleting old obsnum pipeline
+exist=0         # if set, and the obsnum exists, skip running pipeline 
 tap=0           # save the TAP in a tar file?
 srdp=0          # save the SRDP in a tar file?
 raw=0           # save the RAW data in a tar file?
@@ -33,7 +34,7 @@ nproc=1
 rsync=""
 rc=""           # global rc file
 oid=""          # experimental
-goal=Science    # Science, or override with: Pointing Focus
+goal=Science    # Science, or override with: Pointing,Focus
 
 #  Optional instrument specific pipeline can be added as well but are not known here
 #    To Unity:  rsync=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s
@@ -119,6 +120,11 @@ if [ $obsnums = 0 ]; then
 else
     pdir=$pidir/${on0}_${on1}
 fi
+if [ $exist == 1 ] && [ -d $pidir ]; then
+    echo Skipping work for $pidir, it already exists
+    exit 0
+fi
+
 if [ "$oid" != "" ]; then
     pdir=${pdir}_${oid}
 fi
