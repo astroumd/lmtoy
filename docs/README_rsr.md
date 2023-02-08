@@ -4,18 +4,17 @@ In this directory you can find the following files, with the following name conv
 
        PID      the project id (e.g. 2023-S1-US-3)
        SRC      source name, as provided by the PI.   (no spaces allowed)
-       OBSNUM   observation number - either a single OBSNUM, or if OBSNUM1_OBSNUM2
+       OBSNUM   observation number - either a single OBSNUM, or OBSNUM1_OBSNUM2
                 if a range was used in stacking. OBSNUM is a 5 or 6 digit number.
 
-Version:  31-jan-2023
+Version:  4-feb-2023
 
        lmtoy.rc                    LMTOY system info
        lmtoy_OBSNUM.rc             parameter setting for SLpipeline (cumulative)
        lmtoy_OBSNUM.log            logfile of (latest) pipeline run
        lmtoy_PID.tar.gz            Record of the script generator used by pipeline (if available)
 
-       rsr.OBSNUM.badlags          See also rsr_badlags.log
-       rsr.badlags                 -will be deprecated-
+       rsr.OBSNUM.badlags          badlags
        rsr.OBSNUM.blanking         Used by "blanking/sum" script
        rsr.OBSNUM.rfile		   Used by "driver" script
 
@@ -25,32 +24,33 @@ Version:  31-jan-2023
        rsr.wf.pdf                  Waterfall style plot of different integrations (png versions as well)
        rsr.wf0.pdf                 Waterfall style plot - original version
 
-       rsr.tsys.png
-       rsr.tsys0.png
+       rsr.tsys0.png               Tsys before badlags were applied
+       rsr.tsys.png                Tsys after badlags were applied
 
-       rsr.spectrum.png
-       rsr.spectrum_zoom.png
+       rsr.spectra.png             Comparing the driver and blanking spectrum (full)
+       rsr.spectra_zoom.png        Comparing the driver and blanking spectrum (zoomed on a PI selected section)
 
-       rsr.spectra.png
+       rsr.spectrum.png            Spectrum of 4 chassis, overplotted
 
-       rsr.driver.png
-       rsr.driver0.png       
+       rsr.driver0.png             Driver spectrum, no badlags applied
+       rsr.driver.png              Driver spectrum, with badlags and potentially xlines applies
 
        fit.driverN.{log,png}       N-th peak from tabpeak for driver spectrum
        fit.blankingN.{log,png}     N-th peak from tabpeak for blanking spectrum
 
-       spec1.tab                   driver spectrum, only used for LineCheck
-       spec2.tab                   blanking spectrum, only used for LineCheck
+       spec1.tab                   zoomed driver spectrum, only used for LineCheck (plus their .png version)
+       spec2.tab                   zoomed blanking spectrum, only used for LineCheck (plus their  .png version)
 
-       first.*                     Record of first time run of this file
+       first.*                     Record of first time run of some of these files
 
 
 ## Log files
 
+Other log files not mentioned before:
+
        fit.blankingN.log            Fit of N=1..4 strongest lines in "blanking" spectrum
        fit.driverN.log              Fit of N=1..4 strongest lines in "driver" spectrum
        linecheck.log                Fit of line for "LineCheck"
-       lmtoy_103779.log             pipeline (SLpipeline.sh)
        rsr_badlags.log              badlags.py
        rsr_driver.log               rsr_driver.py
        rsr_driver0.log
@@ -58,8 +58,8 @@ Version:  31-jan-2023
        rsr_peaks.log                rsr_peaks.sh - summary of tabpeak fits (See also fit.*.log)
        rsr_sum.log                  rsr_sum.py
        rsr_tsys.log                 rsr_tsys.py
-       rsr_tsys0.log
-       rsr_tsys2.log
+       rsr_tsys0.log                log from rsr_tsys w/o lags and containing the BADCB0's
+       rsr_tsys2.log                log from rsr_tsys  w/ lags and containing the BADCB2's
        rsr_tsys_badcb.log           record of Tsys jitter before and after badlags applied (plus improvement ratio)
 
 
@@ -125,7 +125,14 @@ If badcb= used, it pre-sets those BADCB'S in the (2) blanking files for later us
 
 5. [5] tsys plot
 
-6. 
+6. badlags plot:   the badcb= list (if present) were C/B's with deemed bad behavior of those lags. Currently we have the following PI parameters:
+
+     bc_threshold = 2.5
+     bc_low = 0.01
+     spike_threshold = 3.0
+     rms_min = 0.01
+     rms_max = 0.2
+     min_chan = 32
 
 
 Note the waterfall plots have completely blanked out bands, but also spectra that look "greyed out". These are
