@@ -6,7 +6,7 @@
 # trap errors
 #set -e
 
-version="SLpipeline: 25-jan-2023"
+version="SLpipeline: 7-feb-2023"
 
 #--HELP
 
@@ -14,6 +14,7 @@ rsync1=teuben@lma.astro.umd.edu:/lma1/lmt/TAP_lmt
 rsync2=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s
 rsync=$rsync2
 dryrun=0
+unity=1
 key=Science
 new=1
 rsr=0
@@ -23,6 +24,7 @@ debug=0
 sleep=60
 
 #--HELP
+
 if [ "$1" == "--help" ] || [ "$1" == "-h" ];then
     set +x
     awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
