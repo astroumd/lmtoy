@@ -23,12 +23,10 @@ if [ "$1" == "-l" ]; then
     intent="LineCheck"
     shift
 fi
-
 if [ "$1" == "-p" ]; then
     intent="Pointing"
     shift
 fi
-
 if [ "$1" == "-h" ]; then
     usage
     exit 0
@@ -40,7 +38,7 @@ dat=$DATA_LMT/data_lmt.log
 log=$WORK_LMT/tmp/$pid.obsnums.log
 g=1
 
-grep $pid $dat | grep $intent | tabcols - 6,2,7  > $log
+grep $pid $dat | grep $intent | grep -v Cal | tabcols - 6,2,7  > $log
 
 echo "# Using $dat"
 for pid in $(tabcols $log 3 | sort | uniq); do
