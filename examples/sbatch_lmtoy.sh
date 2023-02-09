@@ -37,9 +37,12 @@ fi
 if [ -e "$1" ]; then
     runfile=$1
     echo Processing lines from $runfile line by line
+    nl=$(cat $runfile | wc -l)
+    ml=0
     shift
     while IFS= read -r line; do
-	echo "LINE: $line $*"
+	((ml++)
+	echo "LINE ($ml/$nl): $line $*"
 	sbatch_lmtoy.sh $line $*
     done < $runfile
     exit 1
