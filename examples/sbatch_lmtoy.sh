@@ -41,7 +41,7 @@ if [ -e "$1" ]; then
     ml=0
     shift
     while IFS= read -r line; do
-	((ml++)
+	((ml++))
 	echo "LINE ($ml/$nl): $line $*"
 	sbatch_lmtoy.sh $line $*
     done < $runfile
