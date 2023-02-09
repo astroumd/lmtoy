@@ -6,7 +6,7 @@
 # trap errors
 #set -e
 
-version="SLpipeline: 7-feb-2023"
+version="SLpipeline: 9-feb-2023"
 
 #--HELP
 
@@ -74,6 +74,7 @@ nobs=$(cat $run/data_lmt.log | grep $key | wc -l)
     
 echo "OK, $run/data_lmt.log is ready: Found $nobs $key obsnums from $on0 to $on1"
 echo "DATE-OBS's from run $d0 to $d1"
+echo "# $(date +%Y-%m-%dT%H:%M:%S) - new run" >> rsync.log
 
 # looping to find new Science obsnums 
 while [ $sleep -ne 0 ]; do
@@ -99,6 +100,8 @@ while [ $sleep -ne 0 ]; do
 	    ssh lmtslr_umass_edu@unity mkdir -p work_lmt/$ProjectId
 	    # run pipeline here and copy TAP accross
 	    SLpipeline.sh obsnum=$on2 restart=1 tap=1 rsync=$rsync $extra
+	    # local log
+	    echo "$(date +%Y-%m-%dT%H:%M:%S) $on2 $ProjectId" >> rsync.log
 	    # untap the TAP on unity
 	    ssh lmtslr_umass_edu@unity "(cd work_lmt/$ProjectId; ../do_untap *TAP.tar)"
 	    # get the right variables and make a local summary README.html
