@@ -23,7 +23,8 @@
 # https://unity.rc.umass.edu/docs/#slurm/   IECK, this also stopped working.
 
 #                                        version
-version="6-feb-2023"
+version="9-feb-2023"
+sleep=0
 
 if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
     set +x
@@ -83,7 +84,8 @@ if [ $runid == 0 ]; then
     exit 0
 fi
 
-if [ "$(which sbatch)" != "/usr/bin/sbatch" ]; then
+#if [ "$(which sbatch)" != "/usr/bin/sbatch" ]; then
+if [ "$(which sbatch)" == "" ]; then
     echo "$0 version=$version"    
     echo "run=$run"
     echo "ERROR:  No sbatch system here on $(hostname)"
@@ -125,7 +127,7 @@ chmod +x $run
 echo "$run      - use scancel JOBID to kill this one, JOBID is:"
 sbatch $run
 #   report last few
-sleep 2
+sleep $sleep
 ls -ltr $WORK_LMT/sbatch/slurm*.out | tail -6
 squeue -u $USER
 echo "squeue -u $USER"
