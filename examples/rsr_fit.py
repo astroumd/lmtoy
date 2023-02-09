@@ -12,9 +12,11 @@ Options:
    -b --base X0,X1,X2,X3    Sections of spectrum to use for baseline fitten. Optional.
    -s --smooth SMOOTH       Smoothing kernel. [Default: 0]
    -i                       No interactive mode, just save a plot. Optional
+   -d --debug               More debug output. 
    --scale SCALE            Scale factor for intensity. [Default: 1.0]
    --wave                   Assume input spectrum is in wavelength units. Not implemented.
    --fit                    Attempt a fit between X1 and X2
+   --nemo                   Pass to NEMO's tabnllsqfit to fit a gauss between X1 and X2
    -h --help                This help.
    --version                Version of script.
 
@@ -33,6 +35,7 @@ A fit is attempted to the peak between X1 and X2, though this is not implemented
 
 _version = "9-feb-2023"
 
+import os
 import sys
 import numpy as np
 from docopt import docopt
@@ -46,10 +49,13 @@ save_plot = 'rsr_fit.png'
 # -- fancy command line parsing
 
 av = docopt(__doc__,options_first=True, version='rsr_fit.py %s' % _version)
-print(av)
 
+Qdebug  = av['--debug']
+if Qdebug:
+    print(av)
 tab = av['SPECTRUM']
 Qsaveplot = av['-i']
+Qnemo = av['--nemo']
 do_smooth = int(av['--smooth'])
 p_order = int(av['--order'])
 yscale = float(av['--scale'])
@@ -177,6 +183,12 @@ if do_smooth > 0:
 
 if p_order >= 0:
     (p2,t2,r2) = fit_poly(v2,zz,p_order,bl)
+
+if Qnemo:
+    # note that this has not subtracted the baseline fit !!
+    cmd = "tabnllsqfit %s fit=gauss1d xrange=%g:%g" % (tab,bl[0][1],bl[1][0])
+    print("NEMO: ",cmd)
+    os.system(cmd)
 
 plt.figure()
 
