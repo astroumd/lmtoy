@@ -46,6 +46,8 @@ for pid in $(tabcols $log 3 | sort | uniq); do
 done
 
 echo ""
+echo "project=\"$pid\""
+echo ""
 echo "on = {}"
     
 for src in $(tabcols $log 1 | sort | uniq); do
