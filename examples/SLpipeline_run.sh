@@ -6,7 +6,7 @@
 # trap errors
 #set -e
 
-version="SLpipeline: 9-feb-2023"
+version="SLpipeline: 10-feb-2023"
 
 #--HELP
 
@@ -87,8 +87,9 @@ while [ $sleep -ne 0 ]; do
     on2=$(grep $key $run/data_lmt.lag | tail -1 | awk '{print $2}')
     echo "$on2"
     if [ $on1 != $on2 ]; then
+	pid=$(grep $key $run/data_lmt.lag | tail -1 | awk '{print $7}')
 	tail -1 $run/data_lmt.lag
-	printf_red Found new obsnum=$on2
+	printf_red Found new obsnum=$on2 pid=$pid
 	if [ -e SLpipeline.in ]; then
 	    extra=$(grep -v ^# SLpipeline.in)
 	else
@@ -97,16 +98,14 @@ while [ $sleep -ne 0 ]; do
 	echo "Found extra args:   $extra"
 	if [ $dryrun = 0 ]; then
 	    # ensure the rsync directory exists and use a symlink on unity
-	    ssh lmtslr_umass_edu@unity mkdir -p work_lmt/$ProjectId
+	    ssh lmtslr_umass_edu@unity mkdir -p work_lmt/$pid
 	    # run pipeline here and copy TAP accross
 	    SLpipeline.sh obsnum=$on2 restart=1 tap=1 rsync=$rsync $extra
 	    # local log
-	    echo "$(date +%Y-%m-%dT%H:%M:%S) $on2 $ProjectId" >> rsync.log
+	    echo "$(date +%Y-%m-%dT%H:%M:%S) $on2 $pid" >> rsync.log
 	    # untap the TAP on unity
-	    ssh lmtslr_umass_edu@unity "(cd work_lmt/$ProjectId; ../do_untap *TAP.tar)"
-	    # get the right variables and make a local summary README.html
-	    source $WORK_LMT/*/$on2/lmtoy_${on2}.rc
-	    (cd $WORK_LMT/$ProjectId; mk_summary1.sh > README.html)
+	    ssh lmtslr_umass_edu@unity "(cd work_lmt/$pid; ../do_untap *TAP.tar)"
+	    (cd $WORK_LMT/$pid; mk_summary1.sh > README.html)
 	else
 	    echo SLpipeline.sh obsnum=$on2 restart=1 rsync=$rsync $extra
 	fi
