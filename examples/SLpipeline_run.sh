@@ -40,13 +40,8 @@ for arg in "$@"; do
   export "$arg"
 done
 
-function printf_red {
-    # could also use the tput command?
-    RED='\033[0;31m'
-    NC='\033[0m' # No Color
-    echo -e "${RED}$*${NC}"
-}
-# source lmtoy_functions.sh - not needed (yet)
+#             useful functions
+source lmtoy_functions.sh
 
 #             put in bash debug mode
 if [ $debug = 1 ]; then
@@ -55,10 +50,13 @@ fi
 
 run=$work/SLpipeline.d
 
+printf_red "This is SLpipeline_run version $version in $run"
+
 if [ ! -d $run ]; then
-    echo Directory $run does not exist
+    echo "Directory $run does not exist"
     exit 0
 fi
+cd $run
 
 #  force a new run
 if [ $new = 1 ]; then
