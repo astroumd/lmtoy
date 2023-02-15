@@ -13,6 +13,23 @@ usage() {
     echo "   -h    this help"
 }
 
+mk_header() {
+    echo 'import os'
+    echo 'import sys'
+    echo 'try:'
+    echo '    lmtoy = os.environ["LMTOY"]'
+    echo '    sys.path.append(lmtoy)'
+    echo '    from lmtoy import runs'
+    echo 'except:'
+    echo '    print("No LMTOY with runs.py")'
+    echo '    sys.exit(0)'
+}
+
+mk_trailer() {
+    echo 'if __name__ == "__main__":'
+    echo '    runs.mk_runs(project, on, pars1, pars2)'
+}
+
 if [ -z "$1" ]; then
     usage
     exit 0
@@ -45,6 +62,9 @@ for pid in $(tabcols $log 3 | sort | uniq); do
     echo "# $pid - $intent"
 done
 
+
+
+mk_header
 echo ""
 echo "project=\"$pid\""
 echo ""
@@ -56,7 +76,7 @@ for src in $(tabcols $log 1 | sort | uniq); do
 	grep -w $src $log | tabcols - 2 | sort
     else
 	echo ""
-	echo "on[\"$src\"] = "
+	echo "on[\"$src\"] = \\"
 	printf " ["
 	for o in $(grep -w $src $log | tabcols - 2 | sort -n); do
 	    printf " %d," $o
@@ -80,3 +100,4 @@ echo ""
 for src in $(tabcols $log 1 | sort | uniq); do
     echo "pars2[\"$src\"] = \"\""
 done
+mk_trailer
