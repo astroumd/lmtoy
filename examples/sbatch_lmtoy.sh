@@ -23,8 +23,8 @@
 # https://unity.rc.umass.edu/docs/#slurm/   IECK, this also stopped working.
 
 #                                        version
-version="9-feb-2023"
-sleep=0
+version="14-feb-2023"
+sleep=1
 
 if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
     set +x
