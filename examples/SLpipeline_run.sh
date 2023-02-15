@@ -6,7 +6,7 @@
 # trap errors
 #set -e
 
-version="SLpipeline: 14-feb-2023"
+version="SLpipeline: 15-feb-2023"
 
 #--HELP
 
@@ -18,6 +18,7 @@ unity=1                         # not used yet
 key="(Science|LineCheck)"       # Science or LineCheck or ???
 new=1                           # force a new run
 rsr=0                           # not used yet
+lmtinfo=1                       # sync local with the official one in $DATA_LMT
 data=${DATA_LMT:-data_lmt}      # don't change
 work=${WORK_LMT:-.}             # don't change
 debug=0                         # lots extra output
@@ -77,7 +78,7 @@ nobs=$(cat $run/data_lmt.log | egrep $key | wc -l)
     
 echo "OK, $run/data_lmt.log is ready: Found $nobs $key obsnums from $on0 to $on1"
 echo "DATE-OBS's from run $d0 to $d1"
-echo "# $(date +%Y-%m-%dT%H:%M:%S) - new run" >> rsync.log
+echo "# $(date +%Y-%m-%dT%H:%M:%S) - new run w/ $version" >> rsync.log
 
 # looping to find new Science obsnums 
 while [ $sleep -ne 0 ]; do
@@ -113,6 +114,9 @@ while [ $sleep -ne 0 ]; do
 	    echo SLpipeline.sh obsnum=$on2 restart=1 rsync=$rsync $extra
 	fi
 	cp $run/data_lmt.lag $run/data_lmt.log
+	if [ $lmtinfo == 1 ]; then
+	    cp $run/data_lmt.log $data
+	fi
 	on1=$on2
     fi
     sleep $sleep
