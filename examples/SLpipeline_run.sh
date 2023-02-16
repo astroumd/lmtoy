@@ -87,6 +87,9 @@ while [ $sleep -ne 0 ]; do
     echo -n "checking "
     lmtinfo.py $data | grep ^2 | grep -v failed | sort > $run/data_lmt.lag
     echo ""
+    if [ $lmtinfo == 1 ]; then
+	cp $run/data_lmt.lag $data/data_lmt.log
+    fi
     tail -3 $run/data_lmt.lag
     on2=$(egrep $key $run/data_lmt.lag | tail -1 | awk '{print $2}')
     echo "$on2"
@@ -114,9 +117,6 @@ while [ $sleep -ne 0 ]; do
 	    echo SLpipeline.sh obsnum=$on2 restart=1 rsync=$rsync $extra
 	fi
 	cp $run/data_lmt.lag $run/data_lmt.log
-	if [ $lmtinfo == 1 ]; then
-	    cp $run/data_lmt.log $data
-	fi
 	on1=$on2
     fi
     sleep $sleep
