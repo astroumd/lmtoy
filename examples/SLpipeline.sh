@@ -8,7 +8,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 6-feb-2023"
+version="SLpipeline: 15-feb-2023"
 
 echo ""
 echo "LMTOY>> $version"
@@ -110,7 +110,7 @@ fi
 
 #             cannot handle Cal observations here
 if [ "$obspgm" = "Cal" ]; then
-    echo "Cannot process a 'Cal' obsnum, pick a better obsnum"
+    echo "Cannot process a 'Cal' obsnum=$obsnum"
     exit 1
 fi
 
@@ -263,6 +263,8 @@ else
     lmtoy_report
     exit 0
 fi
+# record the processing time
+echo "date=\"$(date +%Y-%m-%dT%H:%M:%S)\"" >> $pdir/lmtoy_$obsnum.rc
 
 # make a metadata yaml file for later ingestion into DataVerse
 echo "LMTOY>> make metadata for DataVerse"
