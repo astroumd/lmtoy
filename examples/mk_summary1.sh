@@ -5,13 +5,22 @@
 #
 #  Typical usage:
 #        mk_summary1.sh > README.html
+#        mk_summary1.sh NGC5376  > README_NGC5376.html
 #  After this, make a symlink from index.html to README.html if you enforce noindex.
 #  On unity we do this, on malt and lma we don't, since developers like to see everything
+#  For manual work, we also support making source based README_$src.html files, in case
+#  there are multiple
 
 #set -e
 #set -x
 
-csv=summary.csv
+if [ -z "$1" ]; then
+    src0=""
+    csv=summary.csv
+else
+    src0=$1
+    csv=summary_${src0}.csv
+fi
 pid=$(pwd | awk -F/ '{print $NF}')
 
 echo "<html>"
@@ -69,6 +78,10 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     rc=$o/lmtoy_*$o.rc
     log=$o/lmtoy_*$o.log
     source $rc
+    if [ ! -z "$src0" ] && [ "$src" != "$src0" ]; then
+	continue
+    fi
+	
     date_obs=$(grep date_obs $rc | awk -F= '{print $2}')
     date=$(grep date= $rc | tail -1 | awk -F= '{print $2}')
     if [ $instrument == "RSR" ]; then
