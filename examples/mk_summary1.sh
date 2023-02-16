@@ -27,6 +27,9 @@ echo "    <th>"
 echo "      ObservingDate"
 echo "    </th>"
 echo "    <th>"
+echo "      ReductionDate"
+echo "    </th>"
+echo "    <th>"
 echo "      ObsNum"
 echo "    </th>"
 echo "    <th>"
@@ -67,6 +70,7 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     log=$o/lmtoy_*$o.log
     source $rc
     date_obs=$(grep date_obs $rc | awk -F= '{print $2}')
+    date=$(grep date= $rc | tail -1 | awk -F= '{print $2}')
     if [ $instrument == "RSR" ]; then
 	# RSR - use average of driver and blanking RMS
 	#rms=$(grep QAC_STATS $log | txtpar - '1000*0.5*(%1+%2)/sqrt(2)' p0=1,4 p1=2,4)  # trend spectrum
@@ -100,6 +104,9 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     echo "    </td>"
     echo "    <td>"
     echo "      $date_obs"
+    echo "    </td>"
+    echo "    <td>"
+    echo "      $date"
     echo "    </td>"
     echo "    <td>"
     echo "      <A HREF=$obsnum/README.html> $obsnum</A>"
