@@ -10,7 +10,7 @@
 #
 #  Example:   rsr_combine.sh obsnums=33551,71610,92068 
 
-version="rsr_combine: 10-oct-2022"
+version="rsr_combine: 1-feb-2023"
 
 echo "LMTOY>> $version"
 
@@ -27,7 +27,7 @@ obsnums=0
 pdir=""
 output=""
 #            - procedural
-admit=1
+admit=0
 debug=0
 #            - parameters that directly match the SLR scripts
 #--HELP
@@ -108,6 +108,7 @@ obsnum=${on0}_${on1}
 echo "obsnum=${obsnum}" >> $pdir/lmtoy_${on0}_${on1}.rc
 
 cd $pdir
+rc=lmtoy_${on0}_${on1}.rc
 
 blanking=rsr.${on0}_${on1}.blanking
    rfile=rsr.${on0}_${on1}.rfile

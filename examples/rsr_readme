@@ -2,7 +2,7 @@
 #
 #    creates the README.html file for a standard RSR "TAP"
 #    https://www.lmtobservatory.org/help/user/calculation_rsr   (factor 1.291 is also explained here)
-#    
+#    but see also:   http://lmtgtm.org/wp-content/uploads/2022/09/RSR_v2p0_reduced.pdf  
 #
 
 if [ "x$1" == "x" ]; then
@@ -10,6 +10,10 @@ if [ "x$1" == "x" ]; then
     echo "Usage:   $1  obsnum  src"
     exit 0
 fi
+
+url1="http://lmtgtm.org/telescope/instrumentation/instruments/rsr/"
+url2="https://www.lmtobservatory.org/help/user/calculation_rsr"
+url3="http://lmtgtm.org/wp-content/uploads/2022/09/RSR_v2p0_reduced.pdf"
 
 #            required:   2 arguments
 obsnum=$1
@@ -23,7 +27,8 @@ source=`grep "Source:" $file |awk '{print $NF}'`
 RA=`grep "RA:" $file |awk '{print $NF}'`
 DEC=`grep "DEC:" $file |awk '{print $NF}'`
 itime=`grep "Integration Time:" $file |awk '{printf("%.2f",$(NF-1))}'`
-rms=$(grep Integration $file | awk '{printf("%.3f mK\n",1.291*1000*100/sqrt(3*31000000*$4))}')
+#rms=$(grep Integration $file | awk '{printf("%.3f mK\n",1.291*1000*100/sqrt(4*31000000*$4))}')
+rms=$(grep Integration $file | awk '{printf("%.3f mK\n",1000*100/sqrt(31250000*$4))}')
 tau=`grep "Opacity" $file |awk '{printf $NF}'`
 inobs=`grep "Input Observations:" $file |awk '{print $NF}'`
 reddate=`grep "Date of Reduction" $file |awk '{print $NF}'`
@@ -49,7 +54,7 @@ echo " <tr><th scope='row'>Source</th><td>$source</td></tr>"
 echo " <tr><th scope='row'>RA</th><td>$RA</td></tr>"
 echo " <tr><th scope='row'>DEC</th><td>$DEC</td></tr>"
 echo " <tr><th scope='row'>Input Observations</th><td>$inobs</td></tr>"
-echo " <tr><th scope='row'>Integration Time (s)</th><td>$itime</td></tr>"
+echo " <tr><th scope='row'>Integration Time (s) [driver]</th><td>$itime</td></tr>"
 echo " <tr><th scope='row'>220 GHz Opacity</th><td>$tau</td></tr>"
 echo " <tr><th scope='row'>Date of Reduction</th><td>$reddate</td></tr>"
 echo "</tbody></table>"
@@ -85,11 +90,11 @@ echo "<div class='row'>"
 echo " <div class='col'>"
 echo "  <div class='card'><div class='card-body'>"
 echo "<h4 class='card-title'>Bad Lags</h4>"
-if [ -e badlags.png ]; then
+if [ -e badlags.$obsnum.png ]; then
     echo "<p class='card-text'>The Bad Lags plot shows a time sample based autocorrelation function (ACF) RMS for each channel, board and chassis (i.e., lag consistency)."
     echo "When the RMS is above a clip level (shown as max in the plot), this lag channel will be flagged."
     echo " Boards are color coded by their board number (notice band order is 0,2,1,3,5,4)</p>"
-    echo "<a href='badlags.png'><img class='card-img-top' alt='Bad lags' src='badlags.png'></a>"
+    echo "<a href=badlags.$obsnum.png><img class='card-img-top' alt='Bad lags' src=badlags.$obsnum.png></a>"
     echo "<ul class='list-group list-group-flush'> "
     echo "<li class='list-group-item'> <a href=\"rsr_badlags.log\">Log file of lag flagger</a></li>"
     echo "<li class='list-group-item'> <a href=\"rsr.$obsnum.badlags\">Lag flagging file which can be edited</a></li></ul>"
@@ -106,9 +111,9 @@ echo "</div> <!-- row-->"
 echo "<div class='row'>"
 echo " <div class='col'>"
 echo "  <div class='card'><div class='card-body'>"
-echo "<h4 class='card-title'>Waterfall Plot</h4>"
+echo "<h4 class='card-title'>Waterfall Plot and Spectrum (Author: D. Sanchez)</h4>"
 echo "<p class='card-text'> The Waterfall Plot is a spectrum for each band, chassis and time sample, color coded by their band."
-echo "We keep two versions: <a href='rsr.wf0.pdf'> the original one with minimal flagging </a> and <a href='rsr.wf.pdf'>one that has the latest flags applied</a> after the pipeline has been re-run. This plot is produced by rsr_driver (Author: D. Sanchez)</p>"
+echo "We keep two versions: <a href='rsr.wf0.pdf'> the original one with minimal flagging </a> and <a href='rsr.wf.pdf'>one that has the latest flags applied</a> after the pipeline has been re-run. These plot are produced by rsr_driver</p>"
 
 echo "<div class='row'>"
 echo "<div class='col-md'> <a href='rsr.wf-0.png'><img src='rsr.wf-0.png'></a></div>"
@@ -116,10 +121,15 @@ echo "<div class='col-md'> <a href='rsr.wf-1.png'><img src='rsr.wf-1.png'></a></
 echo "</div><div class='row'>"
 echo "<div class='col-md'> <a href='rsr.wf-2.png'><img src='rsr.wf-2.png'></a></div>"
 echo "<div class='col-md'> <a href='rsr.wf-3.png'><img src='rsr.wf-3.png'></div></a></div>"
+echo "</div>"
+echo "<p class='card-text'> The final spectrum:</p>"
+echo "<div class='row'>"
+echo "<div class='col-md'> <a href='rsr.driver.png'><img src='rsr.driver.png'></div></a></div>"
 echo "</div><!-- row -->"
+
 echo "<ul class='list-group list-group-flush'> "
 echo "<li class='list-group-item'><a href='rsr_driver.log'>rsr_drive log file</a></li>"
-echo "<li class='list-group-item'> <a href=rsr.$obsnum.rfile>rsr_driver $obsnum parameters file (aka rfile)</a></li>"
+echo "<li class='list-group-item'><a href=rsr.$obsnum.rfile>rsr_driver $obsnum parameters file (aka rfile)</a></li>"
 echo "<li class='list-group-item'><a href='rsr.$obsnum.driver.sum.txt'> ASCII table of final bandmerged spectrum</a></li></ul>"
 echo "  </div> <!-- cardbody -->"
 echo "  </div><!-- card -->"
@@ -131,7 +141,6 @@ if [ -e rsr.wf-5.png ]; then
     echo "<div class='row'><div class='col'><p>Skipping remaining plots, see indiviual obsnum pages<p></div></div>"
 fi
 
-
 cat $LMTOY/examples/template.svg.html | sed s/template.svg/rsr.spectra.svg/g > rsr.spectra.svg.html
 rsync -a $LMTOY/etc/resources .
 
@@ -140,8 +149,10 @@ echo "<div class='card'><div class='card-body'>"
 echo "<h4 class='card-title'>Spectrum from rsr_sum: (Author: M.Yun)</h4>"
 echo "<p class='card-text'>The rsr_sum version of the average spectrum has optional blanking and sections to avoid for baseline fitting."
 echo "Below are the spectra from rsr_sum (orange) and rsr_driver (blue). If there is a significant difference between the two, then there is some subtle difference in how the scripts work.</p>"
-echo "<p class='card-text'>Statistics on individual spectra</p><table class='table table-borderless w-auto'><tbody>$qac_stats"
-echo "<tr><td>Expected noise (3C) for Tsys=100K</td><td class='text-start'>rms=$rms </td></tr>"
+echo "<p class='card-text'>Statistics on individual spectra:</p>"
+echo "<table class='table table-borderless w-auto'>"
+echo "<tbody>$qac_stats"
+echo "<tr><td>Expected noise for Tsys=100K</td><td class='text-start'>rms=$rms </td></tr>"
 if [ -e linecheck.log ]; then
     ls1=$(txtpar linecheck.log %5*1000,%1*1000,%2*1000,%3,%4 p0=a=,1,2 p1=b=,1,2 p2=c=,1,2 p3=d=,1,2 p4=rms=,1,2)
     ls2=$(txtpar linecheck.log %5*1000,%1*1000,%2*1000,%3,%4 p0=a=,2,2 p1=b=,2,2 p2=c=,2,2 p3=d=,2,2 p4=rms=,2,2)
@@ -151,17 +162,20 @@ if [ -e linecheck.log ]; then
     echo "<tr><td>LineCheck blanking</td> <td> $fmt2   </td></tr>"
     echo "<tr><td>xlines:</td>            <td> xlines=$xlines </td></tr>"
 fi
-
 echo "</tbody></table>"
+
 echo "<div class='row'>"
 echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra.png'><img src='rsr.spectra.png' width='90%'></a><figcaption>The rsr_driver (blue) and rsr_sum (orange) spectra combined in a single plot</figcaption></figure></div>"
-echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra_co.png'><img src='rsr.spectra_co.png' width='90%'></a><figcaption>Zoomed in version of combined spectral plot [rsr_driver (blue), rsr_sum (orange)].</figcaption></figure></div>"
+echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra_zoom.png'><img src='rsr.spectra_zoom.png' width='90%'></a><figcaption>Zoomed in version of combined spectral plot [rsr_driver (blue), rsr_sum (orange)].</figcaption></figure></div>"
 echo "</div><!-- row -->"
 echo "<ul class='list-group list-group-flush'> "
 echo "<li class='list-group-item'> <a href='rsr_sum.log'>rsr_sum log file</a></li>"
 echo "<li class='list-group-item'><a href='rsr.$obsnum.blanking'>blanking file</a></li>"
 echo "<li class='list-group-item'><a href='rsr.$obsnum.blanking.sum.txt'> ASCII table of final bandmerged spectrum</a></li></ul>"
 echo "<li class='list-group-item'><a href='rsr.spectra.svg.html'>Experimental SVG version of figure.</a> </li></ul>"
+echo "<li class='list-group-item'> <a href='rsr_peaks.log'>rsr_peaks log file</a></li>"
+# create the link, even though it may not exist yet
+echo "<li class='list-group-item'> <a href="../${obsnum}_SRDP.tar">${obsnum}_SRDP.tar</a></li>"
 echo "  </div> <!-- cardbody -->"
 echo "  </div><!-- card -->"
 echo "  </div><!-- col -->"
@@ -187,18 +201,20 @@ echo "</div> <!-- container-->"
 echo "<div class='container'>"
 echo "<hr>"
 echo '<a name="rsrnotes">'
-echo '<h5>Notes on the <a HREF="http://lmtgtm.org/telescope/instrumentation/instruments/rsr/">Redshift Search Receiver (RSR)</a> </h5>'
+echo "<h5>Notes on the <a HREF=\"$url1\">Redshift Search Receiver (RSR)</a> </h5>"
 echo "<ol>"
-echo "<li> 4 chassis represent the two beams and two polarizations; they are normally averaged to increase S/N"
+echo "<li> <A HREF=\"$url3\">Observing on the LMT Redshift Search Receiver</A>"
+echo "</li><li> 4 chassis represent the two beams and two polarizations; they are normally averaged to increase S/N"
 echo "</li><li> 6 boards, which if taken in the order 0,2,1,3,5,4 are the bands sorted by increasing frequency (color coded in our plots)"
-echo "</li><li> each board has 256 channels. For a lag space plot, see lags.png, the waterfall plot is in rsr.wf.pdf"
+echo "</li><li> the first three board are controlled with the first IF, the last three boards with the second IF"
+echo "</li><li> each board has 256 channels. For a lag space plot, see badlags.png, the waterfall plot is in rsr.wf.pdf"
 echo "</li><li> a small number of typically 30sec integrations are in each obsnum"
-echo "</li><li> often multiple obsnums need to be stacked for a full observation. this can cover several days"
+echo "</li><li> often multiple obsnums need to be stacked for a full observation. this can cover several hours or days"
 echo "</li><li> the final spectrum is a single band merged spectrum covering the full 73-111 GHz range, averaged in time and chassis"
 echo "</li><li> Band edges are at 73.0, 79.7, 86.0, 92.1, 98.6, 104.9, 111.0 GHz, with a small overlap between bands."
 echo "</li><li> Board ranges: {0: [(71.72, 79.69)], 1: [(85.41, 93.38)], 2: [(78.02, 85.99)], 3: [(90.62, 98.58)], 4: [(104.31, 112.28)], 5: [(96.92, 104.88)]}"
 echo "</li><li> Channel width is 31.25 MHz or about 100 km/s in the 3mm (W) band"
-echo "</li><li> There is no source doppler tracking, though observations are on a common (helio?)centric frame"
+echo "</li><li> There is no source doppler tracking, observations are on a topocentric frame"
 echo "</li></ol>"
 echo "<hr>"
 echo "Updated: `date`</div><!-- container -->"

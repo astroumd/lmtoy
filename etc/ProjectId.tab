@@ -1,0 +1,73 @@
+#     missing lmtinfo variables that dataverse needs
+# projectID       PIName               projectTitle
+
+2023-S1-MX-44     R.Galvan-Madrid      Establishing the Importance of Magnetic Fields in a Massive Star Cluster in Formation
+2023-S1-MX-46     A.Montana            Identifying Dusty Star-Forming Galaxies in the Early Universe
+2023-S1-MX-47     C.Negrete-Penaloza   Molecular Emission Detection Program for Seyfert Galaxies
+2023-S1-MX-55     A.García-Pérez       Exploring molecular gas content in FRII radio galaxies
+2023-S1-UM-10     M.Yun                LMT Study of Planck-selected Luminous Star Forming Galaxies
+2023-S1-US-8      H.Gim                Exploring the evolution of total gas contents with the observations of galaxies within z=0.11-0.17
+2023-S1-US-18     J.Blue.Bird          Total Gas Content at High Redshift with CHILES and LMT
+
+2021-S1-MX-3      S.Sanchez	       edge-survey
+2021-S1-MX-5      Salome	       NGC6946
+2021-S1-MX-14     A.Gomez.Ruiz	       L1157-B1
+2021-S1-MX-26     Longinotti           PG.../IRAS...  
+2021-S1-MX-34     A.Montana	       NGP*,G12*
+2021-S1-UM-1      M.Heyer	       BKP7323_CO
+2021-S1-UM-3      M.Heyer	       UGCA281
+2021-S1-UM-11     M.Yun		       J*.*
+2021-S1-US-3      I.Yoon	       M100
+2021-S1-US-17     Jiangtao 	       J1557+1540
+2021-S1-US-19     Unknown	       Cyg_X-1	
+
+# older
+2018-S1-MU-8      M.Heyer              M51/NGC628
+2018-S1-MU-45     A.Gomez.Ruiz	       L1157-B1
+2018-S1-MU-46     M.Heyer?             Region_J-K
+2018-S1-MU-64     A.Bolatto?	       Sextans_A
+
+#   
+# 2018-S1-MU-1
+# 2018-S1-MU-25
+# 2018-S1-MU-26
+# 2018-S1-MU-31
+# 2018-S1-MU-57
+# 2018-S1-MU-65
+2018-S1-MU-66     C.Rodriguez          IRAS*
+# 2018-S1-MU-67
+# 2018-S1-MU-78
+# 2018-S1-MU-79
+# 2018-S1-MU-8
+# 2018-S1-MU-90
+
+#   any projectId with the string "Commissioning" will be recognized as such
+2014ARSRCommissioning        None  commissioning
+2014AVLBI3mmCommissioning    None  commissioning
+2015ACommissioning    	     None  commissioning
+2015ARSRCommissioning        None  commissioning
+2016ARSRCommissioning        None  commissioning
+2018ARSRCommissioning        None  commissioning
+2018S1RSRCommissioning       None  commissioning
+2018S1SEQUOIACommissioning   None  commissioning
+2018S1SequoiaCommissioning   None  commissioning
+2018S1VLBI1mmCommissioning   None  commissioning
+2019S1Msip1mmCommissioning   None  commissioning
+2019S1SEQUOIACommissioning   None  commissioning
+2019SEQUOIACommissioning     None  commissioning
+2019VLBI1mmCommissioning     None  commissioning
+2020MSIP1mmCommissioning     None  commissioning
+2020VLBI1mmCommissioning     None  commissioning
+2021S1MSIP1mmCommissioning   None  commissioning
+2021S1RSRCommissioning       None  commissioning
+2021S1SEQUOIACommissioning   None  commissioning
+2022MSIP1mmCommissioning     None  commissioning
+2022S1MSIP1mmCommissioning   None  commissioning
+2022S1OOFCommissioning       None  commissioning
+2022S1RSRCommissioning       None  commissioning
+2022S1SEQUOIACommissioning   None  commissioning
+2022S1VLBI1mmCommissioning   None  commissioning
+2022VLBI1mmCommissioning     None  commissioning
+#
+
+

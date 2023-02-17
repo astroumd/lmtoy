@@ -8,7 +8,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 13-dec-2022"
+version="SLpipeline: 15-feb-2023"
 
 echo ""
 echo "LMTOY>> $version"
@@ -22,7 +22,8 @@ obsnums=0                      #    obsnums= for combinations of existing obsnum
 path=${DATA_LMT:-data_lmt}
 work=${WORK_LMT:-.}
 debug=0
-restart=0
+restart=0       # if set, force a fresh restart by deleting old obsnum pipeline
+exist=0         # if set, and the obsnum exists, skip running pipeline 
 tap=0           # save the TAP in a tar file?
 srdp=0          # save the SRDP in a tar file?
 raw=0           # save the RAW data in a tar file?
@@ -33,7 +34,7 @@ nproc=1
 rsync=""
 rc=""           # global rc file
 oid=""          # experimental
-goal=Science    # Science, or override with: Pointing Focus
+goal=Science    # Science, or override with: Pointing,Focus
 
 #  Optional instrument specific pipeline can be added as well but are not known here
 #    To Unity:  rsync=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s
@@ -73,6 +74,7 @@ fi
 #             put in bash debug mode
 if [ $debug = 1 ]; then
     set -x
+    set -e
     python --version
     which python
 fi
@@ -98,6 +100,7 @@ rc=$WORK_LMT/tmp/lmtoy_${obsnum}.$$.rc
 lmtinfo.py $obsnum > $rc
 source $rc
 rm -f $rc
+unset rc
 
 #             ensure again....just in case
 if [ $obsnum = 0 ]; then
@@ -107,7 +110,7 @@ fi
 
 #             cannot handle Cal observations here
 if [ "$obspgm" = "Cal" ]; then
-    echo "Cannot process a 'Cal' obsnum, pick a better obsnum"
+    echo "Cannot process a 'Cal' obsnum=$obsnum"
     exit 1
 fi
 
@@ -117,6 +120,11 @@ if [ $obsnums = 0 ]; then
 else
     pdir=$pidir/${on0}_${on1}
 fi
+if [ $exist == 1 ] && [ -d $pidir ]; then
+    echo Skipping work for $pidir, it already exists
+    exit 0
+fi
+
 if [ "$oid" != "" ]; then
     pdir=${pdir}_${oid}
 fi
@@ -186,8 +194,8 @@ elif [ $instrument = "RSR" ]; then
     fi
     sleep $sleep
     if [ $obsnums = 0 ]; then
-	echo "LMTOY>> rsr_pipeline.sh pdir=$pdir $*"
-	$time         rsr_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	echo "LMTOY>> rsr_pipeline.sh pdir=$pdir first=$first $*"
+	$time         rsr_pipeline.sh pdir=$pdir first=$first $*     > $pdir/lmtoy_$obsnum.log 2>&1
     else
 	obsnum=${on0}_${on1}
 	cd $work
@@ -255,6 +263,8 @@ else
     lmtoy_report
     exit 0
 fi
+# record the processing time
+echo "date=\"$(date +%Y-%m-%dT%H:%M:%S)\"" >> $pdir/lmtoy_$obsnum.rc
 
 # make a metadata yaml file for later ingestion into DataVerse
 echo "LMTOY>> make metadata for DataVerse"

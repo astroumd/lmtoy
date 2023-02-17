@@ -10,7 +10,7 @@
 #
 #
 
-version="rsr_pipeline: 10-oct-2022"
+version="rsr_pipeline: 1-feb-2023"
 
 echo "LMTOY>> $version"
 
@@ -26,6 +26,15 @@ path=${DATA_LMT:-data_lmt}
 xlines=""     # set to a comma separated list of freq,dfreq pairs where strong lines are
 badboard=""   # set to a comma separated list of bad boards
 badcb=""      # set to a comma separated list of (chassis/board) combinations, badcb=2/3,3/5
+linecheck=0   # set to 1, to use the source name to grab the correct xlines=
+bandzoom=5    # the band for the zoomed window
+speczoom=""   # override bandzoom with a manual speczoom=CEN,WID pair
+rthr=0.01     # -r option for rsr_driver Threshold sigma value when averaging single observations repeats
+cthr=0.01     # -t                       Threshold sigma value when coadding all observations
+sgf=0         # Savitzky-Golay high pass filter ; odd number > 21
+notch=0       # sigma cut for notch filter to eliminate large frecuency oscillations. Needs sgf > 21
+blo=1         # order of polynomial baseline subtraction
+
 #            - procedural
 admit=0
 #            - debug
@@ -45,6 +54,8 @@ done
 
 # 
 source lmtoy_functions.sh
+rc0=$WORK_LMT/tmp/lmtoy_${obsnum}.rc
+show_vars xlines badcb linecheck bandzoom speczoom rthr cthr sgf notch blo > $rc0
 
 #             put in bash debug mode
 if [ $debug = 1 ]; then
@@ -66,12 +77,18 @@ rc=lmtoy_${obsnum}.rc
 if [ -e $rc ] && [ $newrc = 0 ]; then
     echo "LMTOY>> reading $rc"
     echo "# DATE: `date +%Y-%m-%dT%H:%M:%S.%N`" >> $rc
-    for arg in "$@"; do
-        echo "$arg" >> $rc
-    done
+    if [ $first = 1 ]; then
+	cat $rc0 >> $rc
+    else
+	for arg in "$@"; do
+	    echo "$arg" >> $rc
+	done
+    fi
     source ./$rc
+    rm -f $rc0
     newrc=0
 else
+    echo "LMTOY>> newrc=1 $rc"    
     newrc=1
 fi
 
@@ -104,8 +121,8 @@ else
 fi
 
 blanking=rsr.$obsnum.blanking     # for  rsr_sum    - produced by rsr_blanking
-badlags=rsr.$obsnum.badlags       # for  rsr_xxx    - produced by badlags.py
 rfile=rsr.$obsnum.rfile           # for  rsr_driver - produced by rsr_rfile
+badlags=rsr.$obsnum.badlags       # for  rsr_xxx    - produced by badlags.py
 
 if [ $first == 1 ]; then
     # bootstrap  $blanking and $rfile; these are just commented lines w/ examples
@@ -140,7 +157,16 @@ if [ $obsnum != 0 ]; then
 	    echo "$obsnum,$c,$b"               >> $rfile
 	done
     fi
-    # note $badlags is created by badlags.py
+    # note $badlags is created by badlags.py 
+fi
+
+#  grab a "xlines=" from a sourcename based table for linecheck sources
+if [ $linecheck == 1 ]; then
+    if [ -z "$xlines" ]; then
+	xlines=$(grep ^${src} $LMTOY/etc/linecheck.tab | awk '{print $2}' | awk -F= '{print $2}')
+	echo "xlines=$xlines" >> $rc
+    fi
+    echo "linecheck=1 for $src : xlines=$xlines"
 fi
 
 #             redo CLI again

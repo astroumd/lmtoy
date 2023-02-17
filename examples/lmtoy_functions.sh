@@ -1,9 +1,9 @@
 #! /usr/bin/env bash
 #
 #   some functions to share for lmtoy pipeline operations
-#   beware, shell variables are common variables between this and the caller
+#   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="17-jan-2023"
+lmtoy_version="6-feb-2023"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -68,6 +68,14 @@ function printf_green {
     echo -e "${RED}$*${NC}"
 }
 
+function show_vars {
+    # helper function to show value of shell variables using bash dynamic variables
+    for _arg in "$@"; do
+	echo "${_arg}=${!_arg}"
+    done
+    
+}
+
 function qac_select {
     msg=$(grep ^$1 $LMTOY/etc/qac_stats.log | sed s/$1//)
     if [ -z "$msg" ]; then
@@ -85,7 +93,7 @@ function lmtoy_rsr1 {
     #  1. run rsr_driver to get a "first" spectrum, with whatever badlags are in dreampyrc
     #  2. get Tsys0, which also gives some badcb0= (which we ignore)
     #  3. run badlags, this also gives some badcb1=
-    #  4. try rsr_driver, just to apply these badlags
+    #  4. try rsr_driver again, just to apply these badlags
     #  5. get Tsys1, now done with the badlags. these also give a badcb2=, which we could use
     #  6. final rsr_driver, using badlags and badcb1,badcb2
     #  7. final rsr_sum,    using badlags and badcb1,badcb2
@@ -94,69 +102,67 @@ function lmtoy_rsr1 {
     lmtoy_version > lmtoy.rc
 
     # spec1:    output spectrum rsr.$obsnum.driver.txt
-    #       xlines=110.51,0.15,108.65,0.3,85.2,0.4    - example for I10565
+    # 
     spec1="rsr.${obsnum}.driver.sum.txt"
     b="--badlags $badlags"
     r="--rfile $rfile"
     o="-o $spec1"
     w="-w rsr.wf.pdf"
-    t=""
-    t="-r 0.01"
-    blo="1"
+    t="-r $rthr"
+    f=""
     if [ "$xlines" != "" ]; then
 	l="--exclude $(echo $xlines | sed 's/,/ /g')"
     else
 	l=""
     fi
     
-    # deal with a first run -
+    # FIRST RUN - save initial attempts without badlags applied
     # Before july-2022 we reset with empty badlags entry in dreampy config with no bad lags
     # in order to be able to run serially with reproduceable results.
-    # Now we make the dreampy config file read-only so we can run in parallel 
-    _old_serial=0
+    # Now we make the dreampy config file read-only so we can run in parallel
+    # as well as process old data. Thus we want all 'bad_lagsC' in dreampyrc to be ""
     if [[ $first == 1 ]]; then
 	# 1.
-	if [[ $_old_serial == 1 ]]; then
-	    echo '# empty badlags' > rsr.badlags
-	    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t --badlags rsr.badlags   > rsr_driver0.log 2>&1
-        else
-	    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t > rsr_driver0.log 2>&1
-	fi
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t   > rsr_driver0.log 2>&1
+	mv rsr.driver.png rsr.driver0.png
 	# 2.
-	python $LMTOY/examples/rsr_tsys.py -s $obsnum            > rsr_tsys0.log  2>&1
+	python $LMTOY/examples/rsr_tsys.py -s $obsnum                                       > rsr_tsys0.log   2>&1
 	mv rsr.tsys.png rsr.tsys0.png
+	# we ignore any 'BADCB0' in here
     fi
 
     # FIRST get the badlags - this is a file that can be edited by the user in later re-runs
-    # output: rsr.$obsnum.badlags badlags.png
+    # output: $badlags=rsr.$obsnum.badlags and badlags.$obsnum.png
     #         rsr.$obsnum.rfile and rsr.$obsnum.blanking  - can be modified if #BADCB's have been found
     if [[ ! -e $badlags ]]; then
 	#     only for a single obsnum run
-	# 3.
-	python $LMTOY/examples/badlags.py -s $obsnum   > rsr_badlags.log 2>&1
-	#  -b bc_threshold
-	#  -p plotmax
+	# 3.  produces rsr.badlags (currently)
+	echo "LMTOY>> python $LMTOY/examples/badlags.py -d -s $obsnum"
+	python $LMTOY/examples/badlags.py -d -s $obsnum       > rsr_badlags.log 2>&1
+	mv badlags.png badlags.$obsnum.png
+	mv rsr.badlags $badlags
+	# this gives 'BADCB1'
 	
 	# 4.
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo $t --badlags rsr.badlags   > rsr_driver1.log 2>&1	
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo $t --badlags $badlags   > rsr_driver1.log 2>&1	
 
-	# keep the old one (for the bad rsr_tsys.py parser)
-	cp rsr.badlags $badlags
 
 	# Tsys plot:  rsr.tsys.png  - only done for single obsnum - also lists BADCB's
 	#             rsr.spectrum.png - another way to view each chassis spectrum
-	#             -b will use fixed name 'rsr.badlags' for badlags
+	#             Only make this plot for single obsnum's
 	if [[ -z "$obsnums" ]]; then
 	    # 5.
-	    python $LMTOY/examples/rsr_tsys.py -b    -s $obsnum         > rsr_tsys.log  2>&1
-	    python $LMTOY/examples/rsr_tsys.py -b -t -s $obsnum         > rsr_tsys2.log 2>&1
+	    python $LMTOY/examples/rsr_tsys.py -b $badlags    -s $obsnum         > rsr_tsys2.log 2>&1
+	    python $LMTOY/examples/rsr_tsys.py -b $badlags -t -s $obsnum         > rsr_tsys1.log 2>&1
 	    grep CB rsr_tsys0.log  > tab0
-	    grep CB rsr_tsys.log   > tab1
-	    paste tab0 tab1 | awk '{print $0," ratio:",$11/$5}'  > rsr_tsys_badcb.log 
+	    grep CB rsr_tsys2.log  > tab2
+	    paste tab0 tab1 | awk '{print $0," ratio:",$11/$5}'  > rsr_tsys_badcb.log
+	    rm -f tab0 tab2
+	    # this Tsys2.log gave 'BADCB2' - and comparing CB0 with CB2 in rsr_tsys_badcb.log
 	fi	
 
-	# this step could be debatable
-	grep '#BADCB' rsr_tsys.log >> $badlags
+	# this step could be debatable, combining BADCB2 with BADCB1
+	grep '^#BADCB' rsr_tsys2.log >> $badlags
 	rsr_badcb -r $badlags >> $rfile 
 	rsr_badcb -b $badlags >> $blanking
 	echo "PJT1 obsnum=$obsnum obsnums=$obsnums"	
@@ -165,10 +171,11 @@ function lmtoy_rsr1 {
 	echo "PJT2 obsnum=$obsnum obsnums=$obsnums"
     else
 	#  only for a single obsnum run
-	#  @todo initial settings lost
+	rsr_blanking $obsnum   > $blanking
+	rsr_rfile    $obsnum   > $rfile
 	echo "Using existing $badlags - forgetting initial settings"
-	rsr_badcb -r $badlags > $rfile
-	rsr_badcb -b $badlags > $blanking
+	rsr_badcb -b $badlags >> $blanking
+	rsr_badcb -r $badlags >> $rfile
 	echo "PJT3 obsnum=$obsnum obsnums=$obsnums"
     fi
     
@@ -181,8 +188,15 @@ function lmtoy_rsr1 {
     # 6.
     #   note, we're not using all the options for rsr_driver, .e.g
     #   -t, -f, -s, -r, -n
-    echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t"
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t          > rsr_driver.log 2>&1
+    if [ $sgf != 0 ]; then
+	f="-f $sgf -n $notch"
+    fi
+    echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t $f"
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t $f    > rsr_driver.log 2>&1
+    #  grab the total integration time from the driver
+    inttime=$(grep "Integration Time" $spec1 | awk '{print $4}')
+    echo "inttime=$(printf %.1f $inttime) # sec" >> $rc
+
     #  ImageMagick:   this step can fail with some weird security policy error :-(
     #  edit /etc/ImageMagick-*/policy.xml:     rights="read | write" pattern="PDF"
     #  One solution:  copy $LMTOY/etc/policy.xml to ~/.config/ImageMagick/policy.xml
@@ -191,21 +205,28 @@ function lmtoy_rsr1 {
     # 7.
     # spec2: output spectrum rsr.$obsnum.blanking.sum.txt
     spec2=${blanking}.sum.txt
-    echo "LMTOY>>  python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo"
+    echo "LMTOY>> python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo"
     python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo                         > rsr_sum.log 2>&1
 
-    
+    # plot the two in one spectrum, one full range, one in a selected band.
+    # the -g version makes an svg file for an alternative way to zoom in (TBD)
+    if [ -z "$speczoom" ]; then
+	zoom="--band $bandzoom"
+    else
+	zoom="--zoom $speczoom"	
+    fi
+    python $LMTOY/examples/rsr_spectra.py -s     $zoom --title $src $spec1 $spec2
+    mv rsr.spectra.png rsr.spectra_zoom.png
+    python $LMTOY/examples/rsr_spectra.py -s           --title $src $spec1 $spec2
+    python $LMTOY/examples/rsr_spectra.py -s -g        --title $src $spec1 $spec2
 
-    # plot the two in one spectrum, one full range, one the last band, closest to "CO"
-    # the -z version makes an svg file for an alternative way to zoom in (TBD)
-    # @todo a more interactive pan&zoom version ala matplotlib for online use
-    python $LMTOY/examples/rsr_spectra.py -s -co $spec1 $spec2
-    mv rsr.spectra.png rsr.spectra_co.png
-    python $LMTOY/examples/rsr_spectra.py -s     $spec1 $spec2
-    python $LMTOY/examples/rsr_spectra.py -s -z  $spec1 $spec2
-
+    # update the rc file
+    nbadcb=$(grep '^#BADCB' $badlags | wc -l)
+    echo nbadcb=$nbadcb >> $rc
+    badcb=$(grep '^#BADCB' $badlags | awk '{printf("%d/%d ",$3,$4)}')
+    echo badcb=\"$badcb\" >> $rc
     
-    # NEMO summary spectra
+    # NEMO summary spectra, some stats and peak analysis
     if [[ -n "$NEMO" ]]; then
 	echo "LMTOY>> Some NEMO post-processing"
 	dev=$(yapp_query png ps)
@@ -223,6 +244,7 @@ function lmtoy_rsr1 {
 
 	if [ $obsgoal = "LineCheck" ]; then
 	    echo "LMTOY>> LineCheck"
+	    rm -f spec1.tab spec2.tab
 	    #  good for I17208, I12112, I10565
 	    xrange=106:111
 	    echo  "# tabnllsqfit $spec1 fit=gauss1d xrange=$xrange"      > linecheck.log
@@ -239,6 +261,14 @@ function lmtoy_rsr1 {
 		tabplot spec2.tab 1 2,3,4 111-4 111 line=1,1 color=2,3,4 ycoord=0 yapp=spec2.$dev/$dev
 	    fi
 	fi
+
+	# try and fit the 4 strongest peaks
+	peaks=1:4
+	epeak=1
+	echo "LMTOY>> rsr_peaks peaks=$peaks"
+	rsr_peaks.sh in=$spec1 peak=$peaks epeak=$epeak fit=fit.driver   yapp=$dev  > rsr_peaks.log  2>&1
+	rsr_peaks.sh in=$spec2 peak=$peaks epeak=$epeak fit=fit.blanking yapp=$dev >> rsr_peaks.log  2>&1
+
     else
 	echo "LMTOY>> Skipping NEMO post-processing"
     fi
