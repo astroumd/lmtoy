@@ -26,7 +26,7 @@ pid=$(pwd | awk -F/ '{print $NF}')
 echo "<html>"
 echo '<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>'
 
-echo "<B>$pid</B>: <A HREF=$csv>Summary of all obsnum's and combinations:</A> (click on column name to sort by that column)"
+echo "<B>$pid</B>: <A HREF=$csv>Summary of all obsnum's and combinations:</A> (click on column name to sort by that column) Created: $(date)"
 echo '<table border=1 class="sortable">'
 echo '  <tr class="item">'
 echo "    <th>"
