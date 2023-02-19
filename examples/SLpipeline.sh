@@ -8,7 +8,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 15-feb-2023"
+version="SLpipeline: 19-feb-2023"
 
 echo ""
 echo "LMTOY>> $version"
@@ -120,8 +120,8 @@ if [ $obsnums = 0 ]; then
 else
     pdir=$pidir/${on0}_${on1}
 fi
-if [ $exist == 1 ] && [ -d $pidir ]; then
-    echo Skipping work for $pidir, it already exists
+if [ $exist == 1 ] && [ -d $pidir/$obsnum ]; then
+    echo Skipping work for $pidir/$obsnum, it already exists
     exit 0
 fi
 
