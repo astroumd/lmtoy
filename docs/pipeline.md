@@ -40,9 +40,9 @@ netcdf file.
 ### Sequoia  (SEQ)
 
 How to use this is best described through an example. We use proposal **2018-S1-MU-46**
-where a
-small patch of M31 was observed several times. Each obsnum is run through the pipeline, 
-inspected, maybe re-run if need be, and then combined in a final set of cubes.
+where a few small patches of M31 were observed each, several times (always in CO ?).
+Each obsnum is run through the pipeline, 
+inspected, maybe re-run if need be, and then combined in a final cube.
 
       SLpipeline.sh  obsnum=85776 
       SLpipeline.sh  obsnum=85778
@@ -70,17 +70,6 @@ is equivalent to
 
       pix_list=1,2,3,4,6,7,8,9,10,11,12,13,14,15
 
-#### sample
-
-This can be a painfully long parameter,
-because it is a series of 3 integers, giving the pixel number, first and last
-calibrated scan in the SpecFile.
-
-### masking
-
-A masking file is the most powerful and flexible way to pass masking information
-to the pipeline. It does not exist yet (jul 2021)
-
 ## RSR
 
 The RSR receiver....
@@ -91,20 +80,19 @@ The 1MM receiver....
 
 ## B4R
 
-This 2MM received is not covered here.
-
+This 2MM received is not covered here, they have their own pipeline.
 
 # User Processing (2023)
 
 Here we sketch the user experience, as seen from both a POSIX shell
-and web interface (translation in progress):
+(now working) and a hypothetical web interface (translation in progress):
 
 1. set up LMTOY (including $DATA_LMT, $WORK_LMT, as well as $WORK_LMT/lmtoy_run)
 
 2. user logs in and this reports back one or more PID's (project-ID)
    that they are authenticated to work on
 
-         # WORK_LMT has been set up. At the start it will be empty
+         # ... WORK_LMT has been set up. At the start it will be empty
          $ cd $WORK_LMT
          $ ls
 
@@ -118,7 +106,7 @@ and web interface (translation in progress):
 4. A list of sources is shown that are in this PID. User selects one
    or more of those to work on. 
    
-         # current clumsy ascii database
+         # ... current clumsy ascii database
          $ lmtinfo.py grepw $PID Science | awk '{print $6}' | sort | uniq -c
            12 Arp143
            10 Arp91
@@ -130,7 +118,7 @@ and web interface (translation in progress):
            10 NGC6786
 
 5. Based on the previous item, using the script generator can be done in two ways:
-   whole project or source based. Either way, we need to be in
+   whole project or source based. Either way, for the shell interface we need to be in
    the directory of the script generator   (this requires two symlinks from the $WORK_LMT/$PID directory:
    index.html needs to point to the README.html and comments.txt needs to point to its namesake here):
 
@@ -163,13 +151,13 @@ and web interface (translation in progress):
 
                 $ grep $SRC *run1a > test1
                 $ grep $SRC *run2a > test2
-		$ sbatch_lmtoy.sh test1
-		$ sbatch_lmtoy.sh test2
+                $ sbatch_lmtoy.sh test1
+                $ sbatch_lmtoy.sh test2
 		
 	 but making the summary table just for a source is now tricky:
 	 
-		$ cd $WORK_LMT/$PID
-		$ mk_summary1.sh $SRC > README_$SRC.html
+                $ cd $WORK_LMT/$PID
+                $ mk_summary1.sh $SRC > README_$SRC.html
 
    If you want to use a python based submission (e.g. via the web workflow), there's a better way, though
    as described before, it assumed the script generator(s) have been set up. This workflow hasn't been
