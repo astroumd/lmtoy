@@ -11,9 +11,10 @@
 in=spec.tab       # input table (xcol=1 ycol=2)
 peaks=1:4         # which peaks, e.g 1:4
 epeak=1           # expand factor from the default peak
-fit=fit           # baseame of fit plot
+fit=fit           # basename of fit plot
 yapp=xs           # xs,png,ps,_ps
 debug=-1          # not so verbose for NEMO
+xlines=""         # if given, line integral also determined
 
 #--HELP
 
@@ -67,3 +68,11 @@ for ipeak in $(nemoinp $peaks); do
 	   p4=c=,1,2 p5=c=,1,3 \
 	   p6=d=,1,2 p7=d=,1,3
 done
+
+# line integral; only use the first xlines entry 
+if [ ! -z "$xlines" ]; then
+    f0=$(echo $xlines | tabcols - 1)
+    df=$(echo $xlines | tabcols - 2)
+    echo "# Line Integral"
+    echo "$in $f0 $df $epeak $(tabint $in xmin=$f0-$df*$epeak xmax=$f0+$df*$epeak scale=c/$f0/1000)"
+fi
