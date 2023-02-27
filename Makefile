@@ -314,12 +314,12 @@ common: lmtoy_venv
 
 # ---------------------------- benchmarks -------------------------------------------------------------------------------------------
 
-ADMIT = 1
+ADMIT = 0
 bench:  bench1 bench2
 
 ## bench1:   RSR benchmark (obsnum=33551)
 bench1:
-	$(TIME) SLpipeline.sh obsnum=33551 restart=1 admit=$(ADMIT)
+	$(TIME) SLpipeline.sh obsnum=33551 restart=1 linecheck=1 admit=$(ADMIT)
 	@echo "QAC_STATS: rsr.33551.driver.sum.txt 2.0904e-05 0.00095051 -0.00407884 0.0459238 0.173963 0.156462 1186 [expected]"
 	@echo "QAC_STATS: rsr.33551.blanking.sum.txt 4.19332e-05 0.000950482 -0.00385069 0.0459053 0.210346 0.188981 1186 [expected]"
 	@echo "================================================================================================================="
