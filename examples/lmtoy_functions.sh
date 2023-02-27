@@ -3,30 +3,33 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="23-feb-2023"
+lmtoy_version="26-feb-2023"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
 function lmtoy_version {
-    v=$(cat $LMTOY/VERSION)
-    d=$(date -u +%Y-%m-%dT%H:%M:%S)
-    g=$(cd $LMTOY; git rev-list --count HEAD)
-    h=$(uname -a)
+    local v=$(cat $LMTOY/VERSION)
+    local d=$(date -u +%Y-%m-%dT%H:%M:%S)
+    local g=$(cd $LMTOY; git rev-list --count HEAD)
+    local h=$(uname -a)
     echo "$v  $g  $d  $h"
+}
+
+function lmtoy_date {
+    # standard ISO date, by default in local time though.   Use "-u" to switch to UT time
+    date +%Y-%m-%dT%H:%M:%S $*
+}
+
+function lmtoy_debug {
+    # debug level for bash
+    #  1:   -x
+    #  2:   -e
+    echo "lmtoy_debug: not implemented yet"
 }
 
 function lmtoy_report {
     printf_red "LMTOY>> ProjectId=$ProjectId  obsnum=$obsnum  obspgm=$obspgm  obsgoal=$obsgoal oid=$oid"
 }
-
-function lmtoy_help {
-    if [ -z $1 ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
-	set +x
-	awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
-	exit 0
-    fi
-}
-
 
 function lmtoy_args {
     # require arguments, but if -h/--help given, give the inline help
@@ -41,8 +44,6 @@ function lmtoy_args {
 	export "$arg"
     done
 }
-
-
 
 function lmtoy_decipher_obsnums {
     # input:    obsnums
@@ -95,6 +96,7 @@ function printf_green {
 
 function show_vars {
     # helper function to show value of shell variables using bash dynamic variables
+    # meant to be stored in an rc file
     for _arg in "$@"; do
 	echo "${_arg}=${!_arg}"
     done
