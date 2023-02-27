@@ -9,7 +9,7 @@
 import os
 import sys
 import dvpipe.utils as utils
-from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
+from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, LmtMetadataBlock, example
 
 _version = "27-feb-2023"
 
@@ -80,6 +80,7 @@ def get_version():
 if __name__ == "__main__":
 
     debug = False
+    use_db = False
     
     # simple CLI for now
     if len(sys.argv) < 2:
@@ -109,7 +110,10 @@ if __name__ == "__main__":
         instrument = "SEQUOIA"
 
     # open the LMB and write some common metadata
-    lmtdata = LmtMetadataGroup('foobar')
+    if use_db:
+        lmtdata = LmtMetadataBlock(dbfile="test_meta.db")
+    else:
+        lmtdata = LmtMetadataGroup('foobar')
     lmtdata.add_metadata("observatory",  "LMT")
     lmtdata.add_metadata("LMTInstrument",instrument)
     lmtdata.add_metadata("projectID",    header(rc,"ProjectId",debug))
@@ -160,3 +164,8 @@ if __name__ == "__main__":
 
     
     print(lmtdata.to_yaml())
+
+    if use_db:
+        lmtdata._write_to_db()
+
+    
