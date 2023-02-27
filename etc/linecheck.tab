@@ -1,9 +1,11 @@
-#    xlines for selected RSR sources, optional _flux for fun for now
+#    xlines for selected RSR sources, optional _peak for fun for now
 #    this file is used when linecheck=1 is given to the RSR pipeline
 #    the first xlines= frequency should be the strong line in which we also want to see a line integral instead of a fit
-I10565    xlines=110.51,0.15,108.65,0.3,85.2,0.4     _peak=100mK
-I05189    xlines=110.53,0.25                         _peak=40mK
+#    Note RSR is not meant to be more accurate than 10-20%
+I05189    xlines=110.53,0.25                         _peak=55mK
+I10565    xlines=110.51,0.15,108.65,0.3,85.2,0.4     _peak=110mK
 I12112    xlines=107.40,0.25                         _peak=40mK
-VIIZw31   xlines=109.34,0.25,107.5,0.3               _peak=120mK
-I17208    xlines=110.50,0.20,108.8,0.3               _peak=70mK
+I17208    xlines=110.50,0.20,108.8,0.3               _peak=110mK
+# I23365                                             _peak=16mK
+VIIZw31   xlines=109.34,0.25,107.5,0.3               _peak=110mK
 # 3c273
