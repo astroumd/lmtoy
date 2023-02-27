@@ -141,7 +141,7 @@ if [ $goal == "Science" ]; then
 	if [ -d $pdir ]; then
 	    echo "Re-Processing Map in $pdir for $src (use restart=1 if you need a fresh start)"
 	    first=0
-	    date >> $pdir/date.log
+	    lmtoy_date >> $pdir/date.log
 	else
 	    echo "Processing SEQ/Map in $pdir for $src"
 	    first=1
@@ -158,7 +158,7 @@ if [ $goal == "Science" ]; then
 	    $time         seq_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
 	fi
 	seq_summary.sh $pdir/lmtoy_$obsnum.log
-	date >> $pdir/date.log	
+	lmtoy_date >> $pdir/date.log	
 	echo Logfile in: $pdir/lmtoy_$obsnum.log
 	if [[ $first == 1 ]]; then
 	    cp $pdir/lmtoy_$obsnum.log   $pdir/first.lmtoy_$obsnum.log	
@@ -169,7 +169,7 @@ if [ $goal == "Science" ]; then
 	if [ -d $pdir ]; then
 	    echo "Re-Processing $obspgm RSR in $pdir for $src (use restart=1 if you need a fresh start)"
 	    first=0
-	    date                             >> $pdir/date.log
+	    lmtoy_date                        >> $pdir/date.log
 	else
 	    echo "Processing $obspgm RSR for $ProjectId $obsnum $src in $pdir"
 	    first=1
@@ -177,9 +177,9 @@ if [ $goal == "Science" ]; then
 	    if [ $obsnums = 0 ]; then
 		echo $obsnum                  > $pdir/rsr.obsnum
 		#  $rc0 ?
-		lmtinfo.py $obsnum            > $pdir/lmtoy_$obsnum.rc
+		# lmtinfo.py $obsnum            > $pdir/lmtoy_$obsnum.rc
 	    fi
-	    date                              > $pdir/date.log
+	    lmtoy_date                          > $pdir/date.log
 	fi
 	sleep $sleep
 	if [ $obsnums = 0 ]; then
@@ -192,7 +192,7 @@ if [ $goal == "Science" ]; then
 	    $time         rsr_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
 	fi
 	rsr_summary.sh $pdir/lmtoy_$obsnum.log
-	date >> $pdir/date.log
+	lmtoy_date >> $pdir/date.log
 	echo Logfile in: $pdir/lmtoy_$obsnum.log
 	if [[ $first == 1 ]]; then
 	    cp $pdir/lmtoy_$obsnum.log   $pdir/first.lmtoy_$obsnum.log	
@@ -219,7 +219,7 @@ if [ $goal == "Science" ]; then
 	if [ -d $pdir ]; then
 	    echo "Re-Processing $obspgm SEQ in $pdir for $src (use restart=1 if you need a fresh start)"
 	    first=0
-	    date                             >> $pdir/date.log
+	    lmtoy_date                             >> $pdir/date.log
 	else
 	    first=1
 	    mkdir -p $pdir	
@@ -227,7 +227,7 @@ if [ $goal == "Science" ]; then
 	echo "LMTOY>> seqbs_pipeline.sh pdir=$pdir $*"
 	$time         seqbs_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
 	seq_summary.sh $pdir/lmtoy_$obsnum.log
-	date >> $pdir/date.log	
+	lmtoy_date >> $pdir/date.log	
 	echo Logfile in: $pdir/lmtoy_$obsnum.log
 	
     else
