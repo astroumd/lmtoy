@@ -11,9 +11,9 @@ import sys
 import dvpipe.utils as utils
 from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 
-_version = "1-dec-2022"
+_version = "27-feb-2023"
 
-def header(rc, key):
+def header(rc, key, debug=False):
     """
     input:
     rc     dictionary from the rc file
@@ -23,12 +23,14 @@ def header(rc, key):
     
     """
     if key in rc:
-        print("# PJT: header   ",key,rc[key])
+        if debug:
+            print("# PJT: header   ",key,rc[key])
         return rc[key]
     else:
-        print("# PJT: unknown key ",key)
+        if debug:
+            print("# PJT: unknown key ",key)
 
-def get_rc(filename):
+def get_rc(filename, debug=False):
     """
     input:
     filename   name of the rc file
@@ -36,18 +38,24 @@ def get_rc(filename):
     """
     rc = {}
     try:
-        print("# PJT: opening  ",rcfile)
+        print("# opening  ",rcfile)
         fp = open(rcfile)
         lines = fp.readlines()
         fp.close()
         for line in lines:
             if line[0] == '#':  continue
+            line = line.strip()
             # can either exec() each line when the rc is clean, but it's not yet
             # until then, manually parse
             w = line.split('=')
             #   if w[1] starts with " or ', make it a string
-            if w[1][0] == '"' or w[1][0] == "'":
-                print("# PJT: stringify",line.strip())
+            if len(w[1])==0:
+                # empty string
+                exec('%s=""' % w[0])
+                rc[w[0]] = locals()[w[0]]                
+            elif w[1][0] == '"' or w[1][0] == "'":
+                if debug:
+                    print("# PJT: stringify",line.strip())
                 exec(line.strip())
                 rc[w[0]] = locals()[w[0]]
             else:
@@ -55,6 +63,7 @@ def get_rc(filename):
                 # but save it as string for potential conversion later on
                 rc[w[0]] = w[1].strip().split()[0]
     except:
+        print("line: ",line, "w:",w)
         print("Error processing %s " % rcfile)
         sys.exit(0)
     return rc
@@ -69,6 +78,9 @@ def get_version():
     return lines[0].strip()
     
 if __name__ == "__main__":
+
+    debug = False
+    
     # simple CLI for now
     if len(sys.argv) < 2:
         print("Usage: %s ObsnumDirectory" % sys.argv[0])
@@ -83,7 +95,7 @@ if __name__ == "__main__":
     pdir = sys.argv[1]
     obsnum = pdir.split('/')[-1]
     rcfile = pdir + '/lmtoy_%s.rc' % obsnum
-    rc = get_rc(rcfile)
+    rc = get_rc(rcfile, debug)
 
     # get version, as comment (or metadata?)
     print("# LMTOY version %s" % get_version())
@@ -92,7 +104,7 @@ if __name__ == "__main__":
     # deal with the enum's we use for instrument on the DV side
     # valid names:  TolTEC, MSIP1mm, SEQUOIA, RSR, OMAYA
     
-    instrument = header(rc,"instrument")
+    instrument = header(rc,"instrument", debug)
     if instrument == "SEQ":
         instrument = "SEQUOIA"
 
@@ -100,13 +112,13 @@ if __name__ == "__main__":
     lmtdata = LmtMetadataGroup('foobar')
     lmtdata.add_metadata("observatory",  "LMT")
     lmtdata.add_metadata("LMTInstrument",instrument)
-    lmtdata.add_metadata("projectID",    header(rc,"ProjectId"))
-    lmtdata.add_metadata("projectTitle", header(rc,"projectTitle"))
-    lmtdata.add_metadata("PIName",       header(rc,"PIName"))
-    lmtdata.add_metadata("obsnum",       header(rc,"obsnum"))
-    lmtdata.add_metadata("obsDate",      header(rc,"date_obs"))
-    lmtdata.add_metadata("targetName",   header(rc,"src"))
-    lmtdata.add_metadata("intTime",float(header(rc,"inttime")))
+    lmtdata.add_metadata("projectID",    header(rc,"ProjectId",debug))
+    lmtdata.add_metadata("projectTitle", header(rc,"projectTitle",debug))
+    lmtdata.add_metadata("PIName",       header(rc,"PIName",debug))
+    lmtdata.add_metadata("obsnum",       header(rc,"obsnum",debug))
+    lmtdata.add_metadata("obsDate",      header(rc,"date_obs",debug))
+    lmtdata.add_metadata("targetName",   header(rc,"src",debug))
+    lmtdata.add_metadata("intTime",float(header(rc,"inttime",debug)))
 
     if instrument == "SEQUOIA":
         #lmtdata.add_metadata("origin",  "lmtoy v0.6")
