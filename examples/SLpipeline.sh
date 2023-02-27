@@ -8,10 +8,10 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 19-feb-2023"
+_version="SLpipeline: 26-feb-2023"
 
 echo ""
-echo "LMTOY>> $version"
+echo "LMTOY>> $_version"
 
 #--HELP   
                                # required input is either obsnum= or obsnums=
@@ -19,20 +19,19 @@ obsnum=0                       #    obsnum=  can be used for a single observatio
 obsnums=0                      #    obsnums= for combinations of existing obsnums
 
                                # the remainder are optional parameters
-path=${DATA_LMT:-data_lmt}
-work=${WORK_LMT:-.}
-debug=0
-restart=0       # if set, force a fresh restart by deleting old obsnum pipeline
+path=${DATA_LMT:-data_lmt}     # - to be deprecated
+work=${WORK_LMT:-.}            # - to be deprecated
+debug=0         # add bash debug (1)
+restart=0       # if set, force a fresh restart by deleting old obsnum pipeline results
 exist=0         # if set, and the obsnum exists, skip running pipeline 
 tap=0           # save the TAP in a tar file?
 srdp=0          # save the SRDP in a tar file?
 raw=0           # save the RAW data in a tar file?
 grun=1          # save the script generator?
 admit=0         # run ADMIT ?
-sleep=2
-nproc=1
-rsync=""
-rc=""           # global rc file
+sleep=2         # add few seconds before running, allowing quick interrupt
+nproc=1         # number of processors to use (keep it at 1)
+rsync=""        # rsync address for the TAP file (used at LMT/malt)
 oid=""          # experimental
 goal=Science    # Science, or override with: Pointing,Focus
 
@@ -48,39 +47,27 @@ goal=Science    # Science, or override with: Pointing,Focus
 #    $WORK_LMT/2014ARSRCommissioning/33551
 #    $WORK_LMT/2018S1SEQUOIACommissioning/79448/
 #    $WORK_LMT/2021-S1-US-3/97520_97521
+#
+#  Web viewing:
+#    http://taps.lmtgtm.org/lmtslr/2023-S1-US-18/
+#    http://taps.lmtgtm.org/lmtslr/lmtoy_run/
+#
+#--HELP
 
-#--HELP   
-
-if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
-    set +x
-    awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
-    exit 0
-fi
-
-#             simple keyword=value command line parser for bash - don't make any changing below
-for arg in "$@"; do
-  export "$arg"
-done
-
-# 
+#             set up LMTOY, parse command line so it's merged with the script parameters
 source lmtoy_functions.sh
-
-# global rc ?
-if [ -n "$rc" ]; then
-    echo "LMTOY>> source $rc"
-    source $rc
-fi
+lmtoy_args "$@"
 
 #             put in bash debug mode
-if [ $debug = 1 ]; then
+if [ $debug -gt 0 ]; then
     set -x
     set -e
     python --version
     which python
 fi
 
+#             get the obsnum= (or obsnums=)
 lmtoy_decipher_obsnums
-
 if [ $obsnum = 0 ]; then
     echo No valid obsnum= or obsnums= given
     exit 1
@@ -96,11 +83,11 @@ echo "OMP_NUM_THREADS=$OMP_NUM_THREADS"
 
 #             bootstrap
 [ ! -d $WORK_LMT/tmp ] && mkdir -p $WORK_LMT/tmp
-rc=$WORK_LMT/tmp/lmtoy_${obsnum}.$$.rc
-lmtinfo.py $obsnum > $rc
-source $rc
-rm -f $rc
-unset rc
+rc0=$WORK_LMT/tmp/lmtoy_${obsnum}.rc
+lmtinfo.py $obsnum > $rc0
+source $rc0
+rm -f $rc0
+unset rc0
 
 #             ensure again....just in case
 if [ $obsnum = 0 ]; then
@@ -146,103 +133,107 @@ if [ -e $pidir/PI_pars.rc ]; then
     source $pidir/PI_pars.rc
 fi
 
-# warning: we're not using obsgoal, but our own goal=
+# warning: we're not using obsgoal, but our own goal=     @todo     use obsgoal et al.
 if [ $goal == "Science" ]; then
 
-if [ $obspgm == "Map" ] || [ $obspgm == "Lissajous" ]; then
-    echo "Map mode with instrument=$instrument"
-    if [ -d $pdir ]; then
-	echo "Re-Processing Map in $pdir for $src (use restart=1 if you need a fresh start)"
-	first=0
-	date >> $pdir/date.log
-    else
-	echo "Processing SEQ/Map in $pdir for $src"
-	first=1
-	mkdir -p $pdir
-    fi
-    sleep $sleep
-    if [ $obsnums = 0 ]; then
-	echo "LMTOY>> seq_pipeline.sh pdir=$pdir $*"
-	$time         seq_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
-    else
-	obsnum=${on0}_${on1}
-	cd $work
-	echo "LMTOY>> seq_combine.sh             $*"
-	$time         seq_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
-    fi
-    seq_summary.sh $pdir/lmtoy_$obsnum.log
-    date >> $pdir/date.log	
-    echo Logfile in: $pdir/lmtoy_$obsnum.log
-    if [[ $first == 1 ]]; then
-	cp $pdir/lmtoy_$obsnum.log   $pdir/first.lmtoy_$obsnum.log	
-    fi
-    
-elif [ $instrument = "RSR" ]; then
-    if [ -d $pdir ]; then
-	echo "Re-Processing $obspgm RSR in $pdir for $src (use restart=1 if you need a fresh start)"
-	first=0
-	date                             >> $pdir/date.log
-    else
-	echo "Processing $obspgm RSR for $ProjectId $obsnum $src in $pdir"
-	first=1
-	mkdir -p $pdir
-	if [ $obsnums = 0 ]; then
-	    echo $obsnum                  > $pdir/rsr.obsnum
-	    lmtinfo.py $obsnum            > $pdir/lmtoy_$obsnum.rc
+    if [ $obspgm == "Map" ] || [ $obspgm == "Lissajous" ]; then
+	echo "Map mode with instrument=$instrument"
+	if [ -d $pdir ]; then
+	    echo "Re-Processing Map in $pdir for $src (use restart=1 if you need a fresh start)"
+	    first=0
+	    lmtoy_date >> $pdir/date.log
+	else
+	    echo "Processing SEQ/Map in $pdir for $src"
+	    first=1
+	    mkdir -p $pdir
 	fi
-	date                              > $pdir/date.log
-    fi
-    sleep $sleep
-    if [ $obsnums = 0 ]; then
-	echo "LMTOY>> rsr_pipeline.sh pdir=$pdir first=$first $*"
-	$time         rsr_pipeline.sh pdir=$pdir first=$first $*     > $pdir/lmtoy_$obsnum.log 2>&1
-    else
-	obsnum=${on0}_${on1}
-	cd $work
-	echo "LMTOY>> rsr_combine.sh             $*"
-	$time         rsr_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
-    fi
-    rsr_summary.sh $pdir/lmtoy_$obsnum.log
-    date >> $pdir/date.log
-    echo Logfile in: $pdir/lmtoy_$obsnum.log
-    if [[ $first == 1 ]]; then
-	cp $pdir/lmtoy_$obsnum.log   $pdir/first.lmtoy_$obsnum.log	
-    fi
-
-elif [ $instrument = "1MM" ]; then
-    # @todo   only tested for one case
-    if [ -d $pdir ]; then
-	echo "Re-Processing $obspgm 1MM in $pdir for $src"
-    else
-	echo "Processing $obspgm 1MM in $pdir for $src"
-    fi
-    sleep $sleep
-    if [ $obspgm == "Ps" ]; then
-	mkdir -p $pdir
-	(cd $pdir; process_ps.py --obs_list $obsnum --pix_list 2 --bank 0 -p $DATA_LMT )
-    else
-	echo "Skipping unknown obspgm=$obspgm"
-    fi
-elif [ $instrument = "SEQ" ] && [ $obspgm = "Bs" ]; then
-    if [ -d $pdir ]; then
-	echo "Re-Processing $obspgm SEQ in $pdir for $src (use restart=1 if you need a fresh start)"
-	first=0
-	date                             >> $pdir/date.log
-    else
-	first=1
-	mkdir -p $pdir	
-    fi
-    echo "LMTOY>> seqbs_pipeline.sh pdir=$pdir $*"
-    $time         seqbs_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
-    seq_summary.sh $pdir/lmtoy_$obsnum.log
-    date >> $pdir/date.log	
-    echo Logfile in: $pdir/lmtoy_$obsnum.log
+	sleep $sleep
+	if [ $obsnums = 0 ]; then
+	    echo "LMTOY>> seq_pipeline.sh pdir=$pdir $*"
+	    $time         seq_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	else
+	    obsnum=${on0}_${on1}
+	    cd $work
+	    echo "LMTOY>> seq_combine.sh             $*"
+	    $time         seq_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	fi
+	seq_summary.sh $pdir/lmtoy_$obsnum.log
+	lmtoy_date >> $pdir/date.log	
+	echo Logfile in: $pdir/lmtoy_$obsnum.log
+	if [[ $first == 1 ]]; then
+	    cp $pdir/lmtoy_$obsnum.log   $pdir/first.lmtoy_$obsnum.log	
+	fi
     
-else
-    echo "Unknown instrument $instrument"
-    tar=0
-fi
+    elif [ $instrument = "RSR" ]; then
+	
+	if [ -d $pdir ]; then
+	    echo "Re-Processing $obspgm RSR in $pdir for $src (use restart=1 if you need a fresh start)"
+	    first=0
+	    lmtoy_date                        >> $pdir/date.log
+	else
+	    echo "Processing $obspgm RSR for $ProjectId $obsnum $src in $pdir"
+	    first=1
+	    mkdir -p $pdir
+	    if [ $obsnums = 0 ]; then
+		echo $obsnum                  > $pdir/rsr.obsnum
+		#  $rc0 ?
+		# lmtinfo.py $obsnum            > $pdir/lmtoy_$obsnum.rc
+	    fi
+	    lmtoy_date                          > $pdir/date.log
+	fi
+	sleep $sleep
+	if [ $obsnums = 0 ]; then
+	    echo "LMTOY>> rsr_pipeline.sh pdir=$pdir first=$first $*"
+	    $time         rsr_pipeline.sh pdir=$pdir first=$first $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	else
+	    obsnum=${on0}_${on1}
+	    cd $work
+	    echo "LMTOY>> rsr_combine.sh             $*"
+	    $time         rsr_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	fi
+	rsr_summary.sh $pdir/lmtoy_$obsnum.log
+	lmtoy_date >> $pdir/date.log
+	echo Logfile in: $pdir/lmtoy_$obsnum.log
+	if [[ $first == 1 ]]; then
+	    cp $pdir/lmtoy_$obsnum.log   $pdir/first.lmtoy_$obsnum.log	
+	fi
 
+    elif [ $instrument = "1MM" ]; then
+	
+	# @todo   only tested for one case
+	if [ -d $pdir ]; then
+	    echo "Re-Processing $obspgm 1MM in $pdir for $src"
+	else
+	    echo "Processing $obspgm 1MM in $pdir for $src"
+	fi
+	sleep $sleep
+	if [ $obspgm == "Ps" ]; then
+	    mkdir -p $pdir
+	    (cd $pdir; process_ps.py --obs_list $obsnum --pix_list 2 --bank 0 -p $DATA_LMT )
+	else
+	    echo "Skipping unknown obspgm=$obspgm"
+	fi
+	
+    elif [ $instrument = "SEQ" ] && [ $obspgm = "Bs" ]; then
+	
+	if [ -d $pdir ]; then
+	    echo "Re-Processing $obspgm SEQ in $pdir for $src (use restart=1 if you need a fresh start)"
+	    first=0
+	    lmtoy_date                             >> $pdir/date.log
+	else
+	    first=1
+	    mkdir -p $pdir	
+	fi
+	echo "LMTOY>> seqbs_pipeline.sh pdir=$pdir $*"
+	$time         seqbs_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	seq_summary.sh $pdir/lmtoy_$obsnum.log
+	lmtoy_date >> $pdir/date.log	
+	echo Logfile in: $pdir/lmtoy_$obsnum.log
+	
+    else
+	echo "Unknown instrument $instrument"
+	tar=0
+    fi
 else
     if [ -d $pdir ]; then
 	echo "Re-Processing $obspgm/$obsgoal in $pdir for $src"
@@ -263,8 +254,9 @@ else
     lmtoy_report
     exit 0
 fi
+
 # record the processing time
-echo "date=\"$(date +%Y-%m-%dT%H:%M:%S)\"" >> $pdir/lmtoy_$obsnum.rc
+echo "date=\"$(lmtoy_date)\"     # end " >> $pdir/lmtoy_$obsnum.rc
 
 # make a metadata yaml file for later ingestion into DataVerse
 echo "LMTOY>> make metadata for DataVerse"
@@ -290,18 +282,15 @@ fi
 if [ $grun != 0 ]; then
     echo "LMTOY>> Saving the script generator"
     gsaved=0
-    for d in lmtoy_run $ProjectId; do
-	gdir=$d/lmtoy_${ProjectId}
-	if [ -e $gdir ]; then
-	    gsaved="$gdir"
-	    tar -zchf $ProjectId/$obsnum/lmtoy_${ProjectId}.tar.gz -C $d lmtoy_${ProjectId}
-	    break
-	fi
-    done
+    gdir=$WORK_LMT/lmtoy_run/lmtoy_${ProjectId}
+    if [ -e $gdir ]; then
+	gsaved="$gdir"
+	tar -zcf $ProjectId/$obsnum/lmtoy_${ProjectId}.tar.gz -C $WORK_LMT/lmtoy_run lmtoy_${ProjectId}
+    fi
     if [ $gsaved == 0 ]; then
 	echo "LMTOY>> No script generator for lmtoy_${ProjectId} was found"
     else
-	echo "LMTOY>> Saved $ProjectId/$obsnum/lmtoy_${ProjectId}.tar.gz from $gsaved"
+	echo "LMTOY>> Saved $ProjectId/$obsnum/lmtoy_${ProjectId}.tar.gz"
     fi
 fi
 
@@ -310,7 +299,8 @@ if [ $srdp != 0 ]; then
     tar cf $ProjectId/${obsnum}_SRDP.tar $ProjectId/$obsnum
 fi
 
-if [ $raw != 0 ]; then
+if [ $raw != 0 ] && [ $obsnums = 0 ]; then
+    # ensure only for obsnums = 0
     echo "Creating raw (RAW) tar for $pdir for $obsnum $calobsnum in $pidir/${obsnum}_RAW.tar"
     lmtar $ProjectId/${obsnum}_RAW.tar $calobsnum $obsnum
 fi
@@ -328,3 +318,6 @@ fi
 
 # final reminder of parameters
 lmtoy_report
+
+# record of the log file ?
+# cp $pdir/lmtoy_$obsnum.log cp $pdir/lmtoy_$obsnum.log.$date

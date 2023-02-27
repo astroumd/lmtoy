@@ -10,27 +10,32 @@
 #
 #
 
-version="rsr_pipeline: 1-feb-2023"
+_version="rsr_pipeline: 26-feb-2023"
 
-echo "LMTOY>> $version"
+echo "LMTOY>> $_version"
 
 #--HELP   
 # input parameters (only obsnum is required)
 #            - start or restart
-obsnum=0
-obsid=""
-newrc=0
-pdir=""
-path=${DATA_LMT:-data_lmt}
+obsnum=0      # this is a single obsnum pipeline (obsnums=0)
+obsid=""      # not used yet
+pdir=""       # where to do the work
+path=${DATA_LMT:-data_lmt}      # - to be deprecated
+
+#             - PI parameters
 
 xlines=""     # set to a comma separated list of freq,dfreq pairs where strong lines are
 badboard=""   # set to a comma separated list of bad boards
 badcb=""      # set to a comma separated list of (chassis/board) combinations, badcb=2/3,3/5
+badlags=""    # set to a badlags file if to use this instead of dynamically generated (use 0 to force not to use it)
+shortlags=""  # set to a short_min and short_hi to avoid flagged strong continuum source lags
+
 linecheck=0   # set to 1, to use the source name to grab the correct xlines=
 bandzoom=5    # the band for the zoomed window
 speczoom=""   # override bandzoom with a manual speczoom=CEN,WID pair
 rthr=0.01     # -r option for rsr_driver Threshold sigma value when averaging single observations repeats
 cthr=0.01     # -t                       Threshold sigma value when coadding all observations
+              # -t option for rsr_sum as well
 sgf=0         # Savitzky-Golay high pass filter ; odd number > 21
 notch=0       # sigma cut for notch filter to eliminate large frecuency oscillations. Needs sgf > 21
 blo=1         # order of polynomial baseline subtraction
@@ -41,27 +46,30 @@ admit=0
 debug=0
 #--HELP
 
-if [ -z $1 ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
-    set +x
-    awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
-    exit 0
-fi
-
-#             simple keyword=value command line parser for bash - don't make any changing below
-for arg in "$@"; do
-  export "$arg"
-done
-
-# 
+# LMTOY
 source lmtoy_functions.sh
-rc0=$WORK_LMT/tmp/lmtoy_${obsnum}.rc
-show_vars xlines badcb linecheck bandzoom speczoom rthr cthr sgf notch blo > $rc0
+lmtoy_args "$@"
 
+# PI parameters, as merged from defaults and CLI
+rc0=$WORK_LMT/tmp/lmtoy_${obsnum}.rc
+show_vars \
+          xlines badcb badlags linecheck bandzoom speczoom rthr cthr sgf notch blo \
+	  > $rc0
+
+#lmtoy_debug
 #             put in bash debug mode
 if [ $debug = 1 ]; then
     set -x
 fi
 
+#lmtoy_first
+if [ -e lmtoy.rc ]; then
+    first=0
+else
+    first=1
+fi
+
+#lmtoy_pdir
 #             see if pdir working directory needs to be used
 if [ ! -z $pdir ]; then
     echo Working directory $pdir
@@ -72,32 +80,22 @@ else
 fi
 
 
-#             process the parameter file (or force new one with newrc=1)
-rc=lmtoy_${obsnum}.rc
-if [ -e $rc ] && [ $newrc = 0 ]; then
-    echo "LMTOY>> reading $rc"
-    echo "# DATE: `date +%Y-%m-%dT%H:%M:%S.%N`" >> $rc
-    if [ $first = 1 ]; then
-	cat $rc0 >> $rc
-    else
-	for arg in "$@"; do
-	    echo "$arg" >> $rc
-	done
-    fi
-    source ./$rc
-    rm -f $rc0
-    newrc=0
-else
-    echo "LMTOY>> newrc=1 $rc"    
-    newrc=1
+#             process the parameter file
+rc=./lmtoy_${obsnum}.rc
+if [ ! -e $rc ]; then
+    echo "LMTOY>> creating new $rc"
+    echo "# $_version"  > $rc
+    cat $rc0           >> $rc
+    lmtinfo.py $obsnum >> $rc
 fi
-
-
-if [ $newrc = 1 ]; then
-    echo "LMTOY>> Hang on, creating a bootstrap $rc from path=$path - not implemented"
-else
-    echo "LMTOY>> updating"
-fi
+date=$(lmtoy_date)
+echo "#"                                 >> $rc
+echo "date=\"$date\"     # begin"        >> $rc
+for arg in "$@"; do
+    echo "$arg" >> $rc
+done
+source $rc
+rm -f $rc0
 
 #             derived parameters (you should not have to edit these)
 p_dir=${path}
@@ -113,16 +111,11 @@ fi
 
 # -----------------------------------------------------------------------------------------------------------------
 
-if [ -e rsr.wf0.pdf ]; then
-    # anything to check to see from a previous run
-    first=0
-else
-    first=1
-fi
-
 blanking=rsr.$obsnum.blanking     # for  rsr_sum    - produced by rsr_blanking
 rfile=rsr.$obsnum.rfile           # for  rsr_driver - produced by rsr_rfile
-badlags=rsr.$obsnum.badlags       # for  rsr_xxx    - produced by badlags.py
+if [ -z $badlags ]; then
+    badlags=rsr.$obsnum.badlags   # for  rsr_xxx    - produced by badlags.py
+fi
 
 if [ $first == 1 ]; then
     # bootstrap  $blanking and $rfile; these are just commented lines w/ examples
@@ -161,6 +154,7 @@ if [ $obsnum != 0 ]; then
 fi
 
 #  grab a "xlines=" from a sourcename based table for linecheck sources
+#  @todo  we are not resetting xlines= when linecheck=0 ; user responsibility
 if [ $linecheck == 1 ]; then
     if [ -z "$xlines" ]; then
 	xlines=$(grep ^${src} $LMTOY/etc/linecheck.tab | awk '{print $2}' | awk -F= '{print $2}')
@@ -169,9 +163,7 @@ if [ $linecheck == 1 ]; then
     echo "linecheck=1 for $src : xlines=$xlines"
 fi
 
-#             redo CLI again
-for arg in "$@"; do
-  export "$arg"
-done
+#             redo CLI again - not needed anymore
+# lmtoy_args "$@"
 
 lmtoy_rsr1

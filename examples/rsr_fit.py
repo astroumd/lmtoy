@@ -6,19 +6,20 @@
 """Usage: rsr_fit.py [options] SPECTRUM
 
 Options:
+   -i                       No interactive mode, just save the plot in rsr_fit.png. Optional
    -x --xrange XMIN,XMAX    Plotting range, defaults to the full range. Optional
-   -r --ref REF             Reference frequency, in given units, to convert to km/s. Optional.
+   -r --ref REF             Reference frequency, in given units, to convert to km/s. Optional
    -o --order ORDER         Baseline order. [Default: 0]
-   -b --base X0,X1,X2,X3    Sections of spectrum to use for baseline fitten. Optional.
+   -b --base X0,X1,X2,X3    Sections of spectrum to use for baseline fitten. Optional
    -s --smooth SMOOTH       Smoothing kernel. [Default: 0]
-   -i                       No interactive mode, just save a plot. Optional
    -d --debug               More debug output. 
    --scale SCALE            Scale factor for intensity. [Default: 1.0]
+   --sub                    Show subtracted instead of original data
    --wave                   Assume input spectrum is in wavelength units. Not implemented.
    --fit                    Attempt a fit between X1 and X2
    --nemo                   Pass to NEMO's tabnllsqfit to fit a gauss between X1 and X2
-   -h --help                This help.
-   --version                Version of script.
+   -h --help                This help
+   --version                Version of script
 
 Plot a spectrum, and assign one or more segments if a polynomial
 baseline needs to be fitted and subtracted .  Usually two segments are
@@ -29,14 +30,15 @@ to km/s.  In that case the --xrange and -base need to be given in units of km/s,
 in whatever units the spectrum is (MHz, GHz, etc.). No support for wavelength yet, the
 placeholder --wave flag should do this in some future version.
 
-A fit is attempted to the peak between X1 and X2, though this is not implemented yet.
-
+Currently --nemo will activate a fit using NEMO's tabnllsqfit, but the baseline has not been
+subtracted for this.
 """
 
-_version = "9-feb-2023"
+_version = "10-feb-2023"
 
 import os
 import sys
+import subprocess
 import numpy as np
 from docopt import docopt
 import matplotlib.pyplot as plt
@@ -56,6 +58,7 @@ if Qdebug:
 tab = av['SPECTRUM']
 Qsaveplot = av['-i']
 Qnemo = av['--nemo']
+Qsub = av['--sub']
 do_smooth = int(av['--smooth'])
 p_order = int(av['--order'])
 yscale = float(av['--scale'])
@@ -124,6 +127,7 @@ def get_key(key, tab=None, verbose=False):
 
 def fit_poly(x, y, p_order=1, bl = []):
     """ from array X between Xmin and Xmax fit a polynomial
+        returns fitted_poly,xvals,residual
     """
 
     if len(bl) == 0:
@@ -146,13 +150,11 @@ def fit_poly(x, y, p_order=1, bl = []):
     return (p,t,r)
 
 def diff_rms(y):
-    """ take the differences between neighboring signals
+    """ take the differences between neighboring channel
     and compute their rms. this should be sqrt(2)*sigma
     if there is no  trend in the input signal, and if
     the input signal is not correlated (e.g. hanning)
     """
-    #y1 = y[1:]
-    #y2 = y[:-1]
     return (y[1:]-y[:-1]).std() / 1.414
 
 def my_smooth(y, box_pts):
@@ -196,10 +198,14 @@ plt.plot(v2,zz)
 if p_order >= 0:
     rms2 = r2.std()
     rms3 = diff_rms(r2)
-    #plt.plot(t2, p2(t2), '-', label='POLY %d' % p_order)
-    plt.plot(v2, p2(v2), '-', label='POLY %d SMTH %d' % (p_order,do_smooth))
+    # plt.plot(t2, p2(t2), '-', label='POLY %d' % p_order)
+    dd = zz - p2(v2)
+    if not Qsub:
+        plt.plot(v2, p2(v2), '-', label='POLY %d SMTH %d' % (p_order,do_smooth))
     plt.plot(t2, r2, '-', label='RMS %.3g dRMS %.3g' % (rms2, rms3))
     plt.plot([v2[0],v2[-1]], [0.0, 0.0], c='black', linewidth=2, label='baseline')
+    if Qsub:
+        plt.plot(v2, dd, '-', label='Subtracted Spectrum')
 if len(xrange) > 0:
     plt.xlim(xrange)
 plt.ylabel('Y')

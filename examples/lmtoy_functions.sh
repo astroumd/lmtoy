@@ -3,20 +3,46 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="6-feb-2023"
+lmtoy_version="26-feb-2023"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
 function lmtoy_version {
-    v=$(cat $LMTOY/VERSION)
-    d=$(date -u +%Y-%m-%dT%H:%M:%S)
-    g=$(cd $LMTOY; git rev-list --count HEAD)
-    h=$(uname -a)
+    local v=$(cat $LMTOY/VERSION)
+    local d=$(date -u +%Y-%m-%dT%H:%M:%S)
+    local g=$(cd $LMTOY; git rev-list --count HEAD)
+    local h=$(uname -a)
     echo "$v  $g  $d  $h"
+}
+
+function lmtoy_date {
+    # standard ISO date, by default in local time though.   Use "-u" to switch to UT time
+    date +%Y-%m-%dT%H:%M:%S $*
+}
+
+function lmtoy_debug {
+    # debug level for bash
+    #  1:   -x
+    #  2:   -e
+    echo "lmtoy_debug: not implemented yet"
 }
 
 function lmtoy_report {
     printf_red "LMTOY>> ProjectId=$ProjectId  obsnum=$obsnum  obspgm=$obspgm  obsgoal=$obsgoal oid=$oid"
+}
+
+function lmtoy_args {
+    # require arguments, but if -h/--help given, give the inline help
+    if [ -z $1 ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
+	set +x
+	awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
+	exit 0
+    fi
+    # expect simple keyword=value command line parser for bash
+    # eval does not work in functions, we use export instead to deal with arguments with spaces
+    for arg in "$@"; do
+	export "$arg"
+    done
 }
 
 function lmtoy_decipher_obsnums {
@@ -70,6 +96,7 @@ function printf_green {
 
 function show_vars {
     # helper function to show value of shell variables using bash dynamic variables
+    # meant to be stored in an rc file
     for _arg in "$@"; do
 	echo "${_arg}=${!_arg}"
     done
@@ -108,7 +135,8 @@ function lmtoy_rsr1 {
     r="--rfile $rfile"
     o="-o $spec1"
     w="-w rsr.wf.pdf"
-    t="-r $rthr"
+    t1="-r $rthr"
+    t2="-t $cthr"
     f=""
     if [ "$xlines" != "" ]; then
 	l="--exclude $(echo $xlines | sed 's/,/ /g')"
@@ -123,7 +151,7 @@ function lmtoy_rsr1 {
     # as well as process old data. Thus we want all 'bad_lagsC' in dreampyrc to be ""
     if [[ $first == 1 ]]; then
 	# 1.
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t   > rsr_driver0.log 2>&1
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t1 $t2   > rsr_driver0.log 2>&1
 	mv rsr.driver.png rsr.driver0.png
 	# 2.
 	python $LMTOY/examples/rsr_tsys.py -s $obsnum                                       > rsr_tsys0.log   2>&1
@@ -132,19 +160,29 @@ function lmtoy_rsr1 {
     fi
 
     # FIRST get the badlags - this is a file that can be edited by the user in later re-runs
-    # output: $badlags=rsr.$obsnum.badlags and badlags.$obsnum.png
+    # output: badlags=rsr.$obsnum.badlags and badlags.$obsnum.png
     #         rsr.$obsnum.rfile and rsr.$obsnum.blanking  - can be modified if #BADCB's have been found
-    if [[ ! -e $badlags ]]; then
-	#     only for a single obsnum run
-	# 3.  produces rsr.badlags (currently)
-	echo "LMTOY>> python $LMTOY/examples/badlags.py -d -s $obsnum"
+    # Note this is only run for single obsnums
+    if [[ ! -e $rsr.$obsnum.badlags ]]; then
+	# 3.  produces rsr.badlags 
 	python $LMTOY/examples/badlags.py -d -s $obsnum       > rsr_badlags.log 2>&1
-	mv badlags.png badlags.$obsnum.png
-	mv rsr.badlags $badlags
+	if [ "$badlags" = 0 ]; then
+	    echo "LMTOY>> no badlags requested, still making a plot - you almost never want to do this"
+	    mv badlags.png badlags.$obsnum.png
+	    echo "# badlags=0 was requested" > rsr.$obsnum.badlags
+	elif [ -e "$badlags" ]; then
+	    echo "LMTOY>> using badlags file $badlags"
+	    cp $badlags rsr.$obsnum.badlags
+	else
+	    echo "LMTOY>> python $LMTOY/examples/badlags.py -d -s $obsnum"
+	    mv badlags.png badlags.$obsnum.png
+	    mv rsr.badlags rsr.$obsnum.badlags
+	fi
+	badlags=rsr.$obsnum.badlags
 	# this gives 'BADCB1'
 	
 	# 4.
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo $t --badlags $badlags   > rsr_driver1.log 2>&1	
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo $t1 $t2 --badlags $badlags   > rsr_driver1.log 2>&1	
 
 
 	# Tsys plot:  rsr.tsys.png  - only done for single obsnum - also lists BADCB's
@@ -156,7 +194,7 @@ function lmtoy_rsr1 {
 	    python $LMTOY/examples/rsr_tsys.py -b $badlags -t -s $obsnum         > rsr_tsys1.log 2>&1
 	    grep CB rsr_tsys0.log  > tab0
 	    grep CB rsr_tsys2.log  > tab2
-	    paste tab0 tab1 | awk '{print $0," ratio:",$11/$5}'  > rsr_tsys_badcb.log
+	    paste tab0 tab2 | awk '{print $0," ratio:",$11/$5}'  > rsr_tsys_badcb.log
 	    rm -f tab0 tab2
 	    # this Tsys2.log gave 'BADCB2' - and comparing CB0 with CB2 in rsr_tsys_badcb.log
 	fi	
@@ -170,7 +208,7 @@ function lmtoy_rsr1 {
 	#  only for obsnum combinations
 	echo "PJT2 obsnum=$obsnum obsnums=$obsnums"
     else
-	#  only for a single obsnum run
+	#  only for a single obsnum re-run
 	rsr_blanking $obsnum   > $blanking
 	rsr_rfile    $obsnum   > $rfile
 	echo "Using existing $badlags - forgetting initial settings"
@@ -191,9 +229,9 @@ function lmtoy_rsr1 {
     if [ $sgf != 0 ]; then
 	f="-f $sgf -n $notch"
     fi
-    echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t $f"
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t $f    > rsr_driver.log 2>&1
-    #  grab the total integration time from the driver
+    echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t1 $t2 $f"
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t1 $t2 $f    > rsr_driver.log 2>&1
+    #  grab the total integration time from the driver @todo is this the right one?
     inttime=$(grep "Integration Time" $spec1 | awk '{print $4}')
     echo "inttime=$(printf %.1f $inttime) # sec" >> $rc
 
@@ -204,9 +242,10 @@ function lmtoy_rsr1 {
 
     # 7.
     # spec2: output spectrum rsr.$obsnum.blanking.sum.txt
+    #   @todo   should there not be a $t1 flag ?
     spec2=${blanking}.sum.txt
-    echo "LMTOY>> python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo"
-    python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo                         > rsr_sum.log 2>&1
+    echo "LMTOY>> python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo $t2"
+    python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo $t2              > rsr_sum.log 2>&1
 
     # plot the two in one spectrum, one full range, one in a selected band.
     # the -g version makes an svg file for an alternative way to zoom in (TBD)
@@ -215,10 +254,10 @@ function lmtoy_rsr1 {
     else
 	zoom="--zoom $speczoom"	
     fi
-    python $LMTOY/examples/rsr_spectra.py -s     $zoom --title $src $spec1 $spec2
+    rsr_spectra.py -s     $zoom --title $src $spec1 $spec2
     mv rsr.spectra.png rsr.spectra_zoom.png
-    python $LMTOY/examples/rsr_spectra.py -s           --title $src $spec1 $spec2
-    python $LMTOY/examples/rsr_spectra.py -s -g        --title $src $spec1 $spec2
+    rsr_spectra.py -s           --title $src $spec1 $spec2
+    rsr_spectra.py -s -g        --title $src $spec1 $spec2
 
     # update the rc file
     nbadcb=$(grep '^#BADCB' $badlags | wc -l)
@@ -262,12 +301,12 @@ function lmtoy_rsr1 {
 	    fi
 	fi
 
-	# try and fit the 4 strongest peaks
+	# try and fit the 4 strongest peaks, with xlines= a line integral is computed
 	peaks=1:4
-	epeak=1
+	epeak=2
 	echo "LMTOY>> rsr_peaks peaks=$peaks"
-	rsr_peaks.sh in=$spec1 peak=$peaks epeak=$epeak fit=fit.driver   yapp=$dev  > rsr_peaks.log  2>&1
-	rsr_peaks.sh in=$spec2 peak=$peaks epeak=$epeak fit=fit.blanking yapp=$dev >> rsr_peaks.log  2>&1
+	rsr_peaks.sh in=$spec1 peak=$peaks epeak=$epeak xlines=$xlines fit=fit.driver   yapp=$dev  > rsr_peaks.log  2>&1
+	rsr_peaks.sh in=$spec2 peak=$peaks epeak=$epeak xlines=$xlines fit=fit.blanking yapp=$dev >> rsr_peaks.log  2>&1
 
     else
 	echo "LMTOY>> Skipping NEMO post-processing"
@@ -276,7 +315,7 @@ function lmtoy_rsr1 {
 
     # ADMIT
     if [[ $admit == 1 ]]; then
-	echo "LMTOY>> ADMIT post-processing"
+	echo "LMTOY>> ADMIT post-processing @todo bogus vlsr"
 	echo "vlsr = 12387" >> ${spec1}.apar
 	echo "vlsr = 12387" >> ${spec2}.apar
 	lmtoy_admit.sh ${spec1}
@@ -628,11 +667,15 @@ function lmtoy_seq1 {
     fi
 
     # maskmoment
-    echo "LMTOY>> Running maskmoment vlsr=$vlsr"
-    mm1.py $s_on.nf.fits   $vlsr > maskmoment.nf.log   2>&1
-    # hack
-    mm1.py $s_on.nfs.fits  $vlsr > maskmoment.nfs.log  2>&1
-   
+    if [ $maskmoment = 1 ]; then
+	echo "LMTOY>> Running maskmoment vlsr=$vlsr"
+	mm1.py $s_on.nf.fits   $vlsr > maskmoment.nf.log   2>&1
+	# hack
+	mm1.py $s_on.nfs.fits  $vlsr > maskmoment.nfs.log  2>&1
+    else
+	echo "LMTOY>> skipping maskmoment"	
+    fi
+    
     echo "LMTOY>> Created $s_fits and $w_fits"
     echo "LMTOY>> Parameter file used: $rc"
     
