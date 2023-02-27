@@ -8,10 +8,10 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-version="SLpipeline: 25-feb-2023"
+_version="SLpipeline: 26-feb-2023"
 
 echo ""
-echo "LMTOY>> $version"
+echo "LMTOY>> $_version"
 
 #--HELP   
                                # required input is either obsnum= or obsnums=
@@ -32,7 +32,6 @@ admit=0         # run ADMIT ?
 sleep=2         # add few seconds before running, allowing quick interrupt
 nproc=1         # number of processors to use (keep it at 1)
 rsync=""        # rsync address for the TAP file (used at LMT/malt)
-rc=""           # global rc file (experimental)
 oid=""          # experimental
 goal=Science    # Science, or override with: Pointing,Focus
 
@@ -55,26 +54,20 @@ goal=Science    # Science, or override with: Pointing,Focus
 #
 #--HELP
 
-#
+#             set up LMTOY, parse command line so it's merged with the script parameters
 source lmtoy_functions.sh
 lmtoy_args "$@"
 
-# global rc ?
-if [ -n "$rc" ]; then
-    echo "LMTOY>> source $rc"
-    source $rc
-fi
-
 #             put in bash debug mode
-if [ $debug = 1 ]; then
+if [ $debug -gt 0 ]; then
     set -x
     set -e
     python --version
     which python
 fi
 
+#             get the obsnum= (or obsnums=)
 lmtoy_decipher_obsnums
-
 if [ $obsnum = 0 ]; then
     echo No valid obsnum= or obsnums= given
     exit 1
@@ -140,7 +133,7 @@ if [ -e $pidir/PI_pars.rc ]; then
     source $pidir/PI_pars.rc
 fi
 
-# warning: we're not using obsgoal, but our own goal=
+# warning: we're not using obsgoal, but our own goal=     @todo     use obsgoal et al.
 if [ $goal == "Science" ]; then
 
     if [ $obspgm == "Map" ] || [ $obspgm == "Lissajous" ]; then
@@ -172,6 +165,7 @@ if [ $goal == "Science" ]; then
 	fi
     
     elif [ $instrument = "RSR" ]; then
+	
 	if [ -d $pdir ]; then
 	    echo "Re-Processing $obspgm RSR in $pdir for $src (use restart=1 if you need a fresh start)"
 	    first=0
@@ -205,6 +199,7 @@ if [ $goal == "Science" ]; then
 	fi
 
     elif [ $instrument = "1MM" ]; then
+	
 	# @todo   only tested for one case
 	if [ -d $pdir ]; then
 	    echo "Re-Processing $obspgm 1MM in $pdir for $src"
@@ -218,7 +213,9 @@ if [ $goal == "Science" ]; then
 	else
 	    echo "Skipping unknown obspgm=$obspgm"
 	fi
+	
     elif [ $instrument = "SEQ" ] && [ $obspgm = "Bs" ]; then
+	
 	if [ -d $pdir ]; then
 	    echo "Re-Processing $obspgm SEQ in $pdir for $src (use restart=1 if you need a fresh start)"
 	    first=0
@@ -237,7 +234,6 @@ if [ $goal == "Science" ]; then
 	echo "Unknown instrument $instrument"
 	tar=0
     fi
-    
 else
     if [ -d $pdir ]; then
 	echo "Re-Processing $obspgm/$obsgoal in $pdir for $src"
@@ -260,7 +256,7 @@ else
 fi
 
 # record the processing time
-echo "date=\"$(date +%Y-%m-%dT%H:%M:%S)\"" >> $pdir/lmtoy_$obsnum.rc
+echo "date=\"$(lmtoy_date)\"     # end " >> $pdir/lmtoy_$obsnum.rc
 
 # make a metadata yaml file for later ingestion into DataVerse
 echo "LMTOY>> make metadata for DataVerse"
@@ -322,3 +318,6 @@ fi
 
 # final reminder of parameters
 lmtoy_report
+
+# record of the log file ?
+# cp $pdir/lmtoy_$obsnum.log cp $pdir/lmtoy_$obsnum.log.$date
