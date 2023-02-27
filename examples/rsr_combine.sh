@@ -10,9 +10,9 @@
 #
 #  Example:   rsr_combine.sh obsnums=33551,71610,92068 
 
-version="rsr_combine: 1-feb-2023"
+_version="rsr_combine: 27-feb-2023"
 
-echo "LMTOY>> $version"
+echo "LMTOY>> $_version"
 
 #--HELP
 
@@ -32,21 +32,9 @@ debug=0
 #            - parameters that directly match the SLR scripts
 #--HELP
 
-if  [ -z $1 ] || [ "$1" == "--help" ] || [ "$1" == "-h" ] ;then
-    set +x
-    awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
-    exit 0
-fi
-
-# unset a few things, since setting them will give a new meaning
-unset vlsr
-
-#             simple keyword=value command line parser for bash - don't make any changing below
-for arg in "$@"; do
-  export "$arg"
-done
-
+#             lmtoy and CLI parsing
 source lmtoy_functions.sh
+lmtoy_args "$@"
 
 #             put in bash debug mode
 if [ $debug = 1 ]; then
@@ -114,10 +102,8 @@ blanking=rsr.${on0}_${on1}.blanking
    rfile=rsr.${on0}_${on1}.rfile
  badlags=rsr.${on0}_${on1}.badlags
 
-# override CLI again
-for arg in "$@"; do
-  export "$arg"
-done
+# override CLI again @todo do we still need this
+lmtoy_args "$@"
 
 lmtoy_rsr1
 
