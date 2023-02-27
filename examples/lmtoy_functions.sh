@@ -28,7 +28,7 @@ function lmtoy_debug {
 }
 
 function lmtoy_report {
-    printf_red "LMTOY>> ProjectId=$ProjectId  obsnum=$obsnum  obspgm=$obspgm  obsgoal=$obsgoal oid=$oid"
+    printf_red "LMTOY>> ProjectId=$ProjectId  obsnum=$obsnum  obspgm=$obspgm  obsgoal=$obsgoal oid=$oid date_obs=$date_obs"
 }
 
 function lmtoy_args {
