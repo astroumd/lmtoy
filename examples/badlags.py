@@ -18,13 +18,14 @@
 #          2021-12-01: renamed to badlags.py
 #          2022-05-18: also flag when rms < bc_lo
 #          2023-02-02: implemented proper flags using docopt
+#          2023-02-22: --plotmax 
 #
 #
 
 """Usage: badlags.py [options] OBSNUM
 
 Options:
-  -p PLOT_MAX                   Plot max. If not given, the bc_hi THRESHOLD is used. Optional
+  -p --plotmax PLOTMAX          Plot max. If not given, the bc_hi THRESHOLD is used. Optional
   -B --badlags BADLAGS          Output badlags file, if desired. [Default: rsr.badlags]
   -d                            Add more debug output
   -e                            Don't use edge detection, by default it will.
@@ -32,24 +33,25 @@ Options:
   --bc_hi HIGH                  Above this value, lags are flagged bad [Default: 2.5]
   --bc_lo LOW                   Below this value, lags are flagged bad [Default: 0.01]
   --spike SPIKE                 Threshold above which spikes are flagged as bad channel [Default: 3.0]
+  --short_hi SHIGH              Above this value, lags under SMIN are flagged [Default: 2.5]
+  --short_min SMIN              Lags below SMIN get special treatment and are allowed different threshold [Default: 256]
+  --min_chan MINCHAN            No blabla below this channel [Default: 32]
+  --rms_min RMIN                Minimum RMS to accept a C/B [Default: 0.01]
+  --rms_max RMAX                Maximum RMS to accept a C/B [Default: 0.2]
 
   -h --help                     show this help
   --version                     show version
 
 A badlags file can be optionally passed in. It will be a file where the first 3 columns
 are tuples of Chassis,Board,Channel that is deemed a bad channel.
-badlags.py is a program that can create it.
 
-There are more parameters that are currently hard-coded but can be exposed as parameters:
-
-     rms_min         = 0.01
-     rms_max         = 0.2
-     min_chan        = 32
+The odd combination (short_hi, short_min) is used for strong continuum, where the short lags will have a larger
+variation than (bc_hi) but should still be allowed.
 
 
 """
 
-_version = "6-feb-2023"
+_version = "22-feb-2023"
 
 import os
 import sys
@@ -57,8 +59,7 @@ import glob
 import numpy as np
 from docopt import docopt
 from matplotlib import pyplot as pl
-from dreampy3.redshift.netcdf import RedshiftNetCDFFile
-
+# dreampy3 is loaded below after commandline parser did its job
 
 def rmsdiff(data, robust=True):
     """   guess the RMS based on a robust neighbor differences
@@ -108,16 +109,20 @@ board_list   = (0,1,2,3,4,5) # BOARD (NOT FREQUENCY BAND) IDENTIFIERS
 bc_hi = float(av['--bc_hi'])
 bc_lo = float(av['--bc_lo'])
 
+# special short lag treatment?
+short_hi = float(av['--short_hi'])
+short_min = int(av['--short_min'])
+
 # spike threshold (doesn't seem to work too well, often works bad on short lags)
 spike_threshold = float(av['--spike'])
 Qspike = spike_threshold > 0
 
 # min RMS_diff needed for full acceptance of a C/B pair
-rms_min = 0.01
-rms_max = 0.2
+rms_min = float(av['--rms_min'])
+rms_max = float(av['--rms_max'])
 
 # where to start checking for bad lags
-min_chan = 32
+min_chan = float(av['--min_chan'])
 
 # more debugging output ?
 Qdebug = av['-d']
@@ -129,10 +134,10 @@ Qshow = not av['-s']
 Qedge = not av['-e']
 
 # plotting max
-if av['-p'] == None:
+if av['--plotmax'] == None:
     plot_max = bc_hi
 else:
-    plot_max = float(av['-p'])
+    plot_max = float(av['--plotmax'])
 
 # the obsnum (just one is accepted now, though we used to allow to process more)
 o_list = [int(av['OBSNUM'])]
@@ -161,6 +166,9 @@ if False:
         o_list.append(int(ss[1]))
     lfile.close()
     print('read file: %s  %d observations\n'%(the_filename,len(o_list)))
+
+# since this code executes, load it later
+from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 
 # set up an array to hold the maximum values of std dev for a channel
 findmax = np.zeros((nchassis,nboards,nchan))
@@ -235,7 +243,8 @@ print('-----------------------')
 
 ftab = open('rsr.badlags','w')
 ftab.write('# File written by %s - version %s\n' % (sys.argv[0],_version))
-ftab.write('# Bad Channel Thresholds:  RMS < %g or RMS > %g\n'%(bc_lo,bc_hi))
+ftab.write('# Bad Channel Thresholds:  RMS < %g or RMS > %g\n' % (bc_lo,bc_hi))
+ftab.write("# Short Channel Threshold:  RMS > %g for lags < %d\n" % (short_hi, short_min))
 ftab.write('# Spike trigger: %g\n' % spike_threshold)
 ftab.write('# Min Channel: %d\n' % (min_chan))
 ftab.write('# Edge: %s\n' % Qedge)
@@ -264,6 +273,8 @@ for ic in range(nchassis):
         for chan in range(nchan):
             # check the value of the standard deviation against threshold and print if above threshold
             if findmax[ic,ib,chan] > bc_hi:
+                if chan < short_min and findmax[ic,ib,chan] < short_hi:
+                    continue
                 msg = '%2d %2d %3d %6d %6.1f    # max'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmax[ic,ib,chan])
                 print(msg)
                 ftab.write("%s\n" % msg)
@@ -372,8 +383,10 @@ else:
 pl.suptitle("obsnum=%d %s" % (obsnum,label))
 
 print('-----------------------')
+ftab.write("# Found %d min, %d max, %d spike badlags and %d bad C/B's" % (count_min, count_max, count_spike, nbadcb))
 ftab.close()
 print("Wrote %s" % badlags)
+print("Found %d bad Chassis/Board's" % nbadcb)
 
 if Qshow:
     pl.show()
@@ -381,11 +394,6 @@ else:
     pl.savefig(lagsplot)
     print("Wrote %s" % lagsplot)
 
-if nbadcb > 0:    
-    print("There were %d bad Chassis/Board's" % nbadcb)
-else:
-    print("Nice, there were no bad Chassis/Board's based on badlags statistics")
-    
 if len(o_list) > 1:
     print("Warning: this program is not meant to be used with multiple obsnums")
 
