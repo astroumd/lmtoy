@@ -3,23 +3,38 @@
 When an LMT observing script finishes, there is a unique **obsnum**,
 which records the instrument, observing mode, and possibly
 other obsnum's needed for calibration. The raw data is a set
-of netCDF files identified by one or more obsnum's.
+of netCDF files identified by one or more obsnum's, its organization
+differs on the instrument (currently RSR and WARES based are the two
+modes).
 
 The obsnum is the only identifier needed to run the pipeline. From the
 obsnum the instrument can be discovered, and the pipeline has sensible
 defaults for each instrument. Of course PI/PL parameters (PIPL's) can
-be passed on the bypass these default settings.
+be passed on the bypass these default settings. An example:
+
+      $ SLpipeline.sh obsnum=79448 pix_list=-0,-5 extent=240
+
+would process Sequoia data, remove beams 0 and 5 from the default list, and
+produce a square map of 240 arcsec. The last two keyword are optional. Use
+--help to get more help:
+
+      $ SLpipeline.sh --help
+      $ seq_pipeline.sh --help
+      $ rsr_pipeline.sh --help
+
+to get generic help, and instrument specific help.
 
 ## Where is the work done
 
 When observing concludes, raw data will show up in your $DATA_LMT. Depending on
-where your $DATA_LMT is, this could be minutes or days.
+where your $DATA_LMT is, this could be seconds, minutes or days.
 
-How do you have if an obsnum is present? One possible way is the lmtinfo.py script:
+How do you know if an obsnum is present? One possible way is the lmtinfo.py script:
 
       $ lmtinfo.py   12345
 
-would show some basic info in "rc" format, which both python and bash can read.
+would show some basic info in "rc" format, which both python and bash can read. It does
+not need a database, but you have to know the obsnum.
 
 The pipeline will reduce the data in $WORK_LMT and create a directory tree
 starting with **$ProjectId/$obsnum**.  If $WORK_LMT is not set, it will be interpreted
@@ -29,13 +44,13 @@ has been configured to look at the $WORK_LMT directory, with or without some aut
 ## SLpipeline.sh
 
 Starting with the 2021-S1 season we have been using the **SLpipeline.sh** script.
-The intent is that the script only needs an **obsnum**, and will figure out which instrument
+As mentioned before, the
+intent is that the script only needs an **obsnum**, and will figure out which instrument
 is used, and run the reduction via the instrument specific reduction pipeline.
 
 There will also be optional *PI pipeline Parameters* (PIPLs), which
 are under discussion, but we will assume they are a series of
-*keyword=value* pairs. It is assumed they will be available in the
-netcdf file.
+*keyword=value* pairs. 
 
 ### Sequoia  (SEQ)
 
@@ -51,9 +66,9 @@ inspected, maybe re-run if need be, and then combined in a final cube.
 
 This will have created three obsnum directories inside the **2018-S1-MU-46** directory.
 Various figures will need to be inspected, and you would find out that pixel 3
-(counting pixels from 0 to 15) is bad for the first. in each obsnum directory the
+(counting pixels from 0 to 15) is bad for 85776. In each obsnum directory the
 corresponding **lmtoy_OBSNUM.rc** file will contain parameters that control the pipeline.
-The ones most likely useful for masking are:
+Here are a few common ones
 
 #### pix_list
 
