@@ -1,5 +1,4 @@
 # See the INSTALL.md notes on how to use this Makefile
-# what is shown here to install, is just one of many paths
 
 #
 SHELL = /bin/bash
@@ -334,9 +333,6 @@ bench2:
 	$(TIME) SLpipeline.sh obsnum=79448 restart=1 admit=$(ADMIT)
 	@echo "QAC_STATS: IRC+10216_79448-full 0.00256137 0.242578 -563.449 634.86 85230.4 0.0531463 5696559 [expected]"
 	@echo "QAC_STATS: IRC+10216_79448-cent 0.00280355 0.213226 -2.42886 15.3425 91513 0.123691 3684458 [expected]"
-	@echo "older one:"
-	@echo "QAC_STATS: IRC+10216_79448-full 0.00231775 0.215314 -55.9662 45.8299 72030.6 0.0721877 [old]"
-	@echo "QAC_STATS: IRC+10216_79448-cent 0.00240622 0.183928 -0.947408 15.264 67897.1 0.213951 [old]"
 	@echo "========================================================================================"
 	@echo xdg-open  $(WORK_LMT)/2018S1SEQUOIACommissioning/79448/README.html
 
