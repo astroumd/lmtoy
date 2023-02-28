@@ -11,6 +11,7 @@ grep 'Mean and dispersion' $f | awk -F: '{print $3}' > $tmp.1
 grep 'min and max'         $f | awk -F: '{print $3}' > $tmp.2
 paste $tmp.1 $tmp.2
 
+echo "linecheck: base[mK]  peak[mK]  freq[GHz]  FWHM[km/s]"
 grep LineCheck1 $f
 grep LineCheck2 $f
 
