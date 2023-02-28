@@ -86,7 +86,9 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: %s ObsnumDirectory" % sys.argv[0])
         print("version: %s" % _version)
-        example()
+        lmtdata = example()
+        if use_db:
+            lmtdata._write_to_db()
         sys.exit(0)
 
     print("# Warning: mk_metadata does not produce fully certified data yet")
