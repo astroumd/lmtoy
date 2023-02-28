@@ -1,16 +1,39 @@
 #! /usr/bin/env python
 #
-#  Create the lmtmetadata.yaml (on stdout) for a given obsnum directory
+#  Create the lmtmetadata.yaml for given obsnum
 #
-#  projectTitle
-#  PIName
-#  lineName  - "search for"
-#
+
+"""Usage: mk_metadata.py [options] [OBSNUM]
+
+Options:
+
+-d          add more debugging
+-y YAMLFILE Output yaml file. Optional
+-f DBFILE   Output database filename. Optional
+-o          Overwrite row for all possible rows with OBSNUM.
+            Only affects if a database was used.
+            (NOT IMPLEMENTED)
+--delete N  delete row N (alma_id) from table
+            (NOT IMPLEMENTED)
+
+--version   Version
+-h --help   This help
+
+With a given OBSNUM the script will create the DataVerse metadata.
+
+A yaml file is sent to stdout, and an optional database (sqlite) can
+be created to aid in in the astroquery-admit style.
+
+mk_metadata.py -f file.db -y file.yaml
+
+"""
+
 import os
 import sys
+from docopt import docopt
 import astropy.units as u
 import dvpipe.utils as utils
-from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, LmtMetadataBlock, example
+from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 
 _version = "28-feb-2023"
 
@@ -80,25 +103,33 @@ def get_version():
     
 if __name__ == "__main__":
 
-    debug = False
-    use_db = False
+    av = docopt(__doc__,options_first=True, version='1')
+    debug = av['-d']
     
-    # simple CLI for now
-    if len(sys.argv) < 2:
-        print("Usage: %s ObsnumDirectory" % sys.argv[0])
-        print("version: %s" % _version)
-        lmtdata = example()
-        if use_db:
-            lmtdata._write_to_db()
+    if debug:
+        print(av)
+
+    dbfile = av['-f']
+    yamlfile = av['-y']
+   
+    if av['OBSNUM'] == None:
+        lmtdata = example(dbfile,yamlfile)
+        lmtdata.write_to_db()
+        lmtdata.write_to_yaml()        
         sys.exit(0)
 
-    print("# Warning: mk_metadata does not produce fully certified data yet")
-
     # find and read the rc file and construct the rc {} dictionary
-    
-    pdir = sys.argv[1]
-    obsnum = pdir.split('/')[-1]
-    rcfile = pdir + '/lmtoy_%s.rc' % obsnum
+    # OBSNUM can be an actual OBSNUM or the OBSNUM directory 
+    pdir = av['OBSNUM']
+    if pdir.rfind('/') > 0:
+        obsnum = pdir.split('/')[-1]
+        rcfile = pdir + '/lmtoy_%s.rc' % obsnum
+    else:
+        obsnum = pdir        
+        rcfile =  '%s/lmtoy_%s.rc' % (obsnum,obsnum)
+    if not os.path.exists(rcfile):
+        print("File %s does not exist" % rcfile)
+        sys.exit(0)
     rc = get_rc(rcfile, debug)
 
     # get version, as comment (or metadata?)
@@ -107,16 +138,12 @@ if __name__ == "__main__":
 
     # deal with the enum's we use for instrument on the DV side
     # valid names:  TolTEC, MSIP1mm, SEQUOIA, RSR, OMAYA
-    
     instrument = header(rc,"instrument", debug)
     if instrument == "SEQ":
         instrument = "SEQUOIA"
 
-    # open the LMB and write some common metadata
-    if use_db:
-        lmtdata = LmtMetadataBlock(dbfile="test_meta.db")
-    else:
-        lmtdata = LmtMetadataGroup('foobar')
+    # open the LMG and write some common metadata
+    lmtdata = LmtMetadataGroup('SLpipeline',dbfile=dbfile, yamlfile=yamlfile)
     lmtdata.add_metadata("observatory",  "LMT")
     lmtdata.add_metadata("LMTInstrument",instrument)
     lmtdata.add_metadata("projectID",    header(rc,"ProjectId",debug))
@@ -140,24 +167,18 @@ if __name__ == "__main__":
         lmtdata.add_metadata("velType","FREQUENCY")
         lmtdata.add_metadata("z",0.001071)              # <-vlsr
         
-        #lmtdata.add_metadata("slBand",1)
-        #lmtdata.add_metadata("lineName",'CS2-1')
-        #lmtdata.add_metadata("frequencyCenter",97.981)
-        #lmtdata.add_metadata("bandwidth",2.5)
-        #lmtdata.add_metadata("beam",20.0/3600.0)
-        #lmtdata.add_metadata("lineSens",0.072)
-
         band = dict()
         band["slBand"] = 1
         band["formula"]='CO'
         band["transition"]='1-0'
-        #   for multiple lines:
-        #band["lineName"] = 'CS2-1,CO1-0,H2CS'
+        #   for multiple lines not known yet
         band["frequencyCenter"] = 97.981*u.Unit("GHz")
+        band["velocityCenter"] = 0.0
         band["bandwidth"] = 2.5
         band["beam"] = 20.0/3600.0
         band["lineSens"] = 0.072*u.Unit("K")
         band["qaGrade"] = "A+++"
+        band["nchan"] = 1024
         lmtdata.add_metadata("band",band)
 
     elif instrument == "RSR":
@@ -166,10 +187,7 @@ if __name__ == "__main__":
         print("instrument=%s not implemented yet" % instrument)
 
 
-    
-    print(lmtdata.to_yaml())
-
-    if use_db:
-        lmtdata._write_to_db()
+    lmtdata.write_to_db()
+    lmtdata.write_to_yaml()
 
     
