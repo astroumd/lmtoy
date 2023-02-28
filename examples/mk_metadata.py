@@ -8,10 +8,11 @@
 #
 import os
 import sys
+import astropy.units as u
 import dvpipe.utils as utils
 from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, LmtMetadataBlock, example
 
-_version = "27-feb-2023"
+_version = "28-feb-2023"
 
 def header(rc, key, debug=False):
     """
@@ -148,13 +149,14 @@ if __name__ == "__main__":
 
         band = dict()
         band["slBand"] = 1
-        band["lineName"]='CS2-1'
+        band["formula"]='CO'
+        band["transition"]='1-0'
         #   for multiple lines:
         #band["lineName"] = 'CS2-1,CO1-0,H2CS'
-        band["frequencyCenter"] = 97.981
+        band["frequencyCenter"] = 97.981*u.Unit("GHz")
         band["bandwidth"] = 2.5
         band["beam"] = 20.0/3600.0
-        band["lineSens"] = 0.072
+        band["lineSens"] = 0.072*u.Unit("K")
         band["qaGrade"] = "A+++"
         lmtdata.add_metadata("band",band)
 
