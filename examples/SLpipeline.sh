@@ -8,7 +8,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 26-feb-2023"
+_version="SLpipeline: 28-feb-2023"
 
 echo ""
 echo "LMTOY>> $_version"
@@ -29,6 +29,7 @@ srdp=0          # save the SRDP in a tar file?
 raw=0           # save the RAW data in a tar file?
 grun=1          # save the script generator?
 admit=0         # run ADMIT ?
+meta=0          # activate update for frontend db (for dataverse)
 sleep=2         # add few seconds before running, allowing quick interrupt
 nproc=1         # number of processors to use (keep it at 1)
 rsync=""        # rsync address for the TAP file (used at LMT/malt)
@@ -36,6 +37,10 @@ oid=""          # experimental
 goal=Science    # Science, or override with: Pointing,Focus
 
 #  Optional instrument specific pipeline can be added as well but are not known here
+#  A few examples:
+#    rsr_pipeline.sh --help
+#    seq_pipeline.sh --help
+#
 #    To Unity:  rsync=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s
 #    To UMD:    rsync=teuben@lma.astro.umd.edu:/lma1/teuben/LMT/work_lmt/%s
 #
@@ -259,9 +264,12 @@ fi
 echo "date=\"$(lmtoy_date)\"     # end " >> $pdir/lmtoy_$obsnum.rc
 
 # make a metadata yaml file for later ingestion into DataVerse
-echo "LMTOY>> make metadata for DataVerse"
-mk_metadata.py $pdir > $pdir/lmtmetadata.yaml
-
+echo "LMTOY>> make metadata ($meta) for DataVerse"
+if [ $meta = 0 ]; then
+    mk_metadata.py -y  $pdir/lmtmetadata.yaml                              $pdir
+else
+    mk_metadata.py -y  $pdir/lmtmetadata.yaml -f $WORK_LMT/example_lmt.db  $pdir 
+fi
 # produce TAP, RSRP, RAW tar files, whichever are requested.
 
 
