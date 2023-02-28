@@ -2,9 +2,15 @@
 
 The top level script **SLpipeline.sh** is written in **bash**, and here
 we describe some salient points of the main pros and cons of such a design.
+
+Why bash, and not python? The original code base was a set of scripts that
+were executed from the command line, and a shell language like bash was a
+more natural fit to this without having to change major interfaces.
+
 bash is a very powerful programming language, and so far in LMTOY we are only
-using a few simple features, which we enumerate in order to assess the
-impact if the design is going to change or expanded:
+using a few simple features, which we enumerate below in order to assess the
+impact if the design is going to change or expanded.
+
 
 ## Features 
 
@@ -13,17 +19,19 @@ impact if the design is going to change or expanded:
 
         source lmtoy_functions.sh
 
-   we can keep a library of functions useful for the pipeline.
+   we can keep a library of functions useful for the pipeline. You will see
+   most bash scrips now use these functions.
 
-2. Variables in bash are shared between functions, and don't need to be declared.
-   Use the **debug=1** to monitor and force better variable declaration habits, e.g. in order
-   to force an error if an unset variables is used, use **debug=2**  [TBD]
+2. Variables in bash are shared between functions, and don't need to be declared. 
 
    We are not using (yet) the **declare** command in bash to enforce typing etc.
 
    We are not using (yet) the **local** command to enforce local variables in a function.
 
-3. Command line parser expects a series of *keyword=value*, but they are not
+   Use the **debug=1** to monitor and force better variable declaration habits, e.g. in order
+   to force an error if an unset variables is used, use **debug=2**  [TBD]
+
+3. Our command line parser expects a series of *keyword=value*, but they are not
    'registered', thus misspelling a keyword name can cause confusion. The
    function **lmtoy_args** contains the following parser:
 
@@ -31,27 +39,38 @@ impact if the design is going to change or expanded:
 	    export "$arg"
         done
 
-    notice we don't use **eval** but **export**, in order for keyword with spaced
-    to be properly parsed.
+   notice we don't use **eval** but **export**. Since it is used inside a function,
+   we need this in order for keyword with spaces to be properly parsed
 
-4.  Inline help is defined as sections of bash commands between two **#--HELP** comments in the script.
-    Normally the defaults of the PI parameters are stored here, but multiple sections of HELP are
-    perfectly fine in a script. 
+4. Inline help is defined as sections of bash commands between two **#--HELP** comments in the script.
+   Normally the defaults of the PI parameters are stored here, but multiple sections of HELP are
+   perfectly fine in a script. This idea is somewhat similar to the **docopt** python module, which
+   we have started to use for some of the python scripts.   It's a more *WYSIWYG* approach to command
+   line interfaces, and makes for so much more readable code.
 
-5.  Command Line Processing is done in the following order:
+5. Command Line Processing is done in the following order:
 
-    1.  Default PI parameters as defined in the **#--HELP** sections of a script
+    1.  Default PI parameters as defined in the **#--HELP** sections of a script (or anything equivalent,
+        usually viewable with the --help option to the script.
 
-    2.  **lmtinfo.py** parameters (some are PI parameters)
+    2.  **lmtinfo.py** parameters (some are PI parameters, and can override the script defaults)
 
     3.  CLI parameters meant to override any of the ones  defined before
 
-    All of these are stored in an **lmtoy_OBSNUM.rc** file, which is means to be readable by
-    bash (using the source command) and python (using the exec function). There are no examples
-    yet of usage in python.
+   All of these parameters are then stored in an **lmtoy_OBSNUM.rc** file, which is meant to be readable by
+   bash (using the bash source command) and
+   python (using the python exec function, e.g. in mk_metadata.py)
 
+6. At the top level, SLpipeline.sh finds out what instrument and (science) goal is, and directs
+   the instrument specific processing to scripts such as seq_pipeline.sh and rsr_pipeline.sh after
+   having set some rc defaults (TBD)
 
+   Each instrument then processes parameters and sets up the variables that then are processed
+   in functions like lmtoy_seq1 and lmtoy_rsr1, where all the hard pipeline work is done.
+   
+99. Various peculiarities to enable analytics
 
+    1. The date= variable is used to store beginning and ending of pipeline processing
 
 ## References
 
