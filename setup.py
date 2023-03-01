@@ -20,6 +20,6 @@ setup(
     keywords = 'astronomy',
     url = 'https://github.com/astroumd/lmtoy',
     packages = find_packages(),
-    install_requires = ['numpy'],
+    install_requires = ['aplpy', 'astropy', 'docopt', 'numpy'],
 )
 
