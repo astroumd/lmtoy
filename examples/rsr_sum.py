@@ -12,6 +12,7 @@
 
 -b BLANKING_FILE              Input ASCII blanking file. No default.
 -t THRESHOLD_SIGMA            Threshold sigma in spectrum needed for averaging [Default: 0.01]
+-r REPEAT_THRESHOLD           Threshold sigma when averaging repeats [Default: 0.01]
 --badlags BADLAGS_FILE        Input rsr.lags.bad file. Optional.
 --o1 ORDER1 -1 ORDER1         Baseline order fit for individual spectra [Default: 1]
 --o2 ORDER2 -2 ORDER2         Baseline order fit for final combined spectrum [Default: -1]
@@ -84,8 +85,10 @@ def main(argv):
         data_lmt =  av['-p']
 
     # -t
-    threshold_sigma = float(av['-t'])
-
+    threshold_sigma  = float(av['-t'])
+    # -r 
+    threshold_repeat = float(av['-r'])
+    
     # --o1, --o2
     order1 = int(av['--o1'])
     order2 = int(av['--o2'])
@@ -143,7 +146,7 @@ def main(argv):
                 nc.hdu.baseline(order=order1, windows=windows, subtract=True)
             else:
                 nc.hdu.baseline(order=order1, subtract=True)
-            nc.hdu.average_all_repeats(weight='sigma')
+            nc.hdu.average_all_repeats(weight='sigma')                # driver has the "-r rthr" threshold here
             # Comment out the following 3 lines if you don't
             #   want to see individual spectrum again
             #pl.plot_spectra(nc)
@@ -161,7 +164,7 @@ def main(argv):
         return
     print("Accumulated %d hdu's" % len(hdulist))
     hdu = hdulist[0]
-    hdu.average_scans(hdulist[1:],threshold_sigma=threshold_sigma)
+    hdu.average_scans(hdulist[1:],threshold_sigma=threshold_sigma)   # -t args.cthresh in driver
 
     pl.plot_spectra(hdu)
     # baselinesub = int(input('Order of baseline (use ''-1'' for none):'))
