@@ -3,22 +3,15 @@
 #
 import os
 import sys
+# @todo docopt
+# from docopt import docopt
+from lmtoy import runs
 
-# in prep of the new lmtoy module
-try:
-    lmtoy = os.environ['LMTOY']
-    sys.path.append(lmtoy + '/lmtoy')
-    import runs
-except:
-    print("No LMTOY with runs.py")
-    sys.exit(0)
 
-    
 if len(sys.argv) == 1:
     print("0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15")
     sys.exit(0)
 
-    
     
 pl=sys.argv[1]
 
@@ -30,7 +23,6 @@ if pl == '-h' or pl == '--help':
 pl = runs.pix_list(pl)
 print(pl)
 sys.exit(0)
-
     
 
 bl = list(range(1,17))
