@@ -266,9 +266,11 @@ echo "date=\"$(lmtoy_date)\"     # end " >> $pdir/lmtoy_$obsnum.rc
 # make a metadata yaml file for later ingestion into DataVerse
 echo "LMTOY>> make metadata ($meta) for DataVerse"
 if [ $meta = 0 ]; then
-    mk_metadata.py -y  $pdir/lmtmetadata.yaml                              $pdir
+    mk_metadata.py -y  $pdir/lmtmetadata.yaml $pdir
 else
-    mk_metadata.py -y  $pdir/lmtmetadata.yaml -f $WORK_LMT/example_lmt.db  $pdir 
+    # @todo will this work reliably on NFS mounted media?
+    db=$WORK_LMT/example_lmt.db
+    flock --verbose $db.flock mk_metadata.py -y  $pdir/lmtmetadata.yaml -f $db $pdir 
 fi
 # produce TAP, RSRP, RAW tar files, whichever are requested.
 
