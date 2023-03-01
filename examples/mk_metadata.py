@@ -1,30 +1,26 @@
 #! /usr/bin/env python
 #
-#  Create the lmtmetadata.yaml for given obsnum
-#
 
 """Usage: mk_metadata.py [options] [OBSNUM]
 
 Options:
 
 -d          add more debugging
--y YAMLFILE Output yaml file. Optional
--f DBFILE   Output database filename. Optional
+-y YAMLFILE Output yaml file. Optional.
+-f DBFILE   Output sqlite database filename. Optional.
+
 -o          Overwrite row for all possible rows with OBSNUM.
             Only affects if a database was used.
             (NOT IMPLEMENTED)
 --delete N  delete row N (alma_id) from table
             (NOT IMPLEMENTED)
 
---version   Version
+--version   Show version
 -h --help   This help
 
-With a given OBSNUM the script will create the DataVerse metadata.
-
-A yaml file is sent to stdout, and an optional database (sqlite) can
-be created to aid in in the astroquery-admit style.
-
-mk_metadata.py -f file.db -y file.yaml
+For a given OBSNUM the script will create the metadata for DataVerse
+in either yaml and/or sqlite format. If no obsnum is given, a
+generic example is given.
 
 """
 
@@ -103,7 +99,7 @@ def get_version():
     
 if __name__ == "__main__":
 
-    av = docopt(__doc__,options_first=True, version='1')
+    av = docopt(__doc__,options_first=True, version=_version)
     debug = av['-d']
     
     if debug:
@@ -153,14 +149,15 @@ if __name__ == "__main__":
     lmtdata.add_metadata("obsDate",      header(rc,"date_obs",debug))
     lmtdata.add_metadata("targetName",   header(rc,"src",debug))
     lmtdata.add_metadata("intTime",float(header(rc,"inttime",debug)))
+    lmtdata.add_metadata("RA",     float(header(rc,"ra",debug)))
+    lmtdata.add_metadata("DEC",    float(header(rc,"dec",debug)))
+    lmtdata.add_metadata("calibrationStatus","CALIBRATED")
 
     if instrument == "SEQUOIA":
         #lmtdata.add_metadata("origin",  "lmtoy v0.6")
         #
         #  below here to be deciphered
         #
-        lmtdata.add_metadata("RA",123.456)
-        lmtdata.add_metadata("DEC",-43.210)
         lmtdata.add_metadata("velocity",321.0)          # vlsr
         lmtdata.add_metadata("velDef","RADIO")          
         lmtdata.add_metadata("velFrame","LSR")
@@ -169,9 +166,8 @@ if __name__ == "__main__":
         
         band = dict()
         band["slBand"] = 1
-        band["formula"]='CO'
+        band["formula"]='CO'               #   multiple lines not resolved yet
         band["transition"]='1-0'
-        #   for multiple lines not known yet
         band["frequencyCenter"] = 97.981*u.Unit("GHz")
         band["velocityCenter"] = 0.0
         band["bandwidth"] = 2.5
@@ -183,9 +179,27 @@ if __name__ == "__main__":
 
     elif instrument == "RSR":
         print("instrument=%s " % instrument)
+
+        lmtdata.add_metadata("velocity",0.0)          # vlsr
+        lmtdata.add_metadata("velDef","RADIO")          
+        lmtdata.add_metadata("velFrame","SRC")
+        lmtdata.add_metadata("velType","FREQUENCY")
+        lmtdata.add_metadata("z",0.0)                 # <-vlsr
+        
+
+        band = dict()
+        band["slBand"] = 1
+        band["frequencyCenter"] = 92.5*u.Unit("GHz")
+        band["bandwidth"] = 40.0*u.Unit("GHz")
+        band["velocityCenter"] = 0.0
+        band["beam"] = 20.0/3600.0
+        band["lineSens"] = 1*u.Unit("mK")
+        band["qaGrade"] = "A+++"
+        band["nchan"] = 1300
+        lmtdata.add_metadata("band",band)
+        
     else:
         print("instrument=%s not implemented yet" % instrument)
-
 
     lmtdata.write_to_db()
     lmtdata.write_to_yaml()
