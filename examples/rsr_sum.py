@@ -19,6 +19,7 @@
                               Use -1 to skip another fit
 -p PATH                       Data path to data_lmt for the raw RedshiftChassis files.
                               By default $DATA_LMT will be used else '/data_lmt'.
+-d                            More debugging
 
 --version                     show the version
 -h --help                     show this help
@@ -70,7 +71,11 @@ script_version ="0.2.2"
 
 def main(argv):
     av = docopt(__doc__,options_first=True, version='0.2')
-    print(av)
+
+    # -d
+    Qdebug = av['-d']
+    if Qdebug:
+        print(av)
 
     # -b
     blanking_file = av['-b']
@@ -146,7 +151,10 @@ def main(argv):
                 nc.hdu.baseline(order=order1, windows=windows, subtract=True)
             else:
                 nc.hdu.baseline(order=order1, subtract=True)
-            nc.hdu.average_all_repeats(weight='sigma')                # driver has the "-r rthr" threshold here
+            if False:
+                nc.hdu.average_all_repeats(weight='sigma',threshold_sigma=threshold_repeat)
+            else:
+                nc.hdu.average_all_repeats(weight='sigma')                # driver has the "-r rthr" threshold here
             # Comment out the following 3 lines if you don't
             #   want to see individual spectrum again
             #pl.plot_spectra(nc)
