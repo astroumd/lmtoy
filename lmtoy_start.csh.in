@@ -10,7 +10,7 @@ if (-e $LMTOY/lmtoy_venv/bin/activate.csh) source $LMTOY/lmtoy_venv/bin/activate
 
 # remainder of environment
 
-setenv PATH  $LMTOY/SpectralLineReduction/bin:$LMTOY/examples:$PATH
+setenv PATH  $LMTOY/SpectralLineReduction/bin:$LMTOY/bin:$LMTOY/examples:$PATH
 
 if (-d $LMTOY/Montage/bin) setenv PATH  $LMTOY/Montage/bin:$PATH
 
