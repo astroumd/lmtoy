@@ -218,7 +218,7 @@ lmtoy_venv:
 
 pip:
 	pip3 install -r requirements.txt
-
+	pip3 install -e .
 
 # I find venv not working for me during development.
 
