@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="27-feb-2023"
+lmtoy_version="2-mar-2023"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -154,7 +154,7 @@ function lmtoy_rsr1 {
 	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t1 $t2   > rsr_driver0.log 2>&1
 	mv rsr.driver.png rsr.driver0.png
 	# 2.
-	python $LMTOY/examples/rsr_tsys.py -s $obsnum                                       > rsr_tsys0.log   2>&1
+	rsr_tsys.py -s $obsnum   > rsr_tsys0.log   2>&1
 	mv rsr.tsys.png rsr.tsys0.png
 	# we ignore any 'BADCB0' in here
     fi
@@ -165,7 +165,7 @@ function lmtoy_rsr1 {
     # Note this is only run for single obsnums
     if [[ ! -e $rsr.$obsnum.badlags ]]; then
 	# 3.  produces rsr.badlags 
-	python $LMTOY/examples/badlags.py -d -s $obsnum       > rsr_badlags.log 2>&1
+	badlags.py -d -s $obsnum       > rsr_badlags.log 2>&1
 	if [ "$badlags" = 0 ]; then
 	    echo "LMTOY>> no badlags requested, still making a plot - you almost never want to do this"
 	    mv badlags.png badlags.$obsnum.png
@@ -174,7 +174,7 @@ function lmtoy_rsr1 {
 	    echo "LMTOY>> using badlags file $badlags"
 	    cp $badlags rsr.$obsnum.badlags
 	else
-	    echo "LMTOY>> python $LMTOY/examples/badlags.py -d -s $obsnum"
+	    echo "LMTOY>> badlags.py -d -s $obsnum"
 	    mv badlags.png badlags.$obsnum.png
 	    mv rsr.badlags rsr.$obsnum.badlags
 	fi
@@ -190,8 +190,8 @@ function lmtoy_rsr1 {
 	#             Only make this plot for single obsnum's
 	if [[ -z "$obsnums" ]]; then
 	    # 5.
-	    python $LMTOY/examples/rsr_tsys.py -b $badlags    -s $obsnum         > rsr_tsys2.log 2>&1
-	    python $LMTOY/examples/rsr_tsys.py -b $badlags -t -s $obsnum         > rsr_tsys1.log 2>&1
+	    rsr_tsys.py -b $badlags    -s $obsnum         > rsr_tsys2.log 2>&1
+	    rsr_tsys.py -b $badlags -t -s $obsnum         > rsr_tsys1.log 2>&1
 	    grep CB rsr_tsys0.log  > tab0
 	    grep CB rsr_tsys2.log  > tab2
 	    paste tab0 tab2 | awk '{print $0," ratio:",$11/$5}'  > rsr_tsys_badcb.log
@@ -244,8 +244,8 @@ function lmtoy_rsr1 {
     # spec2: output spectrum rsr.$obsnum.blanking.sum.txt
     #   @todo   should there not be a $t1 flag ?
     spec2=${blanking}.sum.txt
-    echo "LMTOY>> python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo $t2"
-    python $LMTOY/examples/rsr_sum.py -b $blanking  $b  --o1 $blo $t2              > rsr_sum.log 2>&1
+    echo "LMTOY>> rsr_sum.py -b $blanking  $b  --o1 $blo $t2"
+    rsr_sum.py -b $blanking  $b  --o1 $blo $t2              > rsr_sum.log 2>&1
 
     # plot the two in one spectrum, one full range, one in a selected band.
     # the -g version makes an svg file for an alternative way to zoom in (TBD)
