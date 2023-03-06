@@ -4,6 +4,14 @@
 #  this needs to be executed from the $ProjectId/$obsnum directory 
 #
 
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "Usage:  $0 "
+    echo ""
+    echo "Expects to be in the obsnum directory , then makes an index.html for SEQ/Map data"
+    exit 0
+fi
+
+
 # set -e
 pwd=$(pwd)
 update="$(date) on $(hostname)"
@@ -11,7 +19,7 @@ update="$(date) on $(hostname)"
 # there better be only one....
 source $(ls ./lmtoy_*.rc)
 if [ -z "$obsnum" ]; then
-    # hack until it's in the rc file ?
+    # in case it's not in the rc file [used to be the case]
     grep '# obsnum=' $(ls ./lmtoy_*.rc) | sed s'/# //' > obsnum.rc
     source ./obsnum.rc
 fi
