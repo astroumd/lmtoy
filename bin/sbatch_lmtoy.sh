@@ -22,7 +22,7 @@
 
 # https://unity.rc.umass.edu/docs/#slurm/   IECK, this also stopped working.
 
-version="19-feb-2023"       # script version
+version="7-mar-2023"        # script version
 sleep=1                     # don't use 0, unity spawns too fast in a series
 
 if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
@@ -35,7 +35,8 @@ fi
 # catch the single argument batch call first, but pass addition arguments to each pipeline call
 if [ -e "$1" ]; then
     runfile=$1
-    echo Processing lines from $runfile line by line
+    echo "Processing lines from $runfile line by line"
+    echo "$(date +%Y-%m-%dT%H:%M:%S) $*" >> $WORK_LMT/sbatch.log
     nl=$(cat $runfile | wc -l)
     ml=0
     shift
