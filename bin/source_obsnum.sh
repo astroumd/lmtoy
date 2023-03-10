@@ -100,4 +100,10 @@ echo ""
 for src in $(tabcols $log 1 | sort | uniq); do
     echo "pars2[\"$src\"] = \"\""
 done
+
+ns=$(tabcols $log 1 | sort | uniq | wc -l)
+echo ""
+echo "# Found $ns sources"
+echo ""
+
 mk_trailer
