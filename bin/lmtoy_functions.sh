@@ -164,7 +164,7 @@ function lmtoy_rsr1 {
     # output: badlags=rsr.$obsnum.badlags and badlags.$obsnum.png
     #         rsr.$obsnum.rfile and rsr.$obsnum.blanking  - can be modified if #BADCB's have been found
     # Note this is only run for single obsnums
-    if [[ ! -e $rsr.$obsnum.badlags ]]; then
+    if [[ ! -e rsr.$obsnum.badlags ]]; then
 	# 3.  produces rsr.badlags
 	badlags.py -d -s $obsnum       > rsr_badlags.log 2>&1
 	if [ "$badlags" = 0 ]; then
@@ -264,11 +264,14 @@ function lmtoy_rsr1 {
     rsr_spectra.py -s           --title $src $spec1 $spec2
     rsr_spectra.py -s -g        --title $src $spec1 $spec2
 
-    # update the rc file
-    nbadcb=$(grep '^#BADCB' $badlags | wc -l)
-    echo nbadcb=$nbadcb >> $rc
-    badcb=$(grep '^#BADCB' $badlags | awk '{printf("%d/%d ",$3,$4)}')
-    echo badcb=\"$badcb\" >> $rc
+    # update the rc file (badcb here is deprecated)
+    if [[ 0 = 1 ]]; then
+	echo "BADCB deprecated here"
+	nbadcb=$(grep '^#BADCB' $badlags | wc -l)
+	echo nbadcb=$nbadcb >> $rc
+	badcb=$(grep '^#BADCB' $badlags | awk '{printf("%d/%d ",$3,$4)}')
+	echo badcb=\"$badcb\" >> $rc
+    fi
     
     # NEMO summary spectra, some stats and peak analysis
     if [[ -n "$NEMO" ]]; then
