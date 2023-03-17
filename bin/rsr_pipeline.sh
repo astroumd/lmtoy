@@ -10,7 +10,7 @@
 #
 #
 
-_version="rsr_pipeline: 26-feb-2023"
+_version="rsr_pipeline: 16-mar-2023"
 
 echo "LMTOY>> $_version"
 
@@ -25,16 +25,15 @@ path=${DATA_LMT:-data_lmt}      # - to be deprecated
 #             - PI parameters
 
 xlines=""     # set to a comma separated list of freq,dfreq pairs where strong lines are
-badboard=""   # set to a comma separated list of bad boards
 badcb=""      # set to a comma separated list of (chassis/board) combinations, badcb=2/3,3/5
 badlags=""    # set to a badlags file if to use this instead of dynamically generated (use 0 to force not to use it)
 shortlags=""  # set to a short_min and short_hi to avoid flagged strong continuum source lags
 
 linecheck=0   # set to 1, to use the source name to grab the correct xlines=
 bandzoom=5    # the band for the zoomed window
-speczoom=""   # override bandzoom with a manual speczoom=CEN,WID pair
+speczoom=""   # override bandzoom with a manual speczoom=CENTER,HALF_WIDTH pair
 rthr=0.01     # -r option for rsr_driver Threshold sigma value when averaging single observations repeats
-cthr=0.01     # -t                       Threshold sigma value when coadding all observations
+cthr=0.01     # -t option for rsr_driver Threshold sigma value when coadding all observations
               # -t option for rsr_sum as well
 sgf=0         # Savitzky-Golay high pass filter ; odd number > 21
 notch=0       # sigma cut for notch filter to eliminate large frecuency oscillations. Needs sgf > 21
@@ -44,6 +43,23 @@ blo=1         # order of polynomial baseline subtraction
 admit=0
 #            - debug
 debug=0
+
+# An interactive example: for a given o= this shows roughly how the pipeline works:
+#
+#      o=104090
+#      echo $o > rsr.obsnum
+#      badlags.py $o                               # watch the badcb=
+#      rsr_tsys.py --badlags rsr.badlags $o        # watch the badcb=
+#      badcb=1/1,2/4,3/5                           # merge the two badcb's
+#      rsr_blanking $o            > rsr.blanking
+#      rsr_rfile    $o            > rsr.rfile
+#      rsr_badcb -b -o $o $badcb >> rsr.blanking   # optional if there are badcb's
+#      rsr_badcb -r -o $o $badcb >> rsr.rfile      # optional if there are badcb's
+#      rsr_sum.py -b rsr.blanking  --badlags rsr.badlags  --o1 1 -t 0.01
+#      python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  --badlags rsr.badlags --rfile rsr.rfile  -o rsr.driver.sum.txt -w rsr.wf.pdf -p -b 1 -r 999 -t 0.05
+#      rsr_spectra.py rsr.blanking.sum.txt and rsr.driver.sum.txt
+#
+# The last command throws up the two spectra for comparison in matplotlib, where some panning and zooming can be done.
 #--HELP
 
 # LMTOY
@@ -124,31 +140,12 @@ if [ $first == 1 ]; then
 fi
 
 if [ $obsnum != 0 ]; then
-    echo "LMTOY>> Processing badboard=$badboard and badcb=$badcb"
+    echo "LMTOY>> Processing badcb=$badcb"
 
-    # should deprecate badboard <--------------------------------------------  deprecate?
-    if [[ ! -z "$badboard" ]]; then
-	echo "# setting badboard=$badboard" >> $blanking
-	echo "# setting badboard=$badboard" >> $rfile
-	for b in $(echo $badboard | sed 's/,/ /g'); do
-	    for c in 0 1 2 3; do
-		echo "$obsnum $c {$b: [(70,115)]}" >> $blanking
-		echo "$obsnum,$c,$b"               >> $rfile
-	    done
-	done
-    fi
     if [[ ! -z "$badcb" ]]; then
 	# badcb needs to be formatted as "c1/b1,c2/b2,....."
-	echo "# setting badcb=$badcb" >> $blanking
-	echo "# setting badcb=$badcb" >> $rfile
-	cbs=$(echo $badcb | sed 's/,/ /g')
-	for cb in $cbs; do
-	    cb0=( $(echo $cb | sed 's./. .'))
-	    c=${cb0[0]}
-	    b=${cb0[1]}
-	    echo "$obsnum $c {$b: [(70,115)]}" >> $blanking
-	    echo "$obsnum,$c,$b"               >> $rfile
-	done
+	rsr_badcb -b -o $obsnum $badcb >> $blanking
+	rsr_badcb -r -o $obsnum $badcb >> $rfile
     fi
     # note $badlags is created by badlags.py 
 fi
