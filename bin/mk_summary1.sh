@@ -14,10 +14,19 @@
 #set -e
 #set -x
 
+_version="16-mar-2023"
+
 if [ -z "$1" ]; then
     src0=""
     csv=summary.csv
 else
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+	echo "Typical usage:  $0 [source] > README.html"
+	echo ""
+	echo "Expects to be in a directory where obsnums have been reduced and creates a summary html listing"
+	echo "Optionally can make a listing for a selected source"
+	exit 0
+    fi
     src0=$1
     csv=summary_${src0}.csv
 fi
@@ -83,7 +92,7 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     fi
 	
     date_obs=$(grep date_obs $rc | awk -F= '{print $2}')
-    date=$(grep date= $rc | tail -1 | awk -F= '{print $2}')
+    date=$(grep date= $rc | tail -1 | awk -F= '{print $2}' | awk '{print $1}')
     if [ $instrument == "RSR" ]; then
 	# RSR - use average of driver and blanking RMS
 	#rms=$(grep QAC_STATS $log | txtpar - '1000*0.5*(%1+%2)/sqrt(2)' p0=1,4 p1=2,4)  # trend spectrum
