@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="2-mar-2023"
+lmtoy_version="16-mar-2023"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -151,6 +151,7 @@ function lmtoy_rsr1 {
     # as well as process old data. Thus we want all 'bad_lagsC' in dreampyrc to be ""
     if [[ $first == 1 ]]; then
 	# 1.
+	echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t1 $t2"
 	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t1 $t2   > rsr_driver0.log 2>&1
 	mv rsr.driver.png rsr.driver0.png
 	# 2.
@@ -164,7 +165,7 @@ function lmtoy_rsr1 {
     #         rsr.$obsnum.rfile and rsr.$obsnum.blanking  - can be modified if #BADCB's have been found
     # Note this is only run for single obsnums
     if [[ ! -e $rsr.$obsnum.badlags ]]; then
-	# 3.  produces rsr.badlags 
+	# 3.  produces rsr.badlags
 	badlags.py -d -s $obsnum       > rsr_badlags.log 2>&1
 	if [ "$badlags" = 0 ]; then
 	    echo "LMTOY>> no badlags requested, still making a plot - you almost never want to do this"
@@ -182,6 +183,7 @@ function lmtoy_rsr1 {
 	# this gives 'BADCB1'
 	
 	# 4.
+	echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo $t1 $t2 --badlags $badlags"
 	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo $t1 $t2 --badlags $badlags   > rsr_driver1.log 2>&1	
 
 
@@ -200,9 +202,12 @@ function lmtoy_rsr1 {
 	fi	
 
 	# this step could be debatable, combining BADCB2 with BADCB1
-	grep '^#BADCB' rsr_tsys2.log >> $badlags
-	rsr_badcb -r $badlags >> $rfile 
-	rsr_badcb -b $badlags >> $blanking
+	if [ -z "$badcb" ]; then
+	    echo "BADCB inherited from rsr_tsys2.log"
+	    grep '^#BADCB' rsr_tsys2.log >> $badlags
+	    rsr_badcb -r $badlags >> $rfile 
+	    rsr_badcb -b $badlags >> $blanking
+	fi
 	echo "PJT1 obsnum=$obsnum obsnums=$obsnums"	
     elif [ ! -z "$obsnums" ]; then
 	#  only for obsnum combinations
