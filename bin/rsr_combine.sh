@@ -10,7 +10,7 @@
 #
 #  Example:   rsr_combine.sh obsnums=33551,71610,92068 
 
-_version="rsr_combine: 27-feb-2023"
+_version="rsr_combine: 16-mar-2023"
 
 echo "LMTOY>> $_version"
 
@@ -47,7 +47,7 @@ if [ ! -z $pdir ]; then
     mkdir -p $pdir
     cd $pdir
 else
-    echo "No PDIR directory used, all work in the current directory"
+    echo "No PDIR directory used, all work in the current directory $(pwd)"
 fi
 
 if [ $obsnums = 0 ]; then
