@@ -22,7 +22,7 @@
 
 # https://unity.rc.umass.edu/docs/#slurm/   IECK, this also stopped working.
 
-version="7-mar-2023"        # script version
+version="24-mar-2023"       # script version
 sleep=1                     # don't use 0, unity spawns too fast in a series
 
 if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
@@ -32,7 +32,7 @@ if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
 fi
 
 
-# catch the single argument batch call first, but pass addition arguments to each pipeline call
+# catch the single argument batch call first, but pass additional arguments to each pipeline call
 if [ -e "$1" ]; then
     runfile=$1
     echo "Processing lines from $runfile line by line"
@@ -52,6 +52,7 @@ fi
 
 obsnum=0
 obsnums=0
+obsnum0=0
 
 # processing CLI when key=var
 for arg in "$@"; do
@@ -71,6 +72,13 @@ else
 fi
 if [ $obsnum = 1 ]; then
     shift
+fi
+
+if [ $obsnum0 != 0 ]; then
+    if [ $obsnum -lt $obsnum0 ]; then
+	echo "SKIP obsnum=$obsnum because obsnum0=$obsnum0"
+	exit 0
+    fi
 fi
 
 #                                        sbatch run file
