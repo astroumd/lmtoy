@@ -46,6 +46,7 @@ URL15 = https://github.com/lmt-heterodyne/RedshiftPointing
 URL16 = https://github.com/lmt-heterodyne/LinePointing
 URL17 = https://github.com/teuben/aplpy
 URL18 = https://github.com/toltec-astro/dvpipe
+URL19 = https://github.com/lmtoy/lmtoy_run
 
 .PHONY:  help install build
 
@@ -189,6 +190,11 @@ LinePointing:
 dvpipe:
 	git clone $(URL18)
 
+
+lmtoy_run:	work_lmt/lmtoy_run
+
+work_lmt/lmtoy_run:
+	(cd work_lmt; git clone $(URL19))
 
 # hack for Linux  (@todo Mac)
 admit:
