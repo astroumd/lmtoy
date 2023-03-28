@@ -1,10 +1,12 @@
 # SLpipeline.sh parameters
 
-We differentiate between **generic** and **instrument specific** (RSR,
+We differentiate between **generic** and **instrument/obsmode specific** (RSR,
 SEQ, 1MM, OMA, ...) parameters.
 
 The pipeline and instrument specific scriptS all have a **--help** and **-h** option
-as a reminder to the keywords and their defaults where applicable.
+as a reminder to the keywords and their defaults where applicable. They should always
+report the parameters. If not visible, this means the parameter may still be hardcoded
+in the code.
 
 Command line keywords that do not belong to the instrument (e.g. band= for RSR) are just ignored.
 
@@ -39,6 +41,7 @@ Also note that a non-zero value for **obsnum=** *or* **obsnums=** is required.
         
     debug=0             1: verbosely print all commands and shell expansions
     restart=0           1: cleans up old obsnum pipeline results
+    exist=0             1: will not run if the obsnum exists (see also sbatch_lmtoy.sh obsnum0=)
     path=$DATA_LMT      - should not be used (but will still work)
     work=$WORK_LMT      - should not be used (but will still work)
     tap=0               produce TAP tar file?  [0|1]
@@ -66,6 +69,16 @@ ways, they really should be merged.
     badcb=2/3,2/2          preset Chassis/Board detectors that are bad C=[0..3]  B=[0..5]
     xlines=110.51,0.15     sections of spectrum not to be used for baseline fit (freq-dfreq..freq+dfreq)
                            normally because there is a (strong) line
+    shortlags=32,15.0      set a short_min and short_hi to avoid flagging strong continuum sources
+    spike=3                spikyness of localized peaks
+    linecheck=0            if set to 1, use the source name to grab the correct xlines=
+    bandzoom=5             default band to supply a zoomed view of the final spectrum
+    speczoom=85,3          if given, override the bandzoom with a window 85 +/- 3
+    rthr=0.01              Threshold sigma value when averaging single observations repeats (-r)
+    cthr=0.01              Threshold sigma value when coadding all observations (-t)
+    sgf=51                 If given, set Savitzky-Golay high pass filter ; odd number > 21
+    blo=1                  order of polynomial baseline subtraction
+    
 
 Different scripts have different parameters that are currently hardcoded :
 
