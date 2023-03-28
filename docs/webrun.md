@@ -1,22 +1,49 @@
 # Running SLpipeline via a web interface
 
+## Reminder of nomenclature in the LMTOY environment in this document
+
+      $DATA_LMT   - root directory of the raw data
+      $WORK_LMT   - root directory of the session's working area
+      $PIN        - PI account name 
+      $PIS        - PI session name
+      $PID        - LMT's *ProjectId*
+      $SRC        - PI's source name (no spaces or UTF-8)
+
 ## Overview of steps
 
 1. User authenticates and get a list of valid PIDs (at least one)
 
    Examples of PIDs: 2023-S1-MX-1 2022S1RSRCommissioning
 
-2. User picks one PID to work on.
+2. User picks *one* PID to work on.
 
-   CL equivalent:
+   CL equivalent: (there is no authentication)
    
            PID=2023-S1-MX-1
 
-3. Interface returns a list of sources that can be worked on, user picks one or more.
+3. If multiple sessions were available for this project, pick one, or allow
+   a new one to be created.
 
    CL equivalent:
 
+           export WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/$PIN/$PIS
+	   mkdir -p $WORK_LMT
+	   cd $WORK_LMT
+	   lmtoy_run $PID
+
+   this will create (or re-use) the $WORK_LMT/$PID directory
+
+3. Interface returns a list of sources that can be worked on, user picks *one or more*.
+
+   CL equivalent for one SRC:
+
            lmtinfo.py grep $PID | tabcols - 6 | sort | uniq -c
+	   cd $WORK_LMT/lmtoy_run/lmtoy_$PID
+	   make runs
+	   grep $SRC *.run1a > test1
+	   grep $SRC *.run2a > test2
+
+   (append more for more SRC)
            
 
 4. Interface returns a list of obsnums, and their PI/PL how the script generator
@@ -45,14 +72,8 @@
 
 
 
-Of course 4 is the tricky part.  Each obsnum keeps track of its
-default pipeline (as determined by the QA process) settings, to which
-the PI can modify the PIPLs and re-run.
+## Questions
 
-My current workflow is centered on a script generator, which is
-project centered, and lives in git space (read: github).  I already
-have an example python workflow which uses this and finds the pipeline
-commands. But I suspect that based on which instrument it finds, it
-needs to present the useful/valid parameter options.
+Q1: How many compute nodes do we give them. One for all PIs?
 
-
+Q2: how many session configurations? work areas (called $PIS here)
