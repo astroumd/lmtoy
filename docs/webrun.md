@@ -2,7 +2,7 @@
 
 ## Reminder of nomenclature in the LMTOY environment in this document
 
-      $DATA_LMT   - root directory of the raw data
+      $DATA_LMT   - root directory of the read-only raw data
       $WORK_LMT   - root directory of the session's working area
       $PIN        - PI account name 
       $PIS        - PI session name
@@ -26,7 +26,7 @@
 
    CL equivalent:
 
-           export WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/$PIN/$PIS
+           export WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt/$PID/$PIN/$PIS
 	   mkdir -p $WORK_LMT
 	   cd $WORK_LMT
 	   lmtoy_run $PID
@@ -77,3 +77,15 @@
 Q1: How many compute nodes do we give them. One for all PIs?
 
 Q2: how many session configurations? work areas (called $PIS here)
+
+Q3: In the current scheme, when the 'lmtslr' users runs the pipeline, results are in
+    /nese/toltec/dataprod_lmtslr/work_lmt/$PID
+    In that hierarchy the PI has read access.
+
+    If we create a new session in
+    
+    WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt/$PID/$PIN/$PIS
+
+    the PI (lets say teuben) can now view the summary in
+    
+    http://taps.lmtgtm.org/lmtslr/2023-S1-US-18/teuben/session-1/2023-S1-US-18/
