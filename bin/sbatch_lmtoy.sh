@@ -16,13 +16,17 @@
 #     sbatch_lmtoy.sh SLpipeline.sh obsnum=12345 
 #     sbatch_lmtoy.sh SLpipeline.sh obsnums=12345,12346
 #     sbatch_lmtoy.sh 2021-S1-US-3.run1a exist=1
-#     sbatch_lmtoy.sh 2021-S1-US-3.run2a 
+#     sbatch_lmtoy.sh 2021-S1-US-3.run1a obsnum0=123456
+#     sbatch_lmtoy.sh 2021-S1-US-3.run2a
+#
+#     exist=1   will not process an obsnum if it already exists
+#     obsnum0=  will only process single obsnums at or beyond this obsnum0 
 #
 #--HELP
 
 # https://unity.rc.umass.edu/docs/#slurm/   IECK, this also stopped working.
 
-version="24-mar-2023"       # script version
+version="28-mar-2023"       # script version
 sleep=1                     # don't use 0, unity spawns too fast in a series
 
 if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
@@ -137,7 +141,7 @@ EOF
 chmod +x $run
 echo "$run      - use scancel JOBID to kill this one, JOBID is:"
 sbatch $run
-#   report last few
+#   report last few, if present
 sleep $sleep
 ls -ltr $WORK_LMT/sbatch/slurm*.out | tail -6
 squeue -u $USER
