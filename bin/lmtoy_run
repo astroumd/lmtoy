@@ -3,6 +3,13 @@
 #    set up the script generator for given project(s)
 #
 
+if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
+    echo "Usage: $0 ProjectID"
+    echo 'This will create a $WORK_LMT/lmtoy_run/lmtoy_<ProjectID> script generator'
+    echo "WORK_LMT = $WORK_LMT"
+    exit 0
+fi
+
 if [ -z $LMTOY ]; then
     echo "LMTOY environment not loaded (odd)"
     exit 0
