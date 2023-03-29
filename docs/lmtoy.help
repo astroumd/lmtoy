@@ -53,3 +53,9 @@ lmtar 99481.tar $(seq 99479 99481)
 
 #  show what sources exist in a project
 source_obsnum.sh 2021-S1-MX-3
+
+#  example URLs for viewing results (assuming you have permission)
+
+https://taps.lmtgtm.org/lmtslr/2023-S1-US-18/
+https://taps.lmtgtm.org/lmthelpdesk/cryan/2023-S1-US-18/
+
