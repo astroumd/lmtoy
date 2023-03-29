@@ -52,7 +52,7 @@ def getpars(on):
             if line[0] == '#': continue
             idx = line.find('#')
             w = line.split()
-            # loop over args,  and replace pix_list=-N,....
+            # loop over args,  and replace PI parameters
             if idx > 0:
                 pars4[int(w[0])] = []
                 for a in line[idx+1:].strip().split():
@@ -97,17 +97,44 @@ def getargs_old(obsnum, flags=True):
             args = args + line.strip() + " "
     return args
 
-def mk_runs(project, on, pars1, pars2):
+def mk_runs(project, on, pars1, pars2, argv=None):
     """ top level
     """
 
+    if argv != None:
+        if len(argv) > 0:
+            obsnums=[]
+            if argv[0] == '-h':
+                print("mk_runs.py: Create runfiles by default")
+                print("  -h    this help")
+                print("  -o    show all obsnums, sorted")
+                sys.exit(0)
+            elif argv[0] == '-o':
+                for s in on.keys():
+                    for o1 in on[s]:
+                        obsnums.append(abs(o1))
+                obsnums.sort()
+                for o1 in obsnums:
+                    print(o1)
+                return
+            else:
+                print("Unknown mode: ",argv)
+                sys.exit(0)
+
+
+    print("Creating run files")
+    
+    run1  = '%s.run1'  % project
     run1a = '%s.run1a' % project
     run1b = '%s.run1b' % project
+    run2  = '%s.run2'  % project
     run2a = '%s.run2a' % project
     run2b = '%s.run2b' % project
 
+    fp1  = open(run1,  "w")
     fp1a = open(run1a, "w")
     fp1b = open(run1b, "w")
+    fp2  = open(run2,  "w")    
     fp2a = open(run2a, "w")
     fp2b = open(run2b, "w")
 
@@ -121,8 +148,10 @@ def mk_runs(project, on, pars1, pars2):
             o = abs(o1)
             cmd1a = "SLpipeline.sh obsnum=%d _s=%s %s restart=1 " % (o,s,pars1[s])
             cmd1b = "SLpipeline.sh obsnum=%d _s=%s %s %s" % (o,s,pars2[s], getargs(o,pars4))
+            cmd1  = "SLpipeline.sh obsnum=%d _s=%s %s %s %s" % (o,s,pars1[s], pars2[s], getargs(o,pars4))
             fp1a.write("%s\n" % cmd1a)
             fp1b.write("%s\n" % cmd1b)
+            fp1.write("%s\n" % cmd1)
             n1 = n1 + 1
 
     #                           combination obsnums
