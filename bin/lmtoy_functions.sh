@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="17-mar-2023"
+lmtoy_version="29-mar-2023"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -155,6 +155,7 @@ function lmtoy_rsr1 {
 	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t1 $t2   > rsr_driver0.log 2>&1
 	mv rsr.driver.png rsr.driver0.png
 	# 2.
+	echo "LMTOY>> rsr_tsys.py -s $obsnum"
 	rsr_tsys.py -s $obsnum   > rsr_tsys0.log   2>&1
 	mv rsr.tsys.png rsr.tsys0.png
 	# we ignore any 'BADCB0' in here
@@ -171,7 +172,8 @@ function lmtoy_rsr1 {
 	if [ "$shortlags" != "" ]; then
 	    bopts="$bopts --short_min $(echo $shortlags | tabcols - 1)  --short_hi $(echo $shortlags | tabcols - 2)"
 	fi
-	badlags.py -d -s $bopts $obsnum --spike $spike  > rsr_badlags.log 2>&1
+	echo "LMTOY>> badlags.py -d -s $bopts --spike $spike $obsnum"
+	badlags.py -d -s $bopts --spike $spike $obsnum > rsr_badlags.log 2>&1
 	if [ "$badlags" = 0 ]; then
 	    echo "LMTOY>> no badlags requested, still making a plot - you almost never want to do this"
 	    mv badlags.png badlags.$obsnum.png
@@ -180,7 +182,7 @@ function lmtoy_rsr1 {
 	    echo "LMTOY>> using badlags file $badlags"
 	    cp $badlags rsr.$obsnum.badlags
 	else
-	    echo "LMTOY>> badlags.py -d -s $bopts $obsnum"
+	    echo "LMTOY>> creating rsr.$obsnum.badlags"
 	    mv badlags.png badlags.$obsnum.png
 	    mv rsr.badlags rsr.$obsnum.badlags
 	fi
