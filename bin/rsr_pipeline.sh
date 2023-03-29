@@ -10,7 +10,7 @@
 #
 #
 
-_version="rsr_pipeline: 16-mar-2023"
+_version="rsr_pipeline: 27-mar-2023"
 
 echo "LMTOY>> $_version"
 
@@ -25,12 +25,13 @@ path=${DATA_LMT:-data_lmt}      # - to be deprecated
 #             - PI parameters
 
 xlines=""     # set to a comma separated list of freq,dfreq pairs where strong lines are
-badcb=""      # set to a comma separated list of (chassis/board) combinations, badcb=2/3,3/5
-badlags=""    # set to a badlags file if to use this instead of dynamically generated (use 0 to force not to use it)
-shortlags=""  # set to a short_min and short_hi to avoid flagged strong continuum source lags
+badcb=""      # set to a comma separated list of (chassis/board) combinations, badcb=2/3,3/5 - this will override auto-detection
+badlags=""    # set to a badlags file if to use this instead of dynamically generated (use 0 to force not to use it) - not used yet
+shortlags=""  # set to a short_min and short_hi to avoid flagged strong continuum source lags, e.g. shortlags=32,10.0
+spike=3       # spikyness of bad lags that need to be flagged
 
 linecheck=0   # set to 1, to use the source name to grab the correct xlines=
-bandzoom=5    # the band for the zoomed window
+bandzoom=5    # the band for the zoomed window (0..5)
 speczoom=""   # override bandzoom with a manual speczoom=CENTER,HALF_WIDTH pair
 rthr=0.01     # -r option for rsr_driver Threshold sigma value when averaging single observations repeats
 cthr=0.01     # -t option for rsr_driver Threshold sigma value when coadding all observations
