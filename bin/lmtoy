@@ -13,7 +13,7 @@ if [ -z $LMTOY ]; then
     echo "LMTOY environment not loaded (odd)"
     exit 0
 else
-    echo "LMTOY:       $LMTOY  - $(cat $LMTOY/VERSION)  Git:$(git branch --show-current)"
+    echo "LMTOY:       $LMTOY  - $(cat $LMTOY/VERSION)  Git:$(cd $LMTOY;git branch --show-current)"
 fi
 
 echo "DATA_LMT:    $DATA_LMT"
