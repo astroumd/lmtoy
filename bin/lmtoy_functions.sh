@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="16-mar-2023"
+lmtoy_version="17-mar-2023"
 
 echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
 
@@ -166,7 +166,12 @@ function lmtoy_rsr1 {
     # Note this is only run for single obsnums
     if [[ ! -e rsr.$obsnum.badlags ]]; then
 	# 3.  produces rsr.badlags
-	badlags.py -d -s $obsnum       > rsr_badlags.log 2>&1
+	bopts="--rms_max 0.05"
+	bopts=""
+	if [ "$shortlags" != "" ]; then
+	    bopts="$bopts --short_min $(echo $shortlags | tabcols - 1)  --short_hi $(echo $shortlags | tabcols - 2)"
+	fi
+	badlags.py -d -s $bopts $obsnum --spike $spike  > rsr_badlags.log 2>&1
 	if [ "$badlags" = 0 ]; then
 	    echo "LMTOY>> no badlags requested, still making a plot - you almost never want to do this"
 	    mv badlags.png badlags.$obsnum.png
@@ -175,7 +180,7 @@ function lmtoy_rsr1 {
 	    echo "LMTOY>> using badlags file $badlags"
 	    cp $badlags rsr.$obsnum.badlags
 	else
-	    echo "LMTOY>> badlags.py -d -s $obsnum"
+	    echo "LMTOY>> badlags.py -d -s $bopts $obsnum"
 	    mv badlags.png badlags.$obsnum.png
 	    mv rsr.badlags rsr.$obsnum.badlags
 	fi
@@ -184,7 +189,7 @@ function lmtoy_rsr1 {
 	
 	# 4.
 	echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo $t1 $t2 --badlags $badlags"
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo $t1 $t2 --badlags $badlags   > rsr_driver1.log 2>&1	
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo $t1 $t2 --badlags $badlags > rsr_driver1.log 2>&1	
 
 
 	# Tsys plot:  rsr.tsys.png  - only done for single obsnum - also lists BADCB's
@@ -201,7 +206,7 @@ function lmtoy_rsr1 {
 	    # this Tsys2.log gave 'BADCB2' - and comparing CB0 with CB2 in rsr_tsys_badcb.log
 	fi	
 
-	# this step could be debatable, combining BADCB2 with BADCB1
+	# this step could be debatable, combining BADCB2 with BADCB1, or just keeping one
 	if [ -z "$badcb" ]; then
 	    echo "BADCB inherited from rsr_tsys2.log"
 	    grep '^#BADCB' rsr_tsys2.log >> $badlags
@@ -286,6 +291,7 @@ function lmtoy_rsr1 {
 	# QAC_STATS
 	printf_red $(tabtrend $spec1 2 | tabstat - bad=0 robust=t qac=t label="trend_driver")
 	printf_red $(tabtrend $spec2 2 | tabstat - bad=0 robust=t qac=t label="trend_blanking")
+	echo  "PJT tabstat  $spec1 2 bad=0 robust=t qac=t"
 	printf_red $(tabstat  $spec1 2 bad=0 robust=t qac=t)
 	printf_red $(tabstat  $spec2 2 bad=0 robust=t qac=t)
 
