@@ -26,8 +26,8 @@
 
    CL equivalent:
 
-           export WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt/$PID/$PIN/$PIS
 	   mkdir -p $WORK_LMT
+	   export WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt/$PID/$PIN/$PIS
 	   cd $WORK_LMT
 	   lmtoy_run $PID
 
@@ -79,7 +79,9 @@ Q1: How many compute nodes do we give them. One for all PIs?
 Q2: how many session configurations? work areas (called $PIS here)
 
 Q3: In the current scheme, when the 'lmtslr' users runs the pipeline, results are in
-    /nese/toltec/dataprod_lmtslr/work_lmt/$PID
+
+             /nese/toltec/dataprod_lmtslr/work_lmt/$PID
+    
     In that hierarchy the PI has read access.
 
     If we create a new session in
@@ -89,3 +91,6 @@ Q3: In the current scheme, when the 'lmtslr' users runs the pipeline, results ar
     the PI (lets say teuben) can now view the summary in
     
     http://taps.lmtgtm.org/lmtslr/2023-S1-US-18/teuben/session-1/2023-S1-US-18/
+
+    Name checking needed, image the PI using an crafted session name that allows
+    them to write directly into /nese/toltec/dataprod_lmtslr/work_lmt/$PID itself
