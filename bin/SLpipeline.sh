@@ -8,7 +8,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 28-feb-2023"
+_version="SLpipeline: 30-feb-2023"
 
 echo ""
 echo "LMTOY>> $_version"
@@ -84,12 +84,17 @@ if [ -z "$OMP_NUM_THREADS" ]; then
 	export OMP_NUM_THREADS=$nproc
     fi
 fi
-echo "OMP_NUM_THREADS=$OMP_NUM_THREADS"
+echo "LMTOY>> OMP_NUM_THREADS=$OMP_NUM_THREADS"
 
-#             bootstrap
+#             bootstrap information on the obsnum
 [ ! -d $WORK_LMT/tmp ] && mkdir -p $WORK_LMT/tmp
 rc0=$WORK_LMT/tmp/lmtoy_${obsnum}.rc
 lmtinfo.py $obsnum > $rc0
+if [ $? != 0 ]; then
+    cat $rc0
+    rm -f $rc0    
+    exit 1
+fi
 source $rc0
 rm -f $rc0
 unset rc0
