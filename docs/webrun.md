@@ -1,35 +1,45 @@
 # Running SLpipeline via a web interface
 
+At the moment this is a discussion document. 
+
 ## Reminder of nomenclature in the LMTOY environment in this document
+
+Some of these are environment variables, others so noted for convenience
 
       $DATA_LMT   - root directory of the read-only raw data
       $WORK_LMT   - root directory of the session's working area
-      $PIN        - PI account name 
-      $PIS        - PI session name
+      $PIN        - PI account name [Kamal]
+      $PIS        - PI session name 
       $PID        - LMT's *ProjectId*
-      $SRC        - PI's source name (no spaces or UTF-8)
+      $SRC        - Source Name (no spaces or UTF-8)
 
+## Overview for the lmtslr user:
+
+      cd $WORK_LMT/lmtoy_run/lmtoy_$PID
+      make runs
+      sbatch_lmtoy.sh $PID.run1a
+      
 ## Overview of steps
 
 1. User authenticates and get a list of valid PIDs (at least one)
 
-   Examples of PIDs: 2023-S1-MX-1 2022S1RSRCommissioning
+   Examples of PIDs:    2023-S1-MX-1    2022S1RSRCommissioning
 
 2. User picks *one* PID to work on.
 
-   CL equivalent: (there is no authentication)
+   CL equivalent: (there is no authentication needed within the shell of the CL)
    
            PID=2023-S1-MX-1
 
 3. If multiple sessions were available for this project, pick one, or allow
    a new one to be created.
 
-   CL equivalent:
+   CL equivalent (notice we only redefine the WORK_LMT):
 
-	   mkdir -p $WORK_LMT
-	   export WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt/$PID/$PIN/$PIS
-	   cd $WORK_LMT
-	   lmtoy_run $PID
+     	   export WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt/$PID/$PIN/$PIS
+           mkdir -p $WORK_LMT
+           cd $WORK_LMT
+           lmtoy_run $PID
 
    this will create (or re-use) the $WORK_LMT/$PID directory
 
@@ -38,10 +48,10 @@
    CL equivalent for one SRC:
 
            lmtinfo.py grep $PID | tabcols - 6 | sort | uniq -c
-	   cd $WORK_LMT/lmtoy_run/lmtoy_$PID
-	   make runs
-	   grep $SRC *.run1a > test1
-	   grep $SRC *.run2a > test2
+           cd $WORK_LMT/lmtoy_run/lmtoy_$PID
+           make runs
+           grep $SRC *.run1a > test1
+           grep $SRC *.run2a > test2
 
    (append more for more SRC)
            
