@@ -23,7 +23,7 @@ fi
 cd $WORK_LMT
 
 if [ ! -d lmtoy_run ]; then
-    echo git clone https://github.com/lmtoy/lmtoy_run
+    git clone https://github.com/lmtoy/lmtoy_run
 else
     echo "great, lmtoy_run exists"
 fi
@@ -33,10 +33,9 @@ cd lmtoy_run
 PID=$1
 
 if [ ! -d lmtoy_$PID ]; then
-    echo "no lmtoy_$PID, these are the available script generators for $PID:"
-    ls -d lmtoy_*
-    exit 0
+    git clone https://github.com/lmtoy/lmtoy_$PID
 fi
 
 cd lmtoy_$PID
+git pull
 ls
