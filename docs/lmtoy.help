@@ -31,6 +31,7 @@ lmtinfo.py 91112
 ifproc.sh 91112
 
 #  finding raw data in your current $DATA_LMT
+lmtinfo.py grep 91112
 lmtinfo.py grep Arp143
 lmtinfo.py grep MX-3 Pointing
 lmtinfo.py grep 2023 LineCheck Bs
