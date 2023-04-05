@@ -1,6 +1,6 @@
 # Running SLpipeline via a web interface
 
-At the moment this is a discussion document. 
+At the moment this is a discussion document.
 
 ## Reminder of nomenclature in the LMTOY environment in this document
 
@@ -8,16 +8,44 @@ Some of these are environment variables, others so noted for convenience
 
       $DATA_LMT   - root directory of the read-only raw data
       $WORK_LMT   - root directory of the session's working area
-      $PIN        - PI account name [Kamal]
-      $PIS        - PI session name 
       $PID        - LMT's *ProjectId*
-      $SRC        - Source Name (no spaces or UTF-8)
+      $PIS        - PI session name  (new in webrun)
+      $SRC        - Source Name
 
 ## Overview for the lmtslr user:
 
       cd $WORK_LMT/lmtoy_run/lmtoy_$PID
+      git pull
       make runs
-      sbatch_lmtoy.sh $PID.run1a
+      sbatch_lmtoy.sh $PID.run1
+      sbatch_lmtoy.sh $PID.run2
+      make summary
+
+The PI webrun will essentially do the same thing, but in a new hierarchy
+for just that PID, and underneath a new $WORK_LMT/$PID/session/ tree.
+
+## Directory hierarchy:
+
+Following this convention we arrive at the following proposed directory hierarchy
+
+     ..../work_lmt/                                       top level WORK_LMT used by pipeline
+                   lmtoy_run/lmtoy_PID                    script generator used by pipeline
+                   PID/                                   The PI has web-read-access to this tree via index.html
+		       O1                                 obsnum's
+                       O2
+                       ..
+                       session.dat                        this file contains "1" and "2"
+                       session-1/                         PIS=session-1 is the new WORK_LMT for this webrun session
+		                 lmtoy_run/lmtoy_PID/     
+                                 PID/O1                   only one PID in this session
+                                     O2
+                                     ..
+                       session-2/lmtoy_run/lmtoy_PID      PIS=session-2 is the new WORK_LMT for this webrun session
+                                 PID/O1
+                                     O2
+                                     ..
+
+
       
 ## Overview of steps
 
@@ -36,12 +64,15 @@ Some of these are environment variables, others so noted for convenience
 
    CL equivalent (notice we only redefine the WORK_LMT):
 
-     	   export WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt/$PID/$PIN/$PIS
+           PIS=session-1
+     	   export WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt/$PID/$PIS
            mkdir -p $WORK_LMT
            cd $WORK_LMT
            lmtoy_run $PID
 
-   this will create (or re-use) the $WORK_LMT/$PID directory
+   this will create (or re-use) the $WORK_LMT/$PID directory and the pipeline is now
+   set up with the script generator and a default run can be submitted.
+   webrun has exclusive read/write in this new WORK_LMT tree
 
 3. Interface returns a list of sources that can be worked on, user picks *one or more*.
 
@@ -80,27 +111,22 @@ Some of these are environment variables, others so noted for convenience
 
         make summary
 
+   the PI can then compare the pipeline results in
+
+        https://taps.lmtgtm.org/lmtslr/2018-S1-MU-45/84744
+
+   with their webrun in
+
+        https://taps.lmtgtm.org/lmtslr/2018-S1-MU-45/session-1/2018-S1-MU-45/84744
+
+   One could argue the 2nd 2018-S1-MU-45 is superfluous, but the problem is that the pipeline
+   expected a PID below a WORK_LMT
 
 
-## Questions
+## Open Questions
 
-Q1: How many compute nodes do we give them. One for all PIs?
+Q1: How many compute nodes do we give the PI. One for all PIs?
 
-Q2: how many session configurations? work areas (called $PIS here)
+Q2: What if a PI has data from different PID's that need to be combined?
 
-Q3: In the current scheme, when the 'lmtslr' users runs the pipeline, results are in
-
-             /nese/toltec/dataprod_lmtslr/work_lmt/$PID
-    
-    In that hierarchy the PI has read access.
-
-    If we create a new session in
-    
-    WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt/$PID/$PIN/$PIS
-
-    the PI (lets say teuben) can now view the summary in
-    
-    http://taps.lmtgtm.org/lmtslr/2023-S1-US-18/teuben/session-1/2023-S1-US-18/
-
-    Name checking needed, image the PI using an crafted session name that allows
-    them to write directly into /nese/toltec/dataprod_lmtslr/work_lmt/$PID itself
+    the pipeline user can do this, but a webrun doesn't have a solution for this yet.
