@@ -3,9 +3,9 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="29-mar-2023"
+lmtoy_version="5-apr-2023"
 
-echo "LMTOY>> READING lmtoy_functions $lmtoy_version via $0"
+echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
 function lmtoy_version {
     local v=$(cat $LMTOY/VERSION)
@@ -28,6 +28,7 @@ function lmtoy_debug {
 }
 
 function lmtoy_report {
+    echo "LMTOY>> xdg-open $WORK_LMT/$ProjectId/$obsnum/README.html"
     printf_red "LMTOY>> ProjectId=$ProjectId  obsnum=$obsnum  obspgm=$obspgm  obsgoal=$obsgoal oid=$oid date_obs=$date_obs"
 }
 
@@ -56,7 +57,10 @@ function lmtoy_decipher_obsnums {
     #   obsnums1 = space separate version of obsnums=
     
     if [[ $obsnums = 0 ]]; then
+	obsnum_list=$obsnum
 	return
+    else
+	obsnum_list=$obsnums	
     fi
     
     #             differentiate if obsnums is a file or list of obsnums
@@ -209,8 +213,9 @@ function lmtoy_rsr1 {
 	fi	
 
 	# this step could be debatable, combining BADCB2 with BADCB1, or just keeping one
-	if [ -z "$badcb" ]; then
-	    echo "BADCB inherited from rsr_tsys2.log"
+	# if no badcb was given, use the jitter version from tsys and badlags
+	if [ $jitter = 1 ] || [ -z "$badcb" ]; then
+	    echo "LMTOY>> BADCB inherited from rsr_tsys2.log"
 	    grep '^#BADCB' rsr_tsys2.log >> $badlags
 	    rsr_badcb -r $badlags >> $rfile 
 	    rsr_badcb -b $badlags >> $blanking
@@ -266,6 +271,7 @@ function lmtoy_rsr1 {
     else
 	zoom="--zoom $speczoom"	
     fi
+    echo "LMTOY>> rsr_spectra.py -s  $zoom   --title $src $spec1 $spec2"
     rsr_spectra.py -s     $zoom --title $src $spec1 $spec2
     mv rsr.spectra.png rsr.spectra_zoom.png
     rsr_spectra.py -s           --title $src $spec1 $spec2
@@ -296,6 +302,11 @@ function lmtoy_rsr1 {
 	echo  "PJT tabstat  $spec1 2 bad=0 robust=t qac=t"
 	printf_red $(tabstat  $spec1 2 bad=0 robust=t qac=t)
 	printf_red $(tabstat  $spec2 2 bad=0 robust=t qac=t)
+
+	# regress on the driver.sum.txt file
+	#regress=$(tabstat $spec1 2 bad=0 robust=t qac=t | txtpar - p0=1,4)
+	regress=$(tabstat $spec1 2 bad=0 robust=t qac=t)
+	echo "regress=\"$regress\"" >> $rc
 
 	if [ $obsgoal = "LineCheck" ]; then
 	    echo "LMTOY>> LineCheck"
@@ -604,6 +615,9 @@ function lmtoy_seq1 {
 	    out1=$(ccdstat $s_on.ccd bad=0 qac=t robust=t label="${s_on}-full")
 	    out2=$(ccdsub  $s_on.ccd  - centerbox=0.5,0.5 | ccdstat - bad=0 qac=t robust=t label="${s_on}-cent")
 	    out3=$(ccdsub  $s_on.wtr4.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 qac=t robust=t label="RMS/radiometer")
+
+	    regress=$(ccdsub  $s_on.ccd  - centerbox=0.5,0.5 | ccdstat - bad=0 qac=t robust=t label="${s_on}-cent")
+	    echo "regress=\"$regress\"" >> $rc	    
 	    
 	    printf_red $out1
 	    printf_red $out2
