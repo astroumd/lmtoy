@@ -10,7 +10,7 @@
 #
 #
 
-_version="rsr_pipeline: 27-mar-2023"
+_version="rsr_pipeline: 5-apr-2023"
 
 echo "LMTOY>> $_version"
 
@@ -24,8 +24,9 @@ path=${DATA_LMT:-data_lmt}      # - to be deprecated
 
 #             - PI parameters
 
-xlines=""     # set to a comma separated list of freq,dfreq pairs where strong lines are
-badcb=""      # set to a comma separated list of (chassis/board) combinations, badcb=2/3,3/5 - this will override auto-detection
+xlines=""     # set to a comma separated list of freq,dfreq pairs where strong lines are to avoid baseline fitting
+badcb=""      # set to a comma separated list of (chassis/board) combinations, badcb=2/3,3/5 - see jitter=
+jitter=1      # also use the badcb's based on jittering Tsys and BadLags
 badlags=""    # set to a badlags file if to use this instead of dynamically generated (use 0 to force not to use it) - not used yet
 shortlags=""  # set to a short_min and short_hi to avoid flagged strong continuum source lags, e.g. shortlags=32,10.0
 spike=3       # spikyness of bad lags that need to be flagged
@@ -68,9 +69,9 @@ source lmtoy_functions.sh
 lmtoy_args "$@"
 
 # PI parameters, as merged from defaults and CLI
-rc0=$WORK_LMT/tmp/lmtoy_${obsnum}.rc
+rc0=$WORK_LMT/tmp/lmtoy_${obsnum}_$$.rc
 show_vars \
-          xlines badcb badlags linecheck bandzoom speczoom rthr cthr sgf notch blo \
+          xlines badcb badlags jitter linecheck bandzoom speczoom rthr cthr sgf notch blo \
 	  > $rc0
 
 #lmtoy_debug
