@@ -8,9 +8,10 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 30-feb-2023"
+_version="SLpipeline: 4-apr-2023"
 
 echo ""
+echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
 echo "LMTOY>> $_version"
 
 #--HELP   
@@ -71,7 +72,7 @@ if [ $debug -gt 0 ]; then
     which python
 fi
 
-#             get the obsnum= (or obsnums=)
+#             get the obsnum= (or obsnums=); also sets obsnum_list for archive
 lmtoy_decipher_obsnums
 if [ $obsnum = 0 ]; then
     echo No valid obsnum= or obsnums= given
@@ -265,20 +266,21 @@ else
     exit 0
 fi
 
+# record obsnum_list for the archiver
+echo "obsnum_list=$obsnum_list" >> $pdir/lmtoy_$obsnum.rc
+
 # record the processing time
 echo "date=\"$(lmtoy_date)\"     # end " >> $pdir/lmtoy_$obsnum.rc
 
 # make a metadata yaml file for later ingestion into DataVerse
 echo "LMTOY>> make metadata ($meta) for DataVerse"
-if [ $meta = 0 ]; then
-    mk_metadata.py -y  $pdir/lmtmetadata.yaml $pdir
-else
+mk_metadata.py -y  $pdir/lmtmetadata.yaml $pdir
+if [ $meta = 1 ]; then
     # @todo will this work reliably on NFS mounted media?
     db=$WORK_LMT/example_lmt.db
     flock --verbose $db.flock mk_metadata.py -y  $pdir/lmtmetadata.yaml -f $db $pdir 
 fi
 # produce TAP, RSRP, RAW tar files, whichever are requested.
-
 
 #        ensure we are in $WORK_LMT ("cd $WORK_LMT" doesn't work if it's ".")
 cd $work
