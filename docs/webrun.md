@@ -14,15 +14,22 @@ Some of these are environment variables, others so noted for convenience
 
 ## Overview for the lmtslr user:
 
+This is how the pipeline is normally run from the main *lmtslr* account,
+from the directory where the script generator lives:
+
       cd $WORK_LMT/lmtoy_run/lmtoy_$PID
       git pull
       make runs
       sbatch_lmtoy.sh $PID.run1
       sbatch_lmtoy.sh $PID.run2
       make summary
+      xdg-open https://taps.lmtgtm.org/lmtslr/$PID
 
+The work results for this PID will be in $WORK_LMT/$PID
+ 
 The PI webrun will essentially do the same thing, but in a new hierarchy
-for just that PID, and underneath a new $WORK_LMT/$PID/session/ tree.
+for just that PID, and underneath a new $WORK_LMT/$PID/session/ tree, as
+summarized below:
 
 ## Directory hierarchy:
 
@@ -34,7 +41,7 @@ Following this convention we arrive at the following proposed directory hierarch
 		       O1                                 obsnum's
                        O2
                        ..
-                       session.dat                        this file contains "1" and "2"
+                       session.dat                        this file contains session entries "1" and "2"
                        session-1/                         PIS=session-1 is the new WORK_LMT for this webrun session
 		                 lmtoy_run/lmtoy_PID/     
                                  PID/O1                   only one PID in this session
@@ -51,7 +58,7 @@ Following this convention we arrive at the following proposed directory hierarch
 
 1. User authenticates and get a list of valid PIDs (at least one)
 
-   Examples of PIDs:    2023-S1-MX-1    2022S1RSRCommissioning
+   Examples of PIDs:    2023-S1-MX-1   2022S1RSRCommissioning
 
 2. User picks *one* PID to work on.
 
@@ -64,8 +71,8 @@ Following this convention we arrive at the following proposed directory hierarch
 
    CL equivalent (notice we only redefine the WORK_LMT):
 
-           PIS=session-1
-     	   export WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt/$PID/$PIS
+           PIS=1
+     	   export WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt/$PID/Session-$PIS
            mkdir -p $WORK_LMT
            cd $WORK_LMT
            lmtoy_run $PID
@@ -87,27 +94,31 @@ Following this convention we arrive at the following proposed directory hierarch
    (append more for more SRC)
            
 
-4. Interface returns a list of obsnums, and their PI/PL how the script generator
-   had last decided it was going to be run
+4. Interface returns a list of obsnums, and their PI/PL's how the script generator
+   had last decided it was going to be run, e.g.
 
    obsnum=123456 badcb=1/2,3/4 cthr=0.02
    obsnum=123457 trhr=0.015
    obsnums=123456,123457 
    
-   These can be edited and submitted via slurm.    Single obsnum= runs - by definition -
+   These can be edited and submitted via SLURM.    Single obsnum= runs - by definition -
    can be run in parallel.
    Combination obsnums= need to wait before the single ones are done, but for multiple
    sources, can be run in parallel as well.
    
    In the command line version these are the "run1" and "run2" files:
 
-        sbatch_lmtoy.sh *.run1a
+        sbatch_lmtoy.sh *.run1
    and
-        sbatch_lmtoy.sh *.run2a
+        sbatch_lmtoy.sh *.run2
+
+   **NOTE**:  this section needs a session managment where the status of the keywords belonging
+   to an obsnum are recorded and picked up the next iteration. Valid keywords need to be provided
+   since they are instrument specific.
 
 5. After submission of jobs, relevant summary listings are updated, and can be viewed online
 
-   In the command line version:
+   CL equivalent:
 
         make summary
 
@@ -117,10 +128,10 @@ Following this convention we arrive at the following proposed directory hierarch
 
    with their webrun in
 
-        https://taps.lmtgtm.org/lmtslr/2018-S1-MU-45/session-1/2018-S1-MU-45/84744
+        https://taps.lmtgtm.org/lmtslr/2018-S1-MU-45/Session-1/2018-S1-MU-45/84744
 
    One could argue the 2nd 2018-S1-MU-45 is superfluous, but the problem is that the pipeline
-   expected a PID below a WORK_LMT
+   expects a PID below a WORK_LMT
 
 
 ## Open Questions
