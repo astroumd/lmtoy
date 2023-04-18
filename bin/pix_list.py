@@ -1,6 +1,13 @@
 #! /usr/bin/env python
 #
+#   @todo    for single IF beams 0..15 are allowed
+#            for dual IF beams 0..31 are allowed,
+#                where beams 0..15 for bank=0, and
+#                      beams 16..31 for bank=1
 #
+
+
+
 import os
 import sys
 # @todo docopt
