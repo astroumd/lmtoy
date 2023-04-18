@@ -10,7 +10,7 @@
 #
 
 
-version="seq_combine: 27-nov-2022"
+version="seq_combine: 2-mar-2023"
 
 echo "LMTOY>> $version"    
 
@@ -53,21 +53,8 @@ fi
 
 #--HELP
 
-if  [ -z $1 ] || [ "$1" == "--help" ] || [ "$1" == "-h" ] ;then
-    set +x
-    awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
-    exit 0
-fi
-
-# unset a view things, since setting them will give a new meaning
-# unset vlsr
-
-#             simple keyword=value command line parser for bash - don't make any changing below
-for arg in "$@"; do
-  export "$arg"
-done
-
 source lmtoy_functions.sh
+lmtoy_args "$@"
 
 #             put in bash debug mode
 if [ $debug = 1 ]; then
@@ -152,10 +139,8 @@ echo "FILES: s_nc: $s_nc"
 makespec=0
 viewspec=0
 makewf=0
-# override CLI again
-for arg in "$@"; do
-  export "$arg"
-done
+# override CLI again       @todo is this still needed ?
+lmtoy_args "$@"
 
 lmtoy_seq1
 
