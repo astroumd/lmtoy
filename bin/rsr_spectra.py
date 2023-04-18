@@ -8,12 +8,15 @@
 Options:
   -s                      Don't show interactive plot, save plotfile instead.
   -g                      Use SVG instead of PNG for plotfile
+  -o SPECTRUM             Optional output file indicated a weighted average
+  -a                      No weighted average, use a simple average [not implemented yet]
   -z --zoom CEN,WID       Zoom spectrum on a CEN and +/- WID. Optional.
   -b --band BAND          Zoom on this band (0..5). Optional.
   -t --title TITLE        Title of plot. Optional.
   -d --dash LEVEL         Dashed line at 0+/-LEVEL. Optional.
   --kscale KSCALE         Scale factor to apply to spectrum  [Default: 1000]
   -h --help               This help
+  --debug                 More debugging output
   --version               The script version
 
 One or more ASCII spectra are needed, with columns 1 and 2 designating the
@@ -22,10 +25,14 @@ By default the full spectrum is plotted, but using --zoom or --band (RSR only)
 a section of the spectrum can be plotted instead.
 Using "--kscale 1000" the assumed Kelvin scale factor can be used to plot in mK.
 
+Use the "-o" option to merge the instead, and write (and plot) the merged
+spectrum.   For rsr the presence of a 3rd column insidicates the dispersion in
+the spectra, which will translate into a weight ~ 1/dispersion^2
+
 The saved plotfile has a fixed name, rsr.spectra.png (or rsr.spectra.svg)
 
 """
-_version = "3-feb-2023"
+_version = "12-apr-2023"
 
 import sys
 import numpy as np
@@ -46,7 +53,7 @@ band_edges = [ (71.72, 79.69), (78.02 , 85.99),  (85.41,  93.38),
 
 
 av = docopt(__doc__,options_first=True, version='rsr_spectra.py %s' % _version)
-#print(av)
+
 
 plt.figure()
 
@@ -60,6 +67,16 @@ elif kscale != 1.0:
 if av['--title'] != None:
     title = av['--title']
 
+Qdebug = av['--debug']
+if Qdebug:
+    print(av)
+
+if av['-o']:
+    Qmerge = True
+    merge = av['-o']
+else:
+    Qmerge = False
+    
 if av['-s']:
     Qshow = False
 
@@ -85,15 +102,44 @@ if av['-g']:
 
 spectra = [av['SPECTRUM1']]
 spectra = spectra + av['SPECTRUM2']
+nfiles = len(spectra)
+data = list(range(nfiles))
 
-for f in spectra:
-    data1 = np.loadtxt(f).T
-    data1[1] = kscale* data1[1] 
-    plt.step(data1[0],data1[1],label=f, where='mid')
+for i in range(nfiles):
+    f = spectra[i]
+    data[i] = np.loadtxt(f).T
+    if Qmerge:
+        if i==0:
+            ncol = data[i].shape[0]
+        else:
+            ncol = min(ncol,data[i].shape[0])
+    else:
+        plt.step(data[i][0], data[i][1]*kscale, label=f, where='mid')
 
+if Qmerge:        
+    print("Ncol=",ncol)
+    nchan = len(data[0][0])
+    sum =  0.0 * data[0][0]
+    if ncol == 2:
+        mode = "Average"
+        for i in range(nfiles):
+            sum = sum + data[i][1]
+        sum = sum / nfiles
+    else:
+        mode = "Weighted Average"
+        wsum =  sum
+        for i in range(nfiles):
+            sum = sum + data[i][1]/(data[i][2]**2)
+            wsum = wsum + 1/(data[i][2]**2)
+        sum = sum / wsum
+    print(mode)
+    header = '%s of %s' % ( mode, str(spectra))
+    np.savetxt(merge, np.transpose([data[0][0], sum]), header=header)
+        
+    plt.step(data[0][0], sum*kscale, label=merge, where='mid')
 
 plt.xlabel(xtitle)
-plt.ylabel('Ta (mK)')
+plt.ylabel(ytitle)
 #plt.ylim([0,1])
 plt.title(title)
 plt.legend()
