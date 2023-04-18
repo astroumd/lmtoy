@@ -10,7 +10,7 @@
 #
 #  Example:   rsr_combine.sh obsnums=33551,71610,92068 
 
-_version="rsr_combine: 16-mar-2023"
+_version="rsr_combine: 18-apr-2023"
 
 echo "LMTOY>> $_version"
 
@@ -18,7 +18,8 @@ echo "LMTOY>> $_version"
 
 # This will combine OBSNUM based data that were reduced with rsr_pipeline.sh
 # Parameters are taken from the first lmtoy_OBSNUM.rc file in the OBSNUM list,
-# but can be overridden here where we implemented this (TBD)
+# but can be overridden here where we implemented this.
+# Notably, parameters such as cthr, rthr etc. apply to the combination as well.
 
 
 # input parameters
@@ -29,6 +30,7 @@ output=""
 #            - procedural
 admit=0
 debug=0
+weighted=0     # use weighted averaging of combining spectra (which is currently bad)
 #            - parameters that directly match the SLR scripts
 #--HELP
 
@@ -90,6 +92,8 @@ for on in $obsnums1; do
     cat */$on/rsr.$on.badlags  >> $pdir/rsr.${on0}_${on1}.badlags
     cat */$on/rsr.$on.blanking >> $pdir/rsr.${on0}_${on1}.blanking
     cat */$on/rsr.obsnum       >> $pdir/rsr.obsnum
+    # ln -sf */$on/rsr.$on.blanking.sum.txt  $pdir/rsr.$on.blanking.sum.txt
+    # ln -sf */$on/rsr.$on.driver.sum.txt    $pdir/rsr.$on.driver.sum.txt
 done
 cp $rc $pdir/lmtoy_${on0}_${on1}.rc
 obsnum=${on0}_${on1}
