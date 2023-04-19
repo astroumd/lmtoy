@@ -28,9 +28,14 @@ else
     echo "great, lmtoy_run exists"
 fi
 
-cd lmtoy_run
-
 PID=$1
+
+if [ ! -d $PID ]; then
+    mkdir -p $PID
+fi
+
+
+cd lmtoy_run
 
 if [ ! -d lmtoy_$PID ]; then
     git clone https://github.com/lmtoy/lmtoy_$PID
@@ -38,4 +43,13 @@ fi
 
 cd lmtoy_$PID
 git pull
+
+# convenience link
+ln -sf $WORK_LMT/$PID
 ls
+
+# ensure symlinks to script generator and helper files
+cd $WORK_LMT/$PID
+ln -sf $WORK_LMT/lmtoy_run/lmtoy_$PID
+ln -s lmtoy_$PID/comments.txt
+ln -s README.html index.html
