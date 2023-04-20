@@ -5,7 +5,11 @@
 
 if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
     echo "Usage: $0 ProjectID"
+    echo ''
     echo 'This will create a $WORK_LMT/lmtoy_run/lmtoy_<ProjectID> script generator'
+    echo ' as well ensure the data directory $WORK_LMT/<ProjectID> exists'
+    echo ' and create a number of convenience symbolic links between data and script'
+    echo ''
     echo "WORK_LMT = $WORK_LMT"
     exit 0
 fi
@@ -53,3 +57,8 @@ cd $WORK_LMT/$PID
 ln -sf $WORK_LMT/lmtoy_run/lmtoy_$PID
 ln -s lmtoy_$PID/comments.txt
 ln -s README.html index.html
+
+# report the two directories the user may want to cd to:
+echo ""
+echo "data:   cd $WORK_LMT/$PID"
+echo "script: cd $WORK_LMT/lmtoy_run/lmtoy_$PID"
