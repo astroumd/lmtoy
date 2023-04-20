@@ -14,7 +14,7 @@
 #
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-_version="seq_pipeline: 26-feb-2023"
+_version="seq_pipeline: 18-apr-2023"
 
 echo "LMTOY>> $_version"
 
@@ -193,7 +193,7 @@ cell=$(nemoinp "ifgt($nppb,0.0,$resolution/$nppb,$cell)")
 echo cell=$cell                 >> $rc
 
 # feb 2023 - work around the numbands=2 bug
-if [ $numbands = 2 ]; then
+if [ $numbands = -2 ]; then
     echo "# feb2023 numbands bug"                      >> $rc
     echo "numbands=1  # feb 2023 bug"                  >> $rc
     echo "skyfreq=$(echo $skyfreq | tabcols - 1)"      >> $rc
@@ -223,27 +223,19 @@ p_dir=${data_lmt}
 # lmtoy_args "$@"
 
 if [ $bank != -1 ]; then
-    # pick this selected bank
+    # pick only this selected bank
+    echo "LMTOY> selecting only bank $bank"
     s_on=${src}_${obsnum}_${bank}
     s_nc=${s_on}.nc
     s_fits=${s_on}.fits
     w_fits=${s_on}.wt.fits
     lmtoy_seq1
     nb=1
-elif [ $numbands == 1 ]; then
-    # old style, we should not use it anymore
-    s_on=${src}_${obsnum}
-    s_nc=${s_on}.nc
-    s_fits=${s_on}.fits
-    w_fits=${s_on}.wt.fits
-    bank=0
-    lmtoy_seq1
-    nb=1
-else
-    echo "LMTOY> looping over $numbands"
+elif [ $numbands == 2 ]; then
+    echo "LMTOY>> looping over numbands=$numbands"
     for b in $(seq 1 $numbands); do
 	bank=$(expr $b - 1)
-	echo "Preparing for bank = $bank / $numbands"
+	echo "LMTOY>> Preparing for bank = $bank / $numbands"
 	s_on=${src}_${obsnum}_${bank}
 	s_nc=${s_on}.nc
 	s_fits=${s_on}.fits
@@ -253,6 +245,19 @@ else
 	lmtoy_seq1	
     done
     nb=$numbands
+elif [ $numbands == 1 ]; then
+    # old style, before April 2023, we should not use it anymore
+    echo "LMTOY>> numbands=1"
+    s_on=${src}_${obsnum}
+    s_nc=${s_on}.nc
+    s_fits=${s_on}.fits
+    w_fits=${s_on}.wt.fits
+    bank=0
+    lmtoy_seq1
+    nb=1
+else
+    nb=0
+    echo "LMTOY>> unprocessable numbands/bank option"
 fi
 
 echo "LMTOY>> Processed $nb bands"
