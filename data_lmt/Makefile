@@ -10,6 +10,7 @@ help:
 	@echo "Here you could place your LMT RAW data"
 	@echo "  help:    this help"
 	@echo "  new:     make a new data_lmt.log here"
+	@echo "  new2:    append to data_lmt.log based on OBSNUM0=   usually from last.obsnum"
 	@echo "  data:    download needed benchmark obsnums (33551 for RSR, 79448 for SEQ)"
 	@echo "  rsr:     only download the RSR calibration tables"
 
