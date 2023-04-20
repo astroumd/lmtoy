@@ -38,12 +38,12 @@ Following this convention we arrive at the following proposed directory hierarch
      ..../work_lmt/                                       top level WORK_LMT used by pipeline
                    lmtoy_run/lmtoy_PID                    script generator used by pipeline
                    PID/                                   The PI has web-read-access to this tree via index.html
-		       O1                                 obsnum's
+                       O1                                 obsnum's
                        O2
                        ..
                        session.dat                        this file contains session entries "1" and "2"
                        session-1/                         PIS=session-1 is the new WORK_LMT for this webrun session
-		                 lmtoy_run/lmtoy_PID/     
+                                 lmtoy_run/lmtoy_PID/     
                                  PID/O1                   only one PID in this session
                                      O2
                                      ..
