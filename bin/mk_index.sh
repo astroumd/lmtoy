@@ -25,6 +25,13 @@ if [ -z "$obsnum" ]; then
 fi
 echo "Making index.html for obsnum=$obsnum"
 
+function base {
+    ext1=$1
+    ext2=$2    
+    echo ${src}_${obsnum}${ext1}${ext2}
+}
+
+
 base1="${src}_${obsnum}"
 base2="${src}_${obsnum}_specviews"
 base3="${src}_${obsnum}_specpoint"
@@ -36,6 +43,18 @@ rms=$(txtpar $log %1*1000 p0=-cent,1,4)
 #base2="${src}_${obsnum}_?_specviews"
 #base3="${src}_${obsnum}_?_specpoint"
 
+for ext in "" "_0" "_1"; do
+    #ff="${base1}${ext}.fits"
+    ff="$(base $ext .fits)"
+    if [ -e $ff ]; then
+	echo "YES $ff"
+    else
+	echo "NO $ff"	
+    fi
+done
+
+# restfreq array
+rf=($(echo $restfreq | sed "s/,/ /"))
 
 echo $base1
 echo $base2
@@ -66,6 +85,33 @@ echo "<H2>  <A HREF=index_log.html>log files</A>                </H2>"    >> $ht
 echo "<H2>  Select FITS files:   </H2>"                                   >> $html
 echo "<OL>"                                                               >> $html
 
+
+
+
+c=("final reduced data cube for band 0"  "per pixel weights map"    "waterfall cube")
+f="${base1}_0.fits            ${base1}_0.wt.fits         ${base1}_0.wf.fits"
+i=0
+for ff in $f ; do
+    if [ -e $ff ]; then
+	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
+    else
+	echo "<LI>$ff (missing)"                                          >> $html
+    fi
+    ((i=i+1))
+done
+
+c=("final reduced data cube for band 1"  "per pixel weights map"    "waterfall cube")
+f="${base1}_1.fits            ${base1}_1.wt.fits         ${base1}_1.wf.fits"
+i=0
+for ff in $f ; do
+    if [ -e $ff ]; then
+	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
+    else
+	echo "<LI>$ff (missing)"                                          >> $html
+    fi
+    ((i=i+1))
+done
+
 c=("final reduced data cube"  "per pixel weights map"    "waterfall cube"     "full SRDP tar"         "TAP data")
 f="${base1}.fits              ${base1}.wt.fits           ${base1}.wf.fits     ../${obsnum}_SRDP.tar   ../${obsnum}_TAP.tar"
 i=0
@@ -77,15 +123,15 @@ for ff in $f ; do
     fi
     ((i=i+1))
 done
-echo "<LI> These and other files are also available via the _SRDP.tar,"   >> $html
-echo "     if available"                                                  >> $html
-echo "</OL>"                                                              >> $html
-echo "<br>Last updated $update"                                           >> $html
+echo "</OL>"                                                                  >> $html
+echo "<br> These and all other files are also available via the SRDP.tar,"    >> $html
+echo "if available"                                                           >> $html
+echo "<br><br>Last updated $update"                                           >> $html
 
 
 
 html=index_pipeline.html
-echo Writing $html # in $pwd
+echo "Writing $html"
 
 
 # if "first" figures don't exist, copy them from existing
@@ -106,90 +152,111 @@ echo "If no figure shown, the pipeline did not produce it,"               >> $ht
 echo "e.g. a combination obsnums will not have figures 1..7"              >> $html
 echo "<OL>"                                                               >> $html
 
-if [ -e $base2.1.png ]; then
-    # assume single obsnum
-    # 1.
-    echo "  <LI> Sky coverage for all 16 beams"                               >> $html
-    echo "       (sky coordinates in arcsec w.r.t. map center)"               >> $html
-    echo "           <br><IMG SRC=$base2.1.png>"                              >> $html
-    echo "         <IMG SRC=first_$base2.1.png>"                              >> $html
-    
-    # 2.
-    echo "  <LI> Tsys for each beam in 4x4 panels"                            >> $html
-    echo "       (VLSR vs. TA*)"                                              >> $html
-    echo "           <br><IMG SRC=$base2.6.png>"                              >> $html
-    echo "         <IMG SRC=first_$base2.6.png>"                              >> $html
-    
-    # 3.
-    echo "  <LI> Waterfall plot for each beam in 4x4 panels"                  >> $html
-    echo "       (VLSR vs. SAMPLE TIME)"                                      >> $html
-    echo "           <br><IMG SRC=$base2.2.png>"                              >> $html
-    echo "         <IMG SRC=first_$base2.2.png>"                              >> $html
 
-    # 3a
-    echo "  <br> Waterfall RMS as function of channel"                        >> $html
-    echo "       (RMS vs. CHANNEL)"                                           >> $html
-    echo "           <br><IMG SRC=stats_wf1.png>"                             >> $html
-    echo "         <IMG SRC=first_stats_wf1.png>"                             >> $html
-    
-    # 4.
-    echo "  <LI> RMS $b_order order baseline fit (in K) for each beam."       >> $html
-    echo "       Each beam should give roughly the same RMS."                 >> $html
-    echo "           <br><IMG SRC=$base2.3.png>"                              >> $html
-    echo "         <IMG SRC=first_$base2.3.png>"                              >> $html
-    
-    # 5.
-    echo "  <LI> Spectra for the whole map, overplotted for each beam"        >> $html
-    echo "           <br><IMG SRC=$base3.1.png>"                              >> $html
-    echo "         <IMG SRC=first_$base3.1.png>"                              >> $html
-    
-    # 6.
-    echo "  <LI> Spectra for center beam, overplotted for each beam"          >> $html
-    echo "           <br><IMG SRC=$base3.2.png>"                              >> $html
-    echo "         <IMG SRC=first_$base3.2.png>"                              >> $html
-    
-    # 7.
-    echo "  <LI> mean_spectra_plot for each beam."                            >> $html
-    echo "       Unless there is strong signal, each spectrum should look"    >> $html
-    echo "       the same kind of noisy with zero baseline"                   >> $html
-    echo "           <br><IMG SRC=$base2.5.png>"                              >> $html
-    echo "         <IMG SRC=first_$base2.5.png>"                              >> $html
-else
-    echo "  <LI> N/A"  >> $html
-    echo "  <LI> N/A"  >> $html
-    echo "  <LI> N/A"  >> $html
-    echo "  <LI> N/A"  >> $html
-    echo "  <LI> N/A"  >> $html
-    echo "  <LI> N/A"  >> $html
-    echo "  <LI> N/A"  >> $html
-    echo "  <LI> N/A"  >> $html
-    echo "  <br>obsnums=${obsnums}<br><br>"                               >> $html
-fi    
+#base1="${src}_${obsnum}"
+#base2="${src}_${obsnum}_specviews"
+#base3="${src}_${obsnum}_specpoint"
 
-# 8.
-echo "  <LI> Sky coverage + histogram as defined how often sky pixel was seen"  >> $html
-echo "       (sky pixels are about half of LMT beam size)"                      >> $html
-echo "           <br><IMG SRC=$base1.wt.png>"                                   >> $html
-echo "         <IMG SRC=first_$base1.wt.png>"                                   >> $html
 
-# 9.
-echo "  <LI> Moment-0 estimate [K.m/s] (<A HREF=index_admit>ADMIT</A>)"   >> $html
-echo "       plus histogram."                                             >> $html
-echo "           <br><IMG SRC=$base1.mom0.png>"                           >> $html
-echo "         <IMG SRC=first_$base1.mom0.png>"                           >> $html
+for ext in "" "_0" "_1"; do
+    base1=$(base "$ext" "")
+    base2=$(base "$ext" _specviews)
+    base3=$(base "$ext" _specpoint)
+    echo "BASE: $base1 $base2 $base3"
 
-# 10.
-echo "  <LI> Peak temperature [mK]"                                       >> $html
-echo "       plus histogram."                                             >> $html
-echo "           <br><IMG SRC=$base1.peak.png>"                           >> $html
-echo "         <IMG SRC=first_$base1.peak.png>"                           >> $html
+    if [ -e $base1.fits ]; then
+	echo Found $base1.fits
+    else
+	echo Skipping for $base1.fits
+	continue
+    fi
 
-# 11.
-echo "  <LI> RMS estimate [mK] (central value: $rms mK)"                  >> $html
-echo "       plus histogram."                                             >> $html
-echo "           <br><IMG SRC=$base1.rms.png>"                            >> $html
-echo "         <IMG SRC=first_$base1.rms.png>"                            >> $html
-echo "</OL>"                                                              >> $html
+    if [ -e $base2.1.png ]; then
+	# assume single obsnum
+	# 1.
+	echo "  <LI> Sky coverage for all 16 beams"                               >> $html
+	echo "       (sky coordinates in arcsec w.r.t. map center)"               >> $html
+	echo "           <br><IMG SRC=$base2.1.png>"                              >> $html
+	echo "         <IMG SRC=first_$base2.1.png>"                              >> $html
+	
+	# 2.
+	echo "  <LI> Tsys for each beam in 4x4 panels"                            >> $html
+	echo "       (VLSR vs. TA*)"                                              >> $html
+	echo "           <br><IMG SRC=$base2.6.png>"                              >> $html
+	echo "         <IMG SRC=first_$base2.6.png>"                              >> $html
+	
+	# 3.
+	echo "  <LI> Waterfall plot for each beam in 4x4 panels"                  >> $html
+	echo "       (VLSR vs. SAMPLE TIME)"                                      >> $html
+	echo "           <br><IMG SRC=$base2.2.png>"                              >> $html
+	echo "         <IMG SRC=first_$base2.2.png>"                              >> $html
+	
+	# 3a
+	echo "  <br> Waterfall RMS as function of channel"                        >> $html
+	echo "       (RMS vs. CHANNEL)"                                           >> $html
+	echo "           <br><IMG SRC=stats_wf1.png>"                             >> $html
+	echo "         <IMG SRC=first_stats_wf1.png>"                             >> $html
+	
+	# 4.
+	echo "  <LI> RMS $b_order order baseline fit (in K) for each beam."       >> $html
+	echo "       Each beam should give roughly the same RMS."                 >> $html
+	echo "           <br><IMG SRC=$base2.3.png>"                              >> $html
+	echo "         <IMG SRC=first_$base2.3.png>"                              >> $html
+	
+	# 5.
+	echo "  <LI> Spectra for the whole map, overplotted for each beam"        >> $html
+	echo "           <br><IMG SRC=$base3.1.png>"                              >> $html
+	echo "         <IMG SRC=first_$base3.1.png>"                              >> $html
+	
+	# 6.
+	echo "  <LI> Spectra for center beam, overplotted for each beam"          >> $html
+	echo "           <br><IMG SRC=$base3.2.png>"                              >> $html
+	echo "         <IMG SRC=first_$base3.2.png>"                              >> $html
+	
+	# 7.
+	echo "  <LI> mean_spectra_plot for each beam."                            >> $html
+	echo "       Unless there is strong signal, each spectrum should look"    >> $html
+	echo "       the same kind of noisy with zero baseline"                   >> $html
+	echo "           <br><IMG SRC=$base2.5.png>"                              >> $html
+	echo "         <IMG SRC=first_$base2.5.png>"                              >> $html
+    else
+	echo "  <LI> N/A"  >> $html
+	echo "  <LI> N/A"  >> $html
+	echo "  <LI> N/A"  >> $html
+	echo "  <LI> N/A"  >> $html
+	echo "  <LI> N/A"  >> $html
+	echo "  <LI> N/A"  >> $html
+	echo "  <LI> N/A"  >> $html
+	echo "  <LI> N/A"  >> $html
+	echo "  <br>obsnums=${obsnums}<br><br>"                               >> $html
+    fi    
+    
+    # 8.
+    echo "  <LI> Sky coverage + histogram as defined how often sky pixel was seen"  >> $html
+    echo "       (sky pixels are about half of LMT beam size)"                      >> $html
+    echo "           <br><IMG SRC=$base1.wt.png>"                                   >> $html
+    echo "         <IMG SRC=first_$base1.wt.png>"                                   >> $html
+    
+    # 9.
+    echo "  <LI> Moment-0 estimate [K.m/s] (<A HREF=index_admit>ADMIT</A>)"   >> $html
+    echo "       plus histogram."                                             >> $html
+    echo "           <br><IMG SRC=$base1.mom0.png>"                           >> $html
+    echo "         <IMG SRC=first_$base1.mom0.png>"                           >> $html
+    
+    # 10.
+    echo "  <LI> Peak temperature [mK]"                                       >> $html
+    echo "       plus histogram."                                             >> $html
+    echo "           <br><IMG SRC=$base1.peak.png>"                           >> $html
+    echo "         <IMG SRC=first_$base1.peak.png>"                           >> $html
+    
+    # 11.
+    echo "  <LI> RMS estimate [mK] (central value: $rms mK)"                  >> $html
+    echo "       plus histogram."                                             >> $html
+    echo "           <br><IMG SRC=$base1.rms.png>"                            >> $html
+    echo "         <IMG SRC=first_$base1.rms.png>"                            >> $html
+    echo "</OL>"                                                              >> $html
+    
+done
 
 echo "<br>Last updated $update"                                           >> $html
 
