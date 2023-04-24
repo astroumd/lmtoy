@@ -1,7 +1,11 @@
 #! /bin/bash
 #
 #  create nice looking index.html for LMT/ADMIT products from pipeline for SEQ/Map
-#  this needs to be executed from the $ProjectId/$obsnum directory 
+#  this needs to be executed from the $ProjectId/$obsnum directory
+#
+#  two modes:
+#     - only src_obsnum.nc present:   single bank (bank=0) mode
+#     - one or two src_obsnum_B.nc present:   bank=0 or 1 expected
 #
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -43,6 +47,7 @@ rms=$(txtpar $log %1*1000 p0=-cent,1,4)
 #base2="${src}_${obsnum}_?_specviews"
 #base3="${src}_${obsnum}_?_specpoint"
 
+
 for ext in "" "_0" "_1"; do
     #ff="${base1}${ext}.fits"
     ff="$(base $ext .fits)"
@@ -76,8 +81,16 @@ dev=$(yapp_query png ps)
 
 html=index.html
 echo Writing $html # in $pwd
-echo "<H1> $ProjectId/$obsnum for $src </H1>"                              > $html
-echo "<H2>  <A HREF=index_pipeline.html>SL Pipeline summary</A> </H2>"    >> $html
+echo "<H1> $ProjectId/$obsnum for $src </H1>"                                             > $html
+if [ -e index_pipeline.html ]; then
+    echo "<H2>  <A HREF=index_pipeline.html>SL Pipeline summary</A> </H2>"               >> $html
+fi
+if [ -e index_pipeline_0.html ]; then
+    echo "<H2>  <A HREF=index_pipeline_0.html>SL Pipeline summary (bank 0)</A> </H2>"    >> $html    
+fi
+if [ -e index_pipeline_1.html ]; then
+    echo "<H2>  <A HREF=index_pipeline_1.html>SL Pipeline summary (bank 1)</A> </H2>"    >> $html    
+fi
 echo "<H2>  <A HREF=index_admit.html>ADMIT summary</A> $admit   </H2>"    >> $html
 echo "<H2>  <A HREF=index_mm.html>maskmoment summary</A> $mm    </H2>"    >> $html
 echo "<H2>  <A HREF=index_pars.html>parameters</A>              </H2>"    >> $html
@@ -129,41 +142,54 @@ echo "if available"                                                           >>
 echo "<br><br>Last updated $update"                                           >> $html
 
 
-
-html=index_pipeline.html
-echo "Writing $html"
-
-
-# if "first" figures don't exist, copy them from existing
-first="$base2.1.png $base2.6.png $base2.2.png $base2.3.png $base3.1.png $base3.2.png $base2.5.png $base1.wt.png $base1.mom0.png $base1.peak.png $base1.rms.png stats_wf0.png stats_wf1.png"
-for f in $first; do
-    if [ -e $f ]; then
-	if [ ! -e first_$f ]; then
-	    cp $f  first_$f
-	fi
-    fi
-done
-
-echo "<H1> SL Pipeline summary for $ProjectId/$obsnum for $src </H1>"      > $html
-echo "The figures in the right column are those generated from the first" >> $html
-echo "pass of the pipeline, those on the left are the latest iteration."  >> $html
-echo "<br>"                                                               >> $html
-echo "If no figure shown, the pipeline did not produce it,"               >> $html
-echo "e.g. a combination obsnums will not have figures 1..7"              >> $html
-echo "<OL>"                                                               >> $html
-
-
-#base1="${src}_${obsnum}"
-#base2="${src}_${obsnum}_specviews"
-#base3="${src}_${obsnum}_specpoint"
-
-
 for ext in "" "_0" "_1"; do
+    ff="$(base $ext .fits)"
+    if [ ! -e $ff ]; then
+	continue
+    fi
+    html=index_pipeline$ext.html
+    echo "Writing $html $restfreq"
+    if [ "$ext" == "" ]; then
+	rf=$restfreq
+    fi
+    if [ "$ext" == "_0" ]; then
+	rf=$(echo $restfreq | tabcols - 1)
+    fi
+    if [ "$ext" == "_1" ]; then
+	rf=$(echo $restfreq | tabcols - 2)
+    fi    
+      
     base1=$(base "$ext" "")
     base2=$(base "$ext" _specviews)
     base3=$(base "$ext" _specpoint)
     echo "BASE: $base1 $base2 $base3"
+    
 
+    # if "first" figures don't exist, copy them from existing
+    first="$base2.1.png $base2.6.png $base2.2.png $base2.3.png $base3.1.png $base3.2.png $base2.5.png $base1.wt.png $base1.mom0.png $base1.peak.png $base1.rms.png stats_wf0.png stats_wf1.png"
+    for f in $first; do
+	if [ -e $f ]; then
+	    if [ ! -e first_$f ]; then
+		cp $f  first_$f
+	    fi
+	fi
+    done
+
+    echo "<H1> SL Pipeline summary for $ProjectId/$obsnum for $src </H1>"      > $html
+    echo "<b>bank=$bank restfreq=$rf</b>"                                     >> $html
+    echo "<br>"                                                               >> $html    
+    echo "The figures in the right column are those generated from the first" >> $html
+    echo "pass of the pipeline, those on the left are the latest iteration."  >> $html
+    echo "<br>"                                                               >> $html
+    echo "If no figure shown, the pipeline did not produce it,"               >> $html
+    echo "e.g. a combination obsnums will not have figures 1..7"              >> $html
+    echo "<OL>"                                                               >> $html
+
+
+    #base1="${src}_${obsnum}"
+    #base2="${src}_${obsnum}_specviews"
+    #base3="${src}_${obsnum}_specpoint"
+    
     if [ -e $base1.fits ]; then
 	echo Found $base1.fits
     else
@@ -261,16 +287,28 @@ done
 echo "<br>Last updated $update"                                           >> $html
 
 html=index_admit.html
-echo Writing $html # in $pwd
-echo "<H1> ADMIT summary for $ProjectId/$obsnum for $src </H1>"            > $html
-echo "Currently we produce results for two cubes: "                       >> $html
-echo "<OL>"                                                               >> $html
-echo "   <LI> Native ('nf') resolution, which could be noisy: "           >> $html
-echo "        <A HREF=$base1.nf.admit>$base1.nf.admit</A>"                >> $html
-echo "   <LI> Smoothed ('nfs') spatially and spectrally: "                >> $html
-echo "        <A HREF=$base1.nfs.admit>$base1.nfs.admit</A>"              >> $html
-echo "</OL>"                                                              >> $html
-echo "<br>Last updated $update"                                           >> $html
+echo "Writing $html"
+echo "<H1> ADMIT summary for $ProjectId/$obsnum for $src </H1>"                             > $html
+echo "Currently we produce results for a noise flat and smoothed noise flat cube: "        >> $html
+echo "<OL>"                                                                                >> $html
+
+for ext in "" "_0" "_1"; do
+    ff="$(base $ext .fits)"
+    if [ ! -e $ff ]; then
+	continue
+    fi
+    base1=$(base "$ext" "")
+    base2=$(base "$ext" _specviews)
+    base3=$(base "$ext" _specpoint)
+    echo "BASE: $base1 $base2 $base3"
+
+    echo "   <LI> Native ('nf') resolution: "                                 >> $html
+    echo "        <A HREF=$base1.nf.admit>$base1.nf.admit</A>"                >> $html
+    echo "   <LI> Smoothed ('nfs') spatially and spectrally: "                >> $html
+    echo "        <A HREF=$base1.nfs.admit>$base1.nfs.admit</A>"              >> $html
+done
+echo "</OL>"                                                                  >> $html
+echo "<br>Last updated $update"                                               >> $html
 
 html=index_mm.html
 echo Writing $html # in $pwd
