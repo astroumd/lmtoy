@@ -1,7 +1,8 @@
 Summary of the options for lmtoy
 --------------------------------
-   help      - this help
+   help      - this help (-h and --help also give this help)
    pull      - update LMTOY and all sub-git via "git pull"
+   dev       - extra environment setting for developers
 
 Summary of commands in the LMTOY environment
 --------------------------------------------
