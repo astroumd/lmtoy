@@ -3,7 +3,7 @@
 #    report the LMTOY environment
 #
 
-if [ "$1" == help ]; then
+if [ "$1" == help ] || [ "$1" == --help ] || [ "$1" == -h ]; then
     cat $LMTOY/docs/lmtoy.help
     exit 0
 fi
