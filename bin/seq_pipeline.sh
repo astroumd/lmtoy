@@ -14,7 +14,7 @@
 #
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-_version="seq_pipeline: 18-apr-2023"
+_version="seq_pipeline: 27-apr-2023"
 
 echo "LMTOY>> $_version"
 
@@ -67,6 +67,11 @@ bank=-1           # -1:  all banks 0..numbands-1; otherwise select that bank (0,
 debug=0
 
 #--HELP
+show_vars="extent dv dw birdies numbands pix_list rms_cut location resolution \
+           cell nppb rmax otf_select otf_a otf_b otf_c noise_sigma b_order stype \
+           sample otf_cal edge bank \
+          "
+
 
 # unset a view things, since setting them will give a new meaning
 unset vlsr
@@ -78,11 +83,7 @@ lmtoy_args "$@"
 
 # PI parameters, as merged from defaults and CLI
 rc0=$WORK_LMT/tmp/lmtoy_${obsnum}.rc
-show_vars \
-	  extent dv dw birdies numbands pix_list rms_cut location resolution \
-	  cell nppb rmax otf_select otf_a otf_b otf_c noise_sigma b_order stype \
-	  sample otf_cal edge bank \
-	  > $rc0
+show_vars $show_vars > $rc0
 
 #lmtoy_debug
 #             put in bash debug mode
@@ -108,7 +109,7 @@ else
 fi
 
 
-#             process the parameter file
+#             process the parameter file(s)
 rc=./lmtoy_${obsnum}.rc
 if [ ! -e $rc ]; then
     echo "LMTOY>> creating new $rc"
@@ -124,6 +125,13 @@ for arg in "$@"; do
 done
 source $rc
 rm -f $rc0
+#             optional "oid" parameter file
+rc1=./lmtoy_${obsnum}__${oid}.rc
+if [ ! -z "$oid" ]; then
+    echo "date=\"$date\"     # begin"        >> $rc1    
+    show_vars oid $show_vars                 >> $rc1
+fi
+
 
 # @todo   lmtinfo.py should set this now
 ifproc=$(ls ${data_lmt}/ifproc/*${obsnum}*.nc)
@@ -192,7 +200,7 @@ echo resolution=$resolution     >> $rc
 cell=$(nemoinp "ifgt($nppb,0.0,$resolution/$nppb,$cell)")
 echo cell=$cell                 >> $rc
 
-# feb 2023 - work around the numbands=2 bug
+# feb 2023 - work around the numbands=2 bug (only one bad obsnum was used: 105907/105908)
 if [ $numbands = -2 ]; then
     echo "# feb2023 numbands bug"                      >> $rc
     echo "numbands=1  # feb 2023 bug"                  >> $rc
@@ -225,23 +233,26 @@ p_dir=${data_lmt}
 if [ $bank != -1 ]; then
     # pick only this selected bank
     echo "LMTOY> selecting only bank $bank"
-    s_on=${src}_${obsnum}_${bank}
+    if [ ! -z "$oid" ]; then
+	s_on=${src}_${obsnum}__${oid}
+    else
+	s_on=${src}_${obsnum}__${bank}
+    fi
     s_nc=${s_on}.nc
     s_fits=${s_on}.fits
     w_fits=${s_on}.wt.fits
     lmtoy_seq1
     nb=1
 elif [ $numbands == 2 ]; then
+    # new style, April 2023 and beyond
     echo "LMTOY>> looping over numbands=$numbands"
     for b in $(seq 1 $numbands); do
 	bank=$(expr $b - 1)
 	echo "LMTOY>> Preparing for bank = $bank / $numbands"
-	s_on=${src}_${obsnum}_${bank}
+	s_on=${src}_${obsnum}__${bank}
 	s_nc=${s_on}.nc
 	s_fits=${s_on}.fits
 	w_fits=${s_on}.wt.fits
-	#s_fits=${s_on}_${bank}.fits
-	#w_fits=${s_on}_${bank}.wt.fits
 	lmtoy_seq1	
     done
     nb=$numbands
