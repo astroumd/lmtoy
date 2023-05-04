@@ -8,7 +8,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 24-apr-2023"
+_version="SLpipeline: 27-apr-2023"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -34,7 +34,7 @@ meta=0          # activate update for frontend db (for dataverse)
 sleep=2         # add few seconds before running, allowing quick interrupt
 nproc=1         # number of processors to use (keep it at 1)
 rsync=""        # rsync address for the TAP file (used at LMT/malt)
-oid=""          # experimental
+oid=""          # experimental parallel processing using __$oid 
 goal=Science    # Science, or override with: Pointing,Focus
 
 #  Optional instrument specific pipeline can be added as well but are not known here
@@ -93,6 +93,7 @@ echo "LMTOY>> OMP_NUM_THREADS=$OMP_NUM_THREADS"
 rc0=$WORK_LMT/tmp/lmtoy_${obsnum}.rc
 lmtinfo.py $obsnum > $rc0
 if [ $? != 0 ]; then
+    # some error (maybe OBSNUM did not exist)
     cat $rc0
     rm -f $rc0    
     exit 1
@@ -124,9 +125,6 @@ if [ $exist == 1 ] && [ -d $pidir/$obsnum ]; then
     exit 0
 fi
 
-if [ "$oid" != "" ]; then
-    pdir=${pdir}_${oid}
-fi
 if [ $restart = "-1" ]; then
     if [ -d $pdir ]; then
 	echo "Warning: restart=-1 and $pdir already exists"
@@ -163,14 +161,13 @@ if [ $goal == "Science" ]; then
 	if [ $obsnums = 0 ]; then
 	    echo "LMTOY>> seq_pipeline.sh pdir=$pdir $*"
 	    $time         seq_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
-	    cp $pdir/lmtoy_$obsnum.log $pdir/lmtoy_$obsnum_$ldate.log
 	else
 	    obsnum=${on0}_${on1}
 	    cd $work
 	    echo "LMTOY>> seq_combine.sh             $*"
 	    $time         seq_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
-	    cp $pdir/lmtoy_$obsnum.log $pdir/lmtoy_$obsnum_$ldate.log	    
 	fi
+	cp $pdir/lmtoy_$obsnum.log $pdir/lmtoy_${obsnum}_$ldate.log	    
 	seq_summary.sh $pdir/lmtoy_$obsnum.log
 	lmtoy_date >> $pdir/date.log	
 	echo Logfile also in: $pdir/lmtoy_$obsnum_$ldate.log
