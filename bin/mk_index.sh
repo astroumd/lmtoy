@@ -48,7 +48,7 @@ rms=$(txtpar $log %1*1000 p0=-cent,1,4)
 #base3="${src}_${obsnum}_?_specpoint"
 
 
-for ext in "" "_0" "_1"; do
+for ext in "" "__0" "__1"; do
     #ff="${base1}${ext}.fits"
     ff="$(base $ext .fits)"
     if [ -e $ff ]; then
@@ -85,11 +85,11 @@ echo "<H1> $ProjectId/$obsnum for $src </H1>"                                   
 if [ -e index_pipeline.html ]; then
     echo "<H2>  <A HREF=index_pipeline.html>SL Pipeline summary</A> </H2>"               >> $html
 fi
-if [ -e index_pipeline_0.html ]; then
-    echo "<H2>  <A HREF=index_pipeline_0.html>SL Pipeline summary (bank 0)</A> </H2>"    >> $html    
+if [ -e index_pipeline__0.html ]; then
+    echo "<H2>  <A HREF=index_pipeline__0.html>SL Pipeline summary (bank 0)</A> </H2>"    >> $html    
 fi
-if [ -e index_pipeline_1.html ]; then
-    echo "<H2>  <A HREF=index_pipeline_1.html>SL Pipeline summary (bank 1)</A> </H2>"    >> $html    
+if [ -e index_pipeline__1.html ]; then
+    echo "<H2>  <A HREF=index_pipeline__1.html>SL Pipeline summary (bank 1)</A> </H2>"    >> $html    
 fi
 echo "<H2>  <A HREF=index_admit.html>ADMIT summary</A> $admit   </H2>"    >> $html
 echo "<H2>  <A HREF=index_mm.html>maskmoment summary</A> $mm    </H2>"    >> $html
@@ -102,7 +102,7 @@ echo "<OL>"                                                               >> $ht
 
 
 c=("final reduced data cube for band 0"  "per pixel weights map"    "waterfall cube")
-f="${base1}_0.fits            ${base1}_0.wt.fits         ${base1}_0.wf.fits"
+f="${base1}__0.fits            ${base1}__0.wt.fits         ${base1}__0.wf.fits"
 i=0
 for ff in $f ; do
     if [ -e $ff ]; then
@@ -114,7 +114,7 @@ for ff in $f ; do
 done
 
 c=("final reduced data cube for band 1"  "per pixel weights map"    "waterfall cube")
-f="${base1}_1.fits            ${base1}_1.wt.fits         ${base1}_1.wf.fits"
+f="${base1}__1.fits            ${base1}__1.wt.fits         ${base1}__1.wf.fits"
 i=0
 for ff in $f ; do
     if [ -e $ff ]; then
@@ -142,7 +142,7 @@ echo "if available"                                                           >>
 echo "<br><br>Last updated $update"                                           >> $html
 
 
-for ext in "" "_0" "_1"; do
+for ext in "" "__0" "__1"; do
     ff="$(base $ext .fits)"
     if [ ! -e $ff ]; then
 	continue
@@ -152,10 +152,10 @@ for ext in "" "_0" "_1"; do
     if [ "$ext" == "" ]; then
 	rf=$restfreq
     fi
-    if [ "$ext" == "_0" ]; then
+    if [ "$ext" == "__0" ]; then
 	rf=$(echo $restfreq | tabcols - 1)
     fi
-    if [ "$ext" == "_1" ]; then
+    if [ "$ext" == "__1" ]; then
 	rf=$(echo $restfreq | tabcols - 2)
     fi    
       
@@ -292,7 +292,7 @@ echo "<H1> ADMIT summary for $ProjectId/$obsnum for $src </H1>"                 
 echo "Currently we produce results for a noise flat and smoothed noise flat cube: "        >> $html
 echo "<OL>"                                                                                >> $html
 
-for ext in "" "_0" "_1"; do
+for ext in "" "__0" "__1"; do
     ff="$(base $ext .fits)"
     if [ ! -e $ff ]; then
 	continue
