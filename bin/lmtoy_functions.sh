@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="12-apr-2023"
+lmtoy_version="27-apr-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -16,7 +16,7 @@ function lmtoy_version {
 }
 
 function lmtoy_date {
-    # standard ISO date, by default in local time though.   Use "-u" to switch to UT time
+    # standard ISO date, by default in local time.   Use "-u" to switch to UT time
     date +%Y-%m-%dT%H:%M:%S $*
 }
 
@@ -425,7 +425,9 @@ function lmtoy_seq1 {
     # log the version
     lmtoy_version > lmtoy.rc
     # keep an IFPROC header
-    ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
+    if [ ! -e lmtoy_$obsnum.ifproc ]; then
+	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
+    fi
     # obsnumrc
     obsnumrc=lmtoy_$obsnum.rc
 
@@ -782,7 +784,10 @@ function lmtoy_bs1 {
 
     # log the version
     lmtoy_version > lmtoy.rc
-    ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
+    # keep an IFPROC header
+    if [ ! -e lmtoy_$obsnum.ifproc ]; then
+	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
+    fi
 
     # for a waterfall -> bs-2.png
     process_bs.py --obs_list $obsnum -o junk2.txt --pix_list $pix_list --use_cal --block -2 --stype $stype
