@@ -79,68 +79,67 @@ fi
 
 dev=$(yapp_query png ps)
 
-html=index.html
-echo Writing $html # in $pwd
-echo "<H1> $ProjectId/$obsnum for $src </H1>"                                             > $html
-if [ -e index_pipeline.html ]; then
-    echo "<H2>  <A HREF=index_pipeline.html>SL Pipeline summary</A> </H2>"               >> $html
-fi
-if [ -e index_pipeline__0.html ]; then
-    echo "<H2>  <A HREF=index_pipeline__0.html>SL Pipeline summary (bank 0)</A> </H2>"    >> $html    
-fi
-if [ -e index_pipeline__1.html ]; then
-    echo "<H2>  <A HREF=index_pipeline__1.html>SL Pipeline summary (bank 1)</A> </H2>"    >> $html    
-fi
-echo "<H2>  <A HREF=index_admit.html>ADMIT summary</A> $admit   </H2>"    >> $html
-echo "<H2>  <A HREF=index_mm.html>maskmoment summary</A> $mm    </H2>"    >> $html
-echo "<H2>  <A HREF=index_pars.html>parameters</A>              </H2>"    >> $html
-echo "<H2>  <A HREF=index_log.html>log files</A>                </H2>"    >> $html
-echo "<H2>  Select FITS files:   </H2>"                                   >> $html
-echo "<OL>"                                                               >> $html
+# ====================================================================================================
 
+html=index_admit.html
+echo "Writing $html"
+echo "<H1> ADMIT summary for $ProjectId/$obsnum for $src </H1>"                             > $html
+echo "Currently we produce results for a noise flat and smoothed noise flat cube: "        >> $html
+echo "<OL>"                                                                                >> $html
 
-
-
-c=("final reduced data cube for band 0"  "per pixel weights map"    "waterfall cube")
-f="${base1}__0.fits            ${base1}__0.wt.fits         ${base1}__0.wf.fits"
-i=0
-for ff in $f ; do
-    if [ -e $ff ]; then
-	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
-    else
-	echo "<LI>$ff (missing)"                                          >> $html
+for ext in "" "__0" "__1"; do
+    ff="$(base $ext .fits)"
+    if [ ! -e $ff ]; then
+	continue
     fi
-    ((i=i+1))
-done
+    base1=$(base "$ext" "")
+    base2=$(base "$ext" _specviews)
+    base3=$(base "$ext" _specpoint)
+    echo "BASE: $base1 $base2 $base3"
 
-c=("final reduced data cube for band 1"  "per pixel weights map"    "waterfall cube")
-f="${base1}__1.fits            ${base1}__1.wt.fits         ${base1}__1.wf.fits"
-i=0
-for ff in $f ; do
-    if [ -e $ff ]; then
-	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
-    else
-	echo "<LI>$ff (missing)"                                          >> $html
-    fi
-    ((i=i+1))
-done
-
-c=("final reduced data cube"  "per pixel weights map"    "waterfall cube"     "full SRDP tar"         "TAP data")
-f="${base1}.fits              ${base1}.wt.fits           ${base1}.wf.fits     ../${obsnum}_SRDP.tar   ../${obsnum}_TAP.tar"
-i=0
-for ff in $f ; do
-    if [ -e $ff ]; then
-	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
-    else
-	echo "<LI>$ff (missing)"                                          >> $html
-    fi
-    ((i=i+1))
+    echo "   <LI> Native ('nf') resolution: "                                 >> $html
+    echo "        <A HREF=$base1.nf.admit>$base1.nf.admit</A>"                >> $html
+    echo "   <LI> Smoothed ('nfs') spatially and spectrally: "                >> $html
+    echo "        <A HREF=$base1.nfs.admit>$base1.nfs.admit</A>"              >> $html
 done
 echo "</OL>"                                                                  >> $html
-echo "<br> These and all other files are also available via the SRDP.tar,"    >> $html
-echo "if available"                                                           >> $html
-echo "<br><br>Last updated $update"                                           >> $html
+echo "<br>Last updated $update"                                               >> $html
 
+# ====================================================================================================
+
+html=index_mm.html
+echo Writing $html # in $pwd
+echo "<H1> maskmoment summary for $ProjectId/$obsnum for $src </H1>"       > $html
+echo "Currently we produce results for one cube: "                        >> $html
+echo "<OL>"                                                               >> $html
+echo "   <LI> Native ('nf') resolution, which could be noisy: "           >> $html
+echo "        <A HREF=$base1.nf.mm>$base1.nf.mm</A>"                      >> $html
+echo "</OL>"                                                              >> $html
+echo "<br>Last updated $update"                                           >> $html
+
+# ====================================================================================================
+
+html=index_pars.html
+echo Writing $html # in $pwd
+echo "<H1> Parameter summary for $ProjectId/$obsnum for $src </H1>"        > $html
+echo "<pre>"                                                              >> $html
+cat lmtoy_*.rc                                                            >> $html
+echo "</pre>"                                                             >> $html
+echo "<br>Last updated $update"                                           >> $html
+
+# ====================================================================================================
+
+html=index_log.html
+echo Writing $html # in $pwd
+echo "<H1> Logfiles for $ProjectId/$obsnum for $src </H1>"                 > $html
+echo "<OL>"                                                               >> $html
+for log in *.log *.ifproc; do
+    echo "<LI> <A HREF=$log>$log</A>"                                     >> $html
+done
+echo "</OL>"                                                              >> $html
+echo "<br>Last updated $update"                                           >> $html
+
+# ====================================================================================================
 
 for ext in "" "__0" "__1"; do
     ff="$(base $ext .fits)"
@@ -286,54 +285,69 @@ done
 
 echo "<br>Last updated $update"                                           >> $html
 
-html=index_admit.html
-echo "Writing $html"
-echo "<H1> ADMIT summary for $ProjectId/$obsnum for $src </H1>"                             > $html
-echo "Currently we produce results for a noise flat and smoothed noise flat cube: "        >> $html
-echo "<OL>"                                                                                >> $html
+# ====================================================================================================
 
-for ext in "" "__0" "__1"; do
-    ff="$(base $ext .fits)"
-    if [ ! -e $ff ]; then
-	continue
+html=index.html
+echo Writing $html # in $pwd
+echo "<H1> $ProjectId/$obsnum for $src </H1>"                                             > $html
+if [ -e index_pipeline.html ]; then
+    echo "<H2>  <A HREF=index_pipeline.html>SL Pipeline summary</A> </H2>"               >> $html
+fi
+if [ -e index_pipeline__0.html ]; then
+    echo BANK0
+    echo "<H2>  <A HREF=index_pipeline__0.html>SL Pipeline summary (bank 0)</A> </H2>"    >> $html    
+fi
+if [ -e index_pipeline__1.html ]; then
+    echo BANK1    
+    echo "<H2>  <A HREF=index_pipeline__1.html>SL Pipeline summary (bank 1)</A> </H2>"    >> $html    
+fi
+echo "<H2>  <A HREF=index_admit.html>ADMIT summary</A> $admit   </H2>"    >> $html
+echo "<H2>  <A HREF=index_mm.html>maskmoment summary</A> $mm    </H2>"    >> $html
+echo "<H2>  <A HREF=index_pars.html>parameters</A>              </H2>"    >> $html
+echo "<H2>  <A HREF=index_log.html>log files</A>                </H2>"    >> $html
+echo "<H2>  Select FITS files:   </H2>"                                   >> $html
+echo "<OL>"                                                               >> $html
+
+c=("final reduced data cube for band 0"  "per pixel weights map"    "waterfall cube")
+f="${base1}__0.fits            ${base1}__0.wt.fits         ${base1}__0.wf.fits"
+i=0
+for ff in $f ; do
+    if [ -e $ff ]; then
+	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
+    else
+	echo "<LI>$ff (missing)"                                          >> $html
     fi
-    base1=$(base "$ext" "")
-    base2=$(base "$ext" _specviews)
-    base3=$(base "$ext" _specpoint)
-    echo "BASE: $base1 $base2 $base3"
+    ((i=i+1))
+done
 
-    echo "   <LI> Native ('nf') resolution: "                                 >> $html
-    echo "        <A HREF=$base1.nf.admit>$base1.nf.admit</A>"                >> $html
-    echo "   <LI> Smoothed ('nfs') spatially and spectrally: "                >> $html
-    echo "        <A HREF=$base1.nfs.admit>$base1.nfs.admit</A>"              >> $html
+c=("final reduced data cube for band 1"  "per pixel weights map"    "waterfall cube")
+f="${base1}__1.fits            ${base1}__1.wt.fits         ${base1}__1.wf.fits"
+i=0
+for ff in $f ; do
+    if [ -e $ff ]; then
+	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
+    else
+	echo "<LI>$ff (missing)"                                          >> $html
+    fi
+    ((i=i+1))
+done
+
+c=("final reduced data cube"  "per pixel weights map"    "waterfall cube"     "full SRDP tar"         "TAP data")
+f="${base1}.fits              ${base1}.wt.fits           ${base1}.wf.fits     ../${obsnum}_SRDP.tar   ../${obsnum}_TAP.tar"
+i=0
+for ff in $f ; do
+    if [ -e $ff ]; then
+	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
+    else
+	echo "<LI>$ff (missing)"                                          >> $html
+    fi
+    ((i=i+1))
 done
 echo "</OL>"                                                                  >> $html
-echo "<br>Last updated $update"                                               >> $html
+echo "<br> These and all other files are also available via the SRDP.tar,"    >> $html
+echo "if available"                                                           >> $html
+echo "<br><br>Last updated $update"                                           >> $html
 
-html=index_mm.html
-echo Writing $html # in $pwd
-echo "<H1> maskmoment summary for $ProjectId/$obsnum for $src </H1>"       > $html
-echo "Currently we produce results for one cube: "                        >> $html
-echo "<OL>"                                                               >> $html
-echo "   <LI> Native ('nf') resolution, which could be noisy: "           >> $html
-echo "        <A HREF=$base1.nf.mm>$base1.nf.mm</A>"                      >> $html
-echo "</OL>"                                                              >> $html
-echo "<br>Last updated $update"                                           >> $html
+# ====================================================================================================
 
-html=index_pars.html
-echo Writing $html # in $pwd
-echo "<H1> Parameter summary for $ProjectId/$obsnum for $src </H1>"        > $html
-echo "<pre>"                                                              >> $html
-cat lmtoy_*.rc                                                            >> $html
-echo "</pre>"                                                             >> $html
-echo "<br>Last updated $update"                                           >> $html
 
-html=index_log.html
-echo Writing $html # in $pwd
-echo "<H1> Logfiles for $ProjectId/$obsnum for $src </H1>"                 > $html
-echo "<OL>"                                                               >> $html
-for log in *.log *.ifproc; do
-    echo "<LI> <A HREF=$log>$log</A>"                                     >> $html
-done
-echo "</OL>"                                                              >> $html
-echo "<br>Last updated $update"                                           >> $html
