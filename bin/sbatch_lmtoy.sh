@@ -1,6 +1,5 @@
 #! /bin/bash
 #
-#
 #--HELP
 #
 #  sbatch_lmtoy.sh :  LMTOY's simple frontend for sbatch
@@ -24,9 +23,7 @@
 #
 #--HELP
 
-# https://unity.rc.umass.edu/docs/#slurm/   IECK, this also stopped working.
-
-version="2-may-2023"        # script version
+version="4-may-2023"        # script version
 sleep=1                     # don't use 0, unity spawns too fast in a series
 
 if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
@@ -39,11 +36,11 @@ fi
 # catch the single argument batch call first, but pass additional arguments to each pipeline call
 if [ -e "$1" ]; then
     runfile=$1
+    shift
     echo "Processing lines from $runfile line by line"
     echo "$(date +%Y-%m-%dT%H:%M:%S) $*" >> $WORK_LMT/sbatch.log
     nl=$(cat $runfile | wc -l)
     ml=0
-    shift
     while IFS= read -r line; do
 	((ml++))
 	echo "LINE ($ml/$nl): $line $*"
