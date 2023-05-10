@@ -14,7 +14,7 @@
 #set -e
 #set -x
 
-_version="16-mar-2023"
+_version="10-may-2023"
 
 if [ -z "$1" ]; then
     src0=""
@@ -93,6 +93,7 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
 	
     date_obs=$(grep date_obs $rc | awk -F= '{print $2}')
     date=$(grep date= $rc | tail -1 | awk -F= '{print $2}' | awk '{print $1}')
+    # @todo   the RMS0 and RMS/RMS0 should be computed by the pipeline and placed in the rc file
     if [ $instrument == "RSR" ]; then
 	# RSR - use average of driver and blanking RMS
 	#rms=$(grep QAC_STATS $log | txtpar - '1000*0.5*(%1+%2)/sqrt(2)' p0=1,4 p1=2,4)  # trend spectrum
@@ -155,8 +156,15 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     if [ -e ${o}/${src}_${o}.nf.admit/x.csm.png ]; then
 	echo "      <A HREF=${o}/${src}_${o}.nf.admit/x.csm.png> <IMG SRC=${o}/${src}_${o}.nf.admit/x.csm.png height=100></A>"
 	echo "      <A HREF=${o}/${src}_${o}.nfs.admit/x.csm.png> <IMG SRC=${o}/${src}_${o}.nfs.admit/x.csm.png height=100></A>"
+    elif [ -e ${o}/${src}_${o}__0.nf.admit/x.csm.png ]; then
+	# @todo for now only show bank0 ?
+	echo "      <A HREF=${o}/${src}_${o}__0.nf.admit/x.csm.png> <IMG SRC=${o}/${src}_${o}__0.nf.admit/x.csm.png height=100></A>"
+	echo "      <A HREF=${o}/${src}_${o}__0.nfs.admit/x.csm.png> <IMG SRC=${o}/${src}_${o}__0.nfs.admit/x.csm.png height=100></A>"
     elif [ -e ${o}/${src}_${o}.mom0.png ]; then
 	echo "      <A HREF=${o}/${src}_${o}.mom0.png> <IMG SRC=${o}/${src}_${o}.mom0.png height=100></A>"
+    elif [ -e ${o}/${src}_${o}__0.mom0.png ]; then
+	# @todo  for now only show bank0 ?
+	echo "      <A HREF=${o}/${src}_${o}__0.mom0.png> <IMG SRC=${o}/${src}_${o}__0.mom0.png height=100></A>"	
     elif [ -e ${o}/rsr.spectra.png ]; then
 	echo "      <A HREF=${o}/rsr.spectra.png> <IMG SRC=${o}/rsr.spectra.png height=100></A>"
 	echo "      <A HREF=${o}/rsr.spectra_zoom.png> <IMG SRC=${o}/rsr.spectra_zoom.png height=100></A>"		
