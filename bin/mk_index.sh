@@ -313,8 +313,8 @@ for ext in "" "__0" "__1"; do
     echo "BASE: $base1"
 
 
-    c=("final reduced data cube"  "per pixel weights map"    "waterfall cube"     "full SRDP tar"         "TAP data")
-    f="${base1}.fits              ${base1}.wt.fits           ${base1}.wf.fits     ../${obsnum}_SRDP.tar   ../${obsnum}_TAP.tar"
+    c=("final reduced data cube"  "per pixel weights map"    "waterfall cube")
+    f="${base1}.fits              ${base1}.wt.fits           ${base1}.wf.fits"
     i=0
     for ff in $f ; do
 	if [ -e $ff ]; then
@@ -325,7 +325,20 @@ for ext in "" "__0" "__1"; do
 	((i=i+1))
     done
 
-done 
+done
+
+c=("full SRDP tar"         "TAP data")
+f="../${obsnum}_SRDP.tar   ../${obsnum}_TAP.tar"
+i=0
+for ff in $f ; do
+    if [ -e $ff ]; then
+	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
+    else
+	echo "<LI>$ff (missing)"                                          >> $html
+    fi
+    ((i=i+1))
+done
+
 echo "</OL>"                                                                  >> $html
 echo "<br> These and all other files are also available via the SRDP.tar,"    >> $html
 echo "if available"                                                           >> $html
