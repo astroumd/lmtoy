@@ -6,7 +6,7 @@
 # trap errors
 #set -e
 
-version="SLpipeline: 15-feb-2023"
+version="SLpipeline: 13-may-2023"
 
 #--HELP
 
@@ -84,7 +84,7 @@ echo "# $(date +%Y-%m-%dT%H:%M:%S) - new run w/ $version" >> rsync.log
 while [ $sleep -ne 0 ]; do
     ls -ltr $DATA_LMT/ifproc/           | tail -3
     ls -ltr $DATA_LMT/RedshiftChassis1/ | tail -3 
-    echo -n "checking "
+    echo -n "checking at $(lmtoy_date)"
     lmtinfo.py $data | grep ^2 | grep -v failed | sort > $run/data_lmt.lag
     echo ""
     if [ $lmtinfo == 1 ]; then
