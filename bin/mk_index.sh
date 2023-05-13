@@ -281,7 +281,7 @@ for ext in "" "__0" "__1"; do
     echo "         <IMG SRC=first_$base1.rms.png>"                            >> $html
     echo "</OL>"                                                              >> $html
     
-done
+done  # for ext in "" "__0" "__1"; do
 
 echo "<br>Last updated $update"                                           >> $html
 
@@ -308,41 +308,24 @@ echo "<H2>  <A HREF=index_log.html>log files</A>                </H2>"    >> $ht
 echo "<H2>  Select FITS files:   </H2>"                                   >> $html
 echo "<OL>"                                                               >> $html
 
-c=("final reduced data cube for band 0"  "per pixel weights map"    "waterfall cube")
-f="${base1}__0.fits            ${base1}__0.wt.fits         ${base1}__0.wf.fits"
-i=0
-for ff in $f ; do
-    if [ -e $ff ]; then
-	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
-    else
-	echo "<LI>$ff (missing)"                                          >> $html
-    fi
-    ((i=i+1))
-done
+for ext in "" "__0" "__1"; do
+    base1=$(base "$ext" "")
+    echo "BASE: $base1"
 
-c=("final reduced data cube for band 1"  "per pixel weights map"    "waterfall cube")
-f="${base1}__1.fits            ${base1}__1.wt.fits         ${base1}__1.wf.fits"
-i=0
-for ff in $f ; do
-    if [ -e $ff ]; then
-	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
-    else
-	echo "<LI>$ff (missing)"                                          >> $html
-    fi
-    ((i=i+1))
-done
 
-c=("final reduced data cube"  "per pixel weights map"    "waterfall cube"     "full SRDP tar"         "TAP data")
-f="${base1}.fits              ${base1}.wt.fits           ${base1}.wf.fits     ../${obsnum}_SRDP.tar   ../${obsnum}_TAP.tar"
-i=0
-for ff in $f ; do
-    if [ -e $ff ]; then
-	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
-    else
-	echo "<LI>$ff (missing)"                                          >> $html
-    fi
-    ((i=i+1))
-done
+    c=("final reduced data cube"  "per pixel weights map"    "waterfall cube"     "full SRDP tar"         "TAP data")
+    f="${base1}.fits              ${base1}.wt.fits           ${base1}.wf.fits     ../${obsnum}_SRDP.tar   ../${obsnum}_TAP.tar"
+    i=0
+    for ff in $f ; do
+	if [ -e $ff ]; then
+	    echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
+	else
+	    echo "<LI>$ff (missing)"                                          >> $html
+	fi
+	((i=i+1))
+    done
+
+done 
 echo "</OL>"                                                                  >> $html
 echo "<br> These and all other files are also available via the SRDP.tar,"    >> $html
 echo "if available"                                                           >> $html
