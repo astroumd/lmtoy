@@ -21,7 +21,7 @@ pwd=$(pwd)
 update="$(date) on $(hostname)"
 
 # there better be only one....
-source $(ls ./lmtoy_*.rc)
+source $(ls ./lmtoy_*.rc | grep -v __)
 if [ -z "$obsnum" ]; then
     # in case it's not in the rc file [used to be the case]
     grep '# obsnum=' $(ls ./lmtoy_*.rc) | sed s'/# //' > obsnum.rc
