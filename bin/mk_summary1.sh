@@ -14,7 +14,7 @@
 #set -e
 #set -x
 
-_version="10-may-2023"
+_version="18-may-2023"
 
 if [ -z "$1" ]; then
     src0=""
@@ -84,8 +84,13 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     if [ ! -e $o/lmtoy.rc ]; then
 	continue
     fi
-    rc=$o/lmtoy_*$o.rc
-    log=$o/lmtoy_*$o.log
+    if [[ "$o" == *"__"* ]]; then
+	on=$(echo $o | awk -F__ '{print $1}')
+    else
+	on=$o
+    fi
+    rc=$o/lmtoy_*$on.rc
+    log=$o/lmtoy_*$on.log
     source $rc
     if [ ! -z "$src0" ] && [ "$src" != "$src0" ]; then
 	continue
@@ -119,7 +124,7 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     else
 	comments=""
     fi
-    echo "$obsnum,$date_obs,$src,$inttime,$tau,$rms,$rms0" >> $csv
+    echo "$o,$date_obs,$src,$inttime,$tau,$rms,$rms0" >> $csv
   
     echo '  <tr class="item">'
     echo "    <td>"
@@ -132,7 +137,7 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     echo "      $date"
     echo "    </td>"
     echo "    <td>"
-    echo "      <A HREF=$obsnum/README.html> $obsnum</A>"
+    echo "      <A HREF=$o/README.html> $o</A>"
     echo "    </td>"
     echo "    <td>"
     echo "      $src"
