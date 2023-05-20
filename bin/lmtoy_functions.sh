@@ -465,7 +465,7 @@ function lmtoy_seq1 {
 	    --eliminate_list $birdies
     fi
     #		    --slice [-1000,1000] \
-	#		    --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
+    #		    --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
 
     # bug:  --use_otf_cal does not work here?? (maybe it does now)
     # bug?   x_axis FLSR doesn't seem to go into freq mode
@@ -475,12 +475,13 @@ function lmtoy_seq1 {
     #  pointings:  -240 .. 270    -259 .. 263      510x520
 
     if [ $viewspec = 1 ]; then
+	# waterfall plot
 	echo "LMTOY>> view_spec_file"
 	view_spec_file.py \
 	    -i $s_nc \
             --pix_list $pix_list \
 	    --rms_cut $rms_cut \
-	    --plot_range=-1,3 \
+	    --plot_range=-1,1 \
 	    --plots ${s_on}_specviews
     
 	# show spectra, each pixel gets a different curve/color
@@ -491,7 +492,7 @@ function lmtoy_seq1 {
 	    --rms_cut $rms_cut \
 	    --location $location \
 	    --plots ${s_on}_specpoint,png,1
-	
+	 
 	echo "LMTOY>> view_spec_point"	
 	view_spec_point.py \
 	    -i $s_nc \
