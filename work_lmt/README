@@ -1,1 +1,10 @@
-place holder for pipeline products
+place holder for pipeline products and the script generators
+
+To get the script generator:
+
+
+    git clone https://github.com/teuben/lmtoy_run
+    cd lmtoy_run
+    git pull
+    make git
+    make pull

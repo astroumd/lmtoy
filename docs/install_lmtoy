@@ -13,14 +13,15 @@
 #    22-jul-2021:     better bootstrap on missing DATA_LMT
 #     2-dec-2021:     add admit, use embedded DATA_LMT and WORK_LMT if none else given
 #     9-nov-2022:     various overhaul for Unity to allow "mknemo builds for pgplot, cfitsio
+#     2-dec-2022:     keep a (dummy?) etc/ProjectId.tab
 #
 
-version=9-nov-2022
+version=2-dec-2022
 
 #--HELP
 #   Keywords for installation
 #
-lmtoy=lmtoy                       # root directory name where to install (probably should not change it)
+lmtoy=lmtoy                       # root directory name where to install (probably should not change it) [use . for itself]
 branch=master                     # branch
 wget=wget                         # use wgetc if you have PJT's caching version
 venv=0                            # set to 1 if you want to bypass a new anaconda3 and use venv
@@ -39,7 +40,8 @@ debug=0                           # shell in debug mode? (set -x)
 # Usage examples:
 #   install_lmtoy                                             # typical ubuntu with pre-conditions, full test w/ admit
 #   install_lmtoy  mknemo=1 pgplot=2 wget=wgetc admit=0       # unity with no modules loaded, all self-contained
-
+#                  data_lmt=/nese/toltec/dataprod_lmtslr/data_lmt     # or add the big $DATA_LMT on unity
+#
 #--HELP
 
 if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
@@ -69,13 +71,23 @@ else
     sleep 5
 fi
 
-rm -rf $lmtoy
 
-git clone https://github.com/astroumd/lmtoy $lmtoy
+if [ $lmtoy == "." ]; then
+    if [ ! -e lmtoy_start.sh.in ]; then
+	echo "You are not in the LMTOY root directory: $(pwd)"
+	exit 1
+    fi
+    lmtoy=$(pwd)
+else
+    rm -rf $lmtoy
+    git clone https://github.com/astroumd/lmtoy $lmtoy    
+fi
+
 cd $lmtoy
 git checkout $branch
+touch etc/ProjectId.tab
 
-#  symlinks where we allow them
+#  symlinks where we allow them; this checks if we want to inherit an existing NEMO
 if [ -e $nemo/nemo_start.sh ]; then
     ln -s $nemo nemo
 fi

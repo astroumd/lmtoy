@@ -12,13 +12,16 @@
 
 -b BLANKING_FILE              Input ASCII blanking file. No default.
 -t THRESHOLD_SIGMA            Threshold sigma in spectrum needed for averaging [Default: 0.01]
+-r REPEAT_THRESHOLD           Threshold sigma when averaging repeats [Default: 0.01]
 --badlags BADLAGS_FILE        Input rsr.lags.bad file. Optional.
 --o1 ORDER1 -1 ORDER1         Baseline order fit for individual spectra [Default: 1]
 --o2 ORDER2 -2 ORDER2         Baseline order fit for final combined spectrum [Default: -1]
                               Use -1 to skip another fit
 -p PATH                       Data path to data_lmt for the raw RedshiftChassis files.
                               By default $DATA_LMT will be used else '/data_lmt'.
+-d                            More debugging
 
+--version                     show the version
 -h --help                     show this help
 
 
@@ -40,8 +43,8 @@ The format of this blanking file is currently as follows (subject to change):
        30001-30100  2    {4: [(95.,111.)]}   {5: [(95.,111.)]}
 
 A badlags file can be optionally passed in. It will be a file where the first 3 columns
-are tuples of Chassis,Board,Channel that is deemed a bad channel.
-badlags.py is a program that can create it.
+are tuples of Chassis,Board,LagChannel that is deemed a bad lag-channel.
+badlags.py is a program that can create a badlags file.
 
 
 
@@ -63,12 +66,16 @@ from dreampy3.redshift.utils.fileutils import make_generic_filename
 from blanking import blanking
 
 
-script_version ="0.2.0"
+script_version ="0.2.2"
 
 
 def main(argv):
-    av = docopt(__doc__,options_first=True, version='0.1')
-    print(av)
+    av = docopt(__doc__,options_first=True, version='0.2')
+
+    # -d
+    Qdebug = av['-d']
+    if Qdebug:
+        print(av)
 
     # -b
     blanking_file = av['-b']
@@ -83,8 +90,10 @@ def main(argv):
         data_lmt =  av['-p']
 
     # -t
-    threshold_sigma = float(av['-t'])
-
+    threshold_sigma  = float(av['-t'])
+    # -r 
+    threshold_repeat = float(av['-r'])
+    
     # --o1, --o2
     order1 = int(av['--o1'])
     order2 = int(av['--o2'])
@@ -124,7 +133,7 @@ def main(argv):
                     print("Process filename %s" % fname)
                     nc = RedshiftNetCDFFile(fname)
             except:
-                print("Skipping %d %d due to an error" % (ObsNum, chassis))
+                print("Warning: skipping %d %d due to an error" % (ObsNum, chassis))
                 continue
             print("Found src=",nc.hdu.header.SourceName)
             nc.hdu.process_scan()
@@ -142,21 +151,28 @@ def main(argv):
                 nc.hdu.baseline(order=order1, windows=windows, subtract=True)
             else:
                 nc.hdu.baseline(order=order1, subtract=True)
-            nc.hdu.average_all_repeats(weight='sigma')
+            if False:
+                nc.hdu.average_all_repeats(weight='sigma',threshold_sigma=threshold_repeat)
+            else:
+                nc.hdu.average_all_repeats(weight='sigma')                # driver has the "-r rthr" threshold here
             # Comment out the following 3 lines if you don't
             #   want to see individual spectrum again
             #pl.plot_spectra(nc)
             zz = 1
             #zz = input('To reject observation, type ''r'':')
-            if zz != 'r':
+            #if zz != 'r':
+            if True:
                 hdulist.append(nc.hdu)
                 nc.sync()
                 nc.close()
                 del nc
 
+    if len(hdulist) == 0:
+        print("WARNING: No hdu's were accumulated for rsr_sum")
+        return
     print("Accumulated %d hdu's" % len(hdulist))
     hdu = hdulist[0]
-    hdu.average_scans(hdulist[1:],threshold_sigma=threshold_sigma)
+    hdu.average_scans(hdulist[1:],threshold_sigma=threshold_sigma)   # -t args.cthresh in driver
 
     pl.plot_spectra(hdu)
     # baselinesub = int(input('Order of baseline (use ''-1'' for none):'))

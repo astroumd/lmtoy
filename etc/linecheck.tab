@@ -1,0 +1,14 @@
+#    xlines for selected RSR sources, optional _peak for fun for now
+#    this file is used when linecheck=1 is given to the RSR pipeline
+#    the first xlines= frequency should be the strong line in which we also want to see a line integral instead of a fit
+#    Note RSR is not meant to be more accurate than 10-20%
+#    See also RedshiftPointing/RSRRunLineCheck.py for the source_line_stength{} that contains
+#
+# source       fcen,df2,...                          peak(mK)
+I05189    xlines=110.53,0.25                         _peak=55
+I10565    xlines=110.51,0.15,108.65,0.3,85.2,0.4     _peak=110
+I12112    xlines=107.40,0.25                         _peak=40
+I17208    xlines=110.50,0.20,108.8,0.3               _peak=110
+I23365    xlines=108.30,0.25                         _peak=16
+VIIZw31   xlines=109.34,0.25,107.5,0.3               _peak=110
+# 3c273

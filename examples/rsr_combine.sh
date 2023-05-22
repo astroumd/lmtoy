@@ -10,9 +10,9 @@
 #
 #  Example:   rsr_combine.sh obsnums=33551,71610,92068 
 
-version="rsr_combine: 10-oct-2022"
+_version="rsr_combine: 27-feb-2023"
 
-echo "LMTOY>> $version"
+echo "LMTOY>> $_version"
 
 #--HELP
 
@@ -27,26 +27,14 @@ obsnums=0
 pdir=""
 output=""
 #            - procedural
-admit=1
+admit=0
 debug=0
 #            - parameters that directly match the SLR scripts
 #--HELP
 
-if  [ -z $1 ] || [ "$1" == "--help" ] || [ "$1" == "-h" ] ;then
-    set +x
-    awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
-    exit 0
-fi
-
-# unset a few things, since setting them will give a new meaning
-unset vlsr
-
-#             simple keyword=value command line parser for bash - don't make any changing below
-for arg in "$@"; do
-  export "$arg"
-done
-
+#             lmtoy and CLI parsing
 source lmtoy_functions.sh
+lmtoy_args "$@"
 
 #             put in bash debug mode
 if [ $debug = 1 ]; then
@@ -74,7 +62,8 @@ for on in $obsnums1; do
     files=(*/$on/lmtoy_$on.rc)
     echo $on : ${#files[@]} ${files[@]}
     if [ ${#files[@]} != 1 ]; then
-	echo Too many matching files for $on : ${files[@]}
+	echo "Too many matching files for $on : ${files[@]}"
+	# @todo take the most recent one, like we in SEQ ?
 	exit 0
     fi	
     if [ $rc = 0 ]; then
@@ -107,15 +96,14 @@ obsnum=${on0}_${on1}
 echo "obsnum=${obsnum}" >> $pdir/lmtoy_${on0}_${on1}.rc
 
 cd $pdir
+rc=lmtoy_${on0}_${on1}.rc
 
 blanking=rsr.${on0}_${on1}.blanking
    rfile=rsr.${on0}_${on1}.rfile
  badlags=rsr.${on0}_${on1}.badlags
 
-# override CLI again
-for arg in "$@"; do
-  export "$arg"
-done
+# override CLI again @todo do we still need this
+lmtoy_args "$@"
 
 lmtoy_rsr1
 

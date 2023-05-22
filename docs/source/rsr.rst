@@ -9,12 +9,89 @@ Here we summarize the current (nov 2021) status of data reduction for the RSR. T
 
 The current **SLpipeline.sh** will currently run a few scripts for a single obsnum:
 
-1. **seek_bad_channels.py**:  this will identify the bad lags, and store them in a **rsr.$obsnum.badlags** file. This file
+1. **badlags.py**:  this will identify bad lags, based on the variation in time of the
+   auto correllation function
+   and store them in a **rsr.$obsnum.badlags** file. This file
    should be inspected (see the **badlags.png** plot). Options:
+
+.. code-block::
+
+      Usage: badlags.py [-f obslist] [-p plot_max] [-b bc_threshold] [obsnum ....]
+
+      -b THRESHOLD                  Threshold sigma in spectrum needed for averaging [Default: 0.01]
+      -p PLOT_MAX                   Plot max. If not given, the THRESHOLD is used
+      -f OBSLIST                    List of OBSNUM's. Not used.
+      -B --badlags BADLAGS_FILE     Output rsr.badlags file. If not provided, it will not be written
+      -d                            Add more debug output
+      -s                            no interactive show (default now is interactive)
+
 
 2. **rsr_driver.py**: this will produce a final averaged and bandmerged spectrum
 
+.. code-block::
+
+      usage: rsr_driver.py [-h] [-p] [-t CTHRESH] [-o OUTPUT] [-f FILTER] [-s SMOOTH] [-r RTHR] [-n NOTCH]
+             [--simulate SIMULATE [SIMULATE ...]] [-d DATA_LMT] [-b BASELINE_ORDER] [--exclude EXCLUDE [EXCLUDE ...]] [-j]
+             [-c CHASSIS [CHASSIS ...]] [-B BADLAGS] [-R RFILE] [-w WATERFALL] [--no-baseline-sub]
+             obslist
+
+      Simple wrapper to process RSR spectra
+
+      positional arguments:
+            obslist               Text file with obsnums to process. Either one obsnum per row or a range of observation numbers separated by hyphens.
+
+      optional arguments:
+         -h, --help            show this help message and exit
+         -p                    Produce default plots
+         -t CTHRESH, --threshold CTHRESH
+                               Threshold sigma value when coadding all observations
+         -o OUTPUT, --output OUTPUT
+                               Output file name containing the spectrum
+         -f FILTER, --filter FILTER
+                               Apply Savitzky-Golay filter (SGF) to reduce large scale trends in the spectrum. Must be an odd integer. This value represent the number of channels used to aproximate the baseline. Recomended values are larger than 21. Default is to not apply the SGF
+                         
+         -s SMOOTH, --smothing SMOOTH
+                               Number of channels of a boxcar lowpass filter applied to the coadded spectrum. Default is to no apply filter
+         -r RTHR, --repeat_thr RTHR
+                               Thershold sigma value when averaging single observations repeats
+         -n NOTCH, --notch_sigma NOTCH
+                               Sigma cut for notch filter to eliminate large frecuency oscillations in spectrum. Needs to be run with -f option.
+         --simulate SIMULATE [SIMULATE ...]
+                               Insert a simulated line into spectrum. The format is a list or a set of three elements Amplitude central_frequency line_velocity_width.
+         -d DATA_LMT, --data_lmt_path DATA_LMT
+                        Path where the LMT data is located (default is to look for the DATA_LMT environment variable or the /data_lmt folder
+         -b BASELINE_ORDER     Baseline calculation order
+         --exclude EXCLUDE [EXCLUDE ...]
+                        A set of frequencies to exclude from baseline calculations. Format is central frequenciy width.
+	                Eg --exclude 76.0 0.2 96.0 0.3 excludes the 75.8-76.2 GHz and the 95.7-96.3 intervals from the baseline calculations.
+         -j                    Perform jacknife simulation
+         -c CHASSIS [CHASSIS ...]
+                        List of chassis to use in reduction. Default is the four chassis
+         -B BADLAGS, --badlags BADLAGS
+                        A bad lags file with list of (chassis,board,channel) tuples as produced by seek_bad_channels
+         -R RFILE, --rfile RFILE
+                        A file with information of band data to ignore from analysis.
+	               The file must include the obsnum, chassis and band number to exclude separated by comas. One band per row
+         -w WATERFALL, --waterfall-file WATERFALL
+                        Request the driver to produce waterfall plot for each input file
+         --no-baseline-sub     Disable subtraction of polinomial baseline. NOT RECOMMENDED.
+
+
 3. **rsr_sum.py**: this will produce a final averaged and bandmerged spectrum
+
+.. code-block::
+
+       Usage: rsr_sum.py -b BLANKING_FILE [options]
+
+       -b BLANKING_FILE              Input ASCII blanking file. No default.
+       -t THRESHOLD_SIGMA            Threshold sigma in spectrum needed for averaging [Default: 0.01]
+       --badlags BADLAGS_FILE        Input rsr.badlags file. Optional, but highly recommended.
+       --o1 ORDER1 -1 ORDER1         Baseline order fit for individual spectra [Default: 1]
+       --o2 ORDER2 -2 ORDER2         Baseline order fit for final combined spectrum [Default: -1]
+                                     Use -1 to skip another fit
+       -p PATH                       Data path to data_lmt for the raw RedshiftChassis files.
+                                     By default $DATA_LMT will be used else '/data_lmt'.
+
 
 The data are stored in a directory *ProjectId/ObsNum*, and the following files can be edited to re-run and improve
 the pipeline:

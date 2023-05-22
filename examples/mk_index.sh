@@ -39,6 +39,12 @@ else
     admit="(Looks like no ADMIT was produced)"
 fi
 
+if [ -d $base1.nf.mm ]; then
+    mm=""
+else
+    mm="(Looks like no maskmoment was produced)"
+fi
+
 dev=$(yapp_query png ps)
 
 html=index.html
@@ -46,6 +52,7 @@ echo Writing $html # in $pwd
 echo "<H1> $ProjectId/$obsnum for $src </H1>"                              > $html
 echo "<H2>  <A HREF=index_pipeline.html>SL Pipeline summary</A> </H2>"    >> $html
 echo "<H2>  <A HREF=index_admit.html>ADMIT summary</A> $admit   </H2>"    >> $html
+echo "<H2>  <A HREF=index_mm.html>maskmoment summary</A> $mm    </H2>"    >> $html
 echo "<H2>  <A HREF=index_pars.html>parameters</A>              </H2>"    >> $html
 echo "<H2>  <A HREF=index_log.html>log files</A>                </H2>"    >> $html
 echo "<H2>  Select FITS files:   </H2>"                                   >> $html
@@ -74,7 +81,7 @@ echo Writing $html # in $pwd
 
 
 # if "first" figures don't exist, copy them from existing
-first="$base2.1.png $base2.6.png $base2.2.png $base2.3.png $base3.1.png $base3.2.png $base2.5.png $base1.wt.png $base1.mom0.png $base1.peak.png $base1.rms.png"
+first="$base2.1.png $base2.6.png $base2.2.png $base2.3.png $base3.1.png $base3.2.png $base2.5.png $base1.wt.png $base1.mom0.png $base1.peak.png $base1.rms.png stats_wf0.png stats_wf1.png"
 for f in $first; do
     if [ -e $f ]; then
 	if [ ! -e first_$f ]; then
@@ -110,6 +117,12 @@ if [ -e $base2.1.png ]; then
     echo "       (VLSR vs. SAMPLE TIME)"                                      >> $html
     echo "           <br><IMG SRC=$base2.2.png>"                              >> $html
     echo "         <IMG SRC=first_$base2.2.png>"                              >> $html
+
+    # 3a
+    echo "  <br> Waterfall RMS as function of channel"                        >> $html
+    echo "       (RMS vs. CHANNEL)"                                           >> $html
+    echo "           <br><IMG SRC=stats_wf1.png>"                             >> $html
+    echo "         <IMG SRC=first_stats_wf1.png>"                             >> $html
     
     # 4.
     echo "  <LI> RMS $b_order order baseline fit (in K) for each beam."       >> $html
@@ -181,6 +194,16 @@ echo "   <LI> Native ('nf') resolution, which could be noisy: "           >> $ht
 echo "        <A HREF=$base1.nf.admit>$base1.nf.admit</A>"                >> $html
 echo "   <LI> Smoothed ('nfs') spatially and spectrally: "                >> $html
 echo "        <A HREF=$base1.nfs.admit>$base1.nfs.admit</A>"              >> $html
+echo "</OL>"                                                              >> $html
+echo "<br>Last updated $update"                                           >> $html
+
+html=index_mm.html
+echo Writing $html # in $pwd
+echo "<H1> maskmoment summary for $ProjectId/$obsnum for $src </H1>"       > $html
+echo "Currently we produce results for one cube: "                        >> $html
+echo "<OL>"                                                               >> $html
+echo "   <LI> Native ('nf') resolution, which could be noisy: "           >> $html
+echo "        <A HREF=$base1.nf.mm>$base1.nf.mm</A>"                      >> $html
 echo "</OL>"                                                              >> $html
 echo "<br>Last updated $update"                                           >> $html
 

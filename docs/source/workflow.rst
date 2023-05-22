@@ -101,6 +101,7 @@ in your own local workspace. This assumes the LMTOY toolkit has been installed:
 
       % lmtinfo.py grep 2021-12-17
       % lmtinfo.py grep 2020 NGC5194
+      % lmtinfo.py grep 2021-S1-MX-3
    
 
 ..
@@ -118,7 +119,7 @@ in your own local workspace. This assumes the LMTOY toolkit has been installed:
    this is all rather haphasard
    
     
-2.  Get the data from a full $DATA_LMT archive (e.g. at "cln", or at LMT) via the **rsync_lma** script. Obviously
+2.  Get the data from a full $DATA_LMT archive (usually "unity") via the **rsync_lma** script. Obviously
     only somebody on that archive machine can do this, but this is the easiest way. Here is an example of several
     methods:
 
@@ -136,7 +137,7 @@ in your own local workspace. This assumes the LMTOY toolkit has been installed:
    lma% SLpipeline.sh obsnum=79448
         Processing SEQ in 2018S1SEQUOIACommissioning/79448 for IRC+10216
 
-      # view!   
+      # view the pipeline results
    lma% xdg-open 2018S1SEQUOIACommissioning/79448/
 
 This opens a directory using your favorite file browser, you can inspect figures,
@@ -166,8 +167,8 @@ note that this script only needs the main (Map) obsnum, the calibration (Cal) is
         Re-Processing SEQ in 2018S1SEQUOIACommissioning/79448 for IRC+10216
 
 
-Parallel Processing
--------------------
+Parallel Processing: parallel
+-----------------------------
 
 Although the SLpipeline consists of single processor code, this is
 sufficient for a single ObsNum.  However, to stack a large number of
@@ -226,6 +227,58 @@ three combinations in parallel, viz.
 Using this technique, the same process took 6 minutes on a 512GB machine with 32 true cores,
 a speedup of almost a factor 5.
 
+Parallel Processing: slurm
+--------------------------
+
+To run on a slurm based cluster, we have written a simple frontend where you can almost copy
+commands from the previous section, except prefix it with **sbatch_lmtoy.sh**, e.g.
+
+.. code-block::
+
+
+      # construct the single obsnum jobs
+      sbatch_lmtoy.sh SLpipeline.sh obsnum=85776 
+      sbatch_lmtoy.sh SLpipeline.sh obsnum=85778 
+      sbatch_lmtoy.sh SLpipeline.sh obsnum=85824 
+
+      sbatch_lmtoy.sh SLpipeline.sh obsnum=85818 
+      sbatch_lmtoy.sh SLpipeline.sh obsnum=85826 
+      sbatch_lmtoy.sh SLpipeline.sh obsnum=85882 
+
+      sbatch_lmtoy.sh SLpipeline.sh obsnum=85820 
+      sbatch_lmtoy.sh SLpipeline.sh obsnum=85878
+
+
+now you have to wait until all of these are finished before the 2nd batch will do the combinations   
+
+.. code-block::
+
+      # construct the combination jobs
+      sbatch_lmtoy.sh SLpipeline.sh obsnums=85776,85778,85824
+      sbatch_lmtoy.sh SLpipeline.sh obsnums=85818,85826,85882
+      sbatch_lmtoy.sh SLpipeline.sh obsnums=85820,85878      
+
+Another option is to place these commands in a text file, exactly like was done for
+GNU parallel, and submit these
+
+.. code-block::
+
+      sbatch_lmtoy.sh job1
+   
+      # watch and wait until job1 is done
+      squeue -u lmtslr_umass_edu
+   
+      # when done, submit the next one
+      sbatch_lmtoy.sh job2
+
+Interactive work is discourged, but sometimes unavoidable. Here is the recommended command:
+
+.. code-block::
+
+      srun -n 1 -c 4 --mem=16G -p toltec-cpu --x11 --pty bash
+
+adjust memory an cores as needed.      
+
  
 Web server
 ----------
@@ -234,9 +287,10 @@ The PI will need a password to acccess their ProjectId. It will be at something 
 
 .. code-block::
 
-      https://your_lmt_url/archive/2018-S1-MU-45
+      http://taps.lmtgtm.org/lmtslr/2021-S1-MX-3/
 
-within which various **obsnum**'s will be visible, and possibly some combinations
+within which various **obsnum**'s will be visible, and possibly different sources and/or combinations
+of obsnums,
 
 .. code-block::
       
@@ -261,8 +315,8 @@ within which various **obsnum**'s will be visible, and possibly some combination
 
 
 
-Future LMT SLR data reduction
------------------------------
+Future LMT SLR data reduction?
+------------------------------
 
 Here we describe the workflow in the future unified SDFITS based
 system.  The first step is always the RAW (lmtslr or dreampy3) based
@@ -335,7 +389,7 @@ Workflow
 ~~~~~~~~
 
 UMass Server has the data, a web interface will run the new-style pipeline. Data can be inspected.
-New parameters can be set, and re-imaged.
+New parameters can be set, and re-imaged. This is being worked on (Jan 2023)
 
 The TolTECA data reduction workflow has a high level config file (yaml?) which via a command line
 interface steers the pipeline.

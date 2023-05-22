@@ -1,9 +1,9 @@
 #! /usr/bin/env python
 # 
-# This is the bad channel searcher, formerly called seek_bad_channels.py
+# This is the bad lag searcher, formerly called seek_bad_channels.py
 #
 # It does two things:
-#     - identify lags where the RMS is too high or too low
+#     - identify lags where the RMS in QAC is too high or too low
 #     - @todo: lags that are obviously spiky
 #     - identify Chassic/Board combos that should be flagged alltogether
 #       (the same as badcb= keyword to the pipeline)
@@ -16,34 +16,42 @@
 #          2021-10-28: write badlags file. use docopt for CLI parsing
 #          2021-11-30: better labeling, rms_diff masking ?
 #          2021-12-01: renamed to badlags.py
-#          2022-05-18: also flag when rms < bc_low
+#          2022-05-18: also flag when rms < bc_lo
+#          2023-02-02: implemented proper flags using docopt
+#          2023-02-22: --plotmax 
 #
 #
-# Possible CLI:
-#
-#    badlags [-f obslist] [-p plot_max] [-b bc_threshold] [obsnum ....]
 
-"""Usage: badlags.py [-f obslist] [-p plot_max] [-b bc_threshold] [obsnum ....]
+"""Usage: badlags.py [options] OBSNUM
 
--b THRESHOLD                  Threshold sigma in spectrum needed for averaging [Default: 0.01]
--p PLOT_MAX                   Plot max. If not given, the THRESHOLD is used
--f OBSLIST                    List of OBSNUM's. Not used.
--B --badlags BADLAGS_FILE     Output rsr.badlags file. If not provided, it will not be written
--d                            Add more debug output
--s                            no interactive show (default now is interactive)
+Options:
+  -p --plotmax PLOTMAX          Plot max. If not given, the bc_hi THRESHOLD is used. Optional
+  -B --badlags BADLAGS          Output badlags file, if desired. [Default: rsr.badlags]
+  -d                            Add more debug output
+  -e                            Don't use edge detection, by default it will.
+  -s                            No interactive plot, it will save the plot.
+  --bc_hi HIGH                  Above this value, lags are flagged bad [Default: 2.5]
+  --bc_lo LOW                   Below this value, lags are flagged bad [Default: 0.01]
+  --spike SPIKE                 Threshold above which spikes are flagged as bad channel [Default: 3.0]
+  --short_hi SHIGH              Above this value, lags under SMIN are flagged [Default: 2.5]
+  --short_min SMIN              Lags below SMIN get special treatment and are allowed different threshold [Default: 256]
+  --min_chan MINCHAN            No blabla below this channel [Default: 32]
+  --rms_min RMIN                Minimum RMS to accept a C/B [Default: 0.01]
+  --rms_max RMAX                Maximum RMS to accept a C/B [Default: 0.2]
 
--h --help                     show this help
-
+  -h --help                     show this help
+  --version                     show version
 
 A badlags file can be optionally passed in. It will be a file where the first 3 columns
 are tuples of Chassis,Board,Channel that is deemed a bad channel.
-badlags.py is a program that can create it.
 
+The odd combination (short_hi, short_min) is used for strong continuum, where the short lags will have a larger
+variation than (bc_hi) but should still be allowed.
 
 
 """
 
-_version = "10-jun-2022"
+_version = "22-feb-2023"
 
 import os
 import sys
@@ -51,8 +59,7 @@ import glob
 import numpy as np
 from docopt import docopt
 from matplotlib import pyplot as pl
-from dreampy3.redshift.netcdf import RedshiftNetCDFFile
-
+# dreampy3 is loaded below after commandline parser did its job
 
 def rmsdiff(data, robust=True):
     """   guess the RMS based on a robust neighbor differences
@@ -69,6 +76,7 @@ def rmsdiff(data, robust=True):
         d = data[1:]-data[:-1]
     return d.std()/1.41421
 
+av = docopt(__doc__,options_first=True, version='badlags.py %s' % _version)
 
 if 'DATA_LMT' in os.environ:
     data_lmt = os.environ['DATA_LMT']
@@ -86,69 +94,62 @@ else:
 # the date and the observation number for each one. 
 
 
-# Here is the list of chassis and boards to review
+# Here is the list of chassis and boards to review 
 # You can specify any number with chassis and board id's in a list
-nchassis = 4
-nboards  = 6
-nchan    = 256
+nchassis     = 4
+nboards      = 6
+nchan        = 256
 chassis_list = (0,1,2,3)     # CHASSIS IDENTIFIERS
 board_list   = (0,1,2,3,4,5) # BOARD (NOT FREQUENCY BAND) IDENTIFIERS
 
-# The program produces a plot showing the maximum value of the standard deviation
-# for each channel.  You can set the maximum for the y axis in the plots (10 is good) 
-plot_max = 10
 
 # set the threshold for a bad channel (3 is not bad, but look at plot and experiment!)
 #     -at short lags the RMS is often (naturally) higher. Cutting out those can result in bad spectra
-bc_threshold = 2.0
-bc_threshold = 3.0
-bc_threshold = 2.5
-#bc_threshold = 1.5
-bc_low = 0.0
-bc_low = 0.01
+#     -or use min_chan
+bc_hi = float(av['--bc_hi'])
+bc_lo = float(av['--bc_lo'])
+
+# special short lag treatment?
+short_hi = float(av['--short_hi'])
+short_min = int(av['--short_min'])
 
 # spike threshold (doesn't seem to work too well, often works bad on short lags)
-Qspike = True
-spike_threshold = 1.5
-spike_threshold = 3.0
+spike_threshold = float(av['--spike'])
+Qspike = spike_threshold > 0
 
 # min RMS_diff needed for full acceptance of a C/B pair
-rms_min = 0.01
-rms_max = 0.2
+rms_min = float(av['--rms_min'])
+rms_max = float(av['--rms_max'])
 
 # where to start checking for bad lags
-min_chan = 64
-min_chan = 32
+min_chan = float(av['--min_chan'])
 
 # more debugging output ?
-debug = True
+Qdebug = av['-d']
 
-# showing interactive?
-Qshow = True
+# showing interactive plot/
+Qshow = not av['-s']
 
 # also trying to detect high end edge?
-Qedge = True
+Qedge = not av['-e']
 
-#  filenames
-badlags = "rsr.badlags"
+# plotting max
+if av['--plotmax'] == None:
+    plot_max = bc_hi
+else:
+    plot_max = float(av['--plotmax'])
+
+# the obsnum (just one is accepted now, though we used to allow to process more)
+o_list = [int(av['OBSNUM'])]
+
+#  filenames   
+badlags = av['--badlags']  
 lagsplot = 'badlags.png'
 
-# now ready to process.  First read in the data from the file or commandline
-
-if True:
-    # simply a list of obsnum via commandline, dates are not needed
-    o_list = []
-    for arg in sys.argv[1:]:
-        if arg == '-s':
-            Qshow = False
-            continue
-        o_list.append(int(arg))
-    if len(o_list) == 0:
-        print("ERROR: provide an obsnum list on the commandline, e.g. 33551")
-        sys.exit(0)
-    print('read obsnum %d observations\n'%(len(o_list)))
+if Qdebug:
+    print(av)
     
-else:
+if False:
     # This is the name of file with date and obsnum for scans we wish to review
     the_filename = 'testfile.lis'
     # the data format has two columns: date and obsnum, one observation per line 
@@ -165,6 +166,9 @@ else:
         o_list.append(int(ss[1]))
     lfile.close()
     print('read file: %s  %d observations\n'%(the_filename,len(o_list)))
+
+# since this code executes, load it later
+from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 
 # set up an array to hold the maximum values of std dev for a channel
 findmax = np.zeros((nchassis,nboards,nchan))
@@ -183,7 +187,8 @@ for iobs in range(len(o_list)):
         # glob for filenames like RedshiftChassis?/RedshiftChassis?_*_016975_00_0001.nc
         globs = data_lmt + '/RedshiftChassis%d/RedshiftChassis%d_*_%06d_00_0001.nc' % (chassis, chassis, o_list[iobs])
         fn = glob.glob(globs)
-        print("Found ",fn)
+        if Qdebug:
+            print("Found ",fn)
         if len(fn) != 1:
             print("Skipping missing chassis %d for obsnum %06d" % (chassis,o_list[iobs]))
             continue
@@ -210,9 +215,9 @@ for iobs in range(len(o_list)):
                     findmax[ic,ib,chan] = sigma
                 if sigma<findmin[ic,ib,chan]:
                     findmin[ic,ib,chan] = sigma
-            if debug:
+            if Qdebug:
                 for chan in range(1,nchan-1):
-                    if findmax[ic,ib,chan] > bc_threshold:
+                    if findmax[ic,ib,chan] > bc_hi:
                         print("#    ",ic,ib,chan)
                         print('CHAN-',np.std(acf_diff[:,chan-1]), acf_diff[:,chan-1])
                         print('CHAN.',np.std(acf_diff[:,chan+0]), acf_diff[:,chan+0])
@@ -231,14 +236,18 @@ pl.figure(num=1,figsize=(12,8))
 
 
 print(' ')
-print('Bad Channel Threshold = %6.1f'%(bc_threshold))
+print('Bad Channel High Threshold = %6.1f'%(bc_hi))
 print('-----------------------')
 print(' c  b  ch   scan metric')
 print('-----------------------')
 
 ftab = open('rsr.badlags','w')
 ftab.write('# File written by %s - version %s\n' % (sys.argv[0],_version))
-ftab.write('# Bad Channel Thresholds:  RMS < %g or RMS > %g\n'%(bc_low,bc_threshold))
+ftab.write('# Bad Channel Thresholds:  RMS < %g or RMS > %g\n' % (bc_lo,bc_hi))
+ftab.write("# Short Channel Threshold:  RMS > %g for lags < %d\n" % (short_hi, short_min))
+ftab.write('# Spike trigger: %g\n' % spike_threshold)
+ftab.write('# Min Channel: %d\n' % (min_chan))
+ftab.write('# Edge: %s\n' % Qedge)
 ftab.write('# Note these are chassis/board/channel numbers\n')
 ftab.write('# -----------------------\n')
 ftab.write('#  c  b  ch   scan metric\n')
@@ -252,6 +261,10 @@ colors = pl.rcParams['axes.prop_cycle'].by_key()['color']
 b2b = [0, 2, 1, 3, 5, 4]
 #colors = [c[b2b[0]], c[b2b[1]], c[b2b[2]], c[b2b[3]], c[b2b[4]], c[b2b[5]]]
 
+count_min = 0
+count_max = 0
+count_spike = 0
+
 peaks = []
 for ic in range(nchassis):
     for ib1 in range(nboards):
@@ -259,17 +272,21 @@ for ic in range(nchassis):
         ib = ib1
         for chan in range(nchan):
             # check the value of the standard deviation against threshold and print if above threshold
-            if findmax[ic,ib,chan] > bc_threshold:
+            if findmax[ic,ib,chan] > bc_hi:
+                if chan < short_min and findmax[ic,ib,chan] < short_hi:
+                    continue
                 msg = '%2d %2d %3d %6d %6.1f    # max'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmax[ic,ib,chan])
                 print(msg)
                 ftab.write("%s\n" % msg)
                 peaks.append((ic,ib,chan))
+                count_max = count_max + 1
                 continue
-            if findmin[ic,ib,chan] < bc_low:
+            if findmin[ic,ib,chan] < bc_lo:
                 msg = '%2d %2d %3d %6d %6.1f    # min'%(chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmin[ic,ib,chan])
                 print(msg)
                 ftab.write("%s\n" % msg)
                 peaks.append((ic,ib,chan))
+                count_min = count_min + 1
                 continue
             if Qspike:   #  and chan > min_chan+1 and chan < nchan-2:
                 if chan==0: continue
@@ -284,18 +301,18 @@ for ic in range(nchassis):
                     if chan > min_chan+1 and chan < nchan-2:
                         comment=''
                         peaks.append((ic,ib,chan))
+                        count_spike = count_spike + 1
                     else:
                         comment='# '
                     msg = '%s%2d %2d %3d %6d %6.1f %6.1f   # %s'%(comment,chassis_list[ic],board_list[ib],chan,scanmax[ic,ib,chan],findmin[ic,ib,chan],n2/n1,what)
                     print(msg)
                     ftab.write("%s\n" % msg)
                     
-                
 
-if True:        
-    plot_max = bc_threshold
+# report findins
+print("Found %d min, %d max and %d spike badlags" % (count_min, count_max, count_spike))
 
-if debug:
+if Qdebug:
     for ic in range(nchassis):
         for ib in range(nboards):
             rms0 = rmsdiff(findmax[ic,ib,:])
@@ -323,7 +340,7 @@ for ic in range(nchassis):
             nbadcb = nbadcb + 1
             pl.plot(findmax[ic,ib,:], c='black')
             pl.title('BAD chassis=%d band=%d'%(chassis_list[ic],board_list[b2b[ib]]),fontsize=6,color='red')
-            ftab.write("#BADCB %d %d %d %g\n" % (obsnum,ic,ib,rms0))
+            ftab.write("#BADCB %d %d %d %g badlags\n" % (obsnum,ic,ib,rms0))
             label = label + "%d/%d," % (ic,ib)
             
         else:
@@ -366,7 +383,10 @@ else:
 pl.suptitle("obsnum=%d %s" % (obsnum,label))
 
 print('-----------------------')
+ftab.write("# Found %d min, %d max, %d spike badlags and %d bad C/B's" % (count_min, count_max, count_spike, nbadcb))
 ftab.close()
+print("Wrote %s" % badlags)
+print("Found %d bad Chassis/Board's" % nbadcb)
 
 if Qshow:
     pl.show()
@@ -374,11 +394,6 @@ else:
     pl.savefig(lagsplot)
     print("Wrote %s" % lagsplot)
 
-if nbadcb > 0:    
-    print("There were %d bad Chassis/Board's" % nbadcb)
-else:
-    print("There were no bad Chassis/Board's")
-    
 if len(o_list) > 1:
     print("Warning: this program is not meant to be used with multiple obsnums")
 

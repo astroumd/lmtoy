@@ -10,7 +10,7 @@
 #
 
 
-version="seq_combine: 10-oct-2022"
+version="seq_combine: 27-nov-2022"
 
 echo "LMTOY>> $version"    
 
@@ -95,8 +95,11 @@ for on in $obsnums1; do
     files=(*/$on/lmtoy_$on.rc)
     echo $on : ${#files[@]} ${files[@]}
     if [ ${#files[@]} != 1 ]; then
-	echo Too many matching files for $on : ${files[@]}
-	exit 0
+	echo "Too many matching files for $on : ${files[@]}"
+	echo "Will use the most recent one:"
+	ls -ltr ${files[@]}
+	# take the most recent one
+	rc=$(ls -tr ${files[@]} | tail -1)
     fi	
     if [ $rc = 0 ]; then
         if [ -e $files ]; then

@@ -3,7 +3,8 @@
 #  Create a few moment (0,1,2) maps based on the maskmoment module
 #
 #  based on the notebook example/N4047_examples.ipyn (Tony Wong)
-#  adapted for LMT pipeline resultsx
+#  adapted for LMT pipeline results
+#  Also writes a README.html for web summary pages
 
 import os
 import sys
@@ -46,74 +47,114 @@ def quadplot(basename, extmask=None):
     #plt.show()
     return
 
-
+def help(cmd):
+        print("Usage: %s cube.fits [vlsr]" % cmd)
+        print("Will create a new subdirectory")
+        sys.exit(0)
 
 if __name__ == "__main__":
-    ext = "nf.fits"    
-    for gal in sys.argv[1:]:
-        cube = "%s.%s" % (gal,ext)
-        mout = "%s" % (gal)
-        print("cube: ",cube)
-            
-        # example 0:
-        maskmoment.maskmoment(img_fits=cube,
-                              snr_hi=4, snr_lo=2, minbeam=2, snr_lo_minch=2,
-                              outname="%s.dilmsk" % mout)
-        quadplot("%s.dilmsk" % mout)
-        
-        # example 1:
-        maskmoment.maskmoment(img_fits=cube,
-                              snr_hi=5, snr_lo=2, minbeam=2, nguard=[2,0],
-                              outname='%s.dilmskpad' % mout)
-        quadplot("%s.dilmskpad" % mout)
-        
-        # example 2:
-        maskmoment.maskmoment(img_fits=cube,
-                              snr_hi=3, snr_lo=3, fwhm=15, vsm=None, minbeam=2,
-                              outname='%s.smomsk' % mout)
-        quadplot("%s.smomsk" % mout)
-        
-        # example 3
-        maskmoment.maskmoment(img_fits=cube,
-                              snr_hi=4, snr_lo=2, fwhm=15, vsm=None, minbeam=2,
-                              output_2d_mask=True,                   
-                              outname='%s.dilsmomsk' % mout) 
-        quadplot("%s.dilsmomsk" % mout)
-        
-        # example 4
-        maskmoment.maskmoment(img_fits=cube,
-                              rms_fits='%s.dilmsk.ecube.fits.gz' % gal,
-                              mask_fits='%s.dilsmomsk.mask2d.fits.gz' % gal,
-                              outname='%s.msk2d' % mout)
-        # error: No such file or directory: 'NGC0001.msk2d.mask.fits.gz'
-        # quadplot("%s.msk2d" % mout)        
-        # flux comparisons
-        ex0 = Table.read('%s.dilmsk.flux.csv'    % mout, format='ascii.ecsv')
-        ex1 = Table.read('%s.dilmskpad.flux.csv' % mout, format='ascii.ecsv')
-        ex2 = Table.read('%s.smomsk.flux.csv'    % mout, format='ascii.ecsv')
-        ex3 = Table.read('%s.dilsmomsk.flux.csv' % mout, format='ascii.ecsv')
-        ex4 = Table.read('%s.msk2d.flux.csv'     % mout, format='ascii.ecsv')
-        fig = plt.figure(figsize=[8,5.5])
-        plt.step(ex0['Velocity'],ex0['Flux'],color='r',label='dilmsk')
-        plt.step(ex1['Velocity'],ex1['Flux'],color='b',label='dilmskpad')
-        plt.step(ex2['Velocity'],ex2['Flux'],color='g',label='smomsk')
-        plt.step(ex3['Velocity'],ex3['Flux'],color='k',label='dilsmomsk')
-        #plt.step(ex4['Velocity'],ex4['Flux'],color='orange',label='msk2d')
-        plt.legend(fontsize='large')
-        plt.xlabel(ex0['Velocity'].description+' ['+str(ex0['Velocity'].unit)+']',fontsize='x-large')
-        plt.ylabel(ex0['Flux'].description+' ['+str(ex0['Flux'].unit)+']',fontsize='x-large')
-        if False:
-            t = Table.read("../GBTEDGE.cat", format='ascii')
-            idx = t['NAME'] == gal
-            vlsr = t[idx]['CATVEL'][0]
-            ax = plt.gca()
-            fmax = ax.get_ylim()[1]
-            print("VLSR=",vlsr," Fmax=",fmax)
-            plt.arrow(vlsr,fmax,0.0,-0.5*fmax,
-                      head_width=20, head_length=0.1*fmax,
-                      length_includes_head=True, facecolor='red')
-            plt.annotate('VLSR', xy=(vlsr, fmax), multialignment='center')
-        plt.savefig("%s.flux.png" % mout)
-        #plt.show()
+    if len(sys.argv) == 1:
+        help(sys.argv[0])
 
-        os.chdir("..")
+    ff = sys.argv[1]
+    if len(sys.argv) > 2:
+        vlsr = 1575
+    else:
+        vlsr = None
+
+    if not os.path.exists(ff):
+        print("File %s does not exist" % ff)
+        help(sys.argv[0])        
+    if ff.find('.fits') < 0:
+        print("Can only handle .fits files:",ff)
+        help(sys.argv[0])        
+
+    dname = ff.replace('.fits','.mm')
+    os.makedirs(dname, exist_ok=True)
+    os.chdir(dname)
+    if not os.path.exists(ff):
+        os.symlink("../" + ff, ff)
+
+    gal  = ff
+    cube = ff
+    mout = ff
+    print("cube: ",cube)
+    print("vlsr: ",vlsr)
+
+    # example 0:
+    maskmoment.maskmoment(img_fits=cube,
+                          snr_hi=4, snr_lo=2, minbeam=2, snr_lo_minch=2,
+                          outname="%s.dilmsk" % mout)
+    fn1 = "%s.dilmsk" % mout
+    quadplot(fn1)
+
+    # example 1:
+    maskmoment.maskmoment(img_fits=cube,
+                          snr_hi=5, snr_lo=2, minbeam=2, nguard=[2,0],
+                          outname='%s.dilmskpad' % mout)
+    fn2 = "%s.dilmskpad" % mout
+    quadplot(fn2)
+
+    # example 2:
+    maskmoment.maskmoment(img_fits=cube,
+                          snr_hi=3, snr_lo=3, fwhm=15, vsm=None, minbeam=2,
+                          outname='%s.smomsk' % mout)
+    fn3 = "%s.smomsk" % mout
+    quadplot(fn3)
+
+    # example 3
+    maskmoment.maskmoment(img_fits=cube,
+                          snr_hi=4, snr_lo=2, fwhm=15, vsm=None, minbeam=2,
+                          output_2d_mask=True,                   
+                          outname='%s.dilsmomsk' % mout) 
+    fn4 = "%s.dilsmomsk" % mout
+    quadplot(fn4)
+
+    # example 4
+    maskmoment.maskmoment(img_fits=cube,
+                          rms_fits='%s.dilmsk.ecube.fits.gz' % gal,
+                          mask_fits='%s.dilsmomsk.mask2d.fits.gz' % gal,
+                          outname='%s.msk2d' % mout)
+    # error: No such file or directory: 'NGC0001.msk2d.mask.fits.gz'
+    # quadplot("%s.msk2d" % mout)        
+    # flux comparisons
+    ex0 = Table.read('%s.dilmsk.flux.csv'    % mout, format='ascii.ecsv')
+    ex1 = Table.read('%s.dilmskpad.flux.csv' % mout, format='ascii.ecsv')
+    ex2 = Table.read('%s.smomsk.flux.csv'    % mout, format='ascii.ecsv')
+    ex3 = Table.read('%s.dilsmomsk.flux.csv' % mout, format='ascii.ecsv')
+    ex4 = Table.read('%s.msk2d.flux.csv'     % mout, format='ascii.ecsv')
+    fig = plt.figure(figsize=[8,5.5])
+    plt.step(ex0['Velocity'],ex0['Flux'],color='r',label='dilmsk')
+    plt.step(ex1['Velocity'],ex1['Flux'],color='b',label='dilmskpad')
+    plt.step(ex2['Velocity'],ex2['Flux'],color='g',label='smomsk')
+    plt.step(ex3['Velocity'],ex3['Flux'],color='k',label='dilsmomsk')
+    #plt.step(ex4['Velocity'],ex4['Flux'],color='orange',label='msk2d')
+    plt.legend(fontsize='large')
+    plt.xlabel(ex0['Velocity'].description+' ['+str(ex0['Velocity'].unit)+']',fontsize='x-large')
+    plt.ylabel(ex0['Flux'].description+' ['+str(ex0['Flux'].unit)+']',fontsize='x-large')
+    if vlsr != None:
+        ax = plt.gca()
+        fmax = ax.get_ylim()[1]
+        print("VLSR=",vlsr," Fmax=",fmax)
+        plt.arrow(vlsr,fmax,0.0,-0.5*fmax,
+                  head_width=20, head_length=0.1*fmax,
+                  length_includes_head=True, facecolor='red')
+        plt.annotate('VLSR', xy=(vlsr, fmax), multialignment='center')
+    fn5 = "%s.flux.png" % mout
+    plt.savefig(fn5)
+    #plt.show()
+
+    # write a entry for the summary web pages
+
+    fp = open('README.html','w')
+    fp.write("<H1> %s: maskmoment with vlsr=%s </H1>\n" % (cube, str(vlsr)))
+    fp.write("See also <A HREF=https://github.com/tonywong94/maskmoment>https://github.com/tonywong94/maskmoment</A> ")
+    fp.write("for more information on <B>maskmoment</B>")
+    fp.write("<OL>\n");
+    fp.write("<LI> Flux summary                          <br> <IMG SRC=%s>\n" % (fn5))
+    fp.write("<LI> <B>dilmsk:</B>    Dilated Mask        <br> <IMG SRC=%s.png>\n" % (fn1))
+    fp.write("<LI> <B>dilmskpad:</B> Dilated Mask Padded <br> <IMG SRC=%s.png>\n" % (fn2))
+    fp.write("<LI> <B>smomsk:</B>    Smoothed Mask       <br> <IMG SRC=%s.png>\n" % (fn3))
+    fp.write("<LI> <B>dilsmomsk:</B> Dilated Smooth Mask <br> <IMG SRC=%s.png>\n" % (fn4))
+    fp.write("</OL>\n");
+    fp.close()

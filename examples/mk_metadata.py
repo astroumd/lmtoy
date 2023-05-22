@@ -1,17 +1,39 @@
 #! /usr/bin/env python
 #
-#  Create the lmtmetadata.yaml (on stdout) for a given obsnum directory
-#
-#  projectTitle
-#  PIName
-#  lineName  - "search for"
-#
+
+"""Usage: mk_metadata.py [options] [OBSNUM]
+
+Options:
+
+-d          add more debugging
+-y YAMLFILE Output yaml file. Optional.
+-f DBFILE   Output sqlite database filename. Optional.
+
+-o          Overwrite row for all possible rows with OBSNUM.
+            Only affects if a database was used.
+            (NOT IMPLEMENTED)
+--delete N  delete row N (alma_id) from table
+            (NOT IMPLEMENTED)
+
+--version   Show version
+-h --help   This help
+
+For a given OBSNUM the script will create the metadata for DataVerse
+in either yaml and/or sqlite format. If no obsnum is given, a
+generic example is given.
+
+"""
+
 import os
 import sys
+from docopt import docopt
+import astropy.units as u
 import dvpipe.utils as utils
-from dvpipe.pipelines.lmtmetadatablock import LmtMetadataBlock, example
+from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 
-def header(rc, key):
+_version = "28-feb-2023"
+
+def header(rc, key, debug=False):
     """
     input:
     rc     dictionary from the rc file
@@ -21,12 +43,14 @@ def header(rc, key):
     
     """
     if key in rc:
-        print("# PJT: header   ",key,rc[key])
+        if debug:
+            print("# PJT: header   ",key,rc[key])
         return rc[key]
     else:
-        print("# PJT: unknown key ",key)
+        if debug:
+            print("# PJT: unknown key ",key)
 
-def get_rc(filename):
+def get_rc(filename, debug=False):
     """
     input:
     filename   name of the rc file
@@ -34,18 +58,24 @@ def get_rc(filename):
     """
     rc = {}
     try:
-        print("# PJT: opening  ",rcfile)
+        print("# opening  ",rcfile)
         fp = open(rcfile)
         lines = fp.readlines()
         fp.close()
         for line in lines:
             if line[0] == '#':  continue
+            line = line.strip()
             # can either exec() each line when the rc is clean, but it's not yet
             # until then, manually parse
             w = line.split('=')
             #   if w[1] starts with " or ', make it a string
-            if w[1][0] == '"' or w[1][0] == "'":
-                print("# PJT: stringify",line.strip())
+            if len(w[1])==0:
+                # empty string
+                exec('%s=""' % w[0])
+                rc[w[0]] = locals()[w[0]]                
+            elif w[1][0] == '"' or w[1][0] == "'":
+                if debug:
+                    print("# PJT: stringify",line.strip())
                 exec(line.strip())
                 rc[w[0]] = locals()[w[0]]
             else:
@@ -53,6 +83,7 @@ def get_rc(filename):
                 # but save it as string for potential conversion later on
                 rc[w[0]] = w[1].strip().split()[0]
     except:
+        print("line: ",line, "w:",w)
         print("Error processing %s " % rcfile)
         sys.exit(0)
     return rc
@@ -67,20 +98,35 @@ def get_version():
     return lines[0].strip()
     
 if __name__ == "__main__":
-    # simple CLI for now
-    if len(sys.argv) < 2:
-        print("Usage: %s ObsnumDirectory" % sys.argv[0])
-        example()
+
+    av = docopt(__doc__,options_first=True, version=_version)
+    debug = av['-d']
+    
+    if debug:
+        print(av)
+
+    dbfile = av['-f']
+    yamlfile = av['-y']
+   
+    if av['OBSNUM'] == None:
+        lmtdata = example(dbfile,yamlfile)
+        lmtdata.write_to_db()
+        lmtdata.write_to_yaml()        
         sys.exit(0)
 
-    print("# Warning: mk_metadata does not produce fully certified data yet")
-
     # find and read the rc file and construct the rc {} dictionary
-    
-    pdir = sys.argv[1]
-    obsnum = pdir.split('/')[-1]
-    rcfile = pdir + '/lmtoy_%s.rc' % obsnum
-    rc = get_rc(rcfile)
+    # OBSNUM can be an actual OBSNUM or the OBSNUM directory 
+    pdir = av['OBSNUM']
+    if pdir.rfind('/') > 0:
+        obsnum = pdir.split('/')[-1]
+        rcfile = pdir + '/lmtoy_%s.rc' % obsnum
+    else:
+        obsnum = pdir        
+        rcfile =  '%s/lmtoy_%s.rc' % (obsnum,obsnum)
+    if not os.path.exists(rcfile):
+        print("File %s does not exist" % rcfile)
+        sys.exit(0)
+    rc = get_rc(rcfile, debug)
 
     # get version, as comment (or metadata?)
     print("# LMTOY version %s" % get_version())
@@ -88,60 +134,74 @@ if __name__ == "__main__":
 
     # deal with the enum's we use for instrument on the DV side
     # valid names:  TolTEC, MSIP1mm, SEQUOIA, RSR, OMAYA
-    
-    instrument = header(rc,"instrument")
+    instrument = header(rc,"instrument", debug)
     if instrument == "SEQ":
         instrument = "SEQUOIA"
 
-    # open the LMB and write some common metadata
-    lmtdata = LmtMetadataBlock()
+    # open the LMG and write some common metadata
+    lmtdata = LmtMetadataGroup('SLpipeline',dbfile=dbfile, yamlfile=yamlfile)
     lmtdata.add_metadata("observatory",  "LMT")
     lmtdata.add_metadata("LMTInstrument",instrument)
-    lmtdata.add_metadata("projectID",    header(rc,"ProjectId"))
-    lmtdata.add_metadata("projectTitle", "Life, the Universe, and Everything")
-    lmtdata.add_metadata("PIName",       "Unknown")
-    lmtdata.add_metadata("obsnum",       header(rc,"obsnum"))
-    lmtdata.add_metadata("obsDate",      header(rc,"date_obs"))
-    lmtdata.add_metadata("targetName",   header(rc,"src"))
-    lmtdata.add_metadata("intTime",float(header(rc,"inttime")))
+    lmtdata.add_metadata("projectID",    header(rc,"ProjectId",debug))
+    lmtdata.add_metadata("projectTitle", header(rc,"projectTitle",debug))
+    lmtdata.add_metadata("PIName",       header(rc,"PIName",debug))
+    lmtdata.add_metadata("obsnum",       header(rc,"obsnum",debug))
+    lmtdata.add_metadata("obsDate",      header(rc,"date_obs",debug))
+    lmtdata.add_metadata("targetName",   header(rc,"src",debug))
+    lmtdata.add_metadata("intTime",float(header(rc,"inttime",debug)))
+    lmtdata.add_metadata("RA",     float(header(rc,"ra",debug)))
+    lmtdata.add_metadata("DEC",    float(header(rc,"dec",debug)))
+    lmtdata.add_metadata("calibrationStatus","CALIBRATED")
 
     if instrument == "SEQUOIA":
         #lmtdata.add_metadata("origin",  "lmtoy v0.6")
         #
         #  below here to be deciphered
         #
-        lmtdata.add_metadata("RA",123.456)
-        lmtdata.add_metadata("DEC",-43.210)
         lmtdata.add_metadata("velocity",321.0)          # vlsr
         lmtdata.add_metadata("velDef","RADIO")          
         lmtdata.add_metadata("velFrame","LSR")
         lmtdata.add_metadata("velType","FREQUENCY")
         lmtdata.add_metadata("z",0.001071)              # <-vlsr
         
-        #lmtdata.add_metadata("slBand",1)
-        #lmtdata.add_metadata("lineName",'CS2-1')
-        #lmtdata.add_metadata("frequencyCenter",97.981)
-        #lmtdata.add_metadata("bandwidth",2.5)
-        #lmtdata.add_metadata("beam",20.0/3600.0)
-        #lmtdata.add_metadata("lineSens",0.072)
-
         band = dict()
         band["slBand"] = 1
-        band["lineName"]='CS2-1'
-        #   for multiple lines:
-        #band["lineName"] = 'CS2-1,CO1-0,H2CS'
-        band["frequencyCenter"] = 97.981
+        band["formula"]='CO'               #   multiple lines not resolved yet
+        band["transition"]='1-0'
+        band["frequencyCenter"] = 97.981*u.Unit("GHz")
+        band["velocityCenter"] = 0.0
         band["bandwidth"] = 2.5
         band["beam"] = 20.0/3600.0
-        band["lineSens"] = 0.072
+        band["lineSens"] = 0.072*u.Unit("K")
         band["qaGrade"] = "A+++"
+        band["nchan"] = 1024
         lmtdata.add_metadata("band",band)
 
     elif instrument == "RSR":
         print("instrument=%s " % instrument)
+
+        lmtdata.add_metadata("velocity",0.0)          # vlsr
+        lmtdata.add_metadata("velDef","RADIO")          
+        lmtdata.add_metadata("velFrame","SRC")
+        lmtdata.add_metadata("velType","FREQUENCY")
+        lmtdata.add_metadata("z",0.0)                 # <-vlsr
+        
+
+        band = dict()
+        band["slBand"] = 1
+        band["frequencyCenter"] = 92.5*u.Unit("GHz")
+        band["bandwidth"] = 40.0*u.Unit("GHz")
+        band["velocityCenter"] = 0.0
+        band["beam"] = 20.0/3600.0
+        band["lineSens"] = 1*u.Unit("mK")
+        band["qaGrade"] = "A+++"
+        band["nchan"] = 1300
+        lmtdata.add_metadata("band",band)
+        
     else:
         print("instrument=%s not implemented yet" % instrument)
 
+    lmtdata.write_to_db()
+    lmtdata.write_to_yaml()
 
     
-    print(lmtdata.to_yaml())

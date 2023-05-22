@@ -13,15 +13,17 @@
 #     srun -n 1 -c 4 --mem=16G -p toltec-cpu --x11 --pty bash
 #
 #  Typical usage:
-#     sbatch_lmtoy.sh SLpipeline.sh obsnum=12345
+#     sbatch_lmtoy.sh SLpipeline.sh obsnum=12345 
 #     sbatch_lmtoy.sh SLpipeline.sh obsnums=12345,12346
+#     sbatch_lmtoy.sh 2021-S1-US-3.run1a exist=1
+#     sbatch_lmtoy.sh 2021-S1-US-3.run2a 
 #
 #--HELP
 
 # https://unity.rc.umass.edu/docs/#slurm/   IECK, this also stopped working.
 
-#                                        version
-version="9-nov-2022"
+version="19-feb-2023"       # script version
+sleep=1                     # don't use 0, unity spawns too fast in a series
 
 if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
     set +x
@@ -30,13 +32,18 @@ if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
 fi
 
 
-# catch the single argument batch call first
+# catch the single argument batch call first, but pass addition arguments to each pipeline call
 if [ -e "$1" ]; then
-    echo Processing lines from $1 line by line
+    runfile=$1
+    echo Processing lines from $runfile line by line
+    nl=$(cat $runfile | wc -l)
+    ml=0
+    shift
     while IFS= read -r line; do
-	echo "LINE: $line"
-	sbatch_lmtoy.sh $line
-    done < $1
+	((ml++))
+	echo "LINE ($ml/$nl): $line $*"
+	sbatch_lmtoy.sh $line $*
+    done < $runfile
     exit 1
 fi
 
@@ -79,7 +86,8 @@ if [ $runid == 0 ]; then
     exit 0
 fi
 
-if [ "$(which sbatch)" != "/usr/bin/sbatch" ]; then
+#if [ "$(which sbatch)" != "/usr/bin/sbatch" ]; then
+if [ "$(which sbatch)" == "" ]; then
     echo "$0 version=$version"    
     echo "run=$run"
     echo "ERROR:  No sbatch system here on $(hostname)"
@@ -121,7 +129,7 @@ chmod +x $run
 echo "$run      - use scancel JOBID to kill this one, JOBID is:"
 sbatch $run
 #   report last few
-sleep 2
+sleep $sleep
 ls -ltr $WORK_LMT/sbatch/slurm*.out | tail -6
 squeue -u $USER
 echo "squeue -u $USER"
