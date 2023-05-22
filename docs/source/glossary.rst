@@ -43,7 +43,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       a strong source, e.g. Ori-KL.
 
     board
-      for SLR these are the roach boards (4). For RSR they
+      for SLR these are the roach boards (4 or 8). For RSR they
       are called **chassis** (4). But in **RSR** board has also been
       used where **band** is meant, but there is a subtle difference
       where bands are ordered in frequency.
@@ -136,7 +136,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       alltogether.
 
     roach board
-      The SLR has four (4) roach boards, each of which writes a separate
+      The SLR had four (4) roach boards, now eight (8), each of which writes a separate
       file with its own internal clock that later needs to be sync'd. In
       a future expansion we get 8 boards (2 pols, 2 IFs) , capable of writing
       8 files.  ``Rumor``:  for the 1mmRx configuration can be done on one
@@ -150,6 +150,12 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       form 4 independent calibrated spectra; the polarization pairs for each 
       beam are collected through the same horn. These 4 are referred to as the
       4 **chassis**.   Salient detail:  RSR does not doppler track.
+
+    runfile
+      A simple text file of (LMTOY pipeline) commands, one per line. Although more
+      limiting than full programmable bash scripts, these can be executed serially
+      by bash, or in parallel by GNU parallel or SLURM. The lmtoy script generator
+      will produce sets of runfile's.
     
     ScanNum
       Scan Number - see **ObsNum**
@@ -201,7 +207,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
     WARES
       (Wideband Arrayed ROACH Enabled Spectrometer). The spectrometer used
       for Sequoia/1MM/Omaya. Also used for the name
-      of the computer that receives data from the 4 (future 8) roach boards.
+      of the computer that receives data from the 4 (now 8) roach boards.
 
 
 .. _overloaded:
