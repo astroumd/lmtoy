@@ -29,3 +29,8 @@ setenv CORR_CAL_DIR $DATA_LMT/rsr/cal
 foreach f ($LMTOY/lmtoy_local.sh $HOME/.lmtoy_start.sh)
   if (-e $f) source $f
 end
+
+if ( -e $LMTOY/etc/news.txt )  then
+    echo Latest news:
+    cat $LMTOY/etc/news.txt
+endif
