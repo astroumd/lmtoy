@@ -5,7 +5,7 @@
 
 from docopt import docopt
 
-_version = "2-mar-2023"
+_version = "24-may-2023"
 
 _help    = """Usage: stats_wf.py [options] FITSFILE
 
@@ -14,6 +14,7 @@ Show some statistics of a waterfall cube.
 Options:
   -s                   Save plot, no interactive plot.
   -t                   Plot along time instead of channel
+  -b BIRDIEFILE        Output birdie file. Optional
   -d                   Add more debug
   -h --help            show this help
   --version            show version
@@ -66,6 +67,8 @@ ny = data.shape[1]   # number of channels
 nx = data.shape[2]   # number of time samples
 
 pix_list = pixels(head)
+chan0 = int(head['CHAN0'])
+print('chan0:',chan0)
 
 if av['-t']:
     axis = 0     # plot along time
@@ -75,10 +78,16 @@ else:
 # showing interactive plot/
 Qshow = not av['-s']
 
+# output birdie file
+birdiefile = av['-b']
+if birdiefile:
+    print("writing birdie file", birdiefile)
+
     
 print("# beam RMS <rms_chan> <rms_time>")
 plt.figure()
 
+npix = 0
 for z in range(nz):
     p = pix_list[z]
     d = data[z,:,:]
@@ -88,7 +97,19 @@ for z in range(nz):
     if axis==0:
         plt.plot(rms0, label=str(p))
     else:
-        plt.plot(rms1, label=str(p))
+        plt.plot(rms1, label=str(p))   # for birdiefile
+    if npix == 0:
+        rms = rms1
+    else:
+        rms = rms + rms1 
+    npix = npix + 1
+
+if birdiefile:
+    # plt.plot(rms,label="sum")
+    rms = rms / npix
+    chans = np.arange(len(rms))
+    chans = chans + chan0
+    np.savetxt(birdiefile, np.transpose([chans,rms]))
 
 plt.title(ff)
 if axis==0:
