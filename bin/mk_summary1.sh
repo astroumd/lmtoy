@@ -14,7 +14,7 @@
 #set -e
 #set -x
 
-_version="18-may-2023"
+_version="24-may-2023"
 
 if [ -z "$1" ]; then
     src0=""
@@ -102,7 +102,9 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     if [ $instrument == "RSR" ]; then
 	# RSR - use average of driver and blanking RMS
 	#rms=$(grep QAC_STATS $log | txtpar - '1000*0.5*(%1+%2)/sqrt(2)' p0=1,4 p1=2,4)  # trend spectrum
-	rms=$(grep QAC_STATS $log | txtpar - '1000*0.5*(%1+%2)'          p0=3,4 p1=4,4)  # straight spectrum
+	#rms=$(grep QAC_STATS $log | txtpar - '1000*0.5*(%1+%2)'          p0=3,4 p1=4,4)  # straight spectrum
+	rms=$(grep QAC_STATS $log | txtpar - '1000*0.5*(%1+%2)' p0=driver.sum.txt,1,4 p1=blanking.sum.txt,1,4)
+	
 	#rms0=$(nemoinp "1.291*1000*100/sqrt(4*31250000*$inttime)")
 	rms0=$(nemoinp "1000*100/sqrt(31250000*$inttime)")
 	rms0r="$(nemoinp $rms/$rms0) /100K"
