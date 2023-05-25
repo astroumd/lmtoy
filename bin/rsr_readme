@@ -122,9 +122,11 @@ echo "</div><div class='row'>"
 echo "<div class='col-md'> <a href='rsr.wf-2.png'><img src='rsr.wf-2.png'></a></div>"
 echo "<div class='col-md'> <a href='rsr.wf-3.png'><img src='rsr.wf-3.png'></div></a></div>"
 echo "</div>"
-echo "<p class='card-text'> The final spectrum:</p>"
+echo "<p class='card-text'> The final spectrum, with and without baseline subtraction:</p>"
 echo "<div class='row'>"
-echo "<div class='col-md'> <a href='rsr.driver.png'><img src='rsr.driver.png'></div></a></div>"
+echo "<div class='col-sm'> <figure class='figure'><a href='rsr.driver.png'><img src='rsr.driver.png' width='100%'></a><figcaption>with baseline sub</figcaption></figure></div>"
+echo "<div class='col-sm'> <figure class='figure'><a href='rsr.driver_nbs.png'><img src='rsr.driver_nbs.png' width='100%'></a><figcaption>no baseline sub.</figcaption></figure></div>"
+
 echo "</div><!-- row -->"
 
 echo "<ul class='list-group list-group-flush'> "
