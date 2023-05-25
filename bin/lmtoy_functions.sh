@@ -522,8 +522,8 @@ function lmtoy_seq1 {
 
 	stats_wf.py -s -b ${s_on}.bstats.tab    ${s_on}.wf.fits > stats_wf0.tab
 	stats_wf.py -s                       -t ${s_on}.wf.fits > stats_wf1.tab
-	clip=$(tabstat ${s_on}.bstats.tab 2 robust=t | txtpar - %1+3*%2 p0=mean,1,2 p1=disp,1,2)
-	tabpeak ${s_on}.bstats.tab clip=$clip > ${s_on}.birdies.tab
+	delta=$(tabtrend ${s_on}.bstats.tab 2 | tabstat - robust=t qac=t | txtpar - p0=QAC,1,4)
+	tabpeak ${s_on}.bstats.tab delta=5*$delta > ${s_on}.birdies.tab	
     fi
     
 
