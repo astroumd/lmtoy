@@ -142,6 +142,8 @@ function lmtoy_rsr1 {
     t1="-r $rthr"
     t2="-t $cthr"
     f=""
+    nbs=""
+    nbs="--no-baseline-sub"
     if [ "$xlines" != "" ]; then
 	l="--exclude $(echo $xlines | sed 's/,/ /g')"
     else
@@ -246,8 +248,11 @@ function lmtoy_rsr1 {
     if [ $sgf != 0 ]; then
 	f="-f $sgf -n $notch"
     fi
+    echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t1 $t2 $f $nbs"
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t1 $t2 $f $nbs   > rsr_driver_nbs.log 2>&1
+    mv rsr.driver.png rsr.driver_nbs.png
     echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t1 $t2 $f"
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t1 $t2 $f    > rsr_driver.log 2>&1
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t1 $t2 $f   > rsr_driver.log 2>&1
     #  grab the total integration time from the driver @todo is this the right one?
     inttime=$(grep "Integration Time" $spec1 | awk '{print $4}')
     echo "inttime=$(printf %.1f $inttime) # sec" >> $rc
@@ -521,7 +526,9 @@ function lmtoy_seq1 {
 	    --binning 10,1
 
 	stats_wf.py -s -b ${s_on}.bstats.tab    ${s_on}.wf.fits > stats_wf0.tab
+	mv stats_wf0.png ${s_on}.wf0.png
 	stats_wf.py -s                       -t ${s_on}.wf.fits > stats_wf1.tab
+	mv stats_wf1.png ${s_on}.wf1.png	
 	delta=$(tabtrend ${s_on}.bstats.tab 2 | tabstat - robust=t qac=t | txtpar - p0=QAC,1,4)
 	tabpeak ${s_on}.bstats.tab delta=5*$delta > ${s_on}.birdies.tab	
     fi
