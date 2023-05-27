@@ -165,7 +165,7 @@ for ext in "" "__0" "__1"; do
     
 
     # if "first" figures don't exist, copy them from existing
-    first="$base2.1.png $base2.6.png $base2.2.png $base2.3.png $base3.1.png $base3.2.png $base2.5.png $base1.wt.png $base1.mom0.png $base1.peak.png $base1.rms.png stats_wf0.png stats_wf1.png"
+    first="$base2.1.png $base2.6.png $base2.2.png $base2.3.png $base3.1.png $base3.2.png $base2.5.png $base1.wt.png $base1.mom0.png $base1.peak.png $base1.rms.png $base1.wf0.png $base1.wf1.png"
     for f in $first; do
 	if [ -e $f ]; then
 	    if [ ! -e first_$f ]; then
@@ -219,8 +219,8 @@ for ext in "" "__0" "__1"; do
 	# 3a
 	echo "  <br> Waterfall RMS as function of channel"                        >> $html
 	echo "       (RMS vs. CHANNEL)"                                           >> $html
-	echo "           <br><IMG SRC=stats_wf1.png>"                             >> $html
-	echo "         <IMG SRC=first_stats_wf1.png>"                             >> $html
+	echo "           <br><IMG SRC=${base1}.wf1.png>"                          >> $html
+	echo "         <IMG SRC=first_${base1}.wf1.png>"                          >> $html
 	
 	# 4.
 	echo "  <LI> RMS $b_order order baseline fit (in K) for each beam."       >> $html
