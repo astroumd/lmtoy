@@ -21,7 +21,9 @@ new:
 	sort -r data_lmt.new                         >> data_lmt.log
 	rm data_lmt.new
 
-OBSNUM0=0
+OBSNUM0=`cat last.obsnum`
+last:
+	@echo $(OBSNUM0)
 new2:
 	cp data_lmt.log data_lmt.new
 	lmtinfo.py new $(OBSNUM0)  >> data_lmt.new
