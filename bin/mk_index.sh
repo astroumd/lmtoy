@@ -201,6 +201,7 @@ for ext in "" "__0" "__1"; do
 	# 1.
 	echo "  <LI> Sky coverage for all 16 beams"                               >> $html
 	echo "       (sky coordinates in arcsec w.r.t. map center)"               >> $html
+	echo "       - first integration beam imprint in red"                     >> $html
 	echo "           <br><IMG SRC=$base2.1.png>"                              >> $html
 	echo "         <IMG SRC=first_$base2.1.png>"                              >> $html
 	
