@@ -281,47 +281,51 @@ function lmtoy_rsr1 {
     # for a combination we should rely on the individual obsnum spectra, which can then
     # be combined, weighted ideally (for driver, but averaged for blanking)
     # the "old/" directory will contain the old badly combined spectra
-    if [ $obsnums != 0 ] && [ $weighted == 1 ]; then
-	echo "LMTOY>> new weighted average method"
-	mkdir -p old
-	cp $spec1 $spec2 old
-	s1=""
-	s2=""
-	for o in $(cat rsr.obsnum); do
-	    s1="$s1 $(echo ../$o/rsr.$o.driver.sum.txt)"
-	    s2="$s2 $(echo ../$o/rsr.$o.blanking.sum.txt)"
-	    # ls -l ../$o/rsr.$o.driver.sum.txt ../$o/rsr.$o.blanking.sum.txt
-	done
-	#echo S1=$s1
-	#echo S2=$s2
-	rsr_spectra.py -s -o $spec1 $s1
-	rsr_spectra.py -s -o $spec2 $s2
-	
-	rsr_spectra.py -s old/$spec1 $spec1
-	mv rsr.spectra.png rsr.spectra.cmp1.png
-	rsr_spectra.py -s old/$spec2 $spec2
-	mv rsr.spectra.png rsr.spectra.cmp2.png
-	if [[ -n "$NEMO" ]]; then
-	    grep -v nan old/$spec1 | grep -v ^# > junk1a.tab
-	    grep -v nan     $spec1 | grep -v ^# > junk1b.tab
-	    grep -v nan old/$spec2 | grep -v ^# > junk2a.tab
-	    grep -v nan     $spec2 | grep -v ^# > junk2b.tab
-	    tabmath junk1a.tab,junk1b.tab cmp1.tab %1,%2-%5 all
-	    tabmath junk2a.tab,junk2b.tab cmp2.tab %1,%2-%4 all
-	    tabplot cmp1.tab  yscale=1e3 ymin=-1 ymax=1  yapp=cmp1.$dev/$dev 
-	    tabplot cmp2.tab  yscale=1e3 ymin=-1 ymax=1  yapp=cmp2.$dev/$dev 
-	    echo "cmp1.tab"
-	    rsr_stats.sh in=cmp1.tab label=dif
-	    echo "cmp2.tab"	    
-	    rsr_stats.sh in=cmp2.tab label=dif
-	    echo "band stats new $spec1"
-	    rsr_stats.sh in=$spec1 label=new
-	    echo "band stats new $spec2"
-	    rsr_stats.sh in=$spec2 label=new
+    if [ $obsnums != 0 ]; then
+	if [ $weighted == 1 ]; then
+	    echo "LMTOY>> new weighted average method"
+	    mkdir -p old
+	    cp $spec1 $spec2 old
+	    s1=""
+	    s2=""
+	    for o in $(cat rsr.obsnum); do
+		s1="$s1 $(echo ../$o/rsr.$o.driver.sum.txt)"
+		s2="$s2 $(echo ../$o/rsr.$o.blanking.sum.txt)"
+		# ls -l ../$o/rsr.$o.driver.sum.txt ../$o/rsr.$o.blanking.sum.txt
+	    done
+	    #echo S1=$s1
+	    #echo S2=$s2
+	    rsr_spectra.py -s -o $spec1 $s1
+	    rsr_spectra.py -s -o $spec2 $s2
+	    
+	    rsr_spectra.py -s old/$spec1 $spec1
+	    mv rsr.spectra.png rsr.spectra.cmp1.png
+	    rsr_spectra.py -s old/$spec2 $spec2
+	    mv rsr.spectra.png rsr.spectra.cmp2.png
+	    if [[ -n "$NEMO" ]]; then
+		grep -v nan old/$spec1 | grep -v ^# > junk1a.tab
+		grep -v nan     $spec1 | grep -v ^# > junk1b.tab
+		grep -v nan old/$spec2 | grep -v ^# > junk2a.tab
+		grep -v nan     $spec2 | grep -v ^# > junk2b.tab
+		tabmath junk1a.tab,junk1b.tab cmp1.tab %1,%2-%5 all
+		tabmath junk2a.tab,junk2b.tab cmp2.tab %1,%2-%4 all
+		tabplot cmp1.tab  yscale=1e3 ymin=-1 ymax=1  yapp=cmp1.$dev/$dev 
+		tabplot cmp2.tab  yscale=1e3 ymin=-1 ymax=1  yapp=cmp2.$dev/$dev 
+		echo "cmp1.tab"
+		rsr_stats.sh in=cmp1.tab label=dif
+		echo "cmp2.tab"	    
+		rsr_stats.sh in=cmp2.tab label=dif
+		echo "band stats new $spec1"
+		rsr_stats.sh in=$spec1 label=new
+		echo "band stats new $spec2"
+		rsr_stats.sh in=$spec2 label=new
+	    fi
+	    wpre="[w]"
+	else
+	    wpre=""
 	fi
-	wpre = "[w]"
     else
-	wpre = ""
+	wpre=""
     fi
     
     
