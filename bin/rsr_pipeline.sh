@@ -10,7 +10,7 @@
 #
 #
 
-_version="rsr_pipeline: 5-apr-2023"
+_version="rsr_pipeline: 2-jun-2023"
 
 echo "LMTOY>> $_version"
 
@@ -25,7 +25,7 @@ path=${DATA_LMT:-data_lmt}      # - to be deprecated
 #             - PI parameters
 
 xlines=""     # set to a comma separated list of freq,dfreq pairs where strong lines are to avoid baseline fitting
-badcb=""      # set to a comma separated list of (chassis/board) combinations, badcb=2/3,3/5 - see jitter=
+badcb=""      # set to a comma separated list of (chassis/board) combinations, badcb=2/3,3/5 - see also jitter=
 jitter=1      # also use the badcb's based on jittering Tsys and BadLags
 badlags=""    # set to a badlags file if to use this instead of dynamically generated (use 0 to force not to use it) - not used yet
 shortlags=""  # set to a short_min and short_hi to avoid flagged strong continuum source lags, e.g. shortlags=32,10.0
@@ -40,6 +40,7 @@ cthr=0.01     # -t option for rsr_driver Threshold sigma value when coadding all
 sgf=0         # Savitzky-Golay high pass filter ; odd number > 21
 notch=0       # sigma cut for notch filter to eliminate large frecuency oscillations. Needs sgf > 21
 blo=1         # order of polynomial baseline subtraction
+bandstats=0   # also compute stats of each of the 6 RSR bands
 
 #            - procedural
 admit=0
@@ -71,7 +72,7 @@ lmtoy_args "$@"
 # PI parameters, as merged from defaults and CLI
 rc0=$WORK_LMT/tmp/lmtoy_${obsnum}_$$.rc
 show_vars \
-          xlines badcb badlags jitter linecheck bandzoom speczoom rthr cthr sgf notch blo \
+          xlines badcb badlags jitter linecheck bandzoom speczoom rthr cthr sgf notch blo bandstats \
 	  > $rc0
 
 #lmtoy_debug
