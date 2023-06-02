@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="23-may-2023"
+lmtoy_version="2-jun-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -270,11 +270,13 @@ function lmtoy_rsr1 {
     rsr_sum.py -b $blanking  $b  --o1 $blo $t2              > rsr_sum.log 2>&1
 
 
-    # band stats
-    echo "band stats old $spec1"
-    rsr_stats.sh in=$spec1 label=old
-    echo "band stats old $spec2"
-    rsr_stats.sh in=$spec2 label=old
+    if [ $bandstats = 1 ]; then
+	# band stats
+	echo "band stats old $spec1"
+	rsr_stats.sh in=$spec1 label=old
+	echo "band stats old $spec2"
+	rsr_stats.sh in=$spec2 label=old
+    fi
 
     # for a combination we should rely on the individual obsnum spectra, which can then
     # be combined, weighted ideally (for driver, but averaged for blanking)
