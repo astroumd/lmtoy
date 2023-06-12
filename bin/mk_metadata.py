@@ -31,7 +31,7 @@ import astropy.units as u
 import dvpipe.utils as utils
 from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 
-_version = "6-apr-2023"
+_version = "21-apr-2023"
 
 def header(rc, key, debug=False):
     """
@@ -152,8 +152,10 @@ if __name__ == "__main__":
     lmtdata.add_metadata("intTime",float(header(rc,"inttime",debug)))
     lmtdata.add_metadata("RA",     float(header(rc,"ra",debug)))
     lmtdata.add_metadata("DEC",    float(header(rc,"dec",debug)))
-    lmtdata.add_metadata("calibrationStatus","CALIBRATED")
-
+    lmtdata.add_metadata("calibrationLevel",1)
+    lmtdata.add_metadata("obsGoal","SCIENCE")
+    lmtdata.add_metadata("obsComment","This is an observation comment")
+    
     if instrument == "SEQUOIA":
         #lmtdata.add_metadata("origin",  "lmtoy v0.6")
         #
@@ -164,6 +166,9 @@ if __name__ == "__main__":
         lmtdata.add_metadata("velFrame","LSR")
         lmtdata.add_metadata("velType","FREQUENCY")
         lmtdata.add_metadata("z",0.001071)              # <-vlsr
+
+        numbands = int(header(rc,"numbands",debug))
+        
         
         band = dict()
         band["slBand"] = 1
@@ -177,6 +182,20 @@ if __name__ == "__main__":
         band["qaGrade"] = "A+++"
         band["nchan"] = 1024
         lmtdata.add_metadata("band",band)
+
+        if numbands > 1:
+            band["slBand"] = 2
+            band["formula"]='HCN'               #   multiple lines not resolved yet
+            band["transition"]='1-0'
+            band["frequencyCenter"] = 97.981*u.Unit("GHz")
+            band["velocityCenter"] = 0.0
+            band["bandwidth"] = 2.5
+            band["beam"] = 20.0/3600.0
+            band["lineSens"] = 0.072*u.Unit("K")
+            band["qaGrade"] = "A+++"
+            band["nchan"] = 1024
+            lmtdata.add_metadata("band",band)
+            
 
     elif instrument == "RSR":
         print("instrument=%s " % instrument)
