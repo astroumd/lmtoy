@@ -67,7 +67,11 @@ ny = data.shape[1]   # number of channels
 nx = data.shape[2]   # number of time samples
 
 pix_list = pixels(head)
-chan0 = int(head['CHAN0'])
+if 'CHAN0' in head:
+    chan0 = int(head['CHAN0'])
+else:
+    print("Warning: old style FITS file without CHAN0, assuming 0")
+    chan0 = 0
 print('chan0:',chan0)
 
 if av['-t']:
