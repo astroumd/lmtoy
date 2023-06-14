@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="2-jun-2023"
+lmtoy_version="13-jun-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -468,6 +468,7 @@ function lmtoy_seq1 {
 	    --use_cal \
 	    $use_otf_cal \
 	    $use_restfreq \
+	    --map_coord $map_coord_use \
 	    --x_axis VLSR \
 	    --b_order $b_order \
 	    --b_regions $b_regions \

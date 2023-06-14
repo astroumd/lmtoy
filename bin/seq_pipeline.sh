@@ -14,7 +14,7 @@
 #
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-_version="seq_pipeline: 27-apr-2023"
+_version="seq_pipeline: 13-jun-2023"
 
 echo "LMTOY>> $_version"
 
@@ -22,7 +22,7 @@ echo "LMTOY>> $_version"
 # input parameters (only obsnum is required)
 #            - start or restart
 obsnum=0
-obsid=""
+oid=""
 pdir=""
 data_lmt=${DATA_LMT:-data_lmt}
 #            - procedural
@@ -43,6 +43,8 @@ dw=250
 birdies=0
 #            - override numbands to read only 1 band if 2 is not correct. 0=auto-detect
 numbands=0
+#            - override the default map_coord   (-1,0,1,2 = default, HO, EQ, GA)
+map_coord_use=-1
 #            - parameters that directly match the SLR scripts
 pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 rms_cut=-4
@@ -67,7 +69,7 @@ bank=-1           # -1:  all banks 0..numbands-1; otherwise select that bank (0,
 debug=0
 
 #--HELP
-show_vars="extent dv dw birdies numbands pix_list rms_cut location resolution \
+show_vars="extent dv dw birdies numbands map_coord_use pix_list rms_cut location resolution \
            cell nppb rmax otf_select otf_a otf_b otf_c noise_sigma b_order stype \
            sample otf_cal edge bank \
           "
@@ -207,6 +209,9 @@ if [ $numbands = -2 ]; then
     echo "skyfreq=$(echo $skyfreq | tabcols - 1)"      >> $rc
     echo "restfreq=$(echo $restfreq | tabcols - 1)"    >> $rc
 fi
+
+#
+echo map_coord_use=$map_coord_use                      >> $rc
     
 
 # source again to ensure the changed variables are in
