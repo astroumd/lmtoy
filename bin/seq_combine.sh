@@ -10,7 +10,7 @@
 #
 
 
-version="seq_combine: 2-mar-2023"
+version="seq_combine: 27-apr-2023"
 
 echo "LMTOY>> $version"    
 
@@ -23,6 +23,7 @@ echo "LMTOY>> $version"
 # input parameters
 #            - start or restart
 obsnums=0                       # comma separated list of obsnums to combine
+oid=""
 pdir=""                         # directory where to work
 output=""    
 #            - procedural
@@ -76,6 +77,13 @@ if [ $obsnums = 0 ]; then
 fi
 lmtoy_decipher_obsnums
 
+# oid driven?
+if [ -z "$oid" ]; then
+    oids=""
+else
+    oids="__${oid}"
+fi
+
 
 rc=0
 for on in $obsnums1; do
@@ -101,11 +109,14 @@ pdir=$ProjectId/${on0}_${on1}
 echo Using pdir=$pdir
 echo src=$src
 
+
+
 # first find out which .nc files we have
 ons=""
 
 for on in $obsnums1; do
-    fon=$(ls */$on/${src}_${on}.nc)
+    fon=$(ls */$on/${src}_${on}${oids}.nc)
+    # there better be just one
     if [ -e $fon ]; then
 	ons="$ons ${fon}"
     else
