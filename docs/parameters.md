@@ -83,7 +83,23 @@ ways, they really should be merged.
 Different scripts have different parameters that are currently hardcoded :
 
 ### 2.1 badlags.py
+Usage: badlags.py [options] OBSNUM
 
+Options:
+
+    -p --plotmax PLOTMAX          Plot max. If not given, the bc_hi THRESHOLD is used. Optional
+    -B --badlags BADLAGS          Output badlags file, if desired. [Default: rsr.badlags]
+    -d                            Add more debug output
+    -e                            Don't use edge detection, by default it will.
+    -s                            No interactive plot, it will save the plot.
+    --bc_hi HIGH                  Above this value, lags are flagged bad [Default: 2.5]
+    --bc_lo LOW                   Below this value, lags are flagged bad [Default: 0.01]
+    --spike SPIKE                 Threshold above which spikes are flagged as bad channel [Default: 3.0]
+    --short_hi SHIGH              Above this value, lags under SMIN are flagged [Default: 2.5]
+    --short_min SMIN              Lags below SMIN get special treatment and are allowed different threshold [Default: 256]
+    --min_chan MINCHAN            No blabla below this channel [Default: 32]
+    --rms_min RMIN                Minimum RMS to accept a C/B [Default: 0.01]
+    --rms_max RMAX                Maximum RMS to accept a C/B [Default: 0.2]
 
     -b THRESHOLD        0.01
     -p PLOT_MAX         0.3
