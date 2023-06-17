@@ -3,6 +3,16 @@
 #   pix_list(pl)
 #
 
+"""
+Useful tools for the LMTOY script generators (lmtoy_$PID)
+
+   pix_list(pl, maxbeam=16)
+   getpars(on)
+   getargs(obsnum, pars4)
+   mk_runs(project, on, pars1, pars2, argv=None)
+
+"""
+
 import os
 import sys
 
