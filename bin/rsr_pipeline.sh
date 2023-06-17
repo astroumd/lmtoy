@@ -10,7 +10,7 @@
 #
 #
 
-_version="rsr_pipeline: 2-jun-2023"
+_version="rsr_pipeline: 14-jun-2023"
 
 echo "LMTOY>> $_version"
 
@@ -74,6 +74,9 @@ rc0=$WORK_LMT/tmp/lmtoy_${obsnum}_$$.rc
 show_vars \
           xlines badcb badlags jitter linecheck bandzoom speczoom rthr cthr sgf notch blo bandstats \
 	  > $rc0
+
+# enforce no combinations
+obsnums=0
 
 #lmtoy_debug
 #             put in bash debug mode
