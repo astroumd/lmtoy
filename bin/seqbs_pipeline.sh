@@ -9,7 +9,7 @@
 #          If projectid is set, this is the subdirectory, within which obsnum is set
 #
 
-version="seqbs_pipeline: 10-oct-2022"
+version="seqbs_pipeline: 2-mar-2023"
 
 echo "LMTOY>> $version"
 
@@ -36,23 +36,11 @@ rms_cut=-4
 bank=-1           # -1 means all banks 0..numbands-1
 #--HELP
 
+source lmtoy_functions.sh
+lmtoy_args "$@"
+
 # unset a view things, since setting them will give a new meaning
 unset vlsr
-
-#     give help?
-if [ -z $1 ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
-    set +x
-    awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
-    exit 0
-fi
-
-#     simple keyword=value command line parser for bash - don't make any changing below
-for arg in "$@"; do
-    export "$arg"
-done
-
-#     load functions
-source lmtoy_functions.sh
 
 #             put in bash debug mode
 if [ $debug = 1 ]; then
@@ -168,10 +156,8 @@ fi
 
 #             derived parameters (you should not have to edit these)
 p_dir=${path}
-#             redo CLI again
-for arg in "$@"; do
-    export "$arg"
-done
+#             redo CLI again  - @todo     do we still need this?
+lmtoy_args "$@"
 
 
 #             pick one bank, or loop over all allowed banks
