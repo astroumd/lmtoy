@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="13-jun-2023"
+lmtoy_version="19-jun-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -203,8 +203,10 @@ function lmtoy_rsr1 {
 	# Tsys plot:  rsr.tsys.png  - only done for single obsnum - also lists BADCB's
 	#             rsr.spectra.png - another way to view each chassis spectrum
 	#             Only make this plot for single obsnum's
-	if [[ -z "$obsnums" ]]; then
+	if [ "$obsnum" -gt 0 ]; then
 	    # 5.
+	    echo "LMTOY>> rsr_tsys.py -b $badlags    -s $obsnum"
+	    echo "LMTOY>> rsr_tsys.py -b $badlags -t -s $obsnum"
 	    rsr_tsys.py -b $badlags    -s $obsnum         > rsr_tsys2.log 2>&1
 	    rsr_tsys.py -b $badlags -t -s $obsnum         > rsr_tsys1.log 2>&1
 	    grep CB rsr_tsys0.log  > tab0
