@@ -336,7 +336,7 @@ bench1a:
 
 ## bench2:   SEQ benchmark (obsnum=79448)
 bench2:
-	$(TIME) SLpipeline.sh obsnum=79448 restart=1 admit=$(ADMIT)
+	$(TIME) SLpipeline.sh obsnum=79448 restart=1 map_coord_use=1 admit=$(ADMIT)
 	@echo "QAC_STATS: IRC+10216_79448-full 0.00256137 0.242578 -563.449 634.86 85230.4 0.0531463 5696559 [expected]"
 	@echo "QAC_STATS: IRC+10216_79448-cent 0.00280355 0.213226 -2.42886 15.3425 91513 0.123691 3684458 [expected]"
 	@echo "========================================================================================"
