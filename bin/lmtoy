@@ -56,11 +56,13 @@ if [ "$1" == dev ]; then
     echo "fitsccd:          "  $(fitsccd help=V)
     echo "----------------------------------------------------------"
     gitbv $LMTOY
-    echo "lmtoy:     Branch:$_branch Counter:$_counter"    
+    echo "lmtoy:          Branch:$_branch Counter:$_counter"
     gitbv $LMTOY/SpectralLineReduction
-    echo "lmtslr:    Branch:$_branch Counter:$_counter"
+    echo "lmtslr:         Branch:$_branch Counter:$_counter"
+    gitbv $LMTOY/LinePointing
+    echo "linepointing:   Branch:$_branch Counter:$_counter"
     gitbv $LMTOY/dreampy3    
-    echo "dreampy:   Branch:$_branch Counter:$_counter"
+    echo "dreampy:        Branch:$_branch Counter:$_counter"
     gitbv $LMTOY/nemo
-    echo "nemo:      Branch:$_branch Counter:$_counter"   
+    echo "nemo:           Branch:$_branch Counter:$_counter"
 fi
