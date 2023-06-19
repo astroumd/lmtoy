@@ -15,7 +15,7 @@ Options:
 The saved plotfile has a fixed name, rsr.spectra.png (or rsr.spectra.svg)
 
 """
-_version = "2-feb-2023"
+_version = "16-mar-2023"
 
 
 import sys
@@ -61,7 +61,7 @@ if badlags != None:
   
 plt.figure()
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
-label = "jitter badcb="
+label = ""
 
 for chassis in range(4):    # loop over all chassis 0..3
     try:
@@ -82,7 +82,10 @@ for chassis in range(4):    # loop over all chassis 0..3
             rms = dy.std()
             if rms > rms_min:
                 print("#BADCB",obsnum,chassis,board,rms,'Tsys');
-                label = label + "%d/%d," % (chassis,board)
+                if len(label) > 0:
+                    label = label + ",%d/%d" % (chassis,board)
+                else:
+                    label =    "badcb=%d/%d" % (chassis,board)
             else:
                 print("#OKCB",obsnum,chassis,board,rms,'Tsys');                
         ch = nc.hdu.header.ChassisNumber
@@ -92,8 +95,10 @@ for chassis in range(4):    # loop over all chassis 0..3
             plt.step(freqs,y,c=colors[chassis], where='mid')
     nc.close()
 
+print("obsnum=%d %s" % (obsnum,label))
+
 plt.xlim([72,112])
-plt.title("obsnum=%d %s" % (obsnum,label))
+plt.title("obsnum=%d jitter %s" % (obsnum,label))
 plt.xlabel("Frequency (GHz)")
 if Qspec:
     plt.ylabel("Spectrum (mK)")

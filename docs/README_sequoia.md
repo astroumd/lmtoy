@@ -133,4 +133,5 @@ This OTF pipeline suggests the following procedure for quality assesment and fla
    
 # Updates
 
-Software is maintained in https://github.com/astroumd/lmtoy 
+Software is maintained in https://github.com/astroumd/lmtoy where this file will be in docs/README_sequoia.md
+

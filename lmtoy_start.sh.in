@@ -3,7 +3,7 @@
 
 export  LMTOY=@LMTOY@
 
-export PATH=$LMTOY/SpectralLineReduction/bin:$LMTOY/examples:$PATH
+export PATH=$LMTOY/SpectralLineReduction/bin:$LMTOY/bin:$LMTOY/examples:$PATH
 
 # do python first. this is important if a venv is used
 if [ -e $LMTOY/python_start.sh ]; then
@@ -42,3 +42,8 @@ for f in $LMTOY/lmtoy_local.sh $HOME/.lmtoy_start.sh; do
 	source $f
     fi
 done
+
+if [ -e $LMTOY/etc/news.txt ]; then
+    echo Latest news:
+    cat $LMTOY/etc/news.txt
+fi

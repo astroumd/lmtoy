@@ -1,0 +1,94 @@
+#! /usr/bin/env bash
+#
+#    transfer the BADCB's found in the badlags file, or a badcb list, to other formats
+#    -r     rfile format that rsr_driver uses (simple obsnum,chassis,board)
+#    -b     blanking format that rsr_sum uses (more complex)
+
+_version="16-mar-2023"
+set -e
+tmp=tmp$$
+
+function help {
+    echo "rsr_badcb version $_version"
+    echo "Usage: rsr_badcb [-b|-r] rsr.badlags"
+    echo "       rsr_badcb [-b|-r] -o obsnum badcb"
+    echo "Transfer BADCD's from a badlags file or badcb list to blanking/rfile format"
+    echo "e.g. badcb=1/1,2/4,3/5"
+    exit 0
+}
+
+
+opt=""
+badlags=""
+badcb=""
+obsnum=""
+
+for arg in $*; do
+    if [[ "$arg" = "-h" ]]; then
+	help
+    fi
+    if [[ "$arg" = "-r" ]]; then
+	opt="r";
+	continue
+    fi
+    if [[ "$arg" = "-b" ]]; then
+	opt="b";
+	continue
+    fi
+    if [[ "$arg" = "-o" ]]; then
+	obsnum=1
+	continue
+    fi
+    if [[ -z "$obsnum"  ]]; then
+	badlags=$arg
+	break
+    fi
+    if [ "$obsnum" = 1 ]; then
+	obsnum=$arg
+	continue
+    fi
+    badcb=$arg
+done
+
+if [[ -z "$opt" ]]; then
+    help
+fi
+
+if [ -z "$obsnum" ]; then
+
+    grep BADCB $badlags  | awk '{printf("%d %d %d\n",$2,$3,$4)}' > $tmp.1
+    if [ -s $tmp.1 ]; then
+	echo "# rsr_badcb: adding $(cat $tmp.1 | wc -l) badcb's"
+	echo "# mode $opt"
+	while read line; do
+	    a=($line)
+	    obsnum=${a[0]}
+	    chassis=${a[1]}
+	    board=${a[2]}
+	    if [[ $opt == 'r' ]]; then
+		echo "$obsnum,$chassis,$board"
+	    elif [[ $opt == 'b' ]]; then
+		echo "$obsnum   $chassis  {$board : [(70,120)]}"
+	    fi
+	done < $tmp.1
+    else
+	echo "# no badcb's"
+    fi
+
+else
+    # assume the arguments are a comma separated list of badcb's
+    echo "# setting badcbd=$badcb"
+    cbs=$(echo $badcb | sed 's/,/ /g')
+    for cb in $cbs; do
+	cb0=( $(echo $cb | sed 's./. .'))
+	c=${cb0[0]}
+	b=${cb0[1]}
+	if [[ $opt == 'r' ]]; then
+	    echo "$obsnum,$c,$b"
+	elif [[ $opt == 'b' ]]; then    
+	    echo "$obsnum $c {$b: [(70,115)]}"
+	fi
+    done
+fi
+
+rm -f $tmp.1

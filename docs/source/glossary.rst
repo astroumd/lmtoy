@@ -38,6 +38,9 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       Not to be confused with the
       **FWHM**.  At 115 GHz the **FWHM** is about 16", at 86 GHz about
       21".  The beam separation is 27.8" for Sequoia.
+    
+      Note that for some instruments beams are also interpreted while
+      including other simulteanously taken data in another band/polarization
 
     beammap
       A special observing mode (always in Az-El?) where you map around
@@ -87,7 +90,6 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 
     horn
       Another term used for :term:`beam` or :term:`pixel`.
-
     
     LMTSLR
       The LMT Spectral Line Reduction modules you will need to reduce
@@ -97,7 +99,8 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       Monitor and Control system, the system that runs the online LMT system.
     
     ObsNum
-      Observatation Number. This is not all, obsnum is part of the (**ObsNum** , **SubObsNum** , **ScanNum**) tuple,
+      Observatation Number. This is not all, obsnum is part of the (**ObsNum** ,
+    **SubObsNum** , **ScanNum**) tuple,
       but for most applications you only need to know the **ObsNum**
 
     OMAyA
@@ -177,7 +180,9 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 
     SEQUOIA
       85-115.6 GHz, has a 4x4 multi-beam (pixel) receiver. Can do multiple backend
-      spectrometers tuned indepedently in a 15GHz window.
+      spectrometers tuned indepedently in a 15GHz window. In the single IF mode
+      (before April 2023) beams 0..15 are used, but in dual IF mode, beams can be
+      counted 0..31 to select from bank0 or bank1.
 
     SFL
       Sanson-Flamsteed projection, used in LMT **FITS** files
@@ -214,7 +219,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       Continuum mapping instrument
 
     TolTeca
-      Python frontend for the TolTec instrument. Is dasha based.
+      Python frontend for the **TolTec** instrument. Is **dasha** based.
 
     WARES
       (Wideband Arrayed ROACH Enabled Spectrometer). The spectrometer used
@@ -330,7 +335,9 @@ Taking an inventory of current and known future LMT Spectral Line instruments:
 
 * SEQ:
   16 beams (though 4 beams per roach board, and each roach board has its own time) in one
-  band (they also call it bank) and one polarization. Thus nbeam=16, npol=1, nband=1
+  band (they also call it bank) and one polarization. Thus nbeam=16, npol=1, nband=1.
+  Once the 2nd IF will be installed, 32 beams will be recognized by the software,
+  but organizationally it is easier to to think of 16 beams and 2 bands.
 
 .. note::  The timestamps for the different roach boards make it impossible to store
 	   the data in a multi-dimensional array, unless (typicall one) integration

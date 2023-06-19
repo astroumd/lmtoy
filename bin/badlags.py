@@ -51,7 +51,7 @@ variation than (bc_hi) but should still be allowed.
 
 """
 
-_version = "22-feb-2023"
+_version = "16-mar-2023"
 
 import os
 import sys
@@ -381,9 +381,9 @@ else:
     omore = ""
 #pl.suptitle("RMS in Auto Correlation Function as function of lag channels (%d samples) obsnum=%d %s" % (nons,obsnum,omore))
 pl.suptitle("obsnum=%d %s" % (obsnum,label))
-
+print("obsnum=%d %s" % (obsnum,label))
 print('-----------------------')
-ftab.write("# Found %d min, %d max, %d spike badlags and %d bad C/B's" % (count_min, count_max, count_spike, nbadcb))
+ftab.write("# Found %d min, %d max, %d spike badlags and %d bad C/B's\n" % (count_min, count_max, count_spike, nbadcb))
 ftab.close()
 print("Wrote %s" % badlags)
 print("Found %d bad Chassis/Board's" % nbadcb)

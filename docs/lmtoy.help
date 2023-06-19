@@ -1,7 +1,8 @@
 Summary of the options for lmtoy
 --------------------------------
-   help      - this help
+   help      - this help (-h and --help also give this help)
    pull      - update LMTOY and all sub-git via "git pull"
+   dev       - extra environment setting for developers
 
 Summary of commands in the LMTOY environment
 --------------------------------------------
@@ -31,6 +32,7 @@ lmtinfo.py 91112
 ifproc.sh 91112
 
 #  finding raw data in your current $DATA_LMT
+lmtinfo.py grep 91112
 lmtinfo.py grep Arp143
 lmtinfo.py grep MX-3 Pointing
 lmtinfo.py grep 2023 LineCheck Bs
@@ -53,3 +55,11 @@ lmtar 99481.tar $(seq 99479 99481)
 
 #  show what sources exist in a project
 source_obsnum.sh 2021-S1-MX-3
+
+#  example URLs for viewing results (assuming you have permission)
+
+http://taps.lmtgtm.org/lmtslr/lmtoy_run/
+http://taps.lmtgtm.org/lmtslr/2023-S1-US-18/
+http://taps.lmtgtm.org/lmtslr/2023-S1-US-18/Session-1/2023-S1-US-18/
+http://taps.lmtgtm.org/lmthelpdesk/cryan/2023-S1-US-18/
+

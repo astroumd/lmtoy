@@ -1,6 +1,5 @@
 #! /bin/bash
 #
-#
 #--HELP
 #
 #  sbatch_lmtoy.sh :  LMTOY's simple frontend for sbatch
@@ -10,19 +9,21 @@
 #     sbatch run_12345.sh               (this example)
 #     squeue -u lmtslr_umass_edu        (also shows your JOBID's)
 #     scancel JOBID
-#     srun -n 1 -c 4 --mem=16G -p toltec-cpu --x11 --pty bash
+#     srun -n 1 -c 4 --mem=16G -p toltec-cpu -t 1:00:00 --x11 --pty bash
 #
 #  Typical usage:
 #     sbatch_lmtoy.sh SLpipeline.sh obsnum=12345 
 #     sbatch_lmtoy.sh SLpipeline.sh obsnums=12345,12346
 #     sbatch_lmtoy.sh 2021-S1-US-3.run1a exist=1
-#     sbatch_lmtoy.sh 2021-S1-US-3.run2a 
+#     sbatch_lmtoy.sh 2021-S1-US-3.run1a obsnum0=123456
+#     sbatch_lmtoy.sh 2021-S1-US-3.run2a
+#
+#     exist=1   will not process an obsnum if it already exists
+#     obsnum0=  will only process single obsnums at or beyond this obsnum0 
 #
 #--HELP
 
-# https://unity.rc.umass.edu/docs/#slurm/   IECK, this also stopped working.
-
-version="19-feb-2023"       # script version
+version="4-may-2023"        # script version
 sleep=1                     # don't use 0, unity spawns too fast in a series
 
 if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
@@ -32,13 +33,14 @@ if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
 fi
 
 
-# catch the single argument batch call first, but pass addition arguments to each pipeline call
+# catch the single argument batch call first, but pass additional arguments to each pipeline call
 if [ -e "$1" ]; then
     runfile=$1
-    echo Processing lines from $runfile line by line
+    shift
+    echo "Processing lines from $runfile line by line"
+    echo "$(date +%Y-%m-%dT%H:%M:%S) $*" >> $WORK_LMT/sbatch.log
     nl=$(cat $runfile | wc -l)
     ml=0
-    shift
     while IFS= read -r line; do
 	((ml++))
 	echo "LINE ($ml/$nl): $line $*"
@@ -51,6 +53,7 @@ fi
 
 obsnum=0
 obsnums=0
+obsnum0=0
 
 # processing CLI when key=var
 for arg in "$@"; do
@@ -70,6 +73,13 @@ else
 fi
 if [ $obsnum = 1 ]; then
     shift
+fi
+
+if [ $obsnum0 != 0 ]; then
+    if [ $obsnum -lt $obsnum0 ]; then
+	echo "SKIP obsnum=$obsnum because obsnum0=$obsnum0"
+	exit 0
+    fi
 fi
 
 #                                        sbatch run file
@@ -128,7 +138,7 @@ EOF
 chmod +x $run
 echo "$run      - use scancel JOBID to kill this one, JOBID is:"
 sbatch $run
-#   report last few
+#   report last few, if present
 sleep $sleep
 ls -ltr $WORK_LMT/sbatch/slurm*.out | tail -6
 squeue -u $USER
