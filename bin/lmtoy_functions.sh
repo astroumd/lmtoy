@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="19-jun-2023"
+lmtoy_version="20-jun-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -131,6 +131,8 @@ function lmtoy_rsr1 {
 
     # log the version
     lmtoy_version > lmtoy.rc
+    # set the dreampy.log logger filename in the local OBSNUM directory
+    export DREAMPY_LOG='dreampy.log'
 
     # spec1:    output spectrum rsr.$obsnum.driver.txt
     # 
