@@ -8,7 +8,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 27-apr-2023"
+_version="SLpipeline: 22-jun-2023"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -87,6 +87,10 @@ if [ -z "$OMP_NUM_THREADS" ]; then
     fi
 fi
 echo "LMTOY>> OMP_NUM_THREADS=$OMP_NUM_THREADS"
+
+#             report modules
+echo "LMTOY>> modules:"
+echo "$(module list)"
 
 #             bootstrap information on the obsnum
 [ ! -d $WORK_LMT/tmp ] && mkdir -p $WORK_LMT/tmp
@@ -232,6 +236,23 @@ if [ $goal == "Science" ]; then
 	fi
 	echo "LMTOY>> seqbs_pipeline.sh pdir=$pdir $*"
 	$time         seqbs_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	seq_summary.sh $pdir/lmtoy_$obsnum.log
+	lmtoy_date >> $pdir/date.log
+	cp $pdir/lmtoy_$obsnum.log $pdir/lmtoy_$obsnum_$ldate.log
+	echo Logfile also in: $pdir/lmtoy_$obsnum_$ldate.log
+	
+    elif [ $instrument = "SEQ" ] && [ $obspgm = "Ps" ]; then
+	
+	if [ -d $pdir ]; then
+	    echo "Re-Processing $obspgm SEQ in $pdir for $src (use restart=1 if you need a fresh start)"
+	    first=0
+	    lmtoy_date                             >> $pdir/date.log
+	else
+	    first=1
+	    mkdir -p $pdir	
+	fi
+	echo "LMTOY>> seqps_pipeline.sh pdir=$pdir $*"
+	$time         seqps_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
 	seq_summary.sh $pdir/lmtoy_$obsnum.log
 	lmtoy_date >> $pdir/date.log
 	cp $pdir/lmtoy_$obsnum.log $pdir/lmtoy_$obsnum_$ldate.log
