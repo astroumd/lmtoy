@@ -32,7 +32,7 @@ the spectra, which will translate into a weight ~ 1/dispersion^2
 The saved plotfile has a fixed name, rsr.spectra.png (or rsr.spectra.svg)
 
 """
-_version = "12-apr-2023"
+_version = "24-jun-2023"
 
 import sys
 import numpy as np
