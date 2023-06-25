@@ -35,6 +35,7 @@ function lmtoy_error {
 	#exit 1
     fi
 }
+trap 'lmtoy_error $? $LINENO' ERR
 
 function lmtoy_report {
     echo "LMTOY>> xdg-open $WORK_LMT/$ProjectId/$obsnum/README.html"
