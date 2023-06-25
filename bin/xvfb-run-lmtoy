@@ -12,4 +12,5 @@ while [ $nx -ge $nxmax ]; do
     nx=$(ps aux | grep '/usr/bin/time xvfb-run -a' | grep -v grep | wc -l)
 done
 
+echo "xvfb-run [$nx]"
 exec xvfb-run $*
