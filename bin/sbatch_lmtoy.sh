@@ -7,7 +7,7 @@
 #  SLURM cheat list for LMTOY (we use the "toltec-cpu" )
 #     sinfo
 #     sbatch run_12345.sh               (this example)
-#     squeue -u lmtslr_umass_edu        (also shows your JOBID's)
+#     squeue --me                       (also shows your JOBID's)
 #     scancel JOBID
 #     srun -n 1 -c 4 --mem=16G -p toltec-cpu -t 1:00:00 --x11 --pty bash
 #
@@ -50,6 +50,7 @@ if [ -e "$1" ]; then
 fi
 
 # process it as pipeline script, either obsnum= or obsnums= (but not both) should be present on CLI
+# obsnum0 is the minimum obsnum that is used for single obsnum cases
 
 obsnum=0
 obsnums=0
@@ -96,7 +97,6 @@ if [ $runid == 0 ]; then
     exit 0
 fi
 
-#if [ "$(which sbatch)" != "/usr/bin/sbatch" ]; then
 if [ "$(which sbatch)" == "" ]; then
     echo "$0 version=$version"    
     echo "run=$run"
@@ -141,6 +141,6 @@ sbatch $run
 #   report last few, if present
 sleep $sleep
 ls -ltr $WORK_LMT/sbatch/slurm*.out | tail -6
-squeue -u $USER
-echo "squeue -u $USER"
+squeue --me
+echo "squeue --me"
 
