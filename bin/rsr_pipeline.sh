@@ -10,7 +10,7 @@
 #
 #
 
-_version="rsr_pipeline: 14-jun-2023"
+_version="rsr_pipeline: 19-jun-2023"
 
 echo "LMTOY>> $_version"
 
@@ -44,8 +44,9 @@ bandstats=0   # also compute stats of each of the 6 RSR bands
 
 #            - procedural
 admit=0
-#            - debug
+#            - debug/error
 debug=0
+error=0
 
 # An interactive example: for a given o= this shows roughly how the pipeline works:
 #
@@ -82,6 +83,10 @@ obsnums=0
 #             put in bash debug mode
 if [ $debug = 1 ]; then
     set -x
+fi
+#             put in bash error exit mode
+if [ $error = 1 ]; then
+    set -e
 fi
 
 #lmtoy_first
