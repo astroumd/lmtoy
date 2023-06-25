@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="20-jun-2023"
+lmtoy_version="25-jun-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -25,6 +25,15 @@ function lmtoy_debug {
     #  1:   -x
     #  2:   -e
     echo "lmtoy_debug: not implemented yet"
+}
+
+function lmtoy_error {
+    # catch errors and errors in functions
+    echo "lmtoy_error: catching"
+    if [ "$1" != "0" ]; then
+	echo "lmtoy_error: error $1 occured on $2"
+	#exit 1
+    fi
 }
 
 function lmtoy_report {
@@ -850,3 +859,56 @@ function lmtoy_bs1 {
     # mv index.html README.html
     
 } # lmtoy_bs1
+
+
+function lmtoy_ps1 {
+    # input: obsnum, ... (lots)
+    # this will process a single band in an $obsnum
+
+    # log the version
+    lmtoy_version > lmtoy.rc
+    # keep an IFPROC header
+    if [ ! -e lmtoy_$obsnum.ifproc ]; then
+	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
+    fi
+
+    # for a waterfall -> bs-2.png
+    process_ps.py --obs_list $obsnum -o junk2.txt --pix_list $pix_list --use_cal --block -2 --stype $stype
+
+    # full average -> bs-1.png
+    echo "LMTOY>> process_ps.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1 --stype $stype"
+    process_ps.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1 --stype $stype
+    seq_spectra.py -s ${src}_${obsnum}.txt
+    seq_spectra.py -s -z ${src}_${obsnum}.txt
+
+    out4=$(tabmath ${src}_${obsnum}.txt - %2*1000 all | tabstat -  qac=t robust=t label=${src}_${obsnum}.txt)
+    printf_red $out4
+    
+    # tsys
+    dev=$(yapp_query png vps)
+    tabplot ${src}_${obsnum}.txt ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  yapp=tsys.$dev/$dev
+    convert tsys.$dev tsys.jpg
+    
+    if [ -n "$NEMO" ]; then
+	echo "LMTOY>> Some NEMO post-processing"
+
+    fi
+    
+    if [ $admit == 1 ]; then
+	echo "LMTOY>> ADMIT post-processing (TBD)"
+    else
+	echo "LMTOY>> skipping ADMIT post-processing"
+    fi
+    
+    
+    echo "LMTOY>> Parameter file used: $rc"
+    
+    seqps_readme $obsnum $src > $pdir/README.html
+    # cp $LMTOY/docs/README_sequoia.md README_files.md
+    
+    echo "LMTOY>> Making summary index.html:"
+    # mk_index.sh
+    # cheat and rename it for all files access
+    # mv index.html README.html
+    
+} # lmtoy_ps1
