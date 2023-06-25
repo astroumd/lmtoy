@@ -8,7 +8,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 24-jun-2023"
+_version="SLpipeline: 25-jun-2023"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -23,6 +23,7 @@ obsnums=0                      #    obsnums= for combinations of existing obsnum
 path=${DATA_LMT:-data_lmt}     # - to be deprecated
 work=${WORK_LMT:-.}            # - to be deprecated
 debug=0         # add bash debug (1)
+error=0         # add bash error (1)
 restart=0       # if set, force a fresh restart by deleting old obsnum pipeline results
 exist=0         # if set, and the obsnum exists, skip running pipeline 
 tap=0           # save the TAP in a tar file?
@@ -71,6 +72,10 @@ if [ $debug -gt 0 ]; then
     set -e
     python --version
     which python
+fi
+#             put i bash error trap mode
+if [ $error -gt 0 ]; then
+    set -e
 fi
 
 #             get the obsnum= (or obsnums=); also sets obsnum_list for archive
