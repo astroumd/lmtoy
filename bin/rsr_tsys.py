@@ -18,14 +18,15 @@ The saved plotfile has a fixed name, rsr.spectra.png (or rsr.spectra.svg)
 _version = "16-mar-2023"
 
 
+
 import sys
 import numpy as np
 from docopt import docopt
-import matplotlib.pyplot as plt
+
 
 from dreampy3.redshift.utils.fileutils import make_generic_filename
 from dreampy3.redshift.netcdf import RedshiftNetCDFFile
-from dreampy3.redshift.plots import RedshiftPlot
+# from dreampy3.redshift.plots import RedshiftPlot
 
 
 #                    command line options
@@ -58,7 +59,14 @@ else:
 if badlags != None:
     import dreampy3
     dreampy3.badlags(badlags)
-  
+
+import matplotlib
+if Qshow:
+    matplotlib.use('qt5agg')
+import matplotlib.pyplot as plt
+print('mpl backend',matplotlib.get_backend())
+
+
 plt.figure()
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 label = ""

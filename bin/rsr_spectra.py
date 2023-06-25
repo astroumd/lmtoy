@@ -37,9 +37,6 @@ _version = "12-apr-2023"
 import sys
 import numpy as np
 from docopt import docopt
-#import matplotlib
-#matplotlib.use('svg')
-import matplotlib.pyplot as plt
 
 Qshow  = True               # -s
 ext    = 'png'              # -z
@@ -55,7 +52,6 @@ band_edges = [ (71.72, 79.69), (78.02 , 85.99),  (85.41,  93.38),
 av = docopt(__doc__,options_first=True, version='rsr_spectra.py %s' % _version)
 
 
-plt.figure()
 
 kscale = float(av['--kscale'])
 if kscale == 1000.0:
@@ -79,6 +75,14 @@ else:
     
 if av['-s']:
     Qshow = False
+
+import matplotlib
+if Qshow:
+    matplotlib.use('qt5agg')
+import matplotlib.pyplot as plt
+    
+
+plt.figure()
 
 if av['--band'] != None:
     band = int(av['--band'])

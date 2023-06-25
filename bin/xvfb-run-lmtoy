@@ -1,0 +1,16 @@
+#! /bin/bash
+#
+
+nxmax=50
+sleep=30
+
+nx=$(ps aux | grep '/usr/bin/time xvfb-run -a' | grep -v grep | wc -l)
+
+while [ $nx -ge $nxmax ]; do
+    echo "xvfb-run-lmtoy:   too many xvfb's running [$nx], waiting $sleep seconds"    
+    sleep $sleep
+    nx=$(ps aux | grep '/usr/bin/time xvfb-run -a' | grep -v grep | wc -l)
+done
+
+echo "xvfb-run [$nx]"
+exec xvfb-run $*
