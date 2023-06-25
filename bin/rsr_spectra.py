@@ -79,6 +79,8 @@ if av['-s']:
 import matplotlib
 if Qshow:
     matplotlib.use('qt5agg')
+else
+    matplotlib.use('agg')
 import matplotlib.pyplot as plt
 print('mpl backend',matplotlib.get_backend())
     
