@@ -23,7 +23,7 @@
 #
 #--HELP
 
-version="4-may-2023"        # script version
+version="25-jun-2023"       # script version
 sleep=1                     # don't use 0, unity spawns too fast in a series
 
 if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
@@ -63,7 +63,7 @@ for arg in "$@"; do
 done
 
 #                                        prefix to run
-prefix="/usr/bin/time xvfb-run -a"
+prefix="/usr/bin/time xvfb-run-lmtoy -a"
 
 #                                        figure out the run ID
 if [ $obsnums != 0 ]; then
