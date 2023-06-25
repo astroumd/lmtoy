@@ -80,9 +80,12 @@ import matplotlib
 if Qshow:
     matplotlib.use('qt5agg')
 else:
+    # if the next statement was not used on unity, occasionally it would fine Qt5Agg, and thus fail
+    # this else clause is NOT used in rsr_tsys.py, which has the same patters as this routine, and
+    # never failed making a Tsys plot, go figure unity!
     matplotlib.use('agg')
 import matplotlib.pyplot as plt
-print('mpl backend',matplotlib.get_backend())
+print('mpl backend spectra',matplotlib.get_backend())
     
 
 plt.figure()
