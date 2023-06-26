@@ -8,7 +8,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 25-jun-2023"
+_version="SLpipeline: 26-jun-2023"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -94,8 +94,10 @@ fi
 echo "LMTOY>> OMP_NUM_THREADS=$OMP_NUM_THREADS"
 
 #             report modules
-echo "LMTOY>> DISPLAY=$DISPLAY modules:"
 echo "$(module list)"
+
+#             report matplotlib environment
+test_mpl
 
 #             bootstrap information on the obsnum
 [ ! -d $WORK_LMT/tmp ] && mkdir -p $WORK_LMT/tmp
