@@ -112,20 +112,37 @@ def mk_runs(project, on, pars1, pars2, argv=None):
     """
 
     if argv != None:
-        if len(argv) > 0:
+        if len(argv) > 1:
             obsnums=[]
-            if argv[0] == '-h':
+            if argv[1] == '-h':
                 print("mk_runs.py: Create runfiles by default")
                 print("  -h    this help")
                 print("  -o    show all obsnums, sorted")
+                print("  -b    show all bad obsnums")
+                print("  -B    show all bad obsnums and add the word BAD for comments.txt")
                 sys.exit(0)
-            elif argv[0] == '-o':
+            elif argv[1] == '-o':
                 for s in on.keys():
                     for o1 in on[s]:
                         obsnums.append(abs(o1))
                 obsnums.sort()
                 for o1 in obsnums:
                     print(o1)
+                print("# found %d obsnums" % len(obsnums))
+                return
+            elif argv[1] == '-b' or argv[1] == '-B':
+                for s in on.keys():
+                    for o1 in on[s]:
+                        if o1 < 0:
+                            obsnums.append(abs(o1))
+                obsnums.sort()
+                if argv[1] == '-b':
+                    for o1 in obsnums:
+                        print(o1)
+                else:
+                    for o1 in obsnums:
+                        print(o1,"BAD")
+                print("# found %d BAD obsnums" % len(obsnums))                        
                 return
             else:
                 print("Unknown mode: ",argv)
