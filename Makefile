@@ -197,6 +197,8 @@ lmtoy_run:	work_lmt/lmtoy_run
 work_lmt/lmtoy_run:
 	(cd work_lmt; git clone $(URL19))
 
+webrun:	lmt_web
+
 lmt_web:
 	git clone $(URL20)
 
