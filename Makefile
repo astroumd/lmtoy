@@ -47,6 +47,7 @@ URL16 = https://github.com/lmt-heterodyne/LinePointing
 URL17 = https://github.com/teuben/aplpy
 URL18 = https://github.com/toltec-astro/dvpipe
 URL19 = https://github.com/lmtoy/lmtoy_run
+URL20 = https://github.com/lmtmc/lmt_web
 
 .PHONY:  help install build
 
@@ -195,6 +196,9 @@ lmtoy_run:	work_lmt/lmtoy_run
 
 work_lmt/lmtoy_run:
 	(cd work_lmt; git clone $(URL19))
+
+lmt_web:
+	git clone $(URL20)
 
 # hack for Linux  (@todo Mac)
 admit:
