@@ -39,6 +39,7 @@ URL11a= https://casa.nrao.edu/download/distro/casa/release/el7/casa-release-5.8.
 URL12a= https://github.com/b4r-dev/pipeline
 URL12b= https://github.com/b4r-dev/notebooks
 URL12c= https://github.com/b4r-dev/devtools
+URL12d= https://github.com/b4r-dev/b4rpipe
 URL13a= https://github.com/gopastro/cubevis
 URL13b= https://github.com/gopastro/sculpt
 URL14 = https://github.com/teuben/gbtgridder
@@ -218,6 +219,10 @@ b4r:
 	(cd b4r; git clone $(URL12a))
 	(cd b4r; git clone $(URL12b))
 	(cd b4r; git clone $(URL12c))
+	(cd b4r; git clone $(URL12d))
+	@echo "All subdirectories here are independent B4R tools" > b4r/README
+	@echo "See also https://github.com/b4r-dev"              >> b4r/README
+	@echo "See also https://github.com/b4r-dev"
 
 
 # step 1 (or skip and use another python)
