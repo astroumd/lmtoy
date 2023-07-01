@@ -3,8 +3,20 @@
 #   pix_list(pl)
 #
 
+"""
+Useful tools for the LMTOY script generators (lmtoy_$PID)
+
+   pix_list(pl, maxbeam=16)
+   getpars(on)
+   getargs(obsnum, pars4)
+   mk_runs(project, on, pars1, pars2, argv=None)
+
+"""
+
 import os
 import sys
+
+_version = "29-jun-2023"
 
 def pix_list(pl):
     """ convert a strong like "-0,-1" to proper pixlist by removing
@@ -52,7 +64,7 @@ def getpars(on):
             if line[0] == '#': continue
             idx = line.find('#')
             w = line.split()
-            # loop over args,  and replace pix_list=-N,....
+            # loop over args,  and replace PI parameters
             if idx > 0:
                 pars4[int(w[0])] = []
                 for a in line[idx+1:].strip().split():
@@ -97,17 +109,61 @@ def getargs_old(obsnum, flags=True):
             args = args + line.strip() + " "
     return args
 
-def mk_runs(project, on, pars1, pars2):
+def mk_runs(project, on, pars1, pars2, argv=None):
     """ top level
     """
 
+    if argv != None:
+        if len(argv) > 1:
+            obsnums=[]
+            if argv[1] == '-h':
+                print("mk_runs.py: Create runfiles by default (version %s)" % _version)
+                print("  -h    this help")
+                print("  -o    show all obsnums, sorted")
+                print("  -b    show all failed obsnums")
+                print("  -B    show all failed obsnums and add the word QAFAIL for comments.txt")
+                sys.exit(0)
+            elif argv[1] == '-o':
+                for s in on.keys():
+                    for o1 in on[s]:
+                        obsnums.append(abs(o1))
+                obsnums.sort()
+                for o1 in obsnums:
+                    print(o1)
+                print("# found %d obsnums" % len(obsnums))
+                return
+            elif argv[1] == '-b' or argv[1] == '-B':
+                for s in on.keys():
+                    for o1 in on[s]:
+                        if o1 < 0:
+                            obsnums.append(abs(o1))
+                obsnums.sort()
+                if argv[1] == '-b':
+                    for o1 in obsnums:
+                        print(o1)
+                else:
+                    for o1 in obsnums:
+                        print(o1,"QAFAIL")
+                print("# found %d failed obsnums" % len(obsnums))                        
+                return
+            else:
+                print("Unknown mode: ",argv)
+                sys.exit(0)
+
+
+    print("Creating run files")
+    
+    run1  = '%s.run1'  % project
     run1a = '%s.run1a' % project
     run1b = '%s.run1b' % project
+    run2  = '%s.run2'  % project
     run2a = '%s.run2a' % project
     run2b = '%s.run2b' % project
 
+    fp1  = open(run1,  "w")
     fp1a = open(run1a, "w")
     fp1b = open(run1b, "w")
+    fp2  = open(run2,  "w")    
     fp2a = open(run2a, "w")
     fp2b = open(run2b, "w")
 
@@ -121,8 +177,10 @@ def mk_runs(project, on, pars1, pars2):
             o = abs(o1)
             cmd1a = "SLpipeline.sh obsnum=%d _s=%s %s restart=1 " % (o,s,pars1[s])
             cmd1b = "SLpipeline.sh obsnum=%d _s=%s %s %s" % (o,s,pars2[s], getargs(o,pars4))
+            cmd1  = "SLpipeline.sh obsnum=%d _s=%s %s %s %s" % (o,s,pars1[s], pars2[s], getargs(o,pars4))
             fp1a.write("%s\n" % cmd1a)
             fp1b.write("%s\n" % cmd1b)
+            fp1.write("%s\n" % cmd1)
             n1 = n1 + 1
 
     #                           combination obsnums

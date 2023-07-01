@@ -1,10 +1,12 @@
 # SLpipeline.sh parameters
 
-We differentiate between **generic** and **instrument specific** (RSR,
+We differentiate between **generic** and **instrument/obsmode specific** (RSR,
 SEQ, 1MM, OMA, ...) parameters.
 
 The pipeline and instrument specific scriptS all have a **--help** and **-h** option
-as a reminder to the keywords and their defaults where applicable.
+as a reminder to the keywords and their defaults where applicable. They should always
+report the parameters. If not visible, this means the parameter may still be hardcoded
+in the code.
 
 Command line keywords that do not belong to the instrument (e.g. band= for RSR) are just ignored.
 
@@ -39,6 +41,7 @@ Also note that a non-zero value for **obsnum=** *or* **obsnums=** is required.
         
     debug=0             1: verbosely print all commands and shell expansions
     restart=0           1: cleans up old obsnum pipeline results
+    exist=0             1: will not run if the obsnum exists (see also sbatch_lmtoy.sh obsnum0=)
     path=$DATA_LMT      - should not be used (but will still work)
     work=$WORK_LMT      - should not be used (but will still work)
     tap=0               produce TAP tar file?  [0|1]
@@ -66,11 +69,37 @@ ways, they really should be merged.
     badcb=2/3,2/2          preset Chassis/Board detectors that are bad C=[0..3]  B=[0..5]
     xlines=110.51,0.15     sections of spectrum not to be used for baseline fit (freq-dfreq..freq+dfreq)
                            normally because there is a (strong) line
+    shortlags=32,15.0      set a short_min and short_hi to avoid flagging strong continuum sources
+    spike=3                spikyness of localized peaks
+    linecheck=0            if set to 1, use the source name to grab the correct xlines=
+    bandzoom=5             default band to supply a zoomed view of the final spectrum
+    speczoom=85,3          if given, override the bandzoom with a window 85 +/- 3
+    rthr=0.01              Threshold sigma value when averaging single observations repeats (-r)
+    cthr=0.01              Threshold sigma value when coadding all observations (-t)
+    sgf=51                 If given, set Savitzky-Golay high pass filter ; odd number > 21
+    blo=1                  order of polynomial baseline subtraction
+    
 
 Different scripts have different parameters that are currently hardcoded :
 
 ### 2.1 badlags.py
+Usage: badlags.py [options] OBSNUM
 
+Options:
+
+    -p --plotmax PLOTMAX          Plot max. If not given, the bc_hi THRESHOLD is used. Optional
+    -B --badlags BADLAGS          Output badlags file, if desired. [Default: rsr.badlags]
+    -d                            Add more debug output
+    -e                            Don't use edge detection, by default it will.
+    -s                            No interactive plot, it will save the plot.
+    --bc_hi HIGH                  Above this value, lags are flagged bad [Default: 2.5]
+    --bc_lo LOW                   Below this value, lags are flagged bad [Default: 0.01]
+    --spike SPIKE                 Threshold above which spikes are flagged as bad channel [Default: 3.0]
+    --short_hi SHIGH              Above this value, lags under SMIN are flagged [Default: 2.5]
+    --short_min SMIN              Lags below SMIN get special treatment and are allowed different threshold [Default: 256]
+    --min_chan MINCHAN            No blabla below this channel [Default: 32]
+    --rms_min RMIN                Minimum RMS to accept a C/B [Default: 0.01]
+    --rms_max RMAX                Maximum RMS to accept a C/B [Default: 0.2]
 
     -b THRESHOLD        0.01
     -p PLOT_MAX         0.3

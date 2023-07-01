@@ -3,17 +3,24 @@
 #    report the LMTOY environment
 #
 
-if [ "$1" == help ]; then
+if [ "$1" == help ] || [ "$1" == --help ] || [ "$1" == -h ]; then
     cat $LMTOY/docs/lmtoy.help
     exit 0
 fi
 os=$(uname -s)
 
+gitbv() {
+    _branch=$(cd $1;git branch --show-current)
+    _counter=$(cd $1;git rev-list --count HEAD)
+}    
+
 if [ -z $LMTOY ]; then
     echo "LMTOY environment not loaded (odd)"
     exit 0
 else
-    echo "LMTOY:       $LMTOY  - $(cat $LMTOY/VERSION)"
+    _version=$(cat $LMTOY/VERSION)
+    gitbv $LMTOY
+    echo "LMTOY:       $LMTOY  - Version:$_version"
 fi
 
 echo "DATA_LMT:    $DATA_LMT"
@@ -47,5 +54,15 @@ if [ "$1" == dev ]; then
     echo "tsf:              "  $(tsf help=V)
     echo "tabplot:          "  $(tabplot help=V)
     echo "fitsccd:          "  $(fitsccd help=V)
-    echo "----------------------------------------------------------"    
+    echo "----------------------------------------------------------"
+    gitbv $LMTOY
+    echo "lmtoy:          Branch:$_branch Counter:$_counter"
+    gitbv $LMTOY/SpectralLineReduction
+    echo "lmtslr:         Branch:$_branch Counter:$_counter"
+    gitbv $LMTOY/LinePointing
+    echo "linepointing:   Branch:$_branch Counter:$_counter"
+    gitbv $LMTOY/dreampy3    
+    echo "dreampy:        Branch:$_branch Counter:$_counter"
+    gitbv $LMTOY/nemo
+    echo "nemo:           Branch:$_branch Counter:$_counter"
 fi

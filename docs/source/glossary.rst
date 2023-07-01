@@ -38,13 +38,16 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       Not to be confused with the
       **FWHM**.  At 115 GHz the **FWHM** is about 16", at 86 GHz about
       21".  The beam separation is 27.8" for Sequoia.
+    
+      Note that for some instruments beams are also interpreted while
+      including other simulteanously taken data in another band/polarization
 
     beammap
       A special observing mode (always in Az-El?) where you map around
       a strong source, e.g. Ori-KL.
 
     board
-      for SLR these are the roach boards (4). For RSR they
+      for SLR these are the roach boards (4 or 8). For RSR they
       are called **chassis** (4). But in **RSR** board has also been
       used where **band** is meant, but there is a subtle difference
       where bands are ordered in frequency.
@@ -87,7 +90,6 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 
     horn
       Another term used for :term:`beam` or :term:`pixel`.
-
     
     LMTSLR
       The LMT Spectral Line Reduction modules you will need to reduce
@@ -97,7 +99,8 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       Monitor and Control system, the system that runs the online LMT system.
     
     ObsNum
-      Observatation Number. This is not all, obsnum is part of the (**ObsNum** , **SubObsNum** , **ScanNum**) tuple,
+      Observatation Number. This is not all, obsnum is part of the (**ObsNum** ,
+    **SubObsNum** , **ScanNum**) tuple,
       but for most applications you only need to know the **ObsNum**
 
     OMAyA
@@ -144,7 +147,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       alltogether.
 
     roach board
-      The SLR has four (4) roach boards, each of which writes a separate
+      The SLR had four (4) roach boards, now eight (8), each of which writes a separate
       file with its own internal clock that later needs to be sync'd. In
       a future expansion we get 8 boards (2 pols, 2 IFs) , capable of writing
       8 files.  ``Rumor``:  for the 1mmRx configuration can be done on one
@@ -158,6 +161,12 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       form 4 independent calibrated spectra; the polarization pairs for each 
       beam are collected through the same horn. These 4 are referred to as the
       4 **chassis**.   Salient detail:  RSR does not doppler track.
+
+    runfile
+      A simple text file of (LMTOY pipeline) commands, one per line. Although more
+      limiting than full programmable bash scripts, these can be executed serially
+      by bash, or in parallel by GNU parallel or SLURM. The lmtoy script generator
+      will produce sets of runfile's.
     
     ScanNum
       Scan Number - see **ObsNum**
@@ -171,7 +180,9 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 
     SEQUOIA
       85-115.6 GHz, has a 4x4 multi-beam (pixel) receiver. Can do multiple backend
-      spectrometers tuned indepedently in a 15GHz window.
+      spectrometers tuned indepedently in a 15GHz window. In the single IF mode
+      (before April 2023) beams 0..15 are used, but in dual IF mode, beams can be
+      counted 0..31 to select from bank0 or bank1.
 
     SFL
       Sanson-Flamsteed projection, used in LMT **FITS** files
@@ -208,12 +219,12 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       Continuum mapping instrument
 
     TolTeca
-      Python frontend for the TolTec instrument. Is dasha based.
+      Python frontend for the **TolTec** instrument. Is **dasha** based.
 
     WARES
       (Wideband Arrayed ROACH Enabled Spectrometer). The spectrometer used
       for Sequoia/1MM/Omaya. Also used for the name
-      of the computer that receives data from the 4 (future 8) roach boards.
+      of the computer that receives data from the 4 (now 8) roach boards.
 
 
 .. _overloaded:
@@ -324,7 +335,9 @@ Taking an inventory of current and known future LMT Spectral Line instruments:
 
 * SEQ:
   16 beams (though 4 beams per roach board, and each roach board has its own time) in one
-  band (they also call it bank) and one polarization. Thus nbeam=16, npol=1, nband=1
+  band (they also call it bank) and one polarization. Thus nbeam=16, npol=1, nband=1.
+  Once the 2nd IF will be installed, 32 beams will be recognized by the software,
+  but organizationally it is easier to to think of 16 beams and 2 bands.
 
 .. note::  The timestamps for the different roach boards make it impossible to store
 	   the data in a multi-dimensional array, unless (typicall one) integration

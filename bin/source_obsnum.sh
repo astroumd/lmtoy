@@ -16,13 +16,8 @@ usage() {
 mk_header() {
     echo 'import os'
     echo 'import sys'
-    echo 'try:'
-    echo '    lmtoy = os.environ["LMTOY"]'
-    echo '    sys.path.append(lmtoy)'
-    echo '    from lmtoy import runs'
-    echo 'except:'
-    echo '    print("No LMTOY with runs.py")'
-    echo '    sys.exit(0)'
+    echo ''
+    echo 'from lmtoy import runs'
 }
 
 mk_trailer() {
@@ -68,6 +63,8 @@ mk_header
 echo ""
 echo "project=\"$pid\""
 echo ""
+echo "# Dictionary of sources, each with a list of obsnum's in this project"
+echo "# negative obsnums are ignored in the combinations"
 echo "on = {}"
     
 for src in $(tabcols $log 1 | sort | uniq); do
@@ -86,6 +83,7 @@ for src in $(tabcols $log 1 | sort | uniq); do
 done
 
 echo ""
+echo "# parameters for the first pass of the pipeline"
 echo "pars1 = {}"
 echo ""
 
@@ -94,10 +92,17 @@ for src in $(tabcols $log 1 | sort | uniq); do
 done
 
 echo ""
+echo "# parameters for the (optional) second pass of the pipeline"
 echo "pars2 = {}"
 echo ""
 
 for src in $(tabcols $log 1 | sort | uniq); do
     echo "pars2[\"$src\"] = \"\""
 done
+
+ns=$(tabcols $log 1 | sort | uniq | wc -l)
+echo ""
+echo "# Found $ns source(s)"
+echo ""
+
 mk_trailer

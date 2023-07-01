@@ -10,6 +10,7 @@ help:
 	@echo "Here you could place your LMT RAW data"
 	@echo "  help:    this help"
 	@echo "  new:     make a new data_lmt.log here"
+	@echo "  new2:    append to data_lmt.log based on OBSNUM0=   usually from last.obsnum"
 	@echo "  data:    download needed benchmark obsnums (33551 for RSR, 79448 for SEQ)"
 	@echo "  rsr:     only download the RSR calibration tables"
 
@@ -19,6 +20,14 @@ new:
 	echo "# LAST UPDATED: `date` on `hostname`"   > data_lmt.log
 	sort -r data_lmt.new                         >> data_lmt.log
 	rm data_lmt.new
+
+OBSNUM0=`cat last.obsnum`
+last:
+	@echo $(OBSNUM0)
+new2:
+	cp data_lmt.log data_lmt.new
+	lmtinfo.py new $(OBSNUM0)  >> data_lmt.new
+	sort -r data_lmt.new | uniq > data_lmt.log
 
 data:   ifproc RedshiftChassis0
 

@@ -39,6 +39,7 @@ URL11a= https://casa.nrao.edu/download/distro/casa/release/el7/casa-release-5.8.
 URL12a= https://github.com/b4r-dev/pipeline
 URL12b= https://github.com/b4r-dev/notebooks
 URL12c= https://github.com/b4r-dev/devtools
+URL12d= https://github.com/b4r-dev/b4rpipe
 URL13a= https://github.com/gopastro/cubevis
 URL13b= https://github.com/gopastro/sculpt
 URL14 = https://github.com/teuben/gbtgridder
@@ -46,6 +47,8 @@ URL15 = https://github.com/lmt-heterodyne/RedshiftPointing
 URL16 = https://github.com/lmt-heterodyne/LinePointing
 URL17 = https://github.com/teuben/aplpy
 URL18 = https://github.com/toltec-astro/dvpipe
+URL19 = https://github.com/lmtoy/lmtoy_run
+URL20 = https://github.com/lmtmc/lmt_web
 
 .PHONY:  help install build
 
@@ -55,8 +58,8 @@ install:
 	@echo "1. install python (or skip it if you have it)"
 	@echo "  make install_python"
 	@echo "  source python_start.sh"
-	@echo "2. install LMTSLR"
-	@echo "  make install_lmtslr"
+	@echo "2. install LMTSLR and friends: (venv versions also exist)"
+	@echo "  make install_lmtslr install_dreampy install_dvpipe install_maskmoment"
 	@echo "3. Configure LMTOY for others to use it"
 	@echo "  make config"
 	@echo "  source lmtoy_start.sh"
@@ -190,6 +193,16 @@ dvpipe:
 	git clone $(URL18)
 
 
+lmtoy_run:	work_lmt/lmtoy_run
+
+work_lmt/lmtoy_run:
+	(cd work_lmt; git clone $(URL19))
+
+webrun:	lmt_web
+
+lmt_web:
+	git clone $(URL20)
+
 # hack for Linux  (@todo Mac)
 admit:
 	git clone $(URL11)
@@ -206,6 +219,10 @@ b4r:
 	(cd b4r; git clone $(URL12a))
 	(cd b4r; git clone $(URL12b))
 	(cd b4r; git clone $(URL12c))
+	(cd b4r; git clone $(URL12d))
+	@echo "All subdirectories here are independent B4R tools" > b4r/README
+	@echo "See also https://github.com/b4r-dev"              >> b4r/README
+	@echo "See also https://github.com/b4r-dev"
 
 
 # step 1 (or skip and use another python)
@@ -218,7 +235,7 @@ lmtoy_venv:
 
 pip:
 	pip3 install -r requirements.txt
-
+	pip3 install -e .
 
 # I find venv not working for me during development.
 
@@ -330,9 +347,10 @@ bench1a:
 
 ## bench2:   SEQ benchmark (obsnum=79448)
 bench2:
-	$(TIME) SLpipeline.sh obsnum=79448 restart=1 admit=$(ADMIT)
+	$(TIME) SLpipeline.sh obsnum=79448 restart=1 map_coord_use=1 admit=$(ADMIT)
 	@echo "QAC_STATS: IRC+10216_79448-full 0.00256137 0.242578 -563.449 634.86 85230.4 0.0531463 5696559 [expected]"
 	@echo "QAC_STATS: IRC+10216_79448-cent 0.00280355 0.213226 -2.42886 15.3425 91513 0.123691 3684458 [expected]"
+	@echo "QAC_STATS: RMS/radiometer 1.84299 0.135224 1.23069 5.1088 10313 1 5021 [expected]"
 	@echo "========================================================================================"
 	@echo xdg-open  $(WORK_LMT)/2018S1SEQUOIACommissioning/79448/README.html
 

@@ -66,8 +66,8 @@ from dreampy3.redshift.utils.fileutils import make_generic_filename
 from blanking import blanking
 
 
-script_version ="0.2.2"
-
+script_version ="0.2.3"
+Qshow = False
 
 def main(argv):
     av = docopt(__doc__,options_first=True, version='0.2')
@@ -107,7 +107,8 @@ def main(argv):
     sourceobs = blanking_file + '.sum'
     (obslist,blanks,windows)  = blanking(blanking_file)
     hdulist=[]
-    pl = RedshiftPlot()
+    if Qshow:
+        pl = RedshiftPlot()
 
     for ObsNum in obslist:        # for observations in obslist
         for chassis in (0,1,2,3): # for all chassis
@@ -174,7 +175,8 @@ def main(argv):
     hdu = hdulist[0]
     hdu.average_scans(hdulist[1:],threshold_sigma=threshold_sigma)   # -t args.cthresh in driver
 
-    pl.plot_spectra(hdu)
+    if Qshow:
+        pl.plot_spectra(hdu)
     # baselinesub = int(input('Order of baseline (use ''-1'' for none):'))
     if order2 < 0:
         hdu.baseline(order=0, subtract=False)    # @todo    can we just skip this call?

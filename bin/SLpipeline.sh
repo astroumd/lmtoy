@@ -8,9 +8,10 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 28-feb-2023"
+_version="SLpipeline: 26-jun-2023"
 
 echo ""
+echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
 echo "LMTOY>> $_version"
 
 #--HELP   
@@ -22,6 +23,7 @@ obsnums=0                      #    obsnums= for combinations of existing obsnum
 path=${DATA_LMT:-data_lmt}     # - to be deprecated
 work=${WORK_LMT:-.}            # - to be deprecated
 debug=0         # add bash debug (1)
+error=0         # add bash error (1)
 restart=0       # if set, force a fresh restart by deleting old obsnum pipeline results
 exist=0         # if set, and the obsnum exists, skip running pipeline 
 tap=0           # save the TAP in a tar file?
@@ -33,7 +35,7 @@ meta=0          # activate update for frontend db (for dataverse)
 sleep=2         # add few seconds before running, allowing quick interrupt
 nproc=1         # number of processors to use (keep it at 1)
 rsync=""        # rsync address for the TAP file (used at LMT/malt)
-oid=""          # experimental
+oid=""          # experimental parallel processing using __$oid 
 goal=Science    # Science, or override with: Pointing,Focus
 
 #  Optional instrument specific pipeline can be added as well but are not known here
@@ -62,6 +64,7 @@ goal=Science    # Science, or override with: Pointing,Focus
 #             set up LMTOY, parse command line so it's merged with the script parameters
 source lmtoy_functions.sh
 lmtoy_args "$@"
+ldate=$(lmtoy_date)
 
 #             put in bash debug mode
 if [ $debug -gt 0 ]; then
@@ -70,8 +73,12 @@ if [ $debug -gt 0 ]; then
     python --version
     which python
 fi
+#             put i bash error trap mode
+if [ $error -gt 0 ]; then
+    set -e
+fi
 
-#             get the obsnum= (or obsnums=)
+#             get the obsnum= (or obsnums=); also sets obsnum_list for archive
 lmtoy_decipher_obsnums
 if [ $obsnum = 0 ]; then
     echo No valid obsnum= or obsnums= given
@@ -84,12 +91,24 @@ if [ -z "$OMP_NUM_THREADS" ]; then
 	export OMP_NUM_THREADS=$nproc
     fi
 fi
-echo "OMP_NUM_THREADS=$OMP_NUM_THREADS"
+echo "LMTOY>> OMP_NUM_THREADS=$OMP_NUM_THREADS"
 
-#             bootstrap
+#             report modules
+echo "$(module list)"
+
+#             report matplotlib environment
+test_mpl
+
+#             bootstrap information on the obsnum
 [ ! -d $WORK_LMT/tmp ] && mkdir -p $WORK_LMT/tmp
 rc0=$WORK_LMT/tmp/lmtoy_${obsnum}.rc
 lmtinfo.py $obsnum > $rc0
+if [ $? != 0 ]; then
+    # some error (maybe OBSNUM did not exist)
+    cat $rc0
+    rm -f $rc0    
+    exit 1
+fi
 source $rc0
 rm -f $rc0
 unset rc0
@@ -117,9 +136,6 @@ if [ $exist == 1 ] && [ -d $pidir/$obsnum ]; then
     exit 0
 fi
 
-if [ "$oid" != "" ]; then
-    pdir=${pdir}_${oid}
-fi
 if [ $restart = "-1" ]; then
     if [ -d $pdir ]; then
 	echo "Warning: restart=-1 and $pdir already exists"
@@ -162,12 +178,10 @@ if [ $goal == "Science" ]; then
 	    echo "LMTOY>> seq_combine.sh             $*"
 	    $time         seq_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
 	fi
+	cp $pdir/lmtoy_$obsnum.log $pdir/lmtoy_${obsnum}_$ldate.log	    
 	seq_summary.sh $pdir/lmtoy_$obsnum.log
 	lmtoy_date >> $pdir/date.log	
-	echo Logfile in: $pdir/lmtoy_$obsnum.log
-	if [[ $first == 1 ]]; then
-	    cp $pdir/lmtoy_$obsnum.log   $pdir/first.lmtoy_$obsnum.log	
-	fi
+	echo Logfile also in: $pdir/lmtoy_$obsnum_$ldate.log
     
     elif [ $instrument = "RSR" ]; then
 	
@@ -198,10 +212,8 @@ if [ $goal == "Science" ]; then
 	fi
 	rsr_summary.sh $pdir/lmtoy_$obsnum.log
 	lmtoy_date >> $pdir/date.log
-	echo Logfile in: $pdir/lmtoy_$obsnum.log
-	if [[ $first == 1 ]]; then
-	    cp $pdir/lmtoy_$obsnum.log   $pdir/first.lmtoy_$obsnum.log	
-	fi
+        cp $pdir/lmtoy_$obsnum.log $pdir/lmtoy_$obsnum_$ldate.log	
+	echo Logfile also in: $pdir/lmtoy_$obsnum_$ldate.log
 
     elif [ $instrument = "1MM" ]; then
 	
@@ -232,8 +244,26 @@ if [ $goal == "Science" ]; then
 	echo "LMTOY>> seqbs_pipeline.sh pdir=$pdir $*"
 	$time         seqbs_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
 	seq_summary.sh $pdir/lmtoy_$obsnum.log
-	lmtoy_date >> $pdir/date.log	
-	echo Logfile in: $pdir/lmtoy_$obsnum.log
+	lmtoy_date >> $pdir/date.log
+	cp $pdir/lmtoy_$obsnum.log $pdir/lmtoy_$obsnum_$ldate.log
+	echo Logfile also in: $pdir/lmtoy_$obsnum_$ldate.log
+	
+    elif [ $instrument = "SEQ" ] && [ $obspgm = "Ps" ]; then
+	
+	if [ -d $pdir ]; then
+	    echo "Re-Processing $obspgm SEQ in $pdir for $src (use restart=1 if you need a fresh start)"
+	    first=0
+	    lmtoy_date                             >> $pdir/date.log
+	else
+	    first=1
+	    mkdir -p $pdir	
+	fi
+	echo "LMTOY>> seqps_pipeline.sh pdir=$pdir $*"
+	$time         seqps_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	seq_summary.sh $pdir/lmtoy_$obsnum.log
+	lmtoy_date >> $pdir/date.log
+	cp $pdir/lmtoy_$obsnum.log $pdir/lmtoy_$obsnum_$ldate.log
+	echo Logfile also in: $pdir/lmtoy_$obsnum_$ldate.log
 	
     else
 	echo "Unknown instrument $instrument"
@@ -260,20 +290,21 @@ else
     exit 0
 fi
 
+# record obsnum_list for the archiver
+echo "obsnum_list=$obsnum_list" >> $pdir/lmtoy_$obsnum.rc
+
 # record the processing time
 echo "date=\"$(lmtoy_date)\"     # end " >> $pdir/lmtoy_$obsnum.rc
 
 # make a metadata yaml file for later ingestion into DataVerse
 echo "LMTOY>> make metadata ($meta) for DataVerse"
-if [ $meta = 0 ]; then
-    mk_metadata.py -y  $pdir/lmtmetadata.yaml $pdir
-else
+mk_metadata.py -y  $pdir/lmtmetadata.yaml $pdir
+if [ $meta = 1 ]; then
     # @todo will this work reliably on NFS mounted media?
     db=$WORK_LMT/example_lmt.db
     flock --verbose $db.flock mk_metadata.py -y  $pdir/lmtmetadata.yaml -f $db $pdir 
 fi
 # produce TAP, RSRP, RAW tar files, whichever are requested.
-
 
 #        ensure we are in $WORK_LMT ("cd $WORK_LMT" doesn't work if it's ".")
 cd $work

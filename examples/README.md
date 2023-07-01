@@ -1,4 +1,4 @@
-# Examples of LMT data processing
+# Early examples of LMT data processing
 
 There are several processing paths for Sequoia data:  OTF, MAP, BS and PS.
 

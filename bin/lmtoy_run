@@ -1,0 +1,64 @@
+#! /usr/bin/env bash
+#
+#    set up the script generator for given project(s)
+#
+
+if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
+    echo "Usage: $0 ProjectID"
+    echo ''
+    echo 'This will create a $WORK_LMT/lmtoy_run/lmtoy_<ProjectID> script generator'
+    echo ' as well ensure the data directory $WORK_LMT/<ProjectID> exists'
+    echo ' and create a number of convenience symbolic links between data and script'
+    echo ''
+    echo "WORK_LMT = $WORK_LMT"
+    exit 0
+fi
+
+if [ -z $LMTOY ]; then
+    echo "LMTOY environment not loaded (odd)"
+    exit 0
+fi
+
+if [ -z $WORK_LMT ]; then
+    echo "LMTOY WORK_LMT not set up (odd)"
+    exit 0
+fi
+
+cd $WORK_LMT
+
+if [ ! -d lmtoy_run ]; then
+    git clone https://github.com/lmtoy/lmtoy_run
+else
+    echo "great, lmtoy_run exists"
+fi
+
+PID=$1
+
+if [ ! -d $PID ]; then
+    mkdir -p $PID
+fi
+
+
+cd lmtoy_run
+
+if [ ! -d lmtoy_$PID ]; then
+    git clone https://github.com/lmtoy/lmtoy_$PID
+fi
+
+cd lmtoy_$PID
+git pull
+
+# convenience link
+ln -sf $WORK_LMT/$PID
+ls
+
+# ensure symlinks to script generator and helper files
+cd $WORK_LMT/$PID
+ln -sf $WORK_LMT/lmtoy_run/lmtoy_$PID
+ln -s lmtoy_$PID/comments.txt
+ln -s README.html index.html
+
+# report the two directories the user may want to cd to:
+echo ""
+echo "data:   cd $WORK_LMT/$PID"
+echo "script: cd $WORK_LMT/lmtoy_run/lmtoy_$PID"

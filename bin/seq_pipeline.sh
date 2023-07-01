@@ -14,7 +14,7 @@
 #
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-_version="seq_pipeline: 26-feb-2023"
+_version="seq_pipeline: 13-jun-2023"
 
 echo "LMTOY>> $_version"
 
@@ -22,7 +22,7 @@ echo "LMTOY>> $_version"
 # input parameters (only obsnum is required)
 #            - start or restart
 obsnum=0
-obsid=""
+oid=""
 pdir=""
 data_lmt=${DATA_LMT:-data_lmt}
 #            - procedural
@@ -43,6 +43,8 @@ dw=250
 birdies=0
 #            - override numbands to read only 1 band if 2 is not correct. 0=auto-detect
 numbands=0
+#            - override the default map_coord   (-1,0,1,2 = default, HO, EQ, GA)
+map_coord_use=-1
 #            - parameters that directly match the SLR scripts
 pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 rms_cut=-4
@@ -67,6 +69,11 @@ bank=-1           # -1:  all banks 0..numbands-1; otherwise select that bank (0,
 debug=0
 
 #--HELP
+show_vars="extent dv dw birdies numbands map_coord_use pix_list rms_cut location resolution \
+           cell nppb rmax otf_select otf_a otf_b otf_c noise_sigma b_order stype \
+           sample otf_cal edge bank \
+          "
+
 
 # unset a view things, since setting them will give a new meaning
 unset vlsr
@@ -78,11 +85,7 @@ lmtoy_args "$@"
 
 # PI parameters, as merged from defaults and CLI
 rc0=$WORK_LMT/tmp/lmtoy_${obsnum}.rc
-show_vars \
-	  extent dv dw birdies numbands pix_list rms_cut location resolution \
-	  cell nppb rmax otf_select otf_a otf_b otf_c noise_sigma b_order stype \
-	  sample otf_cal edge bank \
-	  > $rc0
+show_vars $show_vars > $rc0
 
 #lmtoy_debug
 #             put in bash debug mode
@@ -108,7 +111,7 @@ else
 fi
 
 
-#             process the parameter file
+#             process the parameter file(s)
 rc=./lmtoy_${obsnum}.rc
 if [ ! -e $rc ]; then
     echo "LMTOY>> creating new $rc"
@@ -124,6 +127,13 @@ for arg in "$@"; do
 done
 source $rc
 rm -f $rc0
+#             optional "oid" parameter file
+rc1=./lmtoy_${obsnum}__${oid}.rc
+if [ ! -z "$oid" ]; then
+    echo "date=\"$date\"     # begin"        >> $rc1    
+    show_vars oid $show_vars                 >> $rc1
+fi
+
 
 # @todo   lmtinfo.py should set this now
 ifproc=$(ls ${data_lmt}/ifproc/*${obsnum}*.nc)
@@ -192,13 +202,16 @@ echo resolution=$resolution     >> $rc
 cell=$(nemoinp "ifgt($nppb,0.0,$resolution/$nppb,$cell)")
 echo cell=$cell                 >> $rc
 
-# feb 2023 - work around the numbands=2 bug
-if [ $numbands = 2 ]; then
+# feb 2023 - work around the numbands=2 bug (only one bad obsnum was used: 105907/105908)
+if [ $numbands = -2 ]; then
     echo "# feb2023 numbands bug"                      >> $rc
     echo "numbands=1  # feb 2023 bug"                  >> $rc
     echo "skyfreq=$(echo $skyfreq | tabcols - 1)"      >> $rc
     echo "restfreq=$(echo $restfreq | tabcols - 1)"    >> $rc
 fi
+
+#
+echo map_coord_use=$map_coord_use                      >> $rc
     
 
 # source again to ensure the changed variables are in
@@ -223,15 +236,34 @@ p_dir=${data_lmt}
 # lmtoy_args "$@"
 
 if [ $bank != -1 ]; then
-    # pick this selected bank
-    s_on=${src}_${obsnum}_${bank}
+    # pick only this selected bank
+    echo "LMTOY> selecting only bank $bank"
+    if [ ! -z "$oid" ]; then
+	s_on=${src}_${obsnum}__${oid}
+    else
+	s_on=${src}_${obsnum}__${bank}
+    fi
     s_nc=${s_on}.nc
     s_fits=${s_on}.fits
     w_fits=${s_on}.wt.fits
     lmtoy_seq1
     nb=1
+elif [ $numbands == 2 ]; then
+    # new style, April 2023 and beyond
+    echo "LMTOY>> looping over numbands=$numbands"
+    for b in $(seq 1 $numbands); do
+	bank=$(expr $b - 1)
+	echo "LMTOY>> Preparing for bank = $bank / $numbands"
+	s_on=${src}_${obsnum}__${bank}
+	s_nc=${s_on}.nc
+	s_fits=${s_on}.fits
+	w_fits=${s_on}.wt.fits
+	lmtoy_seq1	
+    done
+    nb=$numbands
 elif [ $numbands == 1 ]; then
-    # old style, we should not use it anymore
+    # old style, before April 2023, we should not use it anymore
+    echo "LMTOY>> numbands=1"
     s_on=${src}_${obsnum}
     s_nc=${s_on}.nc
     s_fits=${s_on}.fits
@@ -240,19 +272,8 @@ elif [ $numbands == 1 ]; then
     lmtoy_seq1
     nb=1
 else
-    echo "LMTOY> looping over $numbands"
-    for b in $(seq 1 $numbands); do
-	bank=$(expr $b - 1)
-	echo "Preparing for bank = $bank / $numbands"
-	s_on=${src}_${obsnum}_${bank}
-	s_nc=${s_on}.nc
-	s_fits=${s_on}.fits
-	w_fits=${s_on}.wt.fits
-	#s_fits=${s_on}_${bank}.fits
-	#w_fits=${s_on}_${bank}.wt.fits
-	lmtoy_seq1	
-    done
-    nb=$numbands
+    nb=0
+    echo "LMTOY>> unprocessable numbands/bank option"
 fi
 
 echo "LMTOY>> Processed $nb bands"
