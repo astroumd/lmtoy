@@ -16,7 +16,7 @@
 #     2-dec-2022:     keep a (dummy?) etc/ProjectId.tab
 #
 
-version=2-dec-2022
+version=19-jun-2023
 
 #--HELP
 #   Keywords for installation
@@ -30,9 +30,8 @@ pgplot=1                          # set to 1 if you want PGPLOT in NEMO, instead
 mknemo=0                          # use mknemo builds for pgplot, hdf5, netcdf4, cfitsio
 data_lmt=${DATA_LMT:-data_lmt}    # give sensible default for $DATA_LMT   lma:/lma1/lmt/data_lmt/
 work_lmt=${WORK_LMT:-work_lmt}    # give sensible default for $WORK_LMT
-bench=0                           # set to the tar.gz file for bootstrapping IRC benchmark data; 0 skips
 admit=1                           # install ADMIT ?
-pipeline=1                        # full pipeline run on bench files?  If selected, bench=1 is not needed
+pipeline=1                        # full pipeline run on bench files? 
 docs=0                            # make docs? (produces the html tree)
 debug=0                           # shell in debug mode? (set -x)
 
@@ -151,47 +150,9 @@ fi
 
 pip3 freeze > freeze.log
 
-
-# this bench will be deprecation, as it is not using the official pipeline
-if [ $bench != 0 ]; then
-    bench=$(realpath $bench)
-    
-    mkdir -p $DATA_LMT
-    (cd $DATA_LMT; tar zxf $bench)
-
-    cd $LMTOY/examples
-
-    # SLR bench
-    echo Assuming your $DATA_LMT has the IRC data
-    if [ -d $DATA_LMT/ifproc ]; then
-	lmtinfo.py 79448 
-	make bench
-    else
-	echo Could not find the SLR data. Hope your DATA_LMT=$DATA_LMT is good:
-	ls -l $DATA_LMT
-    fi
-
-    # RSR bench
-    if [ -d $DATA_LMT/rsr ]; then     
-	make rsr1
-    else
-	echo Could not find the RSR data. Hope your DATA_LMT=$DATA_LMT is good:
-	ls -l $DATA_LMT
-	echo Attempting to download the RSR cal files
-	(cd $DATA_LMT; make -f $LMTOY/data_lmt/Makefile rsr)
-    fi
-fi
-
 # full pipeline bench for RSR and SEQ (if you pick this, the bench=1 is really not needed anymore)
 if [ $pipeline = 1 ]; then
     (cd $DATA_LMT; make -f $LMTOY/data_lmt/Makefile data)
-    cd $WORK_LMT
-    SLpipeline.sh obsnum=33551 restart=1 admit=$admit
-    echo "QAC_STATS: rsr.33551.driver.sum.txt 2.36888e-05 0.000943648 -0.00407884 0.0459238  0 0.157781  1185 [expected]"
-    echo "QAC_STATS: rsr.33551.blanking.sum.txt 4.19332e-05 0.000950482 -0.00385069 0.0459053  0 0.188981  1186 [expected]"
-    SLpipeline.sh obsnum=79448 restart=1 admit=$admit
-    echo "QAC_STATS: IRC+10216_79448.ccd 0.0142744 2.21014 -563.449 634.86  0 0.0531463 [expected]"
-    echo "QAC_STATS: - 0.0242549 0.33463 -2.42886 15.3425  0 0.123691 [expected]"
-    echo xdg-open  $WORK_LMT/2014ARSRCommissioning/33551/README.html
-    echo xdg-open  $WORK_LMT/2018S1SEQUOIACommissioning/79448/README.html
+    make bench1
+    make bench2
 fi
