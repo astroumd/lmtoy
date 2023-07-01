@@ -119,7 +119,7 @@ count = args.count
 
 r = []
 for f in filename:
-    r.append(fdr(f, path, recursive, wildcard, maxfiles))
+    r = r + fdr(f, path, recursive, wildcard, maxfiles)
 r.sort()    
 
 if _debug:
