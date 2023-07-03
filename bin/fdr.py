@@ -22,23 +22,23 @@ _debug = True
 def fdr(filename, path=None, recursive=False, wildcard=False, maxfiles=None):
     """
     Input:
-        filename - can be wildcard
+        filename - can be wildcard too (but see the wildcard option)
         path - optional. can be : separated, can start with $ if envvar
         recursive - recursively search: Default: False
-        wildcard - automatically wildcard the filename
+        wildcard - automatically wildcard the filename: Default not used
         maxfiles - maximum number of files to be returns. Default: All
 
     Returns:
-        list of found filenames,  with maxfiles entry if applicable.
+        list of found filenames,  with maxfiles entries if applicable.
         Note list could be empty.
+        Note if multiple paths are given,  maxfiles is applied to each sublist
 
-    See also?
+    See also:
         astropy's getdata ???  
         pdrptry.pdrutils.get_testdata()
         astropy.utils.data.get_pkg_data_filenames
     
     Examples:
-
         fdr('ngc1234.fits')    - this exact file!
         fdr('*.fits')          - all fits file in this directory
         fdr('ngc1234.fits','/tmp')  - this file in /tmp
@@ -55,35 +55,45 @@ def fdr(filename, path=None, recursive=False, wildcard=False, maxfiles=None):
             fname = '*' + filename + '*'
         else:
             fname = filename
+        if recursive:
+            fname = '**/' + fname
         if _debug:
             print('# FNAME:',fname)
-
-        if recursive:
-            fn = glob.glob('**/' + fname, recursive=recursive)        
-        else:
-            fn = glob.glob(fname, recursive=recursive)
+            
+        fn = glob.glob(fname, recursive=recursive)
 
         if maxfiles == None:
-            return fn
+            retval = fn
         else:
-            return fn[:maxfiles]
+            retval = fn[:maxfiles]
+        retval.sort()
     else:
-        print("# Warning: -p not yet implemented")
+        cwd0 = os.getcwd()
         all=[]
         for p in path.split(':'):
-            if _debug:
-                print('# DATA1',p)
             if p[0] == '$':
                 if p[1:] in os.environ:
                     p = os.environ[p[1:]]
                 else:
                     print("# Warning: %s not in the environment" % p)
-            if not os.path.exists(p):
+            if os.path.exists(p):
+                os.chdir(p)
+                if wildcard:
+                    fname = '*' + filename + '*'
+                else:
+                    fname = filename
+                if recursive:
+                    fname = '**/' + fname
+                fn = glob.glob(fname, recursive=recursive)
+                fn.sort()
+                if maxfiles != None:
+                    fn = fn[:maxfiles]
+                all = all + fn
+            else:
                 print("# Warning: directory %s does not exist" % p)
-            if _debug:
-                print('# DATA2',p)            
-        return all
-
+            os.chdir(cwd0)
+        retval = all
+    return retval
 
 import argparse
 
@@ -120,10 +130,8 @@ count = args.count
 r = []
 for f in filename:
     r = r + fdr(f, path, recursive, wildcard, maxfiles)
-r.sort()    
+# r.sort()    
 
-if _debug:
-    print("Results:")
 if count:
     n=1
     for f in r:
