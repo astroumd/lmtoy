@@ -29,9 +29,11 @@ function lmtoy_debug {
 
 function lmtoy_error {
     # catch errors and errors in functions
+    # See also https://unix.stackexchange.com/questions/39623/trap-err-and-echoing-the-error-line
+    #
     echo "lmtoy_error: catching"
     if [ "$1" != "0" ]; then
-	echo "lmtoy_error: error $1 occured on $2"
+	echo "lmtoy_error: error $1 occured on $(caller)"
 	#exit 1
     fi
 }
@@ -819,22 +821,25 @@ function lmtoy_bs1 {
     if [ ! -e lmtoy_$obsnum.ifproc ]; then
 	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
     fi
+    spec=${src}_${obsnum}__${oid}.txt
+    echo "LMTOY>> spectrum in $spec"
 
     # for a waterfall -> bs-2.png
-    process_bs.py --obs_list $obsnum -o junk2.txt --pix_list $pix_list --use_cal --block -2 --stype $stype
+    echo "LMTOY>> process_bs.py --obs_list $obsnum--pix_list $pix_list --use_cal --block -2 --stype $stype --bank $bank"
+    process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -2 --stype $stype --bank $bank
 
     # full average -> bs-1.png
-    echo "LMTOY>> process_bs.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1 --stype $stype"
-    process_bs.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1 --stype $stype
-    seq_spectra.py -s ${src}_${obsnum}.txt
-    seq_spectra.py -s -z ${src}_${obsnum}.txt
+    echo "LMTOY>> process_bs.py --obs_list $obsnum -o $spec --pix_list $pix_list --use_cal --block -1 --stype $stype  --bank $bank"
+    process_bs.py --obs_list $obsnum -o $spec --pix_list $pix_list --use_cal --block -1 --stype $stype --bank $bank
+    seq_spectra.py -s $spec
+    seq_spectra.py -s -z $spec
 
-    out4=$(tabmath ${src}_${obsnum}.txt - %2*1000 all | tabstat -  qac=t robust=t label=${src}_${obsnum}.txt)
+    out4=$(tabmath $spec - %2*1000 all | tabstat -  qac=t robust=t label=$spec)
     printf_red $out4
     
     # tsys
     dev=$(yapp_query png vps)
-    tabplot ${src}_${obsnum}.txt ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  yapp=tsys.$dev/$dev
+    tabplot $spec ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  yapp=tsys.$dev/$dev
     convert tsys.$dev tsys.jpg
     
     if [ -n "$NEMO" ]; then
