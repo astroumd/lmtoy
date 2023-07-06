@@ -1,0 +1,59 @@
+SIMPLE  =                    T / file does conform to FITS standard
+BITPIX  =                  -32 / number of bits per data pixel
+NAXIS   =                    3 / number of data axes
+NAXIS1  =                  147 / length of data axis 1
+NAXIS2  =                  147 / length of data axis 2
+NAXIS3  =                  689 / length of data axis 3
+EXTEND  =                    T / FITS dataset may contain extensions
+COMMENT   FITS (Flexible Image Transport System) format is defined in 'Astronomy
+COMMENT   and Astrophysics', volume 376, page 359; bibcode: 2001A&A...376..359H
+TELESCOP= 'LMT     '           /
+INSTRUME= 'Sequoia '           / SEQUOIA, 1MM, or OMAYA
+OBJECT  = 'IRC+10216'          /
+DATE-OBS= '2018-11-16T06:48:52' / Data.TelescopeBackend.TelTime
+ORIGIN  = 'LMTSLR 4-dec-2022'  / LMTSLR Software version
+BUNIT   = 'K       '           /
+CTYPE1  = 'RA---SFL'           / map_coord=1
+CRVAL1  =             146.9892 / deg Header.Obs.XPosition
+CDELT1  =         -0.001527778 / deg (5.5 arcsec)
+CRPIX1  =                  74. /
+CUNIT1  = 'deg     '           /
+CTYPE2  = 'DEC--SFL'           /
+CRVAL2  =             13.27877 / deg Header.Obs.YPosition
+CDELT2  =          0.001527778 / deg
+CRPIX2  =                  74. /
+CUNIT2  = 'deg     '           /
+CTYPE3  = 'VRAD    '           /
+CRVAL3  =             329984.8 / m/s
+CDELT3  =            -1015.921 / m/s
+CRPIX3  =                   1. /
+CUNIT3  = 'm/s     '           /
+BMAJ    =          0.003513889 / deg   (12.65 arcsec)
+BMIN    =          0.003513889 / deg   (12.65 arcsec)
+BPA     =                   0. / m/s
+EQUINOX =                2000. /
+RADESYS = 'FK5     '           /
+COMMENT VLSR, VSOURCE and ZSOURCE need to be properly looked at
+VLSR    =                 -20. / Header.LineData.VSource
+VSOURCE =                 -20. / Header.LineData.VSource
+RESTFRQ =        115271204000. / Header.LineData.LineRestFrequency
+VELREF  =                  257 / greisen?
+NCHAN0  =                 2048 / number of channels of original cube
+CHAN0   =                  679 / first channel from original cube
+SPECSYS = 'LSRK    '           / depends on --x_axis ?
+SSYSOBS = 'TOPOCENT'           / [Greisen 2009]
+DATE    = '2023-07-06T01:29:43' / Date of file written
+COMMENT LMT observing numbers in this data: (Header.Obs.ObsNum)
+COMMENT OBSNUM 79448
+COMMENT Convert RAW to SpecFile
+HISTORY process_otf_map2.py -p /home/teuben/LMT/lmtoy/data_lmt -o IRC+10216_7944
+HISTORY 8.nc --obsnum 79448 --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 --b
+HISTORY ank 0 --stype 2 --use_cal --map_coord 1 --x_axis VLSR --b_order 0 --b_re
+HISTORY gions [[-370,-120],[80,330]] --l_region [[-120,80]] --slice [-370,330] -
+HISTORY -eliminate_list 0
+COMMENT Convert SpecFile to FITS
+HISTORY spec_driver_fits -i IRC+10216_79448.nc -o IRC+10216_79448.fits -w IRC+10
+HISTORY 216_79448.wt.fits -l 11 -c 5.5 -u [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+HISTORY ] -z -4 -s 1 -x 400 -y 400 -f 1 -r 3 -n 256 -0 1.1 -1 4.75 -2 2 -b -1 -e
+HISTORY  0
+END
