@@ -49,6 +49,7 @@ URL17 = https://github.com/teuben/aplpy
 URL18 = https://github.com/toltec-astro/dvpipe
 URL19 = https://github.com/lmtoy/lmtoy_run
 URL20 = https://github.com/lmtmc/lmt_web
+URL21 = https://github.com/GreenBankObservatory/dysh
 
 .PHONY:  help install build
 
@@ -202,6 +203,9 @@ webrun:	lmt_web
 
 lmt_web:
 	git clone $(URL20)
+
+dysh:
+	git clone $(URL21)
 
 # hack for Linux  (@todo Mac)
 admit:
