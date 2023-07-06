@@ -212,9 +212,18 @@ fi
 
 # check if numbands=2 and only one restfreq given; if so, set numbands=1 etc.
 if [ $numbands = 2 ]; then
+    rf1="$(echo $restfreq | tabcols - 1)"
     rf2="$(echo $restfreq | tabcols - 2)"
+    echo "LMTOY>> 
+    if [ $rf1 = 0.0 ]; then
+	echo "numbands=1  # only RF2 used"             >> $rc
+	echo "skyfreq=$(echo $skyfreq | tabcols - 2)"  >> $rc
+	echo "restfreq=$(echo $restfreq | tabcols - 2)">> $rc
+	echo "oid=1"                                   >> $rc
+	echo "bank=1"                                  >> $rc
+    fi
     if [ $rf2 = 0.0 ]; then
-	echo "numbands=1  # only one used"             >> $rc
+	echo "numbands=1  # only RF1 used"             >> $rc
 	echo "skyfreq=$(echo $skyfreq | tabcols - 1)"  >> $rc
 	echo "restfreq=$(echo $restfreq | tabcols - 1)">> $rc
 	echo "oid=0"                                   >> $rc
@@ -249,7 +258,7 @@ p_dir=${data_lmt}
 
 if [ $bank != -1 ]; then
     # pick only this selected bank
-    echo "LMTOY> selecting only bank $bank"
+    echo "LMTOY>> selecting only bank $bank with numbanks=$numbanks"
     if [ ! -z "$oid" ]; then
 	s_on=${src}_${obsnum}__${oid}
     else
