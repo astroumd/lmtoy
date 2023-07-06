@@ -10,7 +10,7 @@
 #
 
 
-version="seq_combine: 27-apr-2023"
+version="seq_combine: 7-jul-2023"
 
 echo "LMTOY>> $version"    
 
@@ -77,14 +77,6 @@ if [ $obsnums = 0 ]; then
 fi
 lmtoy_decipher_obsnums
 
-# oid driven?
-if [ -z "$oid" ]; then
-    oids=""
-else
-    oids="__${oid}"
-fi
-
-
 rc=0
 for on in $obsnums1; do
     files=(*/$on/lmtoy_$on.rc)
@@ -105,10 +97,18 @@ done
 source $rc
 echo First RC will be used : $rc
 
+# was it oid driven?
+if [ -z "$oid" ]; then
+    oids=""
+else
+    oids="__${oid}"
+fi
+
+
 pdir=$ProjectId/${on0}_${on1}
 echo Using pdir=$pdir
 echo src=$src
-
+echo oids=$oids
 
 
 # first find out which .nc files we have
