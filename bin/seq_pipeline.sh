@@ -14,7 +14,7 @@
 #
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-_version="seq_pipeline: 13-jun-2023"
+_version="seq_pipeline: 6-jul-2023"
 
 echo "LMTOY>> $_version"
 
@@ -208,6 +208,18 @@ if [ $numbands = -2 ]; then
     echo "numbands=1  # feb 2023 bug"                  >> $rc
     echo "skyfreq=$(echo $skyfreq | tabcols - 1)"      >> $rc
     echo "restfreq=$(echo $restfreq | tabcols - 1)"    >> $rc
+fi
+
+# check if numbands=2 and only one restfreq given; if so, set numbands=1 etc.
+if [ $numbands = 2 ]; then
+    rf2="$(echo $restfreq | tabcols - 2)"
+    if [ $rf2 = 0.0 ]; then
+	echo "numbands=1  # only one used"             >> $rc
+	echo "skyfreq=$(echo $skyfreq | tabcols - 1)"  >> $rc
+	echo "restfreq=$(echo $restfreq | tabcols - 1)">> $rc
+	echo "oid=0"                                   >> $rc
+	echo "bank=0"                                  >> $rc
+    fi
 fi
 
 #
