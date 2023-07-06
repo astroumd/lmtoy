@@ -214,7 +214,7 @@ fi
 if [ $numbands = 2 ]; then
     rf1="$(echo $restfreq | tabcols - 1)"
     rf2="$(echo $restfreq | tabcols - 2)"
-    echo "LMTOY>> 
+    echo "LMTOY>> rf1=$rf1 rf2=$rf2"
     if [ $rf1 = 0.0 ]; then
 	echo "numbands=1  # only RF2 used"             >> $rc
 	echo "skyfreq=$(echo $skyfreq | tabcols - 2)"  >> $rc
