@@ -1,6 +1,7 @@
 # Running SLpipeline via a web interface
 
-At the moment this is a discussion document.
+At the moment this is a discussion document. The source code for the webrun environment
+is currently in:    https://github.com/lmtmc/lmt_web
 
 ## Reminder of nomenclature in the LMTOY environment in this document
 
@@ -8,14 +9,17 @@ Some of these are environment variables, others so noted for convenience
 
       $DATA_LMT   - root directory of the read-only raw data
       $WORK_LMT   - root directory of the session's working area
-      $PID        - LMT's *ProjectId*
-      $PIS        - PI session name  (new in webrun)
+      $PID        - LMT's *ProjectId*  (e.g.  2023-S1-UM-10)
+      $PIS        - PI session name  (a new concept in *webrun*)
       $SRC        - Source Name
 
 ## Overview for the lmtslr user:
 
-This is how the pipeline is normally run from the main *lmtslr* account,
-from the directory where the script generator lives:
+This is how the pipeline is normally run from the main *lmtslr* account.
+
+We start from the directory where the project script generator lives, generate
+run files for this project and submit them to SLURM. Note that each
+command here can only be run when the previous command has finished!
 
       cd $WORK_LMT/lmtoy_run/lmtoy_$PID
       git pull
@@ -25,7 +29,10 @@ from the directory where the script generator lives:
       make summary
       xdg-open https://taps.lmtgtm.org/lmtslr/$PID
 
-The work results for this PID will be in $WORK_LMT/$PID
+This is the typical workflow for the pipeline operator, as well as the DA.
+
+The work results for this PID will be in $WORK_LMT/$PID, but is available
+to the PI at https://taps.lmtgtm.org/lmtslr/$PID
  
 The PI webrun will essentially do the same thing, but in a new hierarchy
 for just that PID, and underneath a new $WORK_LMT/$PID/session/ tree, as
@@ -56,9 +63,11 @@ Following this convention we arrive at the following proposed directory hierarch
       
 ## Overview of steps
 
+Command Line (CL) equivalent commands are given where this makes sense:
+
 1. User authenticates and get a list of valid PIDs (at least one)
 
-   Examples of PIDs:    2023-S1-MX-1   2022S1RSRCommissioning
+   Examples of PIDs:    "2023-S1-MX-1"   "2022S1RSRCommissioning"
 
 2. User picks *one* PID to work on.
 
@@ -105,6 +114,7 @@ Following this convention we arrive at the following proposed directory hierarch
    can be run in parallel.
    Combination obsnums= need to wait before the single ones are done, but for multiple
    sources, can be run in parallel as well.
+   For SEQ multiple banks need to be run serially.
    
    In the command line version these are the "run1" and "run2" files:
 

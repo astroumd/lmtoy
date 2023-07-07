@@ -1,14 +1,18 @@
 # SLpipeline.sh parameters
 
+Here we describe the spectral line pipeline parameters, as they are being understood by
+**SLpipeline.sh** and its instrument specific scripts.
+
 We differentiate between **generic** and **instrument/obsmode specific** (RSR,
 SEQ, 1MM, OMA, ...) parameters.
 
-The pipeline and instrument specific scriptS all have a **--help** and **-h** option
-as a reminder to the keywords and their defaults where applicable. They should always
+The pipeline and instrument specific scripts all have a **--help** and **-h** option
+as a reminder to the keywords and their defaults. They should always
 report the parameters. If not visible, this means the parameter may still be hardcoded
 in the code.
 
-Command line keywords that do not belong to the instrument (e.g. band= for RSR) are just ignored.
+Note that command line keywords that do not belong to the instrument (e.g. band= for RSR) are just ignored,
+and this includes typos!
 
 ## Filename Conventions
 
@@ -20,9 +24,10 @@ all exist within the directory **obsnum/**:
 * lmtoy_OBSNUM.log - logfile from the pipeline
 * lmtoy_OBSNUM.ifproc - brief ASCII version of the IFPROC header
 * lmtoy_OBSNUM.rc  - pipeline (and derived) parameters
-* SRC_OBSNUM_wf.fits  - SEQ waterfall
-* SRC_OBSNUM_0_wf.fits  - SEQ waterfall for band 0 - in case there are > 1 band (e.g. 1MM and OMA)
-* SRC_OBSNUM_1_wf.fits  - SEQ waterfall for band 1
+* SRC_OBSNUM_wf.fits  - SEQ waterfall in case there is only one band
+* SRC_OBSNUM__0_wf.fits  - SEQ waterfall for band 0 - in case there are > 1 band (e.g. 1MM and OMA)
+* SRC_OBSNUM__1_wf.fits  - SEQ waterfall for band 1
+* SRC_OBSNUM__1.txt - SEQ spectrum for band 1 (Bs or Ps mode)
 * rsr.99862.badlags - RSR bad lags used for spectra
 * README_files.md - explanation of all files in this directory
 * README.html - the entry point for the summary table (index.html needs to symlink to this)
@@ -30,16 +35,52 @@ all exist within the directory **obsnum/**:
 there are many more, most of them instrument specific, but this is the basic structure. The **README_files.md**
 is written by the pipeline to explain their contents, and should always contain all used filenames.
 
+
+## Observing Modes
+
+A summary what the **SLpipeline.sh**  handles:
+
+      Instrument    ObsGoal    ObsPgm         Example           Comments
+
+      RSR           Science    Bs
+      RSR           LineCheck  Bs             33551 (bench1)
+
+      SEQ           Science    Bs             108766            only band=0; Bs is a special case of Ps
+      SEQ           Science    Ps             108764            not working yet
+      SEQ           Science    Map            94050,94052       various mapmodes (Hor,Equ,Gal)
+      SEQ           Science    Lissajous      94051             ? broken now ?
+      SEQ           Pointing   Map            79448 (bench2)
+
+      1MM           Pointing   Map            74744,108715              
+      1MM           Pointing   CrossScan      74742
+      1MM           SciencePs  Ps             88058
+
+      <any>         Focus                                       not handled by SLpipeline
+      <any>         Astigmatism                                 not handled by SLpipeline
+      <any>         Gaincurve                                   not handled by SLpipeline
+      <any>         Calibration                                 not handled by SLpipeline
+
+Scripts:
+
+1. rsr_pipeline.sh, rsr_combine.sh - spectra + stacking
+2. seq_pipeline.sh, seq_combine.sh - maps + stacking
+3. seqbs_pipeline.sh, seqbs_combine.sh - spectra + stacking (no stacking yet)
+4. seqps_pipeline.sh, seqps_combine.sh - spectra + stacking (no yet available)
+5. lmtoy_functions.sh - common functions, never called by a user
+
 ## 1. Generic
 
-Each instrument is controlled by the following generic parameters. We also list their default.
-Also note that a non-zero value for **obsnum=** *or* **obsnums=** is required.
+The pipeline flow is controlled by the following generic
+parameters. Note that either **obsnum=** *or* **obsnums=** needs
+to be supplied, not both!
 
 
     obsnum=o1           single obsnum run [0]
     obsnums=o1,o2,....  combination series run [0]
+    oid=""              tag obsnum (results in files with "__$oid") - used for bank 0,1
         
     debug=0             1: verbosely print all commands and shell expansions
+    error=1             1: exit on error
     restart=0           1: cleans up old obsnum pipeline results
     exist=0             1: will not run if the obsnum exists (see also sbatch_lmtoy.sh obsnum0=)
     path=$DATA_LMT      - should not be used (but will still work)
@@ -50,39 +91,41 @@ Also note that a non-zero value for **obsnum=** *or* **obsnums=** is required.
     admit=0             run admit?             [0|1]
     sleep=2             sleep before running, in case you change your mind
     nproc=1             number of processors (should stay at 1)
-    rsync=""            - only for running at LMT
+    rsync=""            special rsync option, only for running at LMT (malt)
 
 and experimental (i.e. don't use in production)
 
     rc=""               ?
-    oid=""              ?
     goal=science        ?pointing,focus,....
-    obsid=              ?
     newrc=              ?if you want to add rc parameters
     pdir=               ?if you want to switch manually for work
 
 ## 2. RSR
 
-The **rsr_pipeline.sh** script still uses two scripts to get the same spectrum in two different
-ways, they really should be merged.
+The **rsr_pipeline.sh** script uses two scripts to get the same spectrum in two different
+ways (they really should be merged).
 
     badcb=2/3,2/2          preset Chassis/Board detectors that are bad C=[0..3]  B=[0..5]
     xlines=110.51,0.15     sections of spectrum not to be used for baseline fit (freq-dfreq..freq+dfreq)
-                           normally because there is a (strong) line
-    shortlags=32,15.0      set a short_min and short_hi to avoid flagging strong continuum sources
-    spike=3                spikyness of localized peaks
+                           normally because there is a (strong) line. Used by linecheck, but adviced for
+			   strong line sources
     linecheck=0            if set to 1, use the source name to grab the correct xlines=
+    shortlags=32,15.0      set a short_min and short_hi to avoid flagging strong continuum sources
+    sgf=51                 If given, set Savitzky-Golay high pass filter ; odd number > 21
+                           Can be useful for strong continuum sources
+    spike=3                spikyness of localized peaks
     bandzoom=5             default band to supply a zoomed view of the final spectrum
     speczoom=85,3          if given, override the bandzoom with a window 85 +/- 3
     rthr=0.01              Threshold sigma value when averaging single observations repeats (-r)
     cthr=0.01              Threshold sigma value when coadding all observations (-t)
-    sgf=51                 If given, set Savitzky-Golay high pass filter ; odd number > 21
     blo=1                  order of polynomial baseline subtraction
     
 
-Different scripts have different parameters that are currently hardcoded :
+Below we describe a few common scripts used in the pipeline. Some parameters are promoted to
+a pipeline parameter, others are hardcoded.
 
 ### 2.1 badlags.py
+
 Usage: badlags.py [options] OBSNUM
 
 Options:
@@ -135,23 +178,24 @@ Options:
 
 
 
-@todo   unified format for rfile/blanking ?
+@todo   unified format for rfile/blanking?
 
-@todo   parallel processing
+@todo   parallel processing?
 
 
 ### 2.1 How to reduce RSR data with this pipeline?
 
 Running RSR pipeline "manually". In this example we use 123456 as the obsnum
-Notation "C/B" means Chassis/Board and "C/B/ch" means Chassis/Board/channel(s)
+Notation "C/B" means Chassis/Board and "C/B/c" means Chassis/Board/channel(s)
 
 1. Run the default pipeline
 
-         SLpipeline.sh admit=0 obsnum=123456
+         SLpipeline.sh obsnum=123456
 
-2. Inspect the Tsys plots. You might find 
+2. Inspect the Tsys plots. You might find some bands (boards) very noisy. They
+   might go away when applying bad lags.
 
-2. Inspect the bad lags.   The plot and the *.badlags file
+2. Inspect the bad lags: look at badlags plot and the *.badlags file
 
    Note the #BADCB lines at the bottom that the badlag.py script 
    has decided to take out. These get transferred to the *.blanking and *.rfile  files by
@@ -160,19 +204,19 @@ Notation "C/B" means Chassis/Board and "C/B/ch" means Chassis/Board/channel(s)
 3. Optionally there is an alternative way to specify the badlags etc.
    completely manually. For this do this inside the OBSNUM directory:
    
-         badlags2.py OBSNUM  C/B/ch1,ch2,ch3,....      C/B    > *.badlags
+         badlags2.py OBSNUM  C/B/c1,c2,c3,....      C/B    > *.badlags
          rsr_badcb -r *.badlags > *.rfile 
          rsr_badcb -b *.badlags > *.blanking
 
-   In here C/B/ch...   are specific bad lags, whereas C/B means that
+   In here C/B/c1,...   are specific bad lags, whereas C/B means that
    complete Chassis/Board combination needs to be taken out.
 
    then run the pipeline, making sure any old badcb's are not added in
    again:
 
-        SLpipeline.sh admit=0 obsnum=123456 badcb=
+        SLpipeline.sh obsnum=123456 badcb=
 
-4. Parameters to control spectrum-making - and their regression defaults
+4. Parameters to control spectrum-making 
 
    badlags:
    
@@ -191,7 +235,7 @@ Notation "C/B" means Chassis/Board and "C/B/ch" means Chassis/Board/channel(s)
 
 
 
-### two
+### more verbose description
 
     usage: rsr_driver.py [options] obslist
 
@@ -267,9 +311,10 @@ Simple wrapper to process RSR spectra
 ## 3. SEQ
 
 We list the keywords specific to Seqouia and their defaults. Some parameters cause a computation
-of derived paramers, and in a re-run will not be recomputed!  These are noted
+of derived paramers, and in a re-run will not be recomputed!  These are noted as such
 
 
+                   - parameters that determine if something gets done
     makespec=1
     makecube=1
     makewf=1
@@ -277,9 +322,10 @@ of derived paramers, and in a re-run will not be recomputed!  These are noted
     viewcube=0
     viewnemo=1
     admit=0
+    maskmoment=1
     clean=1
-      #            - meta parameters that will compute other parameters for SLR scripts
-    extent=0
+      #            - parameters that will compute other parameters for SLR scripts
+    extent=0         if used, use it as the field size (-extent..extent)
     dv=100           line cube is +/- dv around VLSR
     dw=250           baseline is fitted +/-dw outside of the line cube, i.e. from dv to dv+dw on both sides
       #            - birdies (list of channels, e.g.   10,200,1021)
@@ -305,15 +351,124 @@ of derived paramers, and in a re-run will not be recomputed!  These are noted
 
       # unset a view things, since setting them will give a new meaning
     unset vlsr
+    unset restfreq
+
+
+### 3.1 process_otf_map2.py
+
+Usage: process_otf_map2.py -p PATH -O OBSNUM -o OUTPUT [options]
+
+     -p PATH --path PATH                Path where ifproc and spectrometer/roach* files are
+     -o OUTPUT --output OUTPUT          Output SpecFile  [test.nc]
+     -O OBSNUM --obsnum OBSNUM          The obsnum, something like 79448. 
+     -b BANK --bank BANK                Spectral Bank for processing [default: 0]
+     --pix_list PIX_LIST                Comma separated list of pixels [Default: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+     --eliminate_list ELIMINATE_LIST    Comma separated list of channels to be blanked
+     --use_cal                          Use Calibration scan
+     --tsys TSYS                        If use_cal is False, value of Tsys to use [default: 250.0] ** not used **
+     --use_otf_cal                      Use calibration within OTF scan (default: False)
+     --save_tsys                        Should tsys (from CAL) be saved in specfile?
+     --stype STYPE                      type of spectral line reduction;
+                                        0 - median; 1 - single ref spectra; 2 - bracketed ref [Default: 2]
+     -map_coord MAP_COORD              Override map_coord for output coordinate system. [Default: -1]
+                                        -1 - default; 0 - Az/El;  1 - Ra/Dec; 2 - L/B
+     --x_axis X_AXIS                    select spectral x axis.
+                                        options one of VLSR, VSKY, VBARY, VSRC, FLSR, FSKY, FBARY, FSRC [default: VLSR]
+     --b_order B_ORDER                  set polynomial baseline order [default: 0]
+     --b_regions B_REGIONS              enter list of lists for baseline regions (default: [[],[]])
+     --l_regions L_REGIONS              enter list of lists for line fit regions (default: [[],[]])
+     --slice SLICE                      enter list to specify slice from spectrum for processing
+     --sample PIXEL,S0,S1               Series of sample sections per pixel to be removed from SpecFile (not implemented yet)
+     --restfreq RESTFREQ                Override the rest frequency (in GHz) for this bank. [Default: -1]
+
+### 3.2  process_bs.py
+
+usage: process_bs [-h] [-c CONFIG] [-p PATH] [-o OUTPUT] [--show] [--obs_list OBS_LIST] [-b BANK] [--block BLOCK] [--pix_list PIX_LIST] [--use_cal]
+                  [--tsys TSYS] [--stype STYPE] [--x_axis X_AXIS] [--b_order B_ORDER] [--b_regions B_REGIONS] [--l_regions L_REGIONS] [--slice SLICE]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c CONFIG, --config CONFIG
+                        Name of configuration file to set parameters (default: None)
+  -p PATH, --path PATH  data path (default: None)
+  -o OUTPUT, --output OUTPUT
+                        name of output SpecFile (default: None)
+  --show                Show figures interactively (default: False)
+  --obs_list OBS_LIST   Comma separated list of ObsNums (default: None)
+  -b BANK, --bank BANK  Spectral Bank for processing (default: 0)
+  --block BLOCK         Spectral block for stype=2 processing (default: -1)
+  --pix_list PIX_LIST   Comma separated list of pixels (default: None)
+  --use_cal             Use Calibration scan (default: False)
+  --tsys TSYS           If use_cal is False, value of Tsys to use (default: 250.0)
+  --stype STYPE         type of spectral line reduction; 0 - median; 1 - single ref spectra; 2 - bracketed ref (default: 1)
+  --x_axis X_AXIS       select spectral x axis. options one of VLSR, VSKY, VBARY, VSRC, FLSR, FSKY, FBARY, FSRC (default: VLSR)
+  --b_order B_ORDER     set polynomial baseline order (default: 0)
+  --b_regions B_REGIONS
+                        enter list of lists for baseline regions (default: None)
+  --l_regions L_REGIONS
+                        enter list of lists for line fit regions (default: None)
+  --slice SLICE         enter list to specify slice from spectrum for processing (default: None)
+
+### 3.3 grid_data
+
+This calls spec_driver_fits!
+
+Usage: grid_data.py  -i INPUT -o OUTPUT -w WEIGHT [options]
+
+     -p PP --program_path PP       Executable [Default: spec_driver_fits]
+     -i INPUT --input INPUT        Input SpecFile (no default)
+     -o OUTPUT --output OUTPUT     Output map (no default)
+     -w WEIGHT --weight WEIGHT     Output weight map (no default)
+     --resolution RESOLUTION       Resolution in arcsec [Default: 14]
+     --cell CELL                   Cell size in arcsec [Default: 7]
+     --pix_list PIX_LIST           Comma separated list of pixels [Default: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+     --rms_cut RMS_CUT             RMS threshold for data, negative allowed for robust MAD method  [Default: 10.0]
+     --noise_sigma NOISE_SIGMA     noise weighting - apply if > 0 [default: 1]
+     --x_extent X_EXTENT           x extent of cube (arcsec) note: cube will go to +/- x_extent [Default: 400]
+     --y_extent Y_EXTENT           y extent of cube (arcsec) note: cube will go to +/- y_extent [Default: 400]
+     --otf_select OTF_SELECT       otf filter code one of (0=box,1=jinc,2=gaussian,3=triangle) [default: 1]
+     --rmax RMAX                   maximum radius of convolution (units lambda/D) [default: 3.0]
+     --n_samples N_SAMPLES         number of samples in convolution filter [default: 256]
+     --otf_a OTF_A                 OTF A parameter [default: 1.1]
+     --otf_b OTF_B                 OTF B parameter [default: 4.75]
+     --otf_c OTF_C                 OTF C parameter [default: 2.0]
+     --sample P,S0,S1,P,...        Blank sample S0 to S1 for pixel P, etc. [Default: -1,0,0]
+     --edge EDGE                   Fuzzy edge?  [default: 1]
+
+
+### 3.4 spec_driver_fits
+
+spec_driver_fits LMTSLR 4-dec-2022
+
+     h help
+     i input
+     o output
+     w weight
+     a model
+     l resolution_size
+     c cell_size
+     u pix_list
+     z rms_cutoff
+     s noise_sigma
+     x x_extent
+     y y_extent
+     f filter
+     r rmax
+     n n_cell
+     0 jinc_a
+     1 jinc_b
+     2 jinc_c
+     b sample
 
 ## Heyer's list 
 
-In lmtoy_reduce_Parameters_v4.docx the SEQ reduction parameters are described. A table with two subtables,
+In **lmtoy_reduce_Parameters_v4.docx** the SEQ reduction parameters are described. A table with two subtables,
 describing the parameters for making spec-file, and for making fits-cube.
 
 
 ### spec file making
 
+        path
         obsnum
         makespec
         pix_list
@@ -404,4 +559,4 @@ There are files with duplicate mentions of parameter names.
 
 ## 4. 1MM
 
-
+This should follow most of the parameters in SEQ/Bs, though there are also map examples
