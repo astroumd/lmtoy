@@ -258,7 +258,7 @@ p_dir=${data_lmt}
 
 if [ $bank != -1 ]; then
     # pick only this selected bank
-    echo "LMTOY>> selecting only bank $bank with numbanks=$numbanks"
+    echo "LMTOY>> selecting only bank $bank with numbands=$numbands"
     if [ ! -z "$oid" ]; then
 	s_on=${src}_${obsnum}__${oid}
     else
