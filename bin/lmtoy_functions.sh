@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="25-jun-2023"
+lmtoy_version="10-jul-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -56,6 +56,8 @@ function lmtoy_args {
     for arg in "$@"; do
 	export "$arg"
     done
+    # save them
+    _lmtoy_args="$@"
 }
 
 function lmtoy_decipher_obsnums {
@@ -492,8 +494,6 @@ function lmtoy_seq1 {
 	    --slice $slice \
 	    --eliminate_list $birdies
     fi
-    #		    --slice [-1000,1000] \
-    #		    --pix_list 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 \
 
     # bug:  --use_otf_cal does not work here?? (maybe it does now)
     # bug?   x_axis FLSR doesn't seem to go into freq mode
