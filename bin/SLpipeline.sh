@@ -8,7 +8,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 26-jun-2023"
+_version="SLpipeline: 10-jul-2023"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -94,7 +94,11 @@ fi
 echo "LMTOY>> OMP_NUM_THREADS=$OMP_NUM_THREADS"
 
 #             report modules
-echo "$(module list)"
+if [ "$(which module)" != "" ]; then
+    echo "$(module list)"
+else
+    echo "No modules loaded"
+fi
 
 #             report matplotlib environment
 test_mpl
@@ -169,6 +173,7 @@ if [ $goal == "Science" ]; then
 	    mkdir -p $pdir
 	fi
 	sleep $sleep
+	echo "$_lmtoy_args" >> $pdir/lmtoy_args.log
 	if [ $obsnums = 0 ]; then
 	    echo "LMTOY>> seq_pipeline.sh pdir=$pdir $*"
 	    $time         seq_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
@@ -201,6 +206,7 @@ if [ $goal == "Science" ]; then
 	    lmtoy_date                          > $pdir/date.log
 	fi
 	sleep $sleep
+	echo "$_lmtoy_args" >> $pdir/lmtoy_args.log	
 	if [ $obsnums = 0 ]; then
 	    echo "LMTOY>> rsr_pipeline.sh pdir=$pdir first=$first $*"
 	    $time         rsr_pipeline.sh pdir=$pdir first=$first $*     > $pdir/lmtoy_$obsnum.log 2>&1
@@ -224,6 +230,7 @@ if [ $goal == "Science" ]; then
 	    echo "Processing $obspgm 1MM in $pdir for $src"
 	fi
 	sleep $sleep
+	echo "$_lmtoy_args" >> $pdir/lmtoy_args.log	
 	if [ $obspgm == "Ps" ]; then
 	    mkdir -p $pdir
 	    (cd $pdir; process_ps.py --obs_list $obsnum --pix_list 2 --bank 0 -p $DATA_LMT )
@@ -241,6 +248,9 @@ if [ $goal == "Science" ]; then
 	    first=1
 	    mkdir -p $pdir	
 	fi
+	sleep $sleep
+	echo "$_lmtoy_args" >> $pdir/lmtoy_args.log
+	#
 	echo "LMTOY>> seqbs_pipeline.sh pdir=$pdir $*"
 	$time         seqbs_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
 	seq_summary.sh $pdir/lmtoy_$obsnum.log
@@ -258,6 +268,9 @@ if [ $goal == "Science" ]; then
 	    first=1
 	    mkdir -p $pdir	
 	fi
+	sleep $sleep
+	echo "$_lmtoy_args" >> $pdir/lmtoy_args.log
+	#
 	echo "LMTOY>> seqps_pipeline.sh pdir=$pdir $*"
 	$time         seqps_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
 	seq_summary.sh $pdir/lmtoy_$obsnum.log
