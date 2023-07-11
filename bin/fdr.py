@@ -1,23 +1,11 @@
 #! /usr/bin/env python
 #
-#  Recursive data (file) finder
+#  Recursive data (file) finder, somewhat like the unix "find" program
 #
-#  command line usage:
-#
-#      fdr [-r] [-m MAXFILES] file [path1 path2 ...]
-#
-#  Shell alternative:
-#
-#  find . -name \*$a\* -print
-
 
 import os
 import sys
 import glob
-
-_debug = True
-
-
 
 def fdr(filename, path=None, recursive=False, wildcard=False, maxfiles=None):
     """
@@ -27,9 +15,11 @@ def fdr(filename, path=None, recursive=False, wildcard=False, maxfiles=None):
         recursive - recursively search: Default: False
         wildcard - automatically wildcard the filename: Default not used
         maxfiles - maximum number of files to be returns. Default: All
+                   if a finite value is used, each path will return
+                   at most maxfiles!
 
     Returns:
-        list of found filenames,  with maxfiles entries if applicable.
+        list of found filenames,  with maxfiles entries (per path) if applicable.
         Note list could be empty.
         Note if multiple paths are given,  maxfiles is applied to each sublist
 
@@ -39,8 +29,8 @@ def fdr(filename, path=None, recursive=False, wildcard=False, maxfiles=None):
         astropy.utils.data.get_pkg_data_filenames
     
     Examples:
-        fdr('ngc1234.fits')    - this exact file!
-        fdr('*.fits')          - all fits file in this directory
+        fdr('ngc1234.fits')         - this exact file!
+        fdr('*.fits')               - all fits file in this directory
         fdr('ngc1234.fits','/tmp')  - this file in /tmp
         fdr('*.fits','/tmp')        - all fits files in /tmp
         fdr('ngc1234.fits','$DYSH_DATA_PATH')
@@ -57,8 +47,6 @@ def fdr(filename, path=None, recursive=False, wildcard=False, maxfiles=None):
             fname = filename
         if recursive:
             fname = '**/' + fname
-        if _debug:
-            print('# FNAME:',fname)
             
         fn = glob.glob(fname, recursive=recursive)
 
@@ -88,6 +76,8 @@ def fdr(filename, path=None, recursive=False, wildcard=False, maxfiles=None):
                 fn.sort()
                 if maxfiles != None:
                     fn = fn[:maxfiles]
+                for i in range(len(fn)):
+                    fn[i] = p + '/' + fn[i]
                 all = all + fn
             else:
                 print("# Warning: directory %s does not exist" % p)
@@ -95,48 +85,51 @@ def fdr(filename, path=None, recursive=False, wildcard=False, maxfiles=None):
         retval = all
     return retval
 
-import argparse
 
-my_help = """
-This script searches for files, optionally hierarchically,
-much like the Unix 'find' program.
-A difference is handling the --path directive, as multiple
-colon separated paths can be given, much like the $PATH
-environment variable in Unix.
-The path variable can also expand $-environment variables.
-          
-"""
+if __name__ == '__main__':
 
-p = argparse.ArgumentParser(description=my_help, epilog='And so the search goes on....')
-p.add_argument('-m', '--maxfiles', type = int, default = None, help='Maximum number of files to return [Default: all]')
-p.add_argument('-c', '--count', action='store_true',           help='add counter to filenames?')
-p.add_argument('-w', '--wildcard', action='store_true',        help='fully wildcard the filename embedded')
-p.add_argument('-r', '--recursive', action='store_true',       help='resursive?')
-p.add_argument('-p', '--path', type = str, default = None,     help='optional (colon separated) path(s)')
-p.add_argument('filename', nargs='+',                          help='Filename(s) to search for')
+    import argparse
+
+    my_help = """
+    This script searches for files, optionally hierarchically
+    and with wildcards, much like the Unix 'find' program.
+    A difference is handling the --path directive, as multiple
+    colon separated paths can be given, much like the $PATH
+    environment variable in Unix.
+    The path variable can also expand $-environment variables.
+
+    """
+
+    p = argparse.ArgumentParser(description=my_help, epilog='And so the search goes on....')
+    p.add_argument('-m', '--maxfiles', type = int, default = None, help='Maximum number of files to return [Default: all]')
+    p.add_argument('-c', '--count', action='store_true',           help='add counter to filenames on output')
+    p.add_argument('-w', '--wildcard', action='store_true',        help='fully wildcard the filename embedded')
+    p.add_argument('-r', '--recursive', action='store_true',       help='resursive search')
+    p.add_argument('-p', '--path', type = str, default = None,     help='optional (colon separated) path(s)')
+    p.add_argument('filename', nargs='+',                          help='Filename, or portion of, to search for')
 
 
-args = p.parse_args()
-if _debug:
-    print('#', args)
- 
-filename = args.filename
-maxfiles = args.maxfiles
-recursive = args.recursive
-wildcard = args.wildcard
-path = args.path
-count = args.count
+    args = p.parse_args()
 
-r = []
-for f in filename:
-    r = r + fdr(f, path, recursive, wildcard, maxfiles)
-# r.sort()    
+    filename = args.filename
+    maxfiles = args.maxfiles
+    recursive = args.recursive
+    wildcard = args.wildcard
+    path = args.path
+    count = args.count
+    final_sort = False
 
-if count:
-    n=1
-    for f in r:
-        print(n,f)
-        n=n+1
-else:
-    for f in r:
-        print(f)
+    r = []
+    for f in filename:
+        r = r + fdr(f, path, recursive, wildcard, maxfiles)
+    if final_sort:
+        r.sort()    
+
+    if count:
+        n=1
+        for f in r:
+            print(n,f)
+            n=n+1
+    else:
+        for f in r:
+            print(f)
