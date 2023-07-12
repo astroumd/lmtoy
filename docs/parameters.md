@@ -318,36 +318,50 @@ of derived paramers, and in a re-run will not be recomputed!  These are noted as
     makespec=1
     makecube=1
     makewf=1
-    viewspec=1
+    viewspec=1       the location= is used here
     viewcube=0
     viewnemo=1
     admit=0
     maskmoment=1
     clean=1
       #            - parameters that will compute other parameters for SLR scripts
-    extent=0         if used, use it as the field size (-extent..extent)
+
+      #              1. BEAM/TIME filtering
+    bank=-1           # -1 means all banks 0..numbands-1
+    pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+    sample=-1         # not used until the gridding stage
+
+      #              2. BASELINE
+
     dv=100           line cube is +/- dv around VLSR
     dw=250           baseline is fitted +/-dw outside of the line cube, i.e. from dv to dv+dw on both sides
-      #            - birdies (list of channels, e.g.   10,200,1021)
-    birdies=0        birdie channels need to be in original channel space, independant of setting dv=
-      #            - parameters that directly match the SLR scripts
-    pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-    rms_cut=-4
-    location=0,0
-    resolution=12.5   # will be computed from skyfreq
+    b_order=0        baseline order
+    b_regions        even number of areas where baseline is defined (dw= can do this symmetrically)
+    l_regions
+    slice            the cube to be cut (usually from the extreme b_regions)
+
+      #              3. CALIBRATION
+    birdies=0        birdie channels need to be in original (1based?) channel space
+                     could also be a pulldown based on nchan from known cases
+    rms_cut=-4       samples to reject if above an threshold [slider]
+    stype=2          type of spectral line reduction (2=bracketed) [radio:0,1,2]
+    otf_cal=0        use calibration within OTF scan? [radio: 0,1]
+
+
+      #              4. GRIDDING
+    extent=0          if used, use it as the field size (square -extent..extent) [arcsec]
+    resolution=12.5   # will be computed from skyfreq (lambda/D, so not exactly beam)
     cell=6.25         # will be computed from resolution/2
-    rmax=3
-    otf_select=1
-    otf_a=1.1
-    otf_b=4.75
-    otf_c=2
-    noise_sigma=1
-    b_order=0
-    stype=2
-    sample=-1
-    otf_cal=0
-    edge=0
-    bank=-1           # -1 means all banks 0..numbands-1
+    nppb=-1           # alternative number of points per beam setting
+    rmax=3            # number of resolutions to convolve with
+    otf_select=1      # otf filter code one of (0=box,1=jinc,2=gaussian,3=triangle) [default: 1]
+    otf_a=1.1         # parameter for the filter
+    otf_b=4.75        # parameter for the filter
+    otf_c=2           # parameter for the filter
+    noise_sigma=1     # weighting scheme (0 or 1)
+    edge=0            # how to handle the edge (interpolate etc.)
+    location=0,0      # viewing spectrum of this position w.r.t. center of map
+    
 
       # unset a view things, since setting them will give a new meaning
     unset vlsr
