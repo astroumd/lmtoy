@@ -141,6 +141,7 @@ echo "<br>Last updated $update"                                           >> $ht
 
 # ====================================================================================================
 
+#                                  index_pipeline*.html
 for ext in "" "__0" "__1"; do
     ff="$(base $ext .fits)"
     if [ ! -e $ff ]; then
@@ -175,7 +176,11 @@ for ext in "" "__0" "__1"; do
     done
 
     echo "<H1> SL Pipeline summary for $ProjectId/$obsnum for $src </H1>"      > $html
-    echo "<b>bank=$bank restfreq=$rf</b>"                                     >> $html
+    if [ $bank -lt 0 ]; then
+	echo "<b>restfreq=$rf</b>"                                            >> $html
+    else
+	echo "<b>bank=$bank restfreq=$rf</b>"                                 >> $html
+    fi
     echo "<br>"                                                               >> $html    
     echo "The figures in the right column are those generated from the first" >> $html
     echo "pass of the pipeline, those on the left are the latest iteration."  >> $html
@@ -207,7 +212,8 @@ for ext in "" "__0" "__1"; do
 	
 	# 2.
 	echo "  <LI> Tsys for each beam in 4x4 panels"                            >> $html
-	echo "       (VLSR vs. TA*)"                                              >> $html
+	echo "       (VLSR [km/s] vs. TA* [K])"                                   >> $html
+	echo "       -- reasonable values are 50 .. 300 K"                        >> $html
 	echo "           <br><IMG SRC=$base2.6.png>"                              >> $html
 	echo "         <IMG SRC=first_$base2.6.png>"                              >> $html
 	
@@ -218,13 +224,15 @@ for ext in "" "__0" "__1"; do
 	echo "         <IMG SRC=first_$base2.2.png>"                              >> $html
 	
 	# 3a
-	echo "  <br> Waterfall RMS as function of channel"                        >> $html
-	echo "       (RMS vs. CHANNEL)"                                           >> $html
+	echo "  <br> Waterfall RMS [K] as function of channel number"             >> $html
+	echo "       (RMS [K] vs. CHANNEL)"                                       >> $html
+	echo "       - this is where birdies show up best, or check *bstats*"     >> $html
 	echo "           <br><IMG SRC=${base1}.wf1.png>"                          >> $html
 	echo "         <IMG SRC=first_${base1}.wf1.png>"                          >> $html
 	
 	# 4.
-	echo "  <LI> RMS $b_order order baseline fit (in K) for each beam."       >> $html
+	echo "  <LI> RMS [K] residuals from a ${b_order}-order baseline fit"      >> $html
+	echo "       as function of sample time"                                  >> $html
 	echo "       Each beam should give roughly the same RMS."                 >> $html
 	echo "           <br><IMG SRC=$base2.3.png>"                              >> $html
 	echo "         <IMG SRC=first_$base2.3.png>"                              >> $html
