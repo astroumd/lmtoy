@@ -92,6 +92,7 @@ for ext in "" "__0" "__1"; do
     if [ ! -e $ff ]; then
 	continue
     fi
+    
     base1=$(base "$ext" "")
     base2=$(base "$ext" _specviews)
     base3=$(base "$ext" _specpoint)
@@ -147,6 +148,11 @@ for ext in "" "__0" "__1"; do
     if [ ! -e $ff ]; then
 	continue
     fi
+
+    rc=./lmtoy_${obsnum}${ext}.rc
+    echo "RC:  $rc"
+    source $rc
+    
     html=index_pipeline$ext.html
     echo "Writing $html $restfreq"
     if [ "$ext" == "" ]; then
@@ -288,6 +294,12 @@ for ext in "" "__0" "__1"; do
     echo "       plus histogram."                                             >> $html
     echo "           <br><IMG SRC=$base1.rms.png>"                            >> $html
     echo "         <IMG SRC=first_$base1.rms.png>"                            >> $html
+
+    # 12.
+    echo "  <LI> Spectral range                            "                  >> $html
+    echo "           <br><IMG SRC=spectrum_${bank}.png>"                      >> $html
+
+    
     echo "</OL>"                                                              >> $html
     
 done  # for ext in "" "__0" "__1"; do
