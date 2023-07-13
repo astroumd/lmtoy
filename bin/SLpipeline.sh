@@ -8,7 +8,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 10-jul-2023"
+_version="SLpipeline: 12-jul-2023"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -324,7 +324,7 @@ cd $work
 
 if [ $tap != 0 ]; then
     echo "Creating Timely Analysis Products (TAP) with admit=$admit in ${pdir}_TAP.tar"
-    products="rc md tab txt png pdf log apar html cubestat ifproc rfile obsnum badlags blanking resources"
+    products="rc md tab txt png pdf log apar html yaml cubestat ifproc rfile obsnum badlags blanking resources"
     rm -f $pdir/tar.log
     touch $pdir/tar.log
     for ext in $products; do
