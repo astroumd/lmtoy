@@ -330,8 +330,9 @@ of derived paramers, and in a re-run will not be recomputed!  These are noted as
     bank=-1           # -1 means all banks 0..numbands-1
     pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
     sample=-1         # not used until the gridding stage
+	              # @todo deal with vlsr=, restfreq= and different lines
 
-      #              2. BASELINE
+      #              3. BASELINE
 
     dv=100           line cube is +/- dv around VLSR
     dw=250           baseline is fitted +/-dw outside of the line cube, i.e. from dv to dv+dw on both sides
@@ -340,7 +341,7 @@ of derived paramers, and in a re-run will not be recomputed!  These are noted as
     l_regions
     slice            the cube to be cut (usually from the extreme b_regions)
 
-      #              3. CALIBRATION
+      #              2. CALIBRATION
     birdies=0        birdie channels need to be in original (1based?) channel space
                      could also be a pulldown based on nchan from known cases
     rms_cut=-4       samples to reject if above an threshold [slider]
@@ -361,6 +362,15 @@ of derived paramers, and in a re-run will not be recomputed!  These are noted as
     noise_sigma=1     # weighting scheme (0 or 1)
     edge=0            # how to handle the edge (interpolate etc.)
     location=0,0      # viewing spectrum of this position w.r.t. center of map
+
+      #              5. OUTPUT
+    admit=0           # run admit?
+    maskmoment=0      # run maskmoment?
+    dataverse=0       # ingest in dataverse
+    raw=0             # create RAW files for offline reduction
+    srdp=0            # create SRDP for this obsnum
+    tap=0             # create TAP (lightweight SRDP)
+    clean=1           # cleanup tmp files after the run
     
 
       # unset a view things, since setting them will give a new meaning
