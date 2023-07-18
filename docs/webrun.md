@@ -65,18 +65,20 @@ Following this convention we arrive at the following proposed directory hierarch
 
 Command Line (CL) equivalent commands are given where this makes sense:
 
-1. User authenticates and get a list of valid PIDs (at least one)
+1. User logs in and authenticates for a given PID.
 
-   Examples of PIDs:    "2023-S1-MX-1"   "2022S1RSRCommissioning"
-
-2. User picks *one* PID to work on.
+   Examples of PIDs:    "2023-S1-MX-1"
+                        "2022S1RSRCommissioning"
 
    CL equivalent: (there is no authentication needed within the shell of the CL)
    
            PID=2023-S1-MX-1
 
-3. If multiple sessions were available for this project, pick one, or allow
-   a new one to be created.
+
+2. If multiple sessions were available for this project, pick one, or allow
+   a new one to be cloned.  There will always be one session, the one that
+   was prepared for the DA's for the PI. It cannot be modified though, only
+   cloned.
 
    CL equivalent (notice we only redefine the WORK_LMT):
 
