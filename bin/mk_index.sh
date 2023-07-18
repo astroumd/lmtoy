@@ -296,7 +296,7 @@ for ext in "" "__0" "__1"; do
     echo "         <IMG SRC=first_$base1.rms.png>"                            >> $html
 
     # 12.
-    echo "  <LI> Spectral range                            "                  >> $html
+    echo "  <LI> Spectral coverage of raw and extracted"                      >> $html
     echo "           <br><IMG SRC=spectrum_${bank}.png>"                      >> $html
 
     
@@ -340,8 +340,6 @@ for ext in "" "__0" "__1"; do
     for ff in $f ; do
 	if [ -e $ff ]; then
 	    echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
-	else
-	    echo "<LI>$ff (missing)"                                          >> $html
 	fi
 	((i=i+1))
     done
@@ -354,8 +352,6 @@ i=0
 for ff in $f ; do
     if [ -e $ff ]; then
 	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
-    else
-	echo "<LI>$ff (missing)"                                          >> $html
     fi
     ((i=i+1))
 done
