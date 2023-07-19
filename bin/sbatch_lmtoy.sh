@@ -23,7 +23,7 @@
 #
 #--HELP
 
-version="25-jun-2023"       # script version
+version="19-jul-2023"       # script version
 sleep=1                     # don't use 0, unity spawns too fast in a series
 
 if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
@@ -141,6 +141,6 @@ sbatch $run
 #   report last few, if present
 sleep $sleep
 ls -ltr $WORK_LMT/sbatch/slurm*.out | tail -6
-squeue --me
-echo "squeue --me"
+squeue --me | nl -v 0
+echo "squeue --me | nl -v 0"
 
