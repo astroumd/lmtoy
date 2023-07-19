@@ -8,7 +8,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 12-jul-2023"
+_version="SLpipeline: 17-jul-2023"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -103,7 +103,7 @@ fi
 #             report matplotlib environment
 test_mpl
 
-#             bootstrap information on the obsnum
+#             bootstrap information on the obsnum to figure out the flow here
 [ ! -d $WORK_LMT/tmp ] && mkdir -p $WORK_LMT/tmp
 rc0=$WORK_LMT/tmp/lmtoy_${obsnum}.rc
 lmtinfo.py $obsnum > $rc0
@@ -139,7 +139,7 @@ if [ $exist == 1 ] && [ -d $pidir/$obsnum ]; then
     echo Skipping work for $pidir/$obsnum, it already exists
     exit 0
 fi
-
+#???
 if [ $restart = "-1" ]; then
     if [ -d $pdir ]; then
 	echo "Warning: restart=-1 and $pdir already exists"
@@ -152,17 +152,17 @@ if [ $restart = "1" ]; then
     rm -rf $pdir
 fi
 
-# ?
+# this is not officially endorsed yet
 if [ -e $pidir/PI_pars.rc ]; then
     echo "Found PI parameters in $pidir/PI_pars.rc"
     source $pidir/PI_pars.rc
 fi
 
-# warning: we're not using obsgoal, but our own goal=     @todo     use obsgoal et al.
+# warning: we're not yet using obsgoal, but our own goal=     @todo     use obsgoal et al.
 if [ $goal == "Science" ]; then
 
     if [ $obspgm == "Map" ] || [ $obspgm == "Lissajous" ]; then
-	echo "Map mode with instrument=$instrument"
+	echo "$obspgm mode with instrument=$instrument"
 	if [ -d $pdir ]; then
 	    echo "Re-Processing Map in $pdir for $src (use restart=1 if you need a fresh start)"
 	    first=0
@@ -283,6 +283,7 @@ if [ $goal == "Science" ]; then
 	tar=0
     fi
 else
+    # not a "Science" goal
     if [ -d $pdir ]; then
 	echo "Re-Processing $obspgm/$obsgoal in $pdir for $src"
     else
@@ -369,6 +370,9 @@ if [ -n "$rsync" ]; then
     echo rsync -av ${pdir}_TAP.tar $rsync1
     rsync -av ${pdir}_TAP.tar $rsync1
 fi
+
+# report matplotlib environment again
+test_mpl
 
 # final reminder of parameters
 lmtoy_report
