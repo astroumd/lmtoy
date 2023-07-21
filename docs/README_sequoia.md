@@ -67,6 +67,10 @@ Version:  22-dec-2022
 	first_*                     Various files created upon a first pass through pipeline
 	README_files.md             This file
 
+        stats_wf0.tab               RMS vs. SAMPLE - stats of watefall along channels
+        stats_wf1.tab               RMS vs. CHAN  - stats of waterfall along sample
+	SRC_OBSNUM.bstats.tab       birdie stats (coluns: freq, rms)
+
 Some more advanced files produces by MaskMoment:
 
 	SRC_OBSNUM.dilmsk.*         results from 'maskmoment' (dilated mask)
@@ -94,6 +98,8 @@ This OTF pipeline suggests the following procedure for quality assesment and fla
    beam 0 and 5 were bad. There was a brief period where beams 14 and 15 were
    broken as well. But individual inspections are still highly encouraged. These
    can be added to the **comments.txt** file
+   Bad beams either have an overall bad Tsys (plot 2),or have large RMS variations
+   (plot 3 and 4)
    
 2. The default setting of **dv=** and **dw=** may need adjustment per project. It may also
    depend on any birdies. This is really a QA/PI process, though the pipeline logs attempt
