@@ -224,6 +224,9 @@ if __name__ == "__main__":
         band["contSens"] = 0.001
         band["qaGrade"] = "A+++"
         band["nchan"] = 1300
+        band["formula"] = ""
+        band["transition"] = ""
+        
         lmtdata.add_metadata("band",band)
         
     else:
