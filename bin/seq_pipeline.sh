@@ -14,7 +14,7 @@
 #
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 
-_version="seq_pipeline: 6-jul-2023"
+_version="seq_pipeline: 18-jul-2023"
 
 echo "LMTOY>> $_version"
 
@@ -64,6 +64,7 @@ sample=-1
 otf_cal=0
 edge=0            #  1:  fuzzy edge  0: good sharp edge where M (mask) > 0 [should be default]
 bank=-1           # -1:  all banks 0..numbands-1; otherwise select that bank (0,1,...)
+                  #      note that oid=0,1 are reserved for bank=0,1 
 
 #                 debug (set -x)
 debug=0
@@ -75,7 +76,7 @@ show_vars="extent dv dw birdies numbands map_coord_use pix_list rms_cut location
           "
 
 
-# unset a view things, since setting them will give a new meaning
+# unset these, since setting them will give a new meaning, different from the lmtinfo based defaults
 unset vlsr
 unset restfreq
 
@@ -93,13 +94,6 @@ if [ $debug = 1 ]; then
     set -x
 fi
 
-#lmtoy_first
-if [ -e lmtoy.rc ]; then
-    first=0
-else
-    first=1
-fi
-
 #lmtoy_pdir
 #             see if pdir working directory needs to be used
 if [ ! -z $pdir ]; then
@@ -110,15 +104,47 @@ else
     echo No PDIR directory used, all work from the current directory
 fi
 
+#lmtoy_first
+echo 'PWD: ' `pwd`
+if [ -e lmtoy.rc ]; then
+    first=0
+else
+    first=1
+fi
 
 #             process the parameter file(s)
 rc=./lmtoy_${obsnum}.rc
 if [ ! -e $rc ]; then
     echo "LMTOY>> creating new $rc"
-    echo "# $_version"  > $rc
+    echo "#! rc $rc:"   > $rc
+    echo "# $_version" >> $rc
+    echo "# <CLI>"     >> $rc
     cat $rc0           >> $rc
+    echo "# </CLI>"    >> $rc    
     lmtinfo.py $obsnum >> $rc
+else
+    source $rc
 fi
+rm -f $rc0
+unset rc0
+
+
+#             optional "oid" based parameter file,
+#             this will be the rc file instead from now on instead
+rc1=./lmtoy_${obsnum}__${oid}.rc
+if [ ! -z "$oid" ]; then
+    if [ ! -e $rc1 ]; then
+	cat $rc                               > $rc1
+    fi
+    echo "LMTOY>> Using rc1=$rc1"
+    echo "#! rc $rc1"                        >> $rc1
+    echo "date=\"$date\"     # begin"        >> $rc1    
+    show_vars oid $show_vars                 >> $rc1
+    rc=$rc1
+fi
+
+
+#              record each time pipeline runs, add new CLI
 date=$(lmtoy_date)
 echo "#"                                 >> $rc
 echo "date=\"$date\"     # begin"        >> $rc
@@ -126,16 +152,10 @@ for arg in "$@"; do
     echo "$arg" >> $rc
 done
 source $rc
-rm -f $rc0
-#             optional "oid" parameter file
-rc1=./lmtoy_${obsnum}__${oid}.rc
-if [ ! -z "$oid" ]; then
-    echo "date=\"$date\"     # begin"        >> $rc1    
-    show_vars oid $show_vars                 >> $rc1
-fi
 
 
-# @todo   lmtinfo.py should set this now
+
+# @todo   lmtinfo.py now sets this (as $rawnc)
 ifproc=$(ls ${data_lmt}/ifproc/*${obsnum}*.nc)
 if [ -z $ifproc ]; then
     rm -f $rc
@@ -149,58 +169,75 @@ echo "# data_lmt=$data_lmt"   >> $rc
 
 # exceptions allowed to be overridden:   vlsr, restfreq
 if [ ! -z $vlsr ]; then
-    echo "vlsr=$vlsr              # set" >> ./$rc
+    echo "vlsr=$vlsr              # set" >> $rc
 fi
 if [ ! -z $restfreq ]; then
-    echo "restfreq=$restfreq      # set" >> ./$rc
+    echo "restfreq=$restfreq      # set" >> $rc
 fi
 source $rc
 
-#   w0   v0   v1     w1
-#v0=$(echo $vlsr - $dv | bc -l)
-#v1=$(echo $vlsr + $dv | bc -l)
-#w0=$(echo $v0 - $dw | bc -l)
-#w1=$(echo $v1 + $dw | bc -l)
+echo "ARGS: $_lmtoy_args"
+echo "ARGS: $first"
 
-v0=$(nemoinp $vlsr-$dv)
-v1=$(nemoinp $vlsr+$dv)
-w0=$(nemoinp $v0-$dw)
-w1=$(nemoinp $v1+$dw)
+#if [[ "$STR" == *"$SUB"* ]]; then
+#  echo "It's there."
+#fi
 
 # recompute derived parameters, and write them back to the rc file
 
-b_regions=[[$w0,$v0],[$v1,$w1]]
-l_regions=[[$v0,$v1]]
-slice=[$w0,$w1]
-v_range=$v0,$v1
+if [ $first = 1 ] || [ "$_lmt_args"  == "*dv=*" ]; then
+    echo "LMTOY>> setting (base)line regions"
 
-echo "# based on vlsr=$vlsr, dv=$dv,  dw=$dw" >> $rc
-echo b_regions=$b_regions       >> $rc
-echo l_regions=$l_regions       >> $rc
-echo slice=$slice               >> $rc
-echo v_range=$v_range           >> $rc
-if [ $extent != 0 ]; then
-    echo x_extent=$extent       >> $rc
-    echo y_extent=$extent       >> $rc
-else
-    # deal with gridding bug
-    if [ $x_extent -gt $y_extent ]; then
-    	echo y_extent=$x_extent    >> $rc
-    fi
-    if [ $x_extent -lt $y_extent ]; then
-	echo x_extent=$y_extent    >> $rc
-    fi
-    echo "#xy_extent should be same">> $rc
+    v0=$(nemoinp $vlsr-$dv)     # $(echo $vlsr - $dv | bc -l)
+    v1=$(nemoinp $vlsr+$dv)     # $(echo $vlsr + $dv | bc -l)
+    w0=$(nemoinp $v0-$dw)       # $(echo $v0 - $dw | bc -l)
+    w1=$(nemoinp $v1+$dw)       # $(echo $v1 + $dw | bc -l)
+    
+    b_regions=[[$w0,$v0],[$v1,$w1]]
+    l_regions=[[$v0,$v1]]
+    slice=[$w0,$w1]
+    v_range=$v0,$v1
+    
+    echo "# based on vlsr=$vlsr, dv=$dv,  dw=$dw" >> $rc
+    echo b_regions=$b_regions       >> $rc
+    echo l_regions=$l_regions       >> $rc
+    echo slice=$slice               >> $rc
+    echo v_range=$v_range           >> $rc
 fi
 
-#  allow the complement to be removed, e.g. pix_list=-0,-5
-echo pix_list=$(pix_list.py $pix_list)  >> $rc
-    
-# @todo   new hack to allow resolution/cell > 2       
-echo "# resolution hack?"       >> $rc
-echo resolution=$resolution     >> $rc
-cell=$(nemoinp "ifgt($nppb,0.0,$resolution/$nppb,$cell)")
-echo cell=$cell                 >> $rc
+if [ $first = 1 ] || [ "$_lmt_args"  == "*extent=*" ]; then
+    if [ $extent != 0 ]; then
+	echo x_extent=$extent       >> $rc
+	echo y_extent=$extent       >> $rc
+    else
+	# deal with gridding bug (map needs to be squared)
+	if [ $x_extent -gt $y_extent ]; then
+    	    echo y_extent=$x_extent    >> $rc
+	fi
+	if [ $x_extent -lt $y_extent ]; then
+	    echo x_extent=$y_extent    >> $rc
+	fi
+	echo "#xy_extent should be same">> $rc
+    fi
+fi
+
+if [ $first = 1 ] || [ "$_lmt_args"  == "*pix_list=*" ]; then
+    echo "LMTOY>> setting pix_list"
+    #    re-interpret pix_list
+    echo pix_list=$(pix_list.py $pix_list)  >> $rc
+fi
+
+if [ $first = 1 ] || [ "$_lmt_args"  == "*resolution=*" ] || [ "$_lmt_args"  == "*cell=*" ] ||  [ "$_lmt_args"  == "*nppb=*" ]; then
+    # @todo   new hack to allow resolution/cell > 2       
+    echo "# resolution hack?"       >> $rc
+    echo resolution=$resolution     >> $rc
+    cell=$(nemoinp "ifgt($nppb,0.0,$resolution/$nppb,$cell)")
+    echo cell=$cell                 >> $rc
+fi
+
+if [ $first = 1 ] || [ "$_lmt_args"  == "*vlsr=*" ]; then
+    echo "vlsr=$vlsr              # set" >> $rc
+fi
 
 # feb 2023 - work around the numbands=2 bug (only one bad obsnum was used: 105907/105908)
 if [ $numbands = -2 ]; then
@@ -235,26 +272,14 @@ fi
 echo map_coord_use=$map_coord_use                      >> $rc
     
 
-# source again to ensure the changed variables are in
+# source again - ensure the changed variables are in
 source $rc
 
 
-echo "LMTOY>> this is your startup $rc file:"
+echo "LMTOY>> this is your startup rc=$rc file:"
 cat $rc
-echo "LMTOY>> Sleeping for 2 seconds, you can  abort, edit $rc, then continuing"
+echo "LMTOY>> Sleeping for 2 seconds, you can abort, edit $rc, then continuing"
 sleep 2
-
-#             sanity checks
-if [ ! -d $p_dir ]; then
-    echo "LMTOY>> directory $p_dir does not exist"
-    exit 1
-fi
-
-#             derived parameters (you should not have to edit these)
-p_dir=${data_lmt}
-
-#             redo CLI again is now not needed anymore
-# lmtoy_args "$@"
 
 if [ $bank != -1 ]; then
     # pick only this selected bank
@@ -274,7 +299,8 @@ elif [ $numbands == 2 ]; then
     echo "LMTOY>> looping over numbands=$numbands"
     for b in $(seq 1 $numbands); do
 	bank=$(expr $b - 1)
-	echo "LMTOY>> Preparing for bank = $bank / $numbands"
+	oid=$bank
+	echo "LMTOY>> Preparing for bank=$bank"
 	s_on=${src}_${obsnum}__${bank}
 	s_nc=${s_on}.nc
 	s_fits=${s_on}.fits
@@ -284,17 +310,16 @@ elif [ $numbands == 2 ]; then
     nb=$numbands
 elif [ $numbands == 1 ]; then
     # old style, before April 2023, we should not use it anymore
-    echo "LMTOY>> numbands=1"
+    echo "LMTOY>> numbands=1 -- old style"
     s_on=${src}_${obsnum}
     s_nc=${s_on}.nc
     s_fits=${s_on}.fits
     w_fits=${s_on}.wt.fits
-    bank=0
     lmtoy_seq1
     nb=1
 else
     nb=0
-    echo "LMTOY>> unprocessable numbands/bank option"
+    echo "LMTOY>> cannot process numbands/bank option"
 fi
 
 echo "LMTOY>> Processed $nb bands"
