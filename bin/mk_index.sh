@@ -20,14 +20,10 @@ fi
 pwd=$(pwd)
 update="$(date) on $(hostname)"
 
-# there better be only one....
+# there better be only one.... 
 source $(ls ./lmtoy_*.rc | grep -v __)
-if [ -z "$obsnum" ]; then
-    # in case it's not in the rc file [used to be the case]
-    grep '# obsnum=' $(ls ./lmtoy_*.rc) | sed s'/# //' > obsnum.rc
-    source ./obsnum.rc
-fi
-echo "Making index.html for obsnum=$obsnum"
+echo "Making index.html for obsnum=$obsnum bank=$bank oid=$oid"
+# @todo first time around bank is not properly set
 
 function base {
     ext1=$1
@@ -193,6 +189,7 @@ for ext in "" "__0" "__1"; do
     echo "<br>"                                                               >> $html
     echo "If no figure shown, the pipeline did not produce it,"               >> $html
     echo "e.g. a combination obsnums will not have figures 1..7"              >> $html
+    echo "as they are only created for the individual obsnums"                >> $html
     echo "<OL>"                                                               >> $html
 
 
@@ -213,6 +210,7 @@ for ext in "" "__0" "__1"; do
 	echo "  <LI> Sky coverage for all 16 beams"                               >> $html
 	echo "       (sky coordinates in arcsec w.r.t. map center)"               >> $html
 	echo "       - first integration beam imprint in red"                     >> $html
+	echo "       MapCoord 0,1,2 are AzEl, RaDec and LatLong resp."            >> $html
 	echo "           <br><IMG SRC=$base2.1.png>"                              >> $html
 	echo "         <IMG SRC=first_$base2.1.png>"                              >> $html
 	
@@ -225,7 +223,7 @@ for ext in "" "__0" "__1"; do
 	
 	# 3.
 	echo "  <LI> Waterfall plot for each beam in 4x4 panels"                  >> $html
-	echo "       (VLSR vs. SAMPLE TIME)"                                      >> $html
+	echo "       (VLSR vs. SAMPLE TIME) - Intensity units: K"                 >> $html
 	echo "           <br><IMG SRC=$base2.2.png>"                              >> $html
 	echo "         <IMG SRC=first_$base2.2.png>"                              >> $html
 	
@@ -238,18 +236,21 @@ for ext in "" "__0" "__1"; do
 	
 	# 4.
 	echo "  <LI> RMS [K] residuals from a ${b_order}-order baseline fit"      >> $html
-	echo "       as function of sample time"                                  >> $html
-	echo "       Each beam should give roughly the same RMS."                 >> $html
+	echo "       as function of sample time."                                 >> $html
+	echo "       Each beam should give roughly the same RMS,"                 >> $html
+	echo "       though during gridding RMS is used as a weight."             >> $html
 	echo "           <br><IMG SRC=$base2.3.png>"                              >> $html
 	echo "         <IMG SRC=first_$base2.3.png>"                              >> $html
 	
 	# 5.
 	echo "  <LI> Spectra for the whole map, overplotted for each beam"        >> $html
+	echo "       (vlsr=$vlsr)"                                                >> $html
 	echo "           <br><IMG SRC=$base3.1.png>"                              >> $html
 	echo "         <IMG SRC=first_$base3.1.png>"                              >> $html
 	
 	# 6.
 	echo "  <LI> Spectra for center beam, overplotted for each beam"          >> $html
+	echo "       (vlsr=$vlsr)"                                                >> $html	
 	echo "           <br><IMG SRC=$base3.2.png>"                              >> $html
 	echo "         <IMG SRC=first_$base3.2.png>"                              >> $html
 	
@@ -326,7 +327,7 @@ echo "<H2>  <A HREF=index_admit.html>ADMIT summary</A> $admit   </H2>"    >> $ht
 echo "<H2>  <A HREF=index_mm.html>maskmoment summary</A> $mm    </H2>"    >> $html
 echo "<H2>  <A HREF=index_pars.html>parameters</A>              </H2>"    >> $html
 echo "<H2>  <A HREF=index_log.html>log files</A>                </H2>"    >> $html
-echo "<H2>  Select FITS files:   </H2>"                                   >> $html
+echo "<H2>  Select data files:   </H2>"                                   >> $html
 echo "<OL>"                                                               >> $html
 
 for ext in "" "__0" "__1"; do
@@ -351,7 +352,10 @@ f="../${obsnum}_SRDP.tar   ../${obsnum}_TAP.tar"
 i=0
 for ff in $f ; do
     if [ -e $ff ]; then
+	echo "Found $ff"
 	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
+    else
+	echo "No $ff"
     fi
     ((i=i+1))
 done
@@ -360,7 +364,7 @@ echo "</OL>"                                                                  >>
 echo "<br> These and all other files are also available via the SRDP.tar,"    >> $html
 echo "if available"                                                           >> $html
 echo "<br><br>Last updated $update"                                           >> $html
-
+echo "Wrote final $html"
 # ====================================================================================================
 
 
