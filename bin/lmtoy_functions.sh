@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="10-jul-2023"
+lmtoy_version="20-jul-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -41,7 +41,7 @@ trap 'lmtoy_error $? $LINENO' ERR
 
 function lmtoy_report {
     echo "LMTOY>> xdg-open $WORK_LMT/$ProjectId/$obsnum/README.html"
-    printf_red "LMTOY>> ProjectId=$ProjectId  obsnum=$obsnum  obspgm=$obspgm  obsgoal=$obsgoal oid=$oid date_obs=$date_obs"
+    printf_red "LMTOY>> ProjectId=$ProjectId  obsnum=$obsnum oid=$oid obspgm=$obspgm  obsgoal=$obsgoal date_obs=$date_obs"
 }
 
 function lmtoy_args {
@@ -56,7 +56,7 @@ function lmtoy_args {
     for arg in "$@"; do
 	export "$arg"
     done
-    # save them
+    # save them (they are saved in lmtoy_args.log)
     _lmtoy_args="$@"
 }
 
@@ -449,20 +449,23 @@ function lmtoy_rsr1 {
 
 function lmtoy_seq1 {
     # input: obsnum, ... (lots)
-    # this will process a single band in an $obsnum
+    # this will process a single bank in an $obsnum; $bank and $oid needs to be set
 
     # log the version
-    lmtoy_version > lmtoy.rc
+    lmtoy_version >> lmtoy.rc
     # keep an IFPROC header
     if [ ! -e lmtoy_$obsnum.ifproc ]; then
 	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
     fi
-    # obsnumrc
-    obsnumrc=lmtoy_$obsnum.rc
+    # record
+    echo "LMTOY>> rc=$rc rc1=$rc1 bank=$bank oid=$oid"
+
+    # fix potential pix_list
+    pix_list=$(pix_list.py $pix_list)
 
     #  convert RAW to SpecFile (hardcoded parameters are hardcoded for a good resaon)
     if [ $makespec = 1 ]; then
-	echo "LMTOY>> process_otf_map2 in 2 seconds"
+	echo "LMTOY>> process_otf_map2 in 2 seconds bank=$bank"
 	sleep 2
 	if [ $otf_cal = 1 ]; then
 	    use_otf_cal="--use_otf_cal"
@@ -477,7 +480,7 @@ function lmtoy_seq1 {
 	    echo "WARNING: resetting restfreq not supported yet"
 	fi
 	process_otf_map2.py \
-	    -p $p_dir \
+	    -p $DATA_LMT \
 	    -o $s_nc \
 	    --obsnum $obsnum \
 	    --pix_list $pix_list \
@@ -493,6 +496,7 @@ function lmtoy_seq1 {
 	    --l_region $l_regions \
 	    --slice $slice \
 	    --eliminate_list $birdies
+	lmtinfo2.py $s_nc >> $rc
     fi
 
     # bug:  --use_otf_cal does not work here?? (maybe it does now)
@@ -548,6 +552,7 @@ function lmtoy_seq1 {
 	    --pix_list $pix_list \
 	    --binning 10,1
 
+	echo "LMTOY>> stats_wf"
 	stats_wf.py -s -b ${s_on}.bstats.tab    ${s_on}.wf.fits > stats_wf0.tab
 	mv stats_wf0.png ${s_on}.wf0.png
 	stats_wf.py -s                       -t ${s_on}.wf.fits > stats_wf1.tab
@@ -706,7 +711,7 @@ function lmtoy_seq1 {
 	    out3=$(ccdsub  $s_on.wtr4.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 qac=t robust=t label="RMS/radiometer")
 
 	    regress=$(ccdsub  $s_on.ccd  - centerbox=0.5,0.5 | ccdstat - bad=0 qac=t robust=t label="${s_on}-cent")
-	    echo "regress=\"$regress\"" >> $rc	    
+	    echo "regress=\"$regress\"" >> $rc
 	    
 	    printf_red $out1
 	    printf_red $out2
@@ -714,13 +719,20 @@ function lmtoy_seq1 {
 
 	    rms=$(echo $out2  | txtpar - "%1*1000" p0=-cent,1,4)
 	    rms0=$(echo $out3 | txtpar - p0=radiometer,1,3)
-	    echo "rms=$rms     # rms[mK] in center"      >> $obsnumrc
-	    echo "rms0=$rms0   # RMS/radiometer radio"   >> $obsnumrc
+	    echo "rms=$rms     # rms[mK] in center"      >> $rc
+	    echo "rms0=$rms0   # RMS/radiometer ratio"   >> $rc
 
 	    # hack
 	    fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.cubespecs.tab
 	    echo -n "cubespec : ";  tail -1  $s_on.cubespec.tab
 	    echo -n "cubespecs: ";  tail -1  $s_on.cubespecs.tab
+
+	    source $rc
+	    echo "PJT TABPLOT 	${s_on} bank=$bank vminmax=$vmin,$vmax"
+	    tab_plot.py -s --xrange $vmin,$vmax --xscale 0.001 --ycoord 0.0 --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
+			--title "${s_on} $bank $vmin,$vmax" \
+			${s_on}.cubespec.tab ${s_on}.cubespecs.tab
+	    mv tab_plot.png spectrum_${bank}.png
 	    
 	    # NEMO plotting ?
 	    if [ $viewnemo = 1 ]; then
@@ -799,12 +811,13 @@ function lmtoy_seq1 {
     fi
     
     echo "LMTOY>> Created $s_fits and $w_fits"
-    echo "LMTOY>> Parameter file used: $rc"
+    echo "LMTOY>> Parameter file used: rc=$rc"
     
     # seq_readme > $pdir/README.html
     cp $LMTOY/docs/README_sequoia.md README_files.md
-    
-    echo "LMTOY>> Making summary index.html:"
+    echo "LMTOY>> Making summary index.html for bank=$bank"
+    grep bank= $rc
+    echo "LMTOY>> Making summary index.html for oid=$oid"
     mk_index.sh
     # cheat and rename it for all files access
     mv index.html README.html
@@ -813,7 +826,7 @@ function lmtoy_seq1 {
 
 function lmtoy_bs1 {
     # input: obsnum, ... (lots)
-    # this will process a single band in an $obsnum
+    # this will process a single bank in an $obsnum
 
     # log the version
     lmtoy_version > lmtoy.rc
@@ -869,7 +882,7 @@ function lmtoy_bs1 {
 
 function lmtoy_ps1 {
     # input: obsnum, ... (lots)
-    # this will process a single band in an $obsnum
+    # this will process a single bank in an $obsnum
 
     # log the version
     lmtoy_version > lmtoy.rc
