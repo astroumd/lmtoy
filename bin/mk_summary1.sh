@@ -14,7 +14,7 @@
 #set -e
 #set -x
 
-_version="11-jul-2023"
+_version="17-jul-2023"
 
 if [ -z "$1" ]; then
     src0=""
@@ -95,6 +95,16 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     if [ ! -z "$src0" ] && [ "$src" != "$src0" ]; then
 	continue
     fi
+
+    # numbands is only used by WARES systems, so for RSR etc. we fake there is 1
+    # each bank (yeah, numbands) will get its own row in the summary file
+    if [ ! -z "$numbands" ]; then
+	numbands=1
+    fi
+
+    for b in $(seq 1 $numbands); do
+	bank=$(expr $b - 1)
+    done
 	
     date_obs=$(grep date_obs $rc | awk -F= '{print $2}')
     date=$(grep date= $rc | tail -1 | awk -F= '{print $2}' | awk '{print $1}')
