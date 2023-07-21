@@ -31,7 +31,7 @@ import astropy.units as u
 import dvpipe.utils as utils
 from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 
-_version = "21-apr-2023"
+_version = "20-jul-2023"
 
 def header(rc, key, debug=False):
     """
@@ -83,8 +83,8 @@ def get_rc(filename, debug=False):
                 # but save it as string for potential conversion later on
                 rc[w[0]] = w[1].strip().split()[0]
     except:
-        print("line: ",line, "w:",w)
         print("Error processing %s " % rcfile)
+        print("line: ",line, "w:",w)
         sys.exit(0)
     return rc
     
@@ -155,6 +155,11 @@ if __name__ == "__main__":
     lmtdata.add_metadata("calibrationLevel",1)
     lmtdata.add_metadata("obsGoal","SCIENCE")
     lmtdata.add_metadata("obsComment","This is an observation comment")
+    lmtdata.add_metadata('galLon',    0.0)
+    lmtdata.add_metadata('galLat',    0.0)
+    lmtdata.add_metadata('boundingBox', 60.0)
+    lmtdata.add_metadata('pipeVersion', "1.0")
+
     
     if instrument == "SEQUOIA":
         #lmtdata.add_metadata("origin",  "lmtoy v0.6")
@@ -179,6 +184,7 @@ if __name__ == "__main__":
         band["bandwidth"] = 2.5
         band["beam"] = 20.0/3600.0
         band["lineSens"] = 0.072*u.Unit("K")
+        band["contSens"] = 0.001     #  figure out units *u.Unit("K")
         band["qaGrade"] = "A+++"
         band["nchan"] = 1024
         lmtdata.add_metadata("band",band)
@@ -192,6 +198,7 @@ if __name__ == "__main__":
             band["bandwidth"] = 2.5
             band["beam"] = 20.0/3600.0
             band["lineSens"] = 0.072*u.Unit("K")
+            band["contSens"] = 0.002    # units
             band["qaGrade"] = "A+++"
             band["nchan"] = 1024
             lmtdata.add_metadata("band",band)
@@ -214,6 +221,7 @@ if __name__ == "__main__":
         band["velocityCenter"] = 0.0
         band["beam"] = 20.0/3600.0
         band["lineSens"] = 1*u.Unit("mK")
+        band["contSens"] = 0.001*u*Unit("K")
         band["qaGrade"] = "A+++"
         band["nchan"] = 1300
         lmtdata.add_metadata("band",band)
@@ -221,7 +229,7 @@ if __name__ == "__main__":
     else:
         print("instrument=%s not implemented yet" % instrument)
 
-    lmtdata.write_to_db()
+    # validate=True is now default
+    lmtdata.write_to_db()   
     lmtdata.write_to_yaml()
 
-    
