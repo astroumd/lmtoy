@@ -221,7 +221,7 @@ if __name__ == "__main__":
         band["velocityCenter"] = 0.0
         band["beam"] = 20.0/3600.0
         band["lineSens"] = 1*u.Unit("mK")
-        band["contSens"] = 0.001*u*Unit("K")
+        band["contSens"] = 0.001
         band["qaGrade"] = "A+++"
         band["nchan"] = 1300
         lmtdata.add_metadata("band",band)
