@@ -728,10 +728,13 @@ function lmtoy_seq1 {
 	    echo -n "cubespecs: ";  tail -1  $s_on.cubespecs.tab
 
 	    source $rc
-	    echo "PJT TABPLOT 	${s_on} bank=$bank vminmax=$vmin,$vmax"
-	    tab_plot.py -s --xrange $vmin,$vmax --xscale 0.001 --ycoord 0.0 --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
-			--title "${s_on} $bank $vmin,$vmax" \
-			${s_on}.cubespec.tab ${s_on}.cubespecs.tab
+	    echo "TAB_PLOT   ${s_on} bank=$bank vminmax=$vmin,$vmax"
+	    echo "# tmp file to plot full spectral range for ${s_on} bank=$bank"   > full_spectral_range
+	    nemoinp "1000*$vmin,0.0" newline=f format=%f                          >> full_spectral_range
+	    nemoinp "1000*$vmax,0.0" newline=f format=%f                          >> full_spectral_range	    
+	    tab_plot.py -s --xrange $vmin,$vmax --xscale 0.001  --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
+			--title "${s_on} vminmax=$vmin,$vmax" \
+			${s_on}.cubespec.tab ${s_on}.cubespecs.tab full_spectral_range
 	    mv tab_plot.png spectrum_${bank}.png
 	    
 	    # NEMO plotting ?
