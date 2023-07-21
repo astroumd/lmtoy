@@ -19,7 +19,19 @@
 #     sbatch_lmtoy.sh 2021-S1-US-3.run2a
 #
 #     exist=1   will not process an obsnum if it already exists
-#     obsnum0=  will only process single obsnums at or beyond this obsnum0 
+#     obsnum0=  will only process single obsnums at or beyond this obsnum0
+#
+#  Sample squeue output:
+#
+#             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+#           8722223 toltec-cp    97521 lmtslr_u  R       8:48      1 toltec-cpu001
+#           8722222 toltec-cp    97520 lmtslr_u  R       8:51      1 toltec-cpu001
+#
+#     ST       = R          Running
+#                 
+#     TIME                  wall clock time spent (hh:mm:ss)
+#     NODELIST = Resources  The job is waiting for resources to become available.
+#                Priority   One or more higher priority jobs exist for this partition or advanced reservation.
 #
 #--HELP
 
