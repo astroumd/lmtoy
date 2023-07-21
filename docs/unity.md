@@ -159,3 +159,22 @@ an introduction. See https://github.com/teuben/lmtoy_run/blob/main/README.md for
 the current workflow suggestions.
 
 
+## Anecdotals
+
+Working and debugging with Unity/Slurm is a different beast from doing it on a desktop or laptop.
+Some notes on this.   First some workflow items:
+
+1. Unity runs Ubuntu 20.04 LTS, but login and compute notes have different packages installed
+
+2. The login node cannot do much, mostly for submitting SLURM jobs.  Do not build LMTOY on it,
+   it needs to be done on a compute node.
+
+3. The **srun** command shuold be used to grab a compute node, e.g. for interactive pipeline use,
+   or rebuilding the pipeline
+
+4. If you activate another LMTOY in your shell, you need to logout of unity and come back.
+   (should clarify this)
+
+
+4. MX-55 is 192 obsnums. Submitting them took about 5 minutes. Each takes about 1 minute, but if
+   unity gives me 10 slots, this project would take about 20 mins to complete
