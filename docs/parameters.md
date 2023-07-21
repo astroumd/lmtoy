@@ -4,7 +4,7 @@ Here we describe the spectral line pipeline parameters, as they are being unders
 **SLpipeline.sh** and its instrument specific scripts.
 
 We differentiate between **generic** and **instrument/obsmode specific** (RSR,
-SEQ, 1MM, OMA, ...) parameters.
+SEQ/Map, SEQ/Bs, 1MM, OMA, ...) parameters.
 
 The pipeline and instrument specific scripts all have a **--help** and **-h** option
 as a reminder to the keywords and their defaults. They should always
@@ -24,10 +24,11 @@ all exist within the directory **obsnum/**:
 * lmtoy_OBSNUM.log - logfile from the pipeline
 * lmtoy_OBSNUM.ifproc - brief ASCII version of the IFPROC header
 * lmtoy_OBSNUM.rc  - pipeline (and derived) parameters
+* lmtoy_OBSNUM__0.rc  - pipeline (and derived) parameters when bank=0 is used with numbands=2
+* lmtoy_args.log  - record of all SLpipeline calls for this obsnum
 * SRC_OBSNUM_wf.fits  - SEQ waterfall in case there is only one band
 * SRC_OBSNUM__0_wf.fits  - SEQ waterfall for band 0 - in case there are > 1 band (e.g. 1MM and OMA)
-* SRC_OBSNUM__1_wf.fits  - SEQ waterfall for band 1
-* SRC_OBSNUM__1.txt - SEQ spectrum for band 1 (Bs or Ps mode)
+* SRC_OBSNUM__0.txt - SEQ spectrum for band 0 (Bs or Ps mode)
 * rsr.99862.badlags - RSR bad lags used for spectra
 * README_files.md - explanation of all files in this directory
 * README.html - the entry point for the summary table (index.html needs to symlink to this)
@@ -100,7 +101,71 @@ and experimental (i.e. don't use in production)
     newrc=              ?if you want to add rc parameters
     pdir=               ?if you want to switch manually for work
 
-## 2. RSR
+
+## 2. SEQ
+
+
+We list the keywords specific to Seqouia (SEQ) and their defaults. Some
+parameters cause a computation of derived paramers, and in a re-run
+will not be recomputed!  These are noted as such
+
+
+      #              1. BEAM/TIME filtering
+    bank=-1           # -1 means all banks 0..numbands-1
+    pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+    sample=-1         # not used until the gridding stage
+	              # @todo deal with vlsr=, restfreq= and different lines
+
+      #              3. BASELINE
+
+    dv=100           line cube is +/- dv around VLSR
+    dw=250           baseline is fitted +/-dw outside of the line cube, i.e. from dv to dv+dw on both sides
+    b_order=0        baseline order
+    b_regions=       even number of channels (in km/s) where baseline is defined (dw= can do this symmetrically)
+    l_regions=       line fit region(s)
+    slice=           the cube to be cut (usually from the extreme b_regions)
+
+      #              2. CALIBRATION
+    birdies=0        birdie channels need to be in original (1based?) channel space
+                     could also be a pulldown based on nchan from known cases
+    rms_cut=-4       samples to reject if above an threshold. sign important. [slider?]
+    stype=2          type of spectral line reduction (2=bracketed) [radio:0,1,2]
+    otf_cal=0        use calibration within OTF scan? [radio: 0,1; o check]
+
+
+      #              4. GRIDDING
+    extent=0          if used, use it as the field size (square -extent..extent) [arcsec]
+    resolution=12.5   # will be computed from skyfreq (lambda/D, so not exactly beam)
+    cell=6.25         # will be computed from resolution/2
+    nppb=-1           # alternative number of points per beam setting, will override cell=
+    rmax=3            # number of resolutions to use in convolution
+    otf_select=1      # otf filter code one of (0=box,1=jinc,2=gaussian,3=triangle) [default: 1]
+    otf_a=1.1         # parameter for the filter
+    otf_b=4.75        # parameter for the filter
+    otf_c=2           # parameter for the filter
+    noise_sigma=1     # weighting scheme (0 or 1) [check]
+    edge=0            # how to handle the edge (interpolate etc.) [check]
+    location=0,0      # viewing spectrum of this position w.r.t. center of map (arcsec)
+
+      #              5. OUTPUT
+    admit=0           # run admit?
+    maskmoment=0      # run maskmoment?
+    dataverse=0       # ingest in dataverse
+    raw=0             # create RAW files for offline reduction
+    srdp=0            # create SRDP for this obsnum
+    tap=0             # create TAP (lightweight SRDP)
+    error=0           # more strict errors
+    debug=0           # lots more debug
+    clean=1           # cleanup tmp files after the run
+    
+
+      # unset a view things, since setting them will give a new meaning
+    unset vlsr
+    unset restfreq
+
+
+
+## 3. RSR
 
 The **rsr_pipeline.sh** script uses two scripts to get the same spectrum in two different
 ways (they really should be merged).
@@ -124,7 +189,7 @@ ways (they really should be merged).
 Below we describe a few common scripts used in the pipeline. Some parameters are promoted to
 a pipeline parameter, others are hardcoded.
 
-### 2.1 badlags.py
+### 3.1 badlags.py
 
 Usage: badlags.py [options] OBSNUM
 
@@ -154,11 +219,11 @@ Options:
     min_chan        =   32                 
     Qedge           =   True        # try to find high end edge (lag#=255)
 
-### 2.2 rsr_tsys.py  
+### 3.2 rsr_tsys.py  
 
     rms_min         = 25.0      # this will add more badcb's
 
-### 2.3 rsr_driver.py
+### 3.3 rsr_driver.py
 
 
     -t 0.01             # --threshold sigma value when coadding all observations
@@ -169,7 +234,7 @@ Options:
     -n ???              # --notch_sigma sigma cut for notch filter (needs -f also)
     --exclude f1,df1,   # exclude regions from baseline calcs
 
-### 2.4 rsr_sum.py
+### 3.4 rsr_sum.py
 
 
     -t THRESHOLD_SIGMA  # Threshold sigma in spectrum needed for averaging [0.01]
@@ -308,7 +373,7 @@ Simple wrapper to process RSR spectra
 
 
 
-## 3. SEQ
+## 4. SEQ
 
 We list the keywords specific to Seqouia and their defaults. Some parameters cause a computation
 of derived paramers, and in a re-run will not be recomputed!  These are noted as such
