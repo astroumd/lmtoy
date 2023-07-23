@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="20-jul-2023"
+lmtoy_version="23-jul-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -732,16 +732,16 @@ function lmtoy_seq1 {
 	    echo "# tmp file to plot full spectral range for ${s_on} bank=$bank"   > full_spectral_range
 	    nemoinp "$vmin,0.0" newline=f                                         >> full_spectral_range
 	    nemoinp "$vmax,0.0" newline=f                                         >> full_spectral_range
-	    tabmath ${s_on}.cubespec.tab  - %1/1000,%2 all > cubespec.tab
-	    tabmath ${s_on}.cubespecs.tab - %1/1000,%2 all > cubespecs.tab
+	    tabmath ${s_on}.cubespec.tab  - %1/1000,%2 all > cubespec
+	    tabmath ${s_on}.cubespecs.tab - %1/1000,%2 all > cubespecs
 	    #   set the height at 1-sigma of the RMS in the smoothed (cubespecs) spectrum
-	    h=$(tabtrend cubespecs.tab 2 | tabstat -  | txtpar - %1*1.0 p0=disp,1,2)
+	    h=$(tabtrend cubespecs 2 | tabstat -  | txtpar - %1*1.0 p0=disp,1,2)
 	    #   box coordinates, assumed we did dv=,dw=      @todo use the uactually used b_ parameters
 	    b=$(echo $vlsr,$dv,$dw | tabmath - - %1-%2-%3,-$h,%1-%2,$h,%1+%2,-$h,%1+%2+%3,$h all | tabcsv -)
 	    tab_plot.py -s --xrange $vmin,$vmax --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
 			--boxes $b \
-			--title "${s_on} Vminmax=$vmin,$vmax" \
-			cubespec.tab cubespecs.tab full_spectral_range
+			--title "${s_on} VLSR_range: $vmin $vmax" \
+			cubespec cubespecs full_spectral_range
 	    mv tab_plot.png spectrum_${bank}.png
 	    
 	    # NEMO plotting ?
