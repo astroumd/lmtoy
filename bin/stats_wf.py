@@ -5,7 +5,7 @@
 
 from docopt import docopt
 
-_version = "24-may-2023"
+_version = "23-jul-2023"
 
 _help    = """Usage: stats_wf.py [options] FITSFILE
 
@@ -37,7 +37,6 @@ if Qdebug:
 import os
 import sys
 import numpy as np
-import matplotlib.pyplot as plt
 from astropy.io import fits
 
 
@@ -89,7 +88,13 @@ if birdiefile:
 
     
 print("# beam RMS <rms_chan> <rms_time>")
+
+import matplotlib.pyplot as plt
+
+import matplotlib.pyplot as plt
 plt.figure()
+
+
 
 npix = 0
 for z in range(nz):
@@ -117,9 +122,9 @@ if birdiefile:
 
 plt.title(ff)
 if axis==0:
-    plt.xlabel('Time Sample')
+    plt.xlabel('IntegrationTime Sample')
 else:
-    plt.xlabel('Channel')
+    plt.xlabel('Velocity Channel')
 plt.ylabel('RMS')
 
 # @todo   figure out a more universal best scaling 
