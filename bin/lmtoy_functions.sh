@@ -730,11 +730,18 @@ function lmtoy_seq1 {
 	    source $rc
 	    echo "TAB_PLOT   ${s_on} bank=$bank vminmax=$vmin,$vmax"
 	    echo "# tmp file to plot full spectral range for ${s_on} bank=$bank"   > full_spectral_range
-	    nemoinp "1000*$vmin,0.0" newline=f format=%f                          >> full_spectral_range
-	    nemoinp "1000*$vmax,0.0" newline=f format=%f                          >> full_spectral_range	    
-	    tab_plot.py -s --xrange $vmin,$vmax --xscale 0.001  --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
-			--title "${s_on} vminmax=$vmin,$vmax" \
-			${s_on}.cubespec.tab ${s_on}.cubespecs.tab full_spectral_range
+	    nemoinp "$vmin,0.0" newline=f                                         >> full_spectral_range
+	    nemoinp "$vmax,0.0" newline=f                                         >> full_spectral_range
+	    tabmath ${s_on}.cubespec.tab  - %1/1000,%2 all > cubespec.tab
+	    tabmath ${s_on}.cubespecs.tab - %1/1000,%2 all > cubespecs.tab
+	    #   set the height at 1-sigma of the RMS in the smoothed (cubespecs) spectrum
+	    h=$(tabtrend cubespecs.tab 2 | tabstat -  | txtpar - %1*1.0 p0=disp,1,2)
+	    #   box coordinates, assumed we did dv=,dw=      @todo use the uactually used b_ parameters
+	    b=$(echo $vlsr,$dv,$dw | tabmath - - %1-%2-%3,-$h,%1-%2,$h,%1+%2,-$h,%1+%2+%3,$h all | tabcsv -)
+	    tab_plot.py -s --xrange $vmin,$vmax --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
+			--boxes $b \
+			--title "${s_on} Vminmax=$vmin,$vmax" \
+			cubespec.tab cubespecs.tab full_spectral_range
 	    mv tab_plot.png spectrum_${bank}.png
 	    
 	    # NEMO plotting ?
