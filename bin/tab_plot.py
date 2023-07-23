@@ -9,7 +9,6 @@ Options:
   -s                      Don't show interactive plot, save plotfile instead.
   -g                      Use SVG instead of PNG for plotfile
   -t --title TITLE        Title of plot. Optional.
-  --ycoord YCOORD         Dashed line at YCOORD. Optional.
   --xscale XSCALE         Scale factor to apply to X axis [Default: 1.0]
   --yscale YSCALE         Scale factor to apply to Y axis [Default: 1.0]
   --xlab XLAB             X-axis label [Default: X]
@@ -18,10 +17,12 @@ Options:
   --yrange YMIN,YMAX      Min and Max of Y-coordinate. Optional.
   --size SIZE             Plotsize in inches. [Default: 8.0]
   --dpi DPI               DPI of plot. [Default: 100]
+  --ycoord YCOORD         Dashed line at YCOORD. Optional.
+  --boxes LL,UR           4-Tuples of lower-left upper-right boxes. Optional
   -z --ext EXT            Plotfile extension.  [Default: png]
   -h --help               This help
-  --debug                 More debugging output
-  --version               The script version
+  -d --debug              More debugging output
+  -v --version            The script version
 
 One or more ASCII tables are needed, with columns 1 and 2 designating the
 X and Y coordinates.
@@ -29,7 +30,7 @@ X and Y coordinates.
 The saved plotfile has a fixed name, tabplot.png (or tabplot.svg)
 
 """
-_version = "17-jul-2023"
+_version = "22-jul-2023"
 
 import sys
 import numpy as np
@@ -40,14 +41,23 @@ base   = 'tab_plot'
 title  = 'tab_plot'         # --title
 
 
-av = docopt(__doc__,options_first=True, version='rsr_spectra.py %s' % _version)
+av = docopt(__doc__,options_first=True, version='tab_plot.py %s' % _version)
 
+if av['--debug']:
+    print(av)
 
 xscale = float(av['--xscale'])
 yscale = float(av['--yscale'])
 size = float(av['--size']) 
 dpi = float(av['--dpi'])
 ext = av['--ext']
+boxes = av['--boxes']
+if boxes != None:
+    b = [float(f) for f in boxes.split(',')]
+    if len(b)%4 != 0:
+        print("Warning: boxes=%s needs to have multiple of 4 numbers" % boxes)
+    boxes = b
+
 
 if av['--title'] != None:
     title = av['--title']
@@ -114,6 +124,22 @@ for i in range(nfiles):
 if ycoord != None:
     print("ycoord",ycoord)
     plt.plot([xmin,xmax],[ycoord,ycoord],'--')
+
+if boxes != None:
+    print(boxes)
+    xb=np.zeros(5)
+    yb=np.zeros(5)    
+    for i in range(len(boxes)//4):
+        i0=i*4
+        xb[0] = boxes[i0+0]; yb[0] = boxes[i0+1]
+        xb[1] = boxes[i0+2]; yb[1] = boxes[i0+1]
+        xb[2] = boxes[i0+2]; yb[2] = boxes[i0+3]
+        xb[3] = boxes[i0+0]; yb[3] = boxes[i0+3]
+        xb[4] = boxes[i0+0]; yb[4] = boxes[i0+1]
+        plt.plot(xb,yb, color='black')
+        print('BOX',i,xb,yb)
+        
+
 
 plt.xlabel(xlab)
 plt.ylabel(ylab)
