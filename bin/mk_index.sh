@@ -186,8 +186,9 @@ for ext in "" "__0" "__1"; do
     echo "<br>"                                                               >> $html    
     echo "The figures in the right column are those generated from the first" >> $html
     echo "pass of the pipeline, those on the left are the latest iteration."  >> $html
+    echo "You should generally see some improvements in those."               >> $html
     echo "<br>"                                                               >> $html
-    echo "If no figure shown, the pipeline did not produce it,"               >> $html
+    echo "If no figure is shown, the pipeline did not produce it,"            >> $html
     echo "e.g. a combination obsnums will not have figures 1..7"              >> $html
     echo "as they are only created for the individual obsnums"                >> $html
     echo "<OL>"                                                               >> $html
@@ -229,7 +230,7 @@ for ext in "" "__0" "__1"; do
 	
 	# 3a
 	echo "  <br> Waterfall RMS [K] as function of channel number"             >> $html
-	echo "       (RMS [K] vs. CHANNEL)"                                       >> $html
+	echo "       (RMS vs. reversed CHANNEL)"                                  >> $html
 	echo "       - this is where birdies show up best, or check *bstats*"     >> $html
 	echo "           <br><IMG SRC=${base1}.wf1.png>"                          >> $html
 	echo "         <IMG SRC=first_${base1}.wf1.png>"                          >> $html
@@ -297,15 +298,16 @@ for ext in "" "__0" "__1"; do
     echo "         <IMG SRC=first_$base1.rms.png>"                            >> $html
 
     # 12.
-    echo "  <LI> Spectral coverage of raw and extracted"                      >> $html
+    echo "  <LI> Spectral coverage of raw and extracted cube,"                >> $html
+    echo "       with 1-sigma baseline box drawn"                             >> $html
     echo "           <br><IMG SRC=spectrum_${bank}.png>"                      >> $html
 
     
     echo "</OL>"                                                              >> $html
     
+    echo "<br>Last updated $update"                                           >> $html
 done  # for ext in "" "__0" "__1"; do
 
-echo "<br>Last updated $update"                                           >> $html
 
 # ====================================================================================================
 
