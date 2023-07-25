@@ -118,19 +118,21 @@ will not be recomputed!  These are noted as such
 
       #              3. BASELINE
 
+    b_order=0        baseline order
+    
     dv=100           line cube is +/- dv around VLSR
     dw=250           baseline is fitted +/-dw outside of the line cube, i.e. from dv to dv+dw on both sides
-    b_order=0        baseline order
+    
     b_regions=       even number of channels (in km/s) where baseline is defined (dw= can do this symmetrically)
     l_regions=       line fit region(s)
     slice=           the cube to be cut (usually from the extreme b_regions)
 
       #              2. CALIBRATION
-    birdies=0        birdie channels need to be in original (1based?) channel space
+    birdies=0        birdie channels need to be in original (1-based?) channel space
                      could also be a pulldown based on nchan from known cases
     rms_cut=-4       samples to reject if above an threshold. sign important. [slider?]
     stype=2          type of spectral line reduction (2=bracketed) [radio:0,1,2]
-    otf_cal=0        use calibration within OTF scan? [radio: 0,1; o check]
+    otf_cal=0        use calibration within OTF scan? [radio: 0,1]
 
 
       #              4. GRIDDING
@@ -144,7 +146,7 @@ will not be recomputed!  These are noted as such
     otf_b=4.75        # parameter for the filter
     otf_c=2           # parameter for the filter
     noise_sigma=1     # weighting scheme (0 or 1) [check]
-    edge=0            # how to handle the edge (interpolate etc.) [check]
+    edge=0            # how to handle the edge (interpolate etc.) [radio: 0,1]
     location=0,0      # viewing spectrum of this position w.r.t. center of map (arcsec)
 
       #              5. OUTPUT
