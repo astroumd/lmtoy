@@ -39,22 +39,22 @@ is written by the pipeline to explain their contents, and should always contain 
 
 ## Observing Modes
 
-A summary what the **SLpipeline.sh**  handles:
+A summary what the **SLpipeline.sh**  handles, the ones marked with (*) should be handled with a webrun
 
       Instrument    ObsGoal    ObsPgm         Example           Comments
 
-      RSR           Science    Bs
+      RSR         * Science    Bs
       RSR           LineCheck  Bs             33551 (bench1)
 
-      SEQ           Science    Bs             108766            only band=0; Bs is a special case of Ps
-      SEQ           Science    Ps             108764            not working yet
-      SEQ           Science    Map            94050,94052       various mapmodes (Hor,Equ,Gal)
+      SEQ         * Science    Bs             108766            only band=0; Bs is a special case of Ps
+      SEQ         * Science    Ps             108764            not working yet
+      SEQ         * Science    Map            94050,94052       various mapmodes (Hor,Equ,Gal)
       SEQ           Science    Lissajous      94051             ? broken now ?
       SEQ           Pointing   Map            79448 (bench2)
 
       1MM           Pointing   Map            74744,108715              
       1MM           Pointing   CrossScan      74742
-      1MM           SciencePs  Ps             88058
+      1MM         * Science    Ps             88058
 
       <any>         Focus                                       not handled by SLpipeline
       <any>         Astigmatism                                 not handled by SLpipeline
@@ -84,14 +84,12 @@ to be supplied, not both!
     error=1             1: exit on error
     restart=0           1: cleans up old obsnum pipeline results
     exist=0             1: will not run if the obsnum exists (see also sbatch_lmtoy.sh obsnum0=)
-    path=$DATA_LMT      - should not be used (but will still work)
-    work=$WORK_LMT      - should not be used (but will still work)
     tap=0               produce TAP tar file?  [0|1]
     srdp=0              produce SRDP tar file? [0|1]
     raw=0               produe RAW tar file?   [0|1]
     admit=0             run admit?             [0|1]
     sleep=2             sleep before running, in case you change your mind
-    nproc=1             number of processors (should stay at 1)
+    nproc=1             number of processors (should stay at 1) 
     rsync=""            special rsync option, only for running at LMT (malt)
 
 and experimental (i.e. don't use in production)
@@ -107,7 +105,7 @@ and experimental (i.e. don't use in production)
 
 We list the keywords specific to Seqouia (SEQ) and their defaults. Some
 parameters cause a computation of derived paramers, and in a re-run
-will not be recomputed!  These are noted as such
+should be recomputed! 
 
 
       #              1. BEAM/TIME filtering
@@ -116,8 +114,7 @@ will not be recomputed!  These are noted as such
     sample=-1         # not used until the gridding stage
 	              # @todo deal with vlsr=, restfreq= and different lines
 
-      #              3. BASELINE
-
+      #              2. BASELINE
     dv=100           line cube is +/- dv around VLSR
     dw=250           baseline is fitted +/-dw outside of the line cube, i.e. from dv to dv+dw on both sides
     b_order=0        baseline order
@@ -125,33 +122,33 @@ will not be recomputed!  These are noted as such
     l_regions=       line fit region(s)
     slice=           the cube to be cut (usually from the extreme b_regions)
 
-      #              2. CALIBRATION
+      #              3. CALIBRATION
     birdies=0        birdie channels need to be in original (1based?) channel space
                      could also be a pulldown based on nchan from known cases
     rms_cut=-4       samples to reject if above an threshold. sign important. [slider?]
-    stype=2          type of spectral line reduction (2=bracketed) [radio:0,1,2]
-    otf_cal=0        use calibration within OTF scan? [radio: 0,1; o check]
+    stype=2          type of spectral line reduction (2=bracketed) [radio: 0,1,2]
+    otf_cal=0        use calibration within OTF scan? [radio: 0,1]
 
 
       #              4. GRIDDING
-    extent=0          if used, use it as the field size (square -extent..extent) [arcsec]
+    extent=0          # if used, use it as the field size (square -extent..extent) [arcsec]
     resolution=12.5   # will be computed from skyfreq (lambda/D, so not exactly beam)
     cell=6.25         # will be computed from resolution/2
     nppb=-1           # alternative number of points per beam setting, will override cell=
     rmax=3            # number of resolutions to use in convolution
     otf_select=1      # otf filter code one of (0=box,1=jinc,2=gaussian,3=triangle) [default: 1]
-    otf_a=1.1         # parameter for the filter
-    otf_b=4.75        # parameter for the filter
-    otf_c=2           # parameter for the filter
-    noise_sigma=1     # weighting scheme (0 or 1) [check]
-    edge=0            # how to handle the edge (interpolate etc.) [check]
+    otf_a=1.1         # parameter for the filter (if applicable)
+    otf_b=4.75        # parameter for the filter (if applicable)
+    otf_c=2           # parameter for the filter (if applicable)
+    noise_sigma=1     # weighting scheme [check:0,1]
+    edge=0            # how to handle the edge (interpolate etc.) [check:0,1]
     location=0,0      # viewing spectrum of this position w.r.t. center of map (arcsec)
 
       #              5. OUTPUT
     admit=0           # run admit?
     maskmoment=0      # run maskmoment?
-    dataverse=0       # ingest in dataverse
-    raw=0             # create RAW files for offline reduction
+    dataverse=0       # ingest in dataverse (don't use for webrun)
+    raw=0             # create RAW files for offline reduction (discouraged)
     srdp=0            # create SRDP for this obsnum
     tap=0             # create TAP (lightweight SRDP)
     error=0           # more strict errors
