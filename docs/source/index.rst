@@ -56,7 +56,7 @@ After this was installed, the pipeline can be activated and executed as follows:
 After this the data products can be found in the directory
 ``2018S1SEQUOIACommissioning/79448``. Currently by default the script
 runs the pipeline for obsnum=33551 (an RSR example) and obsnum=79448
-(a Sequoia example), and the results are in ``$LMTOY/work_lmt``.
+(a Sequoia example), and the results are under ``$WORK_LMT``.
    
 
 
