@@ -22,7 +22,9 @@ The resulting data can then be found in $WORK_LMT/$ProjectId/$obsnum, or in the 
 $ProjectId/${on0}_${on1}. Inside there will be a README.html summarizing the
 Timely Analysis Products (TAP).  You can also list the obsnums, line by line, in a text file ``my.obsnums``.
 
-Each instrument (e.g. RSR, SEQ) have their own pipeline script.
+Each instrument (e.g. RSR, SEQ) have their own pipeline script. For some instruments (e.g. SEQ) a different
+script exists for a different observing mode (OTF Mapping, Beam Switching, Position Switching)
+ 
 
 RSR pipeline
 ------------
