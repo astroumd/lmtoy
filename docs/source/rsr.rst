@@ -1,7 +1,8 @@
 RSR via SLpipeline
 ==================
 
-Here we summarize the current (nov 2021) status of data reduction for the RSR. The invocation would be
+Here we summarize the current (nov 2021) status of data reduction for the RSR. 
+The invocation would be
 
 .. code-block::
 
