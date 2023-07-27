@@ -16,7 +16,7 @@ Useful tools for the LMTOY script generators (lmtoy_$PID)
 import os
 import sys
 
-_version = "29-jun-2023"
+_version = "24-jul-2023"
 
 def pix_list(pl):
     """ convert a strong like "-0,-1" to proper pixlist by removing
@@ -120,6 +120,7 @@ def mk_runs(project, on, pars1, pars2, argv=None):
                 print("mk_runs.py: Create runfiles by default (version %s)" % _version)
                 print("  -h    this help")
                 print("  -o    show all obsnums, sorted")
+                print("  -c    produce a config/obsnum list [takes time]")
                 print("  -b    show all failed obsnums")
                 print("  -B    show all failed obsnums and add the word QAFAIL for comments.txt")
                 sys.exit(0)
@@ -131,6 +132,16 @@ def mk_runs(project, on, pars1, pars2, argv=None):
                 for o1 in obsnums:
                     print(o1)
                 print("# found %d obsnums" % len(obsnums))
+                return
+            elif argv[1] == '-c':
+                for s in on.keys():
+                    for o1 in on[s]:
+                        obsnums.append(abs(o1))
+                obsnums.sort()
+                for o1 in obsnums:
+                    cmd = 'echo -n "%s "; lmtinfo.py %d | grep ^config=  | sed s/config=//' % (abs(o1),abs(o1))
+                    print(cmd)
+                    # os.system(cmd)
                 return
             elif argv[1] == '-b' or argv[1] == '-B':
                 for s in on.keys():
