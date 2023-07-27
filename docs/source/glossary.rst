@@ -21,23 +21,28 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       A coherent section of channels in frequency space. For **RSR** there
       are 6 bands, sometimes the word **board** is used as well, although
       the ordering of bands and boards is different. bands are ordered
-      in frequency (by our convention). SLR
-      also uses this keyword, but there is currently only board=0 for
-      SLR. See also **bank**
+      in frequency (by our convention).
+      For
+      See also **bank**
 
     bank
-      A set of spectrometers that cover the same IF band at the same
+      A set of spectrometers that cover the same *IF* band at the same
       resolution (and number of channels).
       There is no side-band restriction.   For SEQUOIA
-      we only use one bank currently. For the MSIP 1mm receiver there are
+      we only two banks currently, though both need to be in the
+      band below 100GHz or in the band above 100GHz.
+    . For the MSIP 1mm receiver there are
       two, although they have one in USB and one in LSB.
 
     beam
-      The footprint of one receiver horn on the sky. Sequioa as a 
+      The footprint of one receiver horn on the sky. Sequioa has a 
       4x4 multi-beam receiver, numbered 0 through 15.
       Not to be confused with the
       **FWHM**.  At 115 GHz the **FWHM** is about 16", at 86 GHz about
       21".  The beam separation is 27.8" for Sequoia.
+      The word **pixel** has also been used for **beam**, but this is
+      discouraged as this has an overloaded means in our final images.
+      See also **cell**.
     
       Note that for some instruments beams are also interpreted while
       including other simulteanously taken data in another band/polarization
@@ -54,12 +59,14 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 
     bufpos
       WARES variable to denote what type of data is being received.
-      bufpos: 0=on 1=off 2=sky 3=hot.   100 can be added if ...(TBD)...
+      bufpos: 0=on 1=off 2=sky 3=hot.
+      A value of 100 can be added if ...(TBD)...
 
     cell
       (most people would call this a pixel, but at LMT
       **pixel** is an overloaded word for the beams. In the gridder we
-      use --cell=
+      use --cell=. This will be the pixel size in the final FITS
+      images.
 
     chassis
       for **RSR** there are 4 chassis boards, which are tuples of two beams and two polarizations
@@ -166,7 +173,8 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       A simple text file of (LMTOY pipeline) commands, one per line. Although more
       limiting than full programmable bash scripts, these can be executed serially
       by bash, or in parallel by GNU parallel or SLURM. The lmtoy script generator
-      will produce sets of runfile's.
+      will produce sets of runfile's. The webrun environment also deals with runfiles,
+      as they are submitted to Unity via SLURM.
     
     ScanNum
       Scan Number - see **ObsNum**
@@ -195,6 +203,17 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       (Spectral Line Receiver) The common name for the (SEQ/1MM/OMA) instruments,
       since they share WARES hardware. Name is also used in ``lmtslr``, the python module.
 
+    SLURM
+      A workload manager to submit jobs to a queue, in our case for **Unity**.
+
+    SpecFile
+      A netcdf file containing the calibrated spectra, ready for gridding.  This is equivalent
+      to an SDFITS file. In a future version we may replace the SpecFile with an SDFITS file.
+
+    Spectral Window
+      In ALMA commonly abbreviated as **spw**, this is closest to what we call a **bank**, a
+      set of linearly spaced channels.
+
     Spectrum
       A coherent section in frequency space, with its own unique meta-data (such as polarization,
       ra, dec, time). Normally the smallest portion of data we can assign. A spectrum is
@@ -221,10 +240,19 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
     TolTeca
       Python frontend for the **TolTec** instrument. Is **dasha** based.
 
+    Unity
+      An HPC system consisting of many compute nodes. We run the SLpipeline here, though they
+      need to be submitted via a workload manager, called **SLURM**
+
     WARES
       (Wideband Arrayed ROACH Enabled Spectrometer). The spectrometer used
       for Sequoia/1MM/Omaya. Also used for the name
-      of the computer that receives data from the 4 (now 8) roach boards.
+      of the computer that receives data from the individual roach boards
+      in the spectrometer hardware.
+
+    webrun
+      Placeholder name for the futuure webbased environemnt that allows one to run
+      pipeline on a project for science data.
 
 
 .. _overloaded:
