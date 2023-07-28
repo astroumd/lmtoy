@@ -1,7 +1,8 @@
 dnl Process this file with autoconf to produce a new configure script if it has changed. 
 dnl ------------------------------------------------------------------------------------
 
-AC_INIT(README.md)
+AC_INIT
+AC_CONFIG_SRCDIR([README.md])
 
 AC_MSG_CHECKING([LMTOY config])
 echo ""
@@ -23,14 +24,16 @@ dnl /data_lmt            At the UMasss machine "cln"
 dnl /lma1/lmt/data_lmt   At the UMD machine "lma"
 dnl ???                  At the LMT site (wares?)
 
-if   test ! -z $DATA_LMT         ; then
+if   test ! -z $DATA_LMT            ; then
      DATA_LMT=$DATA_LMT
-elif test -d ~/LMT/data_lmt      ; then
+elif test -d ~/LMT/data_lmt         ; then
      DATA_LMT=~/LMT/data_lmt
-elif test -d  /data_lmt          ; then
+elif test -d  /data_lmt             ; then
      DATA_LMT=/data_lmt
-elif test -d  /lma1/lmt/data_lmt ; then
+elif test -d  /lma1/lmt/data_lmt    ; then
      DATA_LMT=/lma1/lmt/data_lmt
+elif test -d  /nese/toltec/data_lmt ; then
+     DATA_LMT=/nese/toltec/data_lmt
 else
     echo "Could not find the data_lmt, use --with-data="
     DATA_LMT=/tmp
@@ -83,5 +86,6 @@ AC_SUBST(WORK_LMT)
 echo "Using WORK_LMT=$WORK_LMT"
 
 # put these in a single AC_OUTPUT command so config.status is not called multiple times.
-AC_OUTPUT([lmtoy_start.csh lmtoy_start.sh])
+AC_CONFIG_FILES([lmtoy_start.csh lmtoy_start.sh])
+AC_OUTPUT
 
