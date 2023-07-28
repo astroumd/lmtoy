@@ -1,4 +1,4 @@
-# @EDIT_MSG@
+># @EDIT_MSG@
 # for (t)csh : source this file
 
 setenv LMTOY  @LMTOY@
@@ -17,7 +17,7 @@ if (-d $LMTOY/Montage/bin) setenv PATH  $LMTOY/Montage/bin:$PATH
 if (-e $LMTOY/nemo/nemo_start.csh) source $LMTOY/nemo/nemo_start.csh
 
 if ($?ADMIT) then
-    echo Warning:  ADMIT=$ADMIT present.  LMTOY will not behave nicely with ADMIT yet.
+    echo "Warning:  ADMIT=$ADMIT present.  LMTOY will not behave nicely with ADMIT yet."
 endif
 
 # if you want to change this, edit lmtoy_local.csh instead, or use configure correctly
@@ -31,6 +31,8 @@ foreach f ($LMTOY/lmtoy_local.sh $HOME/.lmtoy_start.sh)
 end
 
 if ( -e $LMTOY/etc/news.txt )  then
-    echo Latest news:
+    echo "Latest news:"
     cat $LMTOY/etc/news.txt
+else
+    echo "No news from $LMTOY/etc/news.txt"
 endif

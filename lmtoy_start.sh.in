@@ -28,7 +28,7 @@ fi
 
 
 if [ ! -z $ADMIT ]; then
-    echo Warning:  ADMIT=$ADMIT present.  LMTOY will not behave nicely with ADMIT yet.
+    echo "Warning:  ADMIT=$ADMIT present.  LMTOY will not behave nicely with ADMIT yet."
 fi
 
 # if you want to change this, edit lmtoy_local.sh instead, or use configure correctly
@@ -44,6 +44,8 @@ for f in $LMTOY/lmtoy_local.sh $HOME/.lmtoy_start.sh; do
 done
 
 if [ -e $LMTOY/etc/news.txt ]; then
-    echo Latest news:
+    echo "Latest news:"
     cat $LMTOY/etc/news.txt
+else
+    echo "No news from $LMTOY/etc/news.txt"
 fi
