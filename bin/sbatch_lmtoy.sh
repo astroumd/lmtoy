@@ -35,7 +35,7 @@
 #
 #--HELP
 
-version="19-jul-2023"       # script version
+version="28-jul-2023"       # script version
 sleep=1                     # don't use 0, unity spawns too fast in a series
 
 if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
@@ -142,6 +142,7 @@ cat <<EOF > $run
 if [ -e $LMTOY/modules.rc ]; then
  source $LMTOY/modules.rc
 fi
+export MPLBACKEND=agg
 
 $prefix $*
 
