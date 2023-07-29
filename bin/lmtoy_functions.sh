@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="23-jul-2023"
+lmtoy_version="28-jul-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -45,6 +45,7 @@ function lmtoy_report {
 }
 
 function lmtoy_args {
+    # set the command line args as shell variables, and save them in _lmtoy_args
     # require arguments, but if -h/--help given, give the inline help
     if [ -z $1 ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
 	set +x
@@ -56,8 +57,17 @@ function lmtoy_args {
     for arg in "$@"; do
 	export "$arg"
     done
-    # save them (they are saved in lmtoy_args.log)
+    # save them (for each run they are appended to lmtoy_args.log)
     _lmtoy_args="$@"
+}
+
+function show_args {
+    # show the latest command line args
+    echo "# <show_args>"
+    for arg in ${_lmtoy_args}; do
+	echo "$arg"
+    done
+    echo "# </show_args>"
 }
 
 function lmtoy_decipher_obsnums {
@@ -93,9 +103,11 @@ function lmtoy_decipher_obsnums {
 	obsnums1=$(echo $obsnums | sed 's/,/ /g')
     fi
     obsnum=${on0}
-    echo OBSNUM: $obsnum
-    echo OBSNUMS: $obsnums
-    echo OBSNUMS1: $obsnums1
+    if [ $debug = 1 ]; then
+	echo OBSNUM: $obsnum
+	echo OBSNUMS: $obsnums
+	echo OBSNUMS1: $obsnums1
+    fi
 }
 
 function printf_red {
@@ -115,9 +127,11 @@ function printf_green {
 function show_vars {
     # helper function to show value of shell variables using bash dynamic variables
     # meant to be stored in an rc file
+    echo "# <show_vars>"
     for _arg in "$@"; do
 	echo "${_arg}=${!_arg}"
     done
+    echo "# </show_vars>"    
     
 }
 
@@ -144,8 +158,8 @@ function lmtoy_rsr1 {
     #  7. final rsr_sum,    using badlags and badcb1,badcb2
 
     # log the version
-    lmtoy_version > lmtoy.rc
-    # set the dreampy.log logger filename in the local OBSNUM directory
+    lmtoy_version >> lmtoy.rc
+    # set the dreampy.log logger filename in the local OBSNUM directory (also needed for parallel processing)
     export DREAMPY_LOG='dreampy.log'
 
     # spec1:    output spectrum rsr.$obsnum.driver.txt
@@ -240,7 +254,7 @@ function lmtoy_rsr1 {
 	    rsr_badcb -r $badlags >> $rfile 
 	    rsr_badcb -b $badlags >> $blanking
 	fi
-	echo "PJT1 obsnum=$obsnum obsnums=$obsnums"	
+	#echo "PJT1 obsnum=$obsnum obsnums=$obsnums"	
     elif [ ! -z "$obsnums" ]; then
 	#  only for obsnum combinations
 	echo "PJT2 obsnum=$obsnum obsnums=$obsnums"
@@ -251,7 +265,7 @@ function lmtoy_rsr1 {
 	echo "Using existing $badlags - forgetting initial settings"
 	rsr_badcb -b $badlags >> $blanking
 	rsr_badcb -r $badlags >> $rfile
-	echo "PJT3 obsnum=$obsnum obsnums=$obsnums"
+	#echo "PJT3 obsnum=$obsnum obsnums=$obsnums"
     fi
     
     #   We have two similar scripts of difference provenance that produce a final spectrum
@@ -839,7 +853,7 @@ function lmtoy_bs1 {
     # this will process a single bank in an $obsnum
 
     # log the version
-    lmtoy_version > lmtoy.rc
+    lmtoy_version >> lmtoy.rc
     # keep an IFPROC header
     if [ ! -e lmtoy_$obsnum.ifproc ]; then
 	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
@@ -895,7 +909,7 @@ function lmtoy_ps1 {
     # this will process a single bank in an $obsnum
 
     # log the version
-    lmtoy_version > lmtoy.rc
+    lmtoy_version >> lmtoy.rc
     # keep an IFPROC header
     if [ ! -e lmtoy_$obsnum.ifproc ]; then
 	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
