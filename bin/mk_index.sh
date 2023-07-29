@@ -299,9 +299,13 @@ for ext in "" "__0" "__1"; do
 
     # 12.
     echo "  <LI> Spectral coverage of raw and extracted cube,"                >> $html
-    echo "       with 1-sigma baseline box drawn"                             >> $html
+    echo "       with 1-sigma baseline box drawn."                            >> $html
+    echo "     Shown are full range (left) and extracted range (right)"       >> $html
+    echo "     spectrum of the central pixel,"                                >> $html
+    echo "     for a native and smooth binned cube."                          >> $html
+    echo "       (vlsr=$vlsr)"                                                >> $html
     echo "           <br><IMG SRC=spectrum_${bank}.png>"                      >> $html
-
+    echo "          <IMG SRC=spectrum_${bank}_zoom.png>"                      >> $html    
     
     echo "</OL>"                                                              >> $html
     
