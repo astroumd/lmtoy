@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="28-jul-2023"
+lmtoy_version="29-jul-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -473,6 +473,10 @@ function lmtoy_seq1 {
     fi
     # record
     echo "LMTOY>> rc=$rc rc1=$rc1 bank=$bank oid=$oid"
+    if [ ! -e $rc1 ]; then
+	cp $rc $rc1
+	rc=$rc1
+    fi
 
     # fix potential pix_list
     pix_list=$(pix_list.py $pix_list)
@@ -736,7 +740,8 @@ function lmtoy_seq1 {
 	    echo "rms=$rms     # rms[mK] in center"      >> $rc
 	    echo "rms0=$rms0   # RMS/radiometer ratio"   >> $rc
 
-	    # hack
+	    # add a smooth cube version as well
+	    # @todo  it seems the WCS of the nfs is off by 1
 	    fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.cubespecs.tab
 	    echo -n "cubespec : ";  tail -1  $s_on.cubespec.tab
 	    echo -n "cubespecs: ";  tail -1  $s_on.cubespecs.tab
@@ -746,17 +751,26 @@ function lmtoy_seq1 {
 	    echo "# tmp file to plot full spectral range for ${s_on} bank=$bank"   > full_spectral_range
 	    nemoinp "$vmin,0.0" newline=f                                         >> full_spectral_range
 	    nemoinp "$vmax,0.0" newline=f                                         >> full_spectral_range
-	    tabmath ${s_on}.cubespec.tab  - %1/1000,%2 all > cubespec
-	    tabmath ${s_on}.cubespecs.tab - %1/1000,%2 all > cubespecs
-	    #   set the height at 1-sigma of the RMS in the smoothed (cubespecs) spectrum
-	    h=$(tabtrend cubespecs 2 | tabstat -  | txtpar - %1*1.0 p0=disp,1,2)
+	    tabmath ${s_on}.cubespec.tab  - %1/1000,%2 all > native
+	    tabmath ${s_on}.cubespecs.tab - %1/1000,%2 all > smooth-5x5x5
+	    #   set the height at 1-sigma of the RMS in the smoothed (5x5x5) spectrum
+	    h=$(tabtrend smooth-5x5x5 2 | tabstat - qac=t robust=t  | txtpar - %1*1.0 p0=QAC,1,4)
+	    echo "rms_baseline=$h" >> $rc
 	    #   box coordinates, assumed we did dv=,dw=      @todo use the uactually used b_ parameters
 	    b=$(echo $vlsr,$dv,$dw | tabmath - - %1-%2-%3,-$h,%1-%2,$h,%1+%2,-$h,%1+%2+%3,$h all | tabcsv -)
+	    #   baseline range
+	    br=$(echo $vlsr,$dv,$dw | tabmath - - %1-%2-%3,%1+%2+%3 all)
 	    tab_plot.py -s --xrange $vmin,$vmax --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
 			--boxes $b \
 			--title "${s_on} VLSR_range: $vmin $vmax" \
-			cubespec cubespecs full_spectral_range
+			native smooth-5x5x5 full_spectral_range
 	    mv tab_plot.png spectrum_${bank}.png
+	    tab_plot.py -s --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
+			--boxes $b \
+			--title "${s_on} VLSR_range: $br" \
+			native smooth-5x5x5
+	    mv tab_plot.png spectrum_${bank}_zoom.png	    
+	    
 	    
 	    # NEMO plotting ?
 	    if [ $viewnemo = 1 ]; then
