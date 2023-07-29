@@ -10,7 +10,7 @@
 #
 #
 
-_version="rsr_pipeline: 28-jul-2023"
+_version="rsr_pipeline: 29-jul-2023"
 
 echo "LMTOY>> $_version"
 
@@ -118,6 +118,7 @@ echo "date=\"$date\"     # begin"    >> $rc
 show_args                            >> $rc   # <show_args>
 source $rc
 rm -f $rc0
+unset rc0
 
 #             derived parameters (do not edit these)
 s_on=${src}_${obsnum}
