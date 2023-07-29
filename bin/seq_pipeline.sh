@@ -15,7 +15,7 @@
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 # @todo   vlsr= only takes correct effect on the first run, not a re-run
 
-_version="seq_pipeline: 28-jul-2023"
+_version="seq_pipeline: 29-jul-2023"
 
 echo "LMTOY>> $_version"
 
@@ -26,8 +26,8 @@ obsnum=0                              # required
 oid=""                                # optional (usually same as the bank)
 pdir=""                               # usually given (otherwise current directory used)
 #            - procedural
-makespec=1
-makecube=1
+makespec=1     # (re)make a specfile
+makecube=1     # (re)make a fits cube
 makewf=1
 viewspec=1
 viewcube=0
@@ -111,38 +111,50 @@ else
 fi
 
 #             process the parameter file(s)
+#             WARNING:  for RSR this process is fairly simple, but for SEQ
+#             dealing with one or two banks this has become a bit more complex
 
 #             bootstrap file
 rc=./lmtoy_${obsnum}.rc
 if [ ! -e $rc ]; then
     echo "LMTOY>> creating bootstrap $rc"
-    echo "#! rc $rc:"   > $rc
-    echo "# $_version" >> $rc
-    lmtinfo.py $obsnum >> $rc                 # <lmtinfo>
-    cat $rc0           >> $rc                 # <show_vars>
+    echo "#! rc=$rc:"                             > $rc
+    echo "# $_version bootstrap version rc"      >> $rc
+    lmtinfo.py $obsnum                           >> $rc   # <lmtinfo>
+    cat $rc0                                     >> $rc   # <show_vars>
+    show_args                                    >> $rc   # <show_args>	  @bug ???
+    source $rc
+    # deal with old pre-2023 data   @todo  forcing didn't work
+    if [ $numbands = 1 ]; then
+	echo "bank=0   # old data"               >> $rc
+    fi
 fi
-echo "date=\"$date\"     # begin"    >> $rc
-show_args                            >> $rc   # <show_args>
 source $rc
+show_args  > $rc0
+source $rc0
+
+if [ $bank -ge 0 ]; then
+    # 2nd time with numbands=2 or 1st time with numbands=1
+    rc1=lmtoy_${obsnum}__${bank}.rc
+    if [ -e $rc1 ]; then
+	source $rc1
+	echo "LMTOY>> Found rc1=$rc1"
+	echo "#! rc=$rc1"                        >> $rc1
+	echo "date=\"$date\"     # begin"        >> $rc1    
+    else
+	cp $rc $rc1
+    fi
+    show_args                                    >> $rc1   # <show_args>	
+    rc=$rc1
+else
+    # only first time with numbands=2
+    echo "date=\"$date\"     # begin2"           >> $rc
+    show_args                                    >> $rc    # <show_args>
+fi
+source $rc
+
 rm -f $rc0
 unset rc0
-
-
-#             optional "oid" based parameter file.
-#             this will be the rc file instead from now on instead
-rc1=./lmtoy_${obsnum}__${oid}.rc
-if [ ! -z "$oid" ]; then
-    if [ ! -e $rc1 ]; then
-	cat $rc                               > $rc1
-    fi
-    echo "LMTOY>> Using rc1=$rc1"
-    echo "#! rc $rc1"                        >> $rc1
-    echo "date=\"$date\"     # begin"        >> $rc1    
-    show_vars oid $show_vars                 >> $rc1
-    # from now on, use this as the rc file
-    rc=$rc1
-fi
-
 
 # exceptions allowed to be overridden:   vlsr, restfreq
 if [ ! -z $vlsr ]; then
@@ -194,7 +206,7 @@ if [[ $first == 1 ]] || [[ "$_lmtoy_args"  == *"extent="* ]]; then
 fi
 
 if [[ $first == 1 ]] || [[ "$_lmtoy_args"  == *"pix_list="* ]]; then
-    echo "# setting pix_list"                >> $rc
+    echo "# setting pix_list $pix_list"      >> $rc
     #    re-interpret pix_list
     echo "pix_list=$(pix_list.py $pix_list)" >> $rc
 fi
@@ -244,7 +256,7 @@ fi
 echo map_coord_use=$map_coord_use                      >> $rc
     
 
-# source again - ensure the changed variables are in
+# source again - ensure we have the changed variables 
 source $rc
 
 
@@ -256,6 +268,7 @@ sleep 2
 if [ $bank != -1 ]; then
     # pick only this selected bank
     echo "LMTOY>> selecting only bank $bank with numbands=$numbands"
+    rc1=lmtoy_${obsnum}__${bank}.rc    
     if [ ! -z "$oid" ]; then
 	s_on=${src}_${obsnum}__${oid}
     else
@@ -273,6 +286,7 @@ elif [ $numbands == 2 ]; then
 	bank=$(expr $b - 1)
 	oid=$bank
 	echo "LMTOY>> Preparing for bank=$bank"
+	rc1=lmtoy_${obsnum}__${bank}.rc
 	s_on=${src}_${obsnum}__${bank}
 	s_nc=${s_on}.nc
 	s_fits=${s_on}.fits
@@ -284,7 +298,7 @@ elif [ $numbands == 1 ]; then
     # old style, before April 2023, we should not use it anymore
     echo "LMTOY>> numbands=1 -- old style"
     bank=0
-    s_on=${src}_${obsnum}            # old
+    rc1=lmtoy_${obsnum}__${bank}.rc    
     s_on=${src}_${obsnum}__${bank}
     s_nc=${s_on}.nc
     s_fits=${s_on}.fits
