@@ -10,7 +10,7 @@
 #
 #
 
-_version="rsr_pipeline: 19-jun-2023"
+_version="rsr_pipeline: 28-jul-2023"
 
 echo "LMTOY>> $_version"
 
@@ -20,7 +20,6 @@ echo "LMTOY>> $_version"
 obsnum=0      # this is a single obsnum pipeline (obsnums=0)
 obsid=""      # not used yet
 pdir=""       # where to do the work
-path=${DATA_LMT:-data_lmt}      # - to be deprecated
 
 #             - PI parameters
 
@@ -87,16 +86,15 @@ fi
 #             put in bash error exit mode
 if [ $error = 1 ]; then
     set -e
+    set -u
 fi
 
-#lmtoy_first
 if [ -e lmtoy.rc ]; then
     first=0
 else
     first=1
 fi
 
-#lmtoy_pdir
 #             see if pdir working directory needs to be used
 if [ ! -z $pdir ]; then
     echo Working directory $pdir
@@ -109,30 +107,26 @@ fi
 
 #             process the parameter file
 rc=./lmtoy_${obsnum}.rc
+date=$(lmtoy_date)
 if [ ! -e $rc ]; then
     echo "LMTOY>> creating new $rc"
     echo "# $_version"  > $rc
-    cat $rc0           >> $rc
-    lmtinfo.py $obsnum >> $rc
+    lmtinfo.py $obsnum >> $rc                 # <lmtinfo>
+    cat $rc0           >> $rc                 # <show_vars>
 fi
-date=$(lmtoy_date)
-echo "#"                                 >> $rc
-echo "date=\"$date\"     # begin"        >> $rc
-for arg in "$@"; do
-    echo "$arg" >> $rc
-done
+echo "date=\"$date\"     # begin"    >> $rc
+show_args                            >> $rc   # <show_args>
 source $rc
 rm -f $rc0
 
-#             derived parameters (you should not have to edit these)
-p_dir=${path}
+#             derived parameters (do not edit these)
 s_on=${src}_${obsnum}
 s_nc=${s_on}.nc
 
 
 #             sanity checks
-if [ ! -d $p_dir ]; then
-    echo "LMTOY>> directory $p_dir does not exist"
+if [ ! -d $DATA_LMT ]; then
+    echo "LMTOY>> directory $DATA_LMT does not exist"
     exit 1
 fi
 
@@ -144,13 +138,14 @@ if [ -z $badlags ]; then
     badlags=rsr.$obsnum.badlags   # for  rsr_xxx    - produced by badlags.py
 fi
 
-if [ $first == 1 ]; then
-    # bootstrap  $blanking and $rfile; these are just commented lines w/ examples
+if [ $first = 1 ]; then
+    # bootstrap  $blanking and $rfile for this obsnum; these are just commented lines w/ examples
     rsr_blanking $obsnum     > $blanking
     rsr_rfile    $obsnum     > $rfile
 fi
 
 if [ $obsnum != 0 ]; then
+    # for single obsnum processing
     echo "LMTOY>> Processing badcb=$badcb"
 
     if [[ ! -z "$badcb" ]]; then
@@ -171,7 +166,5 @@ if [ $linecheck == 1 ]; then
     echo "linecheck=1 for $src : xlines=$xlines"
 fi
 
-#             redo CLI again - not needed anymore
-# lmtoy_args "$@"
 
 lmtoy_rsr1
