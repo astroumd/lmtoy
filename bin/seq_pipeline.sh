@@ -122,9 +122,9 @@ if [ ! -e $rc ]; then
     echo "# $_version bootstrap version rc"      >> $rc
     lmtinfo.py $obsnum                           >> $rc   # <lmtinfo>
     cat $rc0                                     >> $rc   # <show_vars>
-    show_args                                    >> $rc   # <show_args>	  @bug ???
+    show_args                                    >> $rc   # <show_args>
     source $rc
-    # deal with old pre-2023 data   @todo  forcing didn't work
+    # deal with old pre-2023 data
     if [ $numbands = 1 ]; then
 	echo "bank=0   # old data"               >> $rc
     fi
