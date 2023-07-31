@@ -15,7 +15,7 @@
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 # @todo   vlsr= only takes correct effect on the first run, not a re-run
 
-_version="seq_pipeline: 29-jul-2023"
+_version="seq_pipeline: 30-jul-2023"
 
 echo "LMTOY>> $_version"
 
@@ -101,7 +101,7 @@ if [ ! -z $pdir ]; then
     mkdir -p $pdir
     cd $pdir
 else
-    echo "LMTOY>> No PDIR directory used, all work from the current directory"
+    echo "LMTOY>> No PDIR directory used, all work from the current directory $(pwd)"
 fi
 
 if [ -e lmtoy.rc ]; then
@@ -240,14 +240,14 @@ if [ $numbands = 2 ]; then
 	echo "numbands=1  # only RF2 used"             >> $rc
 	echo "skyfreq=$(echo $skyfreq | tabcols - 2)"  >> $rc
 	echo "restfreq=$(echo $restfreq | tabcols - 2)">> $rc
-	echo "oid=1"                                   >> $rc
+	echo "oid=1    # not used yet"                 >> $rc
 	echo "bank=1"                                  >> $rc
     fi
     if [ $rf2 = 0.0 ]; then
 	echo "numbands=1  # only RF1 used"             >> $rc
 	echo "skyfreq=$(echo $skyfreq | tabcols - 1)"  >> $rc
 	echo "restfreq=$(echo $restfreq | tabcols - 1)">> $rc
-	echo "oid=0"                                   >> $rc
+	echo "oid=0     # not used yet"                >> $rc
 	echo "bank=0"                                  >> $rc
     fi
 fi
@@ -269,11 +269,8 @@ if [ $bank != -1 ]; then
     # pick only this selected bank
     echo "LMTOY>> selecting only bank $bank with numbands=$numbands"
     rc1=lmtoy_${obsnum}__${bank}.rc    
-    if [ ! -z "$oid" ]; then
-	s_on=${src}_${obsnum}__${oid}
-    else
-	s_on=${src}_${obsnum}__${bank}
-    fi
+    [ ! -e $rc1 ] && cp $rc $rc1 && rc=$rc1
+    s_on=${src}_${obsnum}__${bank}
     s_nc=${s_on}.nc
     s_fits=${s_on}.fits
     w_fits=${s_on}.wt.fits
@@ -284,9 +281,10 @@ elif [ $numbands == 2 ]; then
     echo "LMTOY>> looping over numbands=$numbands"
     for b in $(seq 1 $numbands); do
 	bank=$(expr $b - 1)
-	oid=$bank
+	oid=$bank    # not used yet
 	echo "LMTOY>> Preparing for bank=$bank"
 	rc1=lmtoy_${obsnum}__${bank}.rc
+	[ ! -e $rc1 ] && cp $rc $rc1 && rc=$rc1
 	s_on=${src}_${obsnum}__${bank}
 	s_nc=${s_on}.nc
 	s_fits=${s_on}.fits
@@ -298,7 +296,8 @@ elif [ $numbands == 1 ]; then
     # old style, before April 2023, we should not use it anymore
     echo "LMTOY>> numbands=1 -- old style"
     bank=0
-    rc1=lmtoy_${obsnum}__${bank}.rc    
+    rc1=lmtoy_${obsnum}__${bank}.rc
+    [ ! -e $rc1 ] && cp $rc $rc1 && rc=$rc1
     s_on=${src}_${obsnum}__${bank}
     s_nc=${s_on}.nc
     s_fits=${s_on}.fits
