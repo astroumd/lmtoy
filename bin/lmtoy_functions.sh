@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="29-jul-2023"
+lmtoy_version="30-jul-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -473,9 +473,10 @@ function lmtoy_seq1 {
     fi
     # record
     echo "LMTOY>> rc=$rc rc1=$rc1 bank=$bank oid=$oid"
-    if [ ! -e $rc1 ]; then
-	cp $rc $rc1
-	rc=$rc1
+    if [ ! -e "$rc1" ]; then
+	echo "PJT_WARNING: we should not need to do this $rc -> $rc1 copy here"
+	#cp $rc $rc1
+	#rc=$rc1
     fi
 
     # fix potential pix_list
@@ -753,11 +754,13 @@ function lmtoy_seq1 {
 	    nemoinp "$vmax,0.0" newline=f                                         >> full_spectral_range
 	    tabmath ${s_on}.cubespec.tab  - %1/1000,%2 all > native
 	    tabmath ${s_on}.cubespecs.tab - %1/1000,%2 all > smooth-5x5x5
-	    #   set the height at 1-sigma of the RMS in the smoothed (5x5x5) spectrum
-	    h=$(tabtrend smooth-5x5x5 2 | tabstat - qac=t robust=t  | txtpar - %1*1.0 p0=QAC,1,4)
-	    echo "rms_baseline=$h" >> $rc
+	    #   set the height at 1-sigma of the RMS in the smoothed (5x5x5) spectrum ($hs)
+	    hn=$(tabtrend native       2 | tabstat - qac=t robust=t  | txtpar - %1*1.0 p0=QAC,1,4)	    
+	    hs=$(tabtrend smooth-5x5x5 2 | tabstat - qac=t robust=t  | txtpar - %1*1.0 p0=QAC,1,4)
+	    echo "rms_baselinen=$hn" >> $rc
+	    echo "rms_baselines=$hs" >> $rc
 	    #   box coordinates, assumed we did dv=,dw=      @todo use the uactually used b_ parameters
-	    b=$(echo $vlsr,$dv,$dw | tabmath - - %1-%2-%3,-$h,%1-%2,$h,%1+%2,-$h,%1+%2+%3,$h all | tabcsv -)
+	    b=$(echo $vlsr,$dv,$dw | tabmath - - %1-%2-%3,-$hs,%1-%2,$hs,%1+%2,-$hs,%1+%2+%3,$hs all | tabcsv -)
 	    #   baseline range
 	    br=$(echo $vlsr,$dv,$dw | tabmath - - %1-%2-%3,%1+%2+%3 all)
 	    tab_plot.py -s --xrange $vmin,$vmax --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
@@ -838,12 +841,11 @@ function lmtoy_seq1 {
 	echo "LMTOY>> skipping ADMIT post-processing"
     fi
 
-    # maskmoment
-    if [ $maskmoment = 1 ]; then
+    if [ $maskmoment == 1 ]; then
 	echo "LMTOY>> Running maskmoment vlsr=$vlsr"
-	mm1.py $s_on.nf.fits   $vlsr > maskmoment.nf.log   2>&1
+	mm1.py $s_on.nf.fits   $vlsr > maskmoment__${bank}.nf.log   2>&1
 	# hack
-	mm1.py $s_on.nfs.fits  $vlsr > maskmoment.nfs.log  2>&1
+	mm1.py $s_on.nfs.fits  $vlsr > maskmoment__${bank}.nfs.log  2>&1
     else
 	echo "LMTOY>> skipping maskmoment"	
     fi
@@ -853,7 +855,7 @@ function lmtoy_seq1 {
     
     # seq_readme > $pdir/README.html
     cp $LMTOY/docs/README_sequoia.md README_files.md
-    echo "LMTOY>> Making summary index.html for bank=$bank"
+    echo "LMTOY>> Making summary index.html for bank=$bank rc=$rc"
     grep bank= $rc
     echo "LMTOY>> Making summary index.html for oid=$oid"
     mk_index.sh
