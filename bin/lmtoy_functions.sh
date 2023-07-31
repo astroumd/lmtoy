@@ -753,12 +753,18 @@ function lmtoy_seq1 {
 	    nemoinp "$vmin,0.0" newline=f                                         >> full_spectral_range
 	    nemoinp "$vmax,0.0" newline=f                                         >> full_spectral_range
 	    tabmath ${s_on}.cubespec.tab  - %1/1000,%2 all > native
-	    tabmath ${s_on}.cubespecs.tab - %1/1000,%2 all > smooth-5x5x5
-	    #   set the height at 1-sigma of the RMS in the smoothed (5x5x5) spectrum ($hs)
+	    tabmath ${s_on}.cubespecs.tab - %1/1000,%2 all > smooth-4x4x4
+	    #   RMS in baseline region
+	    #   set the height at 1-sigma of the RMS in the smoothed (4x4x4) spectrum ($hs)
 	    hn=$(tabtrend native       2 | tabstat - qac=t robust=t  | txtpar - %1*1.0 p0=QAC,1,4)	    
-	    hs=$(tabtrend smooth-5x5x5 2 | tabstat - qac=t robust=t  | txtpar - %1*1.0 p0=QAC,1,4)
-	    echo "rms_baselinen=$hn" >> $rc
-	    echo "rms_baselines=$hs" >> $rc
+	    hs=$(tabtrend smooth-4x4x4 2 | tabstat - qac=t robust=t  | txtpar - %1*1.0 p0=QAC,1,4)
+	    echo "rms_baseline_n=$hn" >> $rc
+	    echo "rms_baseline_s=$hs" >> $rc
+	    #   flux
+	    center_flux_n=$(sort -n native       | tabint -)
+	    center_flux_s=$(sort -n smooth-4x4x4 | tabint -)
+	    echo "center_flux_n=$center_flux_n    # central pixel" >> $rc
+	    echo "center_flux_s=$center_flux_s    # central pixel" >> $rc	    
 	    #   box coordinates, assumed we did dv=,dw=      @todo use the uactually used b_ parameters
 	    b=$(echo $vlsr,$dv,$dw | tabmath - - %1-%2-%3,-$hs,%1-%2,$hs,%1+%2,-$hs,%1+%2+%3,$hs all | tabcsv -)
 	    #   baseline range
@@ -766,12 +772,12 @@ function lmtoy_seq1 {
 	    tab_plot.py -s --xrange $vmin,$vmax --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
 			--boxes $b \
 			--title "${s_on} VLSR_range: $vmin $vmax" \
-			native smooth-5x5x5 full_spectral_range
+			native smooth-4x4x4 full_spectral_range
 	    mv tab_plot.png spectrum_${bank}.png
 	    tab_plot.py -s --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
 			--boxes $b \
 			--title "${s_on} VLSR_range: $br" \
-			native smooth-5x5x5
+			native smooth-4x4x4
 	    mv tab_plot.png spectrum_${bank}_zoom.png	    
 	    
 	    
