@@ -4,11 +4,13 @@
 #                   and delegate the work to whoever it can do
 #                   $ADMIT allowed to be present. Various tar files can be created as well.
 #
+#  Note this script can be run from anywhere, but will work from $WORK_LMT
+#
 #
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 28-jul-2023"
+_version="SLpipeline: 30-jul-2023"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -29,6 +31,7 @@ srdp=0          # save the SRDP in a tar file?
 raw=0           # save the RAW data in a tar file?
 grun=1          # save the script generator?
 admit=0         # run ADMIT ?
+dv=1            # do some DataVerse preparation work?
 meta=0          # activate update for frontend db (for dataverse)
 sleep=2         # add few seconds before running, allowing quick interrupt
 nproc=1         # number of processors to use (keep it at 1)
@@ -185,8 +188,9 @@ if [ $goal == "Science" ]; then
 	    obsnum=${on0}_${on1}
 	    cd $WORK_LMT
 	    echo "LMTOY>> seq_combine.sh             $*"
-	    $time         seq_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	    $time         seq_combine.sh             $*    > $pdir/lmtoy_$obsnum.log 2>&1
 	fi
+	log=$pdir/lmtoy_$obsnum.log
 	cp $pdir/lmtoy_$obsnum.log $pdir/lmtoy_${obsnum}_$ldate.log	    
 	seq_summary.sh $pdir/lmtoy_$obsnum.log
 	lmtoy_date >> $pdir/date.log	
@@ -220,6 +224,7 @@ if [ $goal == "Science" ]; then
 	    echo "LMTOY>> rsr_combine.sh             $*"
 	    $time         rsr_combine.sh             $*     > $pdir/lmtoy_$obsnum.log 2>&1
 	fi
+	log=$pdir/lmtoy_$obsnum.log	
 	rsr_summary.sh $pdir/lmtoy_$obsnum.log
 	lmtoy_date >> $pdir/date.log
         cp $pdir/lmtoy_$obsnum.log $pdir/lmtoy_$obsnum_$ldate.log	
@@ -315,12 +320,14 @@ echo "obsnum_list=$obsnum_list" >> $pdir/lmtoy_$obsnum.rc
 echo "date=\"$(lmtoy_date)\"     # end " >> $pdir/lmtoy_$obsnum.rc
 
 # make a metadata yaml file for later ingestion into DataVerse
-echo "LMTOY>> make metadata ($meta) for DataVerse"
-mk_metadata.py -y  $pdir/lmtmetadata.yaml $pdir
-if [ $meta = 1 ]; then
-    # @todo will this work reliably on NFS mounted media?
-    db=$WORK_LMT/example_lmt.db
-    flock --verbose $db.flock mk_metadata.py -y  $pdir/lmtmetadata.yaml -f $db $pdir 
+if [ $dv = 1 ]; then
+    echo "LMTOY>> make metadata ($meta) for DataVerse"
+    mk_metadata.py -y  $pdir/lmtmetadata.yaml $pdir
+    if [ $meta = 1 ]; then
+	# @todo will this work reliably on NFS mounted media?
+	db=$WORK_LMT/example_lmt.db
+	flock --verbose $db.flock mk_metadata.py -y  $pdir/lmtmetadata.yaml -f $db $pdir 
+    fi
 fi
 # produce TAP, RSRP, RAW tar files, whichever are requested.
 
