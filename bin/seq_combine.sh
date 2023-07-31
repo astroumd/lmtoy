@@ -10,7 +10,7 @@
 #
 
 
-version="seq_combine: 30-jul-2023"
+version="seq_combine: 31-jul-2023"
 
 echo "LMTOY>> $version"    
 
@@ -154,6 +154,7 @@ for bank in $banks; do
 
     # loop to first find out which .nc files we have for this bank
     ons=""        # accumulates the .nc filenames
+    sumtime=0     # accumulates the integration time
     for on in $obsnums1; do
 	fon=$(ls */$on/${src}_${on}__${bank}.nc)
 	# there better be just one
@@ -163,8 +164,16 @@ for bank in $banks; do
 	    echo "Warning $fon not found"
 	    exit 0
 	fi
+	frc=$(ls */$on/lmtoy_${on}__${bank}.rc)
+	if [ -e $frc ]; then
+	    sumtime=$(nemopars inttime $frc | tabmath - - %1+$sumtime all)
+	else
+	    echo "Warning $frc not found"
+	    exit 0
+	fi
     done
     echo ONS: $ons
+    echo SUMTIME: $sumtime
     
     # construct the names as they are seen from $wdir
     s_nc=../../$(echo $ons | sed 's| |,../../|g')
@@ -172,9 +181,10 @@ for bank in $banks; do
 
     cd $wdir
 
-    echo obsnums=${obsnums} >> $rc
-    echo obsnum=${obsnum}   >> $rc
-    echo bank=$bank         >> $rc
+    echo "obsnums=${obsnums}"                      >> $rc
+    echo "obsnum=${obsnum}"                        >> $rc
+    echo "bank=$bank"                              >> $rc
+    echo "inttime=$sumtime  # summed all obsnums"  >> $rc
 
     s_on=${src}_${on0}_${on1}__${bank}
     if [ ! -z $output ]; then
