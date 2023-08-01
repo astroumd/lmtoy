@@ -760,6 +760,9 @@ function lmtoy_seq1 {
 	    hs=$(tabtrend smooth-4x4x4 2 | tabstat - qac=t robust=t  | txtpar - %1*1.0 p0=QAC,1,4)
 	    echo "rms_baseline_n=$hn" >> $rc
 	    echo "rms_baseline_s=$hs" >> $rc
+	    echo "# straight line where vlsr is"          > vlsr
+	    nemoinp "$vlsr,-$hs" newline=f               >> vlsr
+	    nemoinp "$vlsr,$hs"  newline=f               >> vlsr
 	    #   flux
 	    center_flux_n=$(sort -n native       | tabint -)
 	    center_flux_s=$(sort -n smooth-4x4x4 | tabint -)
@@ -772,12 +775,12 @@ function lmtoy_seq1 {
 	    tab_plot.py -s --xrange $vmin,$vmax --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
 			--boxes $b \
 			--title "${s_on} VLSR_range: $vmin $vmax" \
-			native smooth-4x4x4 full_spectral_range
+			native smooth-4x4x4 vlsr full_spectral_range 
 	    mv tab_plot.png spectrum_${bank}.png
 	    tab_plot.py -s --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
 			--boxes $b \
 			--title "${s_on} VLSR_range: $br" \
-			native smooth-4x4x4
+			native smooth-4x4x4 vlsr
 	    mv tab_plot.png spectrum_${bank}_zoom.png	    
 	    
 	    
