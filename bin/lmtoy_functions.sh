@@ -326,13 +326,11 @@ function lmtoy_rsr1 {
 	    done
 	    #echo S1=$s1
 	    #echo S2=$s2
-	    rsr_spectra.py -s -o $spec1 $s1
-	    rsr_spectra.py -s -o $spec2 $s2
+	    rsr_spectra.py -y rsr.spectra.png -o $spec1 $s1
+	    rsr_spectra.py -y rsr.spectra.png -o $spec2 $s2
 	    
-	    rsr_spectra.py -s old/$spec1 $spec1
-	    mv rsr.spectra.png rsr.spectra.cmp1.png
-	    rsr_spectra.py -s old/$spec2 $spec2
-	    mv rsr.spectra.png rsr.spectra.cmp2.png
+	    rsr_spectra.py -y rsr.spectra.cmp1.png old/$spec1 $spec1
+	    rsr_spectra.py -y rsr.spectra.cmp2.png old/$spec2 $spec2
 	    if [[ -n "$NEMO" ]]; then
 		grep -v nan old/$spec1 | grep -v ^# > junk1a.tab
 		grep -v nan     $spec1 | grep -v ^# > junk1b.tab
@@ -367,11 +365,10 @@ function lmtoy_rsr1 {
     else
 	zoom="--zoom $speczoom"	
     fi
-    echo "LMTOY>> rsr_spectra.py -s  $zoom   --title $src $spec1 $spec2"
-    rsr_spectra.py -s     $zoom --title "$src .$wpre" $spec1 $spec2
-    mv rsr.spectra.png rsr.spectra_zoom.png
-    rsr_spectra.py -s           --title "$src .$wpre" $spec1 $spec2
-    rsr_spectra.py -s -g        --title "$src .$wpre" $spec1 $spec2
+    echo "LMTOY>> rsr_spectra.py -y rsr.spectra_zoom.png  $zoom --title $src $spec1 $spec2"
+    rsr_spectra.py -y rsr.spectra_zoom.png $zoom --title "$src .$wpre" $spec1 $spec2
+    rsr_spectra.py -y rsr.spectra.png            --title "$src .$wpre" $spec1 $spec2
+    rsr_spectra.py -y rsr.spectra.svg            --title "$src .$wpre" $spec1 $spec2
 
     # update the rc file (badcb here is deprecated)
     if [[ 0 = 1 ]]; then
