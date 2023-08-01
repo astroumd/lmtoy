@@ -768,17 +768,16 @@ function lmtoy_seq1 {
 	    b=$(echo $vlsr,$dv,$dw | tabmath - - %1-%2-%3,-$hs,%1-%2,$hs,%1+%2,-$hs,%1+%2+%3,$hs all | tabcsv -)
 	    #   baseline range
 	    br=$(echo $vlsr,$dv,$dw | tabmath - - %1-%2-%3,%1+%2+%3 all)
-	    tab_plot.py -s --xrange $vmin,$vmax --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
+	    tab_plot.py --xrange $vmin,$vmax --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
 			--boxes $b \
 			--title "${s_on} VLSR_range: $vmin $vmax" \
+			-y spectrum_${bank}.png \
 			native smooth-4x4x4 vlsr full_spectral_range 
-	    mv tab_plot.png spectrum_${bank}.png
-	    tab_plot.py -s --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
+	    tab_plot.py --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
 			--boxes $b \
 			--title "${s_on} VLSR_range: $br" \
+			-y spectrum_${bank}_zoom.png	    
 			native smooth-4x4x4 vlsr
-	    mv tab_plot.png spectrum_${bank}_zoom.png	    
-	    
 	    
 	    # NEMO plotting ?
 	    if [ $viewnemo = 1 ]; then
