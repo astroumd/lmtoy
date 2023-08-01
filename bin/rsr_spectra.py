@@ -3,7 +3,9 @@
 #    plot one or more RSR spectra, optionally a band or piece of the spectrum
 #
 
-"""Usage: rsr_spectra.py [options] SPECTRUM1 [SPECTRUM2...]
+_version = "1-aug-2023"
+
+_help = """Usage: rsr_spectra.py [options] SPECTRUM1 [SPECTRUM2...]
 
 Options:
   -y PLOTFILE             Save plotfile instead, else interactive. Optional.
@@ -16,7 +18,7 @@ Options:
   --kscale KSCALE         Scale factor to apply to spectrum  [Default: 1000]
   -h --help               This help
   --debug                 More debugging output
-  --version               The script version
+  -v --version            The script version
 
 One or more ASCII spectra are needed, with columns 1 and 2 designating the
 frequency (for RSR in GHz) and amplitude (for RSR in Kelvin).
@@ -31,7 +33,6 @@ the spectra, which will translate into a weight ~ 1/dispersion^2
 The saved plotfile has a fixed name, rsr.spectra.png (or rsr.spectra.svg)
 
 """
-_version = "1-aug-2023"
 
 import sys
 import numpy as np
@@ -46,7 +47,7 @@ band_edges = [ (71.72, 79.69), (78.02 , 85.99),  (85.41,  93.38),
                (90.62, 98.58), (96.92, 104.88), (104.31, 112.28)]
 
 
-av = docopt(__doc__,options_first=True, version='rsr_spectra.py %s' % _version)
+av = docopt(_help, options_first=True, version='rsr_spectra.py %s' % _version)
 
 
 
