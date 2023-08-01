@@ -70,7 +70,7 @@ if av['-o']:
 else:
     Qmerge = False
 
-plotfile = av['-s']:
+plotfile = av['-y']
 
 import matplotlib
 if plotfile == None:
@@ -79,6 +79,7 @@ else:
     # if the next statement was not used on unity, occasionally it would fine Qt5Agg, and thus fail
     # this else clause is NOT used in rsr_tsys.py, which has the same patters as this routine, and
     # never failed making a Tsys plot, go figure unity!
+    # note added later:    "export MPLBACKEND=agg"   seems to do the trick
     matplotlib.use('agg')
 import matplotlib.pyplot as plt
 print('mpl backend spectra',matplotlib.get_backend())
