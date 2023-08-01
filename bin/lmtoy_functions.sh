@@ -192,8 +192,7 @@ function lmtoy_rsr1 {
 	mv rsr.driver.png rsr.driver0.png
 	# 2.
 	echo "LMTOY>> rsr_tsys.py -s $obsnum"
-	rsr_tsys.py -s $obsnum   > rsr_tsys0.log   2>&1
-	mv rsr.tsys.png rsr.tsys0.png
+	rsr_tsys.py -y rsr.tsys0.png $obsnum  > rsr_tsys0.log   2>&1
 	# we ignore any 'BADCB0' in here
     fi
 
@@ -235,10 +234,10 @@ function lmtoy_rsr1 {
 	#             Only make this plot for single obsnum's
 	if [ "$obsnum" -gt 0 ]; then
 	    # 5.
-	    echo "LMTOY>> rsr_tsys.py -b $badlags    -s $obsnum"
-	    echo "LMTOY>> rsr_tsys.py -b $badlags -t -s $obsnum"
-	    rsr_tsys.py -b $badlags    -s $obsnum         > rsr_tsys2.log 2>&1
-	    rsr_tsys.py -b $badlags -t -s $obsnum         > rsr_tsys1.log 2>&1
+	    echo "LMTOY>> rsr_tsys.py -b $badlags -t -y rsr.spectrum.png $obsnum"
+	    echo "LMTOY>> rsr_tsys.py -b $badlags    -y rsr.tsys.png     $obsnum"
+	    rsr_tsys.py -b $badlags -t -y rsr.spectrum.png $obsnum         > rsr_tsys2.log 2>&1
+	    rsr_tsys.py -b $badlags    -y rsr.tsys.png     $obsnum         > rsr_tsys1.log 2>&1
 	    grep CB rsr_tsys0.log  > tab0
 	    grep CB rsr_tsys2.log  > tab2
 	    paste tab0 tab2 | awk '{print $0," ratio:",$11/$5}'  > rsr_tsys_badcb.log
