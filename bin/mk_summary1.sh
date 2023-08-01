@@ -112,8 +112,6 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     for b in $(seq 1 $numbands); do
 	bank=$(expr $b - 1)
 
-	echo "HACK $on/$bank/$numbands"
-
 	rc0=($o/lmtoy_*${on}__${bank}.rc)
 	[ -e $rc0 ] && rc=$rc0 && source $rc
 	
