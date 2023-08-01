@@ -30,8 +30,6 @@ Use the "-o" option to merge the instead, and write (and plot) the merged
 spectrum.   For rsr the presence of a 3rd column insidicates the dispersion in
 the spectra, which will translate into a weight ~ 1/dispersion^2
 
-The saved plotfile has a fixed name, rsr.spectra.png (or rsr.spectra.svg)
-
 """
 
 import sys
