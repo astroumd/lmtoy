@@ -6,7 +6,7 @@
 """Usage: rsr_fit.py [options] SPECTRUM
 
 Options:
-   -i                       No interactive mode, just save the plot in rsr_fit.png. Optional
+   -y SAVEPLOT              No interactive mode, just save the plot in rsr_fit.png. Optional
    -x --xrange XMIN,XMAX    Plotting range, defaults to the full range. Optional
    -r --ref REF             Reference frequency, in given units, to convert to km/s. Optional
    -o --order ORDER         Baseline order. [Default: 0]
@@ -45,8 +45,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
 c = 299792.458       # km/s - speed of light
-save_plot = 'rsr_fit.png'
-
+# save_plot = 'rsr_fit.png'     # now the -y flat
 
 # -- fancy command line parsing
 
@@ -56,7 +55,7 @@ Qdebug  = av['--debug']
 if Qdebug:
     print(av)
 tab = av['SPECTRUM']
-Qsaveplot = av['-i']
+saveplot = av['-y']
 Qnemo = av['--nemo']
 Qsub = av['--sub']
 do_smooth = int(av['--smooth'])
@@ -212,8 +211,8 @@ plt.ylabel('Y')
 plt.xlabel('X')
 plt.title(tab)
 plt.legend()
-if Qsaveplot:
-    plt.savefig(save_plot)
-    print("%s written" % save_plot)
-else:
+if saveplot == None:
     plt.show()
+else:
+    plt.savefig(saveplot)
+    print("%s written" % saveplot)
