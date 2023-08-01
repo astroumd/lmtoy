@@ -230,7 +230,7 @@ for ext in "" "__0" "__1"; do
 	
 	# 4.
 	echo "  <LI> Waterfall RMS [K] as function of channel number"             >> $html
-	echo "       (RMS vs. reversed CHANNEL)"                                  >> $html
+	echo "       (RMS vs. CHANNEL)"                                           >> $html
 	echo "       - this is where birdies show up best, or check *bstats*"     >> $html
 	echo "           <br><IMG SRC=${base1}.wf1.png>"                          >> $html
 	echo "         <IMG SRC=first_${base1}.wf1.png>"                          >> $html
