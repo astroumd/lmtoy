@@ -152,7 +152,6 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
 	else
 	    comments=""
 	fi
-	comments="$bank/$numbands  $rc"
 	echo "$o,$date_obs,$src,$inttime,$tau,$rms,$rms0" >> $csv
   
 	echo '  <tr class="item">'
