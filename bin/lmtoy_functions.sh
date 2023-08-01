@@ -207,8 +207,8 @@ function lmtoy_rsr1 {
 	if [ "$shortlags" != "" ]; then
 	    bopts="$bopts --short_min $(echo $shortlags | tabcols - 1)  --short_hi $(echo $shortlags | tabcols - 2)"
 	fi
-	echo "LMTOY>> badlags.py -d -s $bopts --spike $spike $obsnum"
-	badlags.py -d -s $bopts --spike $spike $obsnum > rsr_badlags.log 2>&1
+	echo "LMTOY>> badlags.py -d -y badlags.png $bopts --spike $spike $obsnum"
+	badlags.py -d -y badlags.png $bopts --spike $spike $obsnum > rsr_badlags.log 2>&1
 	if [ "$badlags" = 0 ]; then
 	    echo "LMTOY>> no badlags requested, still making a plot - you almost never want to do this"
 	    mv badlags.png badlags.$obsnum.png
