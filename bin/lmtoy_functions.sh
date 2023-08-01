@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="30-jul-2023"
+lmtoy_version="1-aug-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -891,8 +891,8 @@ function lmtoy_bs1 {
     # full average -> bs-1.png
     echo "LMTOY>> process_bs.py --obs_list $obsnum -o $spec --pix_list $pix_list --use_cal --block -1 --stype $stype  --bank $bank"
     process_bs.py --obs_list $obsnum -o $spec --pix_list $pix_list --use_cal --block -1 --stype $stype --bank $bank
-    seq_spectra.py -s $spec
-    seq_spectra.py -s -z $spec
+    seq_spectra.py -y seq.spectra.png $spec
+    seq_spectra.py -y seq.spectra.svg $spec
 
     out4=$(tabmath $spec - %2*1000 all | tabstat -  qac=t robust=t label=$spec)
     printf_red $out4
@@ -944,8 +944,8 @@ function lmtoy_ps1 {
     # full average -> bs-1.png
     echo "LMTOY>> process_ps.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1 --stype $stype"
     process_ps.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1 --stype $stype
-    seq_spectra.py -s ${src}_${obsnum}.txt
-    seq_spectra.py -s -z ${src}_${obsnum}.txt
+    seq_spectra.py -y seq.spectra.png ${src}_${obsnum}.txt
+    seq_spectra.py -y seq.spectra.svg ${src}_${obsnum}.txt
 
     out4=$(tabmath ${src}_${obsnum}.txt - %2*1000 all | tabstat -  qac=t robust=t label=${src}_${obsnum}.txt)
     printf_red $out4
