@@ -867,6 +867,9 @@ function lmtoy_seq1 {
     mk_index.sh
     # cheat and rename it for all files access
     mv index.html README.html
+
+    # record the processing time, since this is a bank specific rc file
+    echo "date=\"$(lmtoy_date)\"     # end " >> $rc
     
 } # lmtoy_seq1
 
