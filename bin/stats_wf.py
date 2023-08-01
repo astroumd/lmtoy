@@ -106,7 +106,8 @@ for z in range(nz):
     if axis==0:
         plt.plot(rms0, label=str(p))
     else:
-        plt.plot(rms1, label=str(p))   # for birdiefile
+        chans = np.arange(len(rms1)) + chan0
+        plt.plot(chans,rms1, label=str(p))   # for birdiefile
     if npix == 0:
         rms = rms1
     else:
@@ -124,7 +125,7 @@ plt.title(ff)
 if axis==0:
     plt.xlabel('IntegrationTime Sample')
 else:
-    plt.xlabel('Velocity Channel')
+    plt.xlabel('Channel')
 plt.ylabel('RMS')
 
 # @todo   figure out a more universal best scaling 
