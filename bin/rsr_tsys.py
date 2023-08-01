@@ -14,17 +14,11 @@ Options:
   -h --help               This help
   -v --version               The script version
 
-The saved plotfile has a fixed name, rsr.spectra.png (or rsr.spectra.svg)
-
 """
-
-
 
 import sys
 import numpy as np
 from docopt import docopt
-
-
 
 #                    command line options
 Qspec    = False
