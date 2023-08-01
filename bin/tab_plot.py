@@ -3,11 +3,12 @@
 #    plot one or more RSR spectra, optionally a band or piece of the spectrum
 #
 
-"""Usage: tab_plot.py [options] TABLE1 [TABLE2...]
+_version = "1-aug-2023"
+
+_help = """Usage: tab_plot.py [options] TABLE1 [TABLE2...]
 
 Options:
-  -s                      Don't show interactive plot, save plotfile instead.
-  -g                      Use SVG instead of PNG for plotfile
+  -y PLOTFILE             Save plotfile instead of default interactive. Optional.
   -t --title TITLE        Title of plot. Optional.
   --xscale XSCALE         Scale factor to apply to X axis [Default: 1.0]
   --yscale YSCALE         Scale factor to apply to Y axis [Default: 1.0]
@@ -19,7 +20,6 @@ Options:
   --dpi DPI               DPI of plot. [Default: 100]
   --ycoord YCOORD         Dashed line at YCOORD. Optional.
   --boxes LL,UR           4-Tuples of lower-left upper-right boxes. Optional
-  -z --ext EXT            Plotfile extension.  [Default: png]
   -h --help               This help
   -d --debug              More debugging output
   -v --version            The script version
@@ -27,21 +27,19 @@ Options:
 One or more ASCII tables are needed, with columns 1 and 2 designating the
 X and Y coordinates.
 
-The saved plotfile has a fixed name, tabplot.png (or tabplot.svg)
 
 """
-_version = "22-jul-2023"
 
 import sys
 import numpy as np
 from docopt import docopt
 
-Qshow  = True               # -s
-base   = 'tab_plot' 
+
+# base   = 'tab_plot' 
 title  = 'tab_plot'         # --title
 
 
-av = docopt(__doc__,options_first=True, version='tab_plot.py %s' % _version)
+av = docopt(_help,options_first=True, version='tab_plot.py %s' % _version)
 
 if av['--debug']:
     print(av)
@@ -50,7 +48,6 @@ xscale = float(av['--xscale'])
 yscale = float(av['--yscale'])
 size = float(av['--size']) 
 dpi = float(av['--dpi'])
-ext = av['--ext']
 boxes = av['--boxes']
 if boxes != None:
     b = [float(f) for f in boxes.split(',')]
@@ -66,8 +63,7 @@ Qdebug = av['--debug']
 if Qdebug:
     print(av)
 
-if av['-s']:
-    Qshow = False
+plotfile = av['-s']
 
 if av['--ycoord']:
     ycoord = float(av['--ycoord'])
@@ -91,7 +87,7 @@ ylab = av['--ylab']
 
 
 import matplotlib
-if Qshow:
+if plotfile == None:
     matplotlib.use('qt5agg')
 else:
     # if the next statement was not used on unity, occasionally it would fine Qt5Agg, and thus fail
@@ -107,9 +103,6 @@ if xmin != None:
     plt.xlim(xmin,xmax)
 if ymin != None:
     plt.xlim(ymin,ymax)
-
-if av['-g']:
-    ext = 'svg'
 
 spectra = [av['TABLE1']]
 spectra = spectra + av['TABLE2']
@@ -145,11 +138,10 @@ plt.xlabel(xlab)
 plt.ylabel(ylab)
 plt.title(title)
 plt.legend()
-if Qshow:
+if plotfile == None:
     plt.show()
 else:
-    pout = "%s.%s" % (base,ext)
-    plt.savefig(pout)
-    print("%s writtten" % pout)
+    plt.savefig(plotfile)
+    print("%s writtten" % plotfile)
 
 
