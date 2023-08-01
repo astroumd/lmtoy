@@ -2,7 +2,9 @@
 #
 #    inspect and plot the chassis and band (C/B) based Tsys (or with -t the Spectrum)
 
-"""Usage: rsr_tsys.py [options] OBSNUM
+_version = "1-aug-2023"
+
+_help = """Usage: rsr_tsys.py [options] OBSNUM
 
 Options:
   -y PLOTFILE             Save plotfile instead of interactive. Optional
@@ -10,12 +12,11 @@ Options:
   -t                      Show spectrum instead of tsys
   -r --rms RMS            Use this RMS (in K) for Tsys jitter to determine a BADCB [Default: 25.0]
   -h --help               This help
-  --version               The script version
+  -v --version               The script version
 
 The saved plotfile has a fixed name, rsr.spectra.png (or rsr.spectra.svg)
 
 """
-_version = "1-aug-2023"
 
 
 
@@ -23,10 +24,6 @@ import sys
 import numpy as np
 from docopt import docopt
 
-
-from dreampy3.redshift.utils.fileutils import make_generic_filename
-from dreampy3.redshift.netcdf import RedshiftNetCDFFile
-# from dreampy3.redshift.plots import RedshiftPlot
 
 
 #                    command line options
@@ -36,8 +33,14 @@ Qspec    = False
 
 
 
-av = docopt(__doc__,options_first=True, version='rsr_spectra.py %s' % _version)
+av = docopt(_help, options_first=True, version='rsr_tsys.py %s' % _version)
 print(av)
+
+
+
+from dreampy3.redshift.utils.fileutils import make_generic_filename
+from dreampy3.redshift.netcdf import RedshiftNetCDFFile
+# from dreampy3.redshift.plots import RedshiftPlot
 
 
 if av['-t']:
