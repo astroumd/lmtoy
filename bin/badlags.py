@@ -22,14 +22,15 @@
 #
 #
 
-"""Usage: badlags.py [options] OBSNUM
+_version = "1-aug-2023"
+
+_help = """Usage: badlags.py [options] OBSNUM
 
 Options:
+  -y PLOTFILE                   Plotfile to save, instead of default interactive plot. Optional
   -p --plotmax PLOTMAX          Plot max. If not given, the bc_hi THRESHOLD is used. Optional
   -B --badlags BADLAGS          Output badlags file, if desired. [Default: rsr.badlags]
-  -d                            Add more debug output
   -e                            Don't use edge detection, by default it will.
-  -s                            No interactive plot, it will save the plot.
   --bc_hi HIGH                  Above this value, lags are flagged bad [Default: 2.5]
   --bc_lo LOW                   Below this value, lags are flagged bad [Default: 0.01]
   --spike SPIKE                 Threshold above which spikes are flagged as bad channel [Default: 3.0]
@@ -40,7 +41,8 @@ Options:
   --rms_max RMAX                Maximum RMS to accept a C/B [Default: 0.2]
 
   -h --help                     show this help
-  --version                     show version
+  -d --debug                    add some debug
+  -v --version                  show version
 
 A badlags file can be optionally passed in. It will be a file where the first 3 columns
 are tuples of Chassis,Board,Channel that is deemed a bad channel.
@@ -51,7 +53,6 @@ variation than (bc_hi) but should still be allowed.
 
 """
 
-_version = "16-mar-2023"
 
 import os
 import sys
@@ -76,12 +77,12 @@ def rmsdiff(data, robust=True):
         d = data[1:]-data[:-1]
     return d.std()/1.41421
 
-av = docopt(__doc__,options_first=True, version='badlags.py %s' % _version)
+av = docopt(_help, options_first=True, version='badlags.py %s' % _version)
+Qdebug = av['--debug']
+if Qdebug:
+    print(av)
 
-if 'DATA_LMT' in os.environ:
-    data_lmt = os.environ['DATA_LMT']
-else:
-    data_lmt = '/data_lmt'
+data_lmt = os.environ['DATA_LMT']
     
 # The bad channel searcher reviews a set of scans to find channels
 # with unusually large variations in the ACF for the set of "On"
@@ -124,11 +125,10 @@ rms_max = float(av['--rms_max'])
 # where to start checking for bad lags
 min_chan = float(av['--min_chan'])
 
-# more debugging output ?
-Qdebug = av['-d']
+
 
 # showing interactive plot/
-Qshow = not av['-s']
+plotfile = av['-y']
 
 # also trying to detect high end edge?
 Qedge = not av['-e']
@@ -144,10 +144,8 @@ o_list = [int(av['OBSNUM'])]
 
 #  filenames   
 badlags = av['--badlags']  
-lagsplot = 'badlags.png'
+# lagsplot = 'badlags.png'
 
-if Qdebug:
-    print(av)
     
 if False:
     # This is the name of file with date and obsnum for scans we wish to review
@@ -388,11 +386,11 @@ ftab.close()
 print("Wrote %s" % badlags)
 print("Found %d bad Chassis/Board's" % nbadcb)
 
-if Qshow:
+if plotfile == None:
     pl.show()
 else:
-    pl.savefig(lagsplot)
-    print("Wrote %s" % lagsplot)
+    pl.savefig(plotfile)
+    print("Wrote %s" % plotfile)
 
 if len(o_list) > 1:
     print("Warning: this program is not meant to be used with multiple obsnums")
