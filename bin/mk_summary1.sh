@@ -14,7 +14,7 @@
 #set -e
 #set -x
 
-_version="31-jul-2023"
+_version="2-aug-2023"
 
 if [ -z "$1" ]; then
     src0=""
@@ -136,8 +136,6 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
 	    ext=""
 	else
 	    # SEQ and other mapping instruments
-	    rms=$(grep QAC_STATS $log | txtpar - "%1*1000" p0=-cent,1,4)
-	    rms0=$(grep QAC_STATS $log | txtpar - p0=radiometer,1,3)
 	    rms0r=$rms0
 	    ext="__$bank"
 	fi
