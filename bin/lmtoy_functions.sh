@@ -458,8 +458,10 @@ function lmtoy_rsr1 {
 
 
 function lmtoy_seq1 {
+    time=/usr/bin/time
     # input: obsnum, ... (lots)
     # this will process a single bank in an $obsnum; $bank and $oid needs to be set
+    
 
     # log the version
     lmtoy_version >> lmtoy.rc
@@ -494,7 +496,7 @@ function lmtoy_seq1 {
 	    use_restfreq=""	    
 	    echo "WARNING: resetting restfreq not supported yet"
 	fi
-	process_otf_map2.py \
+	$time process_otf_map2.py \
 	    -p $DATA_LMT \
 	    -o $s_nc \
 	    --obsnum $obsnum \
@@ -580,7 +582,7 @@ function lmtoy_seq1 {
     #  convert SpecFile to FITScube
     if [ $makecube = 1 ]; then
 	echo "LMTOY>> grid_data native"
-	grid_data.py \
+	$time grid_data.py \
 	    --program_path spec_driver_fits \
 	    -i $s_nc \
 	    -o $s_fits \
@@ -605,7 +607,7 @@ function lmtoy_seq1 {
 	echo "@todo this needs a new option to bin in channel space"
 	s_fits2=$s_fits.fits
 	w_fits2=$w_fits.fits
-	grid_data.py \
+	$time grid_data.py \
 	    --program_path spec_driver_fits \
 	    -i $s_nc \
 	    -o $s_fits2 \
@@ -776,7 +778,7 @@ function lmtoy_seq1 {
 	    tab_plot.py --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
 			--boxes $b \
 			--title "${s_on} VLSR_range: $br" \
-			-y spectrum_${bank}_zoom.png	    
+			-y spectrum_${bank}_zoom.png \
 			native smooth-4x4x4 vlsr
 	    
 	    # NEMO plotting ?
