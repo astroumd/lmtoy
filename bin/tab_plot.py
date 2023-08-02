@@ -63,7 +63,7 @@ Qdebug = av['--debug']
 if Qdebug:
     print(av)
 
-plotfile = av['-s']
+plotfile = av['-y']
 
 if av['--ycoord']:
     ycoord = float(av['--ycoord'])
