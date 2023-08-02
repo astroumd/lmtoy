@@ -232,6 +232,8 @@ for ext in "" "__0" "__1"; do
 	echo "  <LI> Waterfall RMS [K] as function of channel number"             >> $html
 	echo "       (RMS vs. CHANNEL)"                                           >> $html
 	echo "       - this is where birdies show up best, or check *bstats*"     >> $html
+	echo "     <br> Note that when birdies were flagged, the RMS will now"    >> $html
+	echo "          show a dip due to interpolation"                          >> $html
 	echo "           <br><IMG SRC=${base1}.wf1.png>"                          >> $html
 	echo "         <IMG SRC=first_${base1}.wf1.png>"                          >> $html
 	
@@ -240,7 +242,7 @@ for ext in "" "__0" "__1"; do
 	echo "       as function of sample time."                                 >> $html
 	echo "       Each beam should give roughly the same RMS,"                 >> $html
 	echo "       though during gridding RMS is used as a weight."             >> $html
-	echo "   <br>Reasonable values are ~0.5K for the 800MHz wideband,"            >> $html
+	echo "   <br>Reasonable values are ~0.5K for the 800MHz wideband,"        >> $html
 	echo "   1K for intermediate 400MHz, and 2K for 200MHz narrowband,"       >> $html
 	echo "   for an assumed Tsys ~ 100K and 0.1s sample time."                >> $html
 	echo "           <br><IMG SRC=$base2.3.png>"                              >> $html
