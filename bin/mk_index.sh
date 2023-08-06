@@ -356,6 +356,16 @@ for ext in "" "__0" "__1"; do
 	((i=i+1))
     done
 
+    c=("noise flat cube"    "noise flat smoothed cube")
+    f="${base1}.nf.fits     ${base1}.nfs.fits"
+    i=0    
+    for ff in $f; do
+	if [ -e $ff ]; then
+	    echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html	    
+	fi
+	((i=i+1))
+    done
+
 done
 
 c=("full SRDP tar"         "TAP data")
