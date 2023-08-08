@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="1-aug-2023"
+lmtoy_version="8-aug-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -191,7 +191,7 @@ function lmtoy_rsr1 {
 	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t1 $t2   > rsr_driver0.log 2>&1
 	mv rsr.driver.png rsr.driver0.png
 	# 2.
-	echo "LMTOY>> rsr_tsys.py -s $obsnum"
+	echo "LMTOY>> rsr_tsys.py -y rsr.tsys0.png $obsnum"
 	rsr_tsys.py -y rsr.tsys0.png $obsnum  > rsr_tsys0.log   2>&1
 	# we ignore any 'BADCB0' in here
     fi
@@ -413,6 +413,7 @@ function lmtoy_rsr1 {
 	    #   catch bad fits
 	    echo  "rms= 0"                                              >> linecheck.log
 	    echo  "rms= 0"                                              >> linecheck.log
+	    # if files are not zero size, they can be plotted....
 	    if [ -s spec1.tab ]; then
 		tabplot spec1.tab 1 2,3,4 111-4 111 line=1,1 color=2,3,4 ycoord=0 yapp=spec1.$dev/$dev
 	    fi
@@ -569,13 +570,19 @@ function lmtoy_seq1 {
 	    --pix_list $pix_list \
 	    --binning 10,1
 
-	echo "LMTOY>> stats_wf"
-	stats_wf.py -s -b ${s_on}.bstats.tab    ${s_on}.wf.fits > stats_wf0.tab
-	mv stats_wf0.png ${s_on}.wf0.png
-	stats_wf.py -s                       -t ${s_on}.wf.fits > stats_wf1.tab
-	mv stats_wf1.png ${s_on}.wf1.png	
+	echo "LMTOY>> stats_wf.py -y ${s_on}.wf0.png  -b ${s_on}.bstats.tab    ${s_on}.wf.fits"
+	stats_wf.py -y ${s_on}.wf0.png  -b ${s_on}.bstats.tab    ${s_on}.wf.fits > stats__${bank}_wf0.tab
+	stats_wf.py -y ${s_on}.wf1.png  -t                       ${s_on}.wf.fits > stats__${bank}_wf1.tab
 	delta=$(tabtrend ${s_on}.bstats.tab 2 | tabstat - robust=t qac=t | txtpar - p0=QAC,1,4)
-	tabpeak ${s_on}.bstats.tab delta=5*$delta > ${s_on}.birdies.tab	
+	tabpeak ${s_on}.bstats.tab delta=5*$delta > ${s_on}.birdies.tab
+
+	# stats__${bank}_wf0.tab can be used to estimate bad beams; use 5-sigma above the mean
+	clip=$(tabstat stats__${bank}_wf0.tab 2 qac=t robust=t | txtpar - %1+5*%2 p0=1,3 p1=1,4)
+	bb=pix_list=$(tabmath  stats__${bank}_wf0.tab - -%1 all "selfie=ifgt(%2,$clip,1,0)")
+	echo "LMTOY>> bad beams might be $bb"
+	if [ ! -e pix_list_${bank}.txt ]; then
+	    echo $bb | sed 's/ /,/g' > pix_list_${bank}.txt
+	fi
     fi
     
 
