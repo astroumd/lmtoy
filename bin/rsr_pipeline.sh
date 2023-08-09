@@ -10,7 +10,7 @@
 #
 #
 
-_version="rsr_pipeline: 29-jul-2023"
+_version="rsr_pipeline: 9-aug-2023"
 
 echo "LMTOY>> $_version"
 
@@ -109,10 +109,12 @@ fi
 rc=./lmtoy_${obsnum}.rc
 date=$(lmtoy_date)
 if [ ! -e $rc ]; then
+    # create the boostrap rc file
     echo "LMTOY>> creating new $rc"
-    echo "# $_version"  > $rc
-    lmtinfo.py $obsnum >> $rc                 # <lmtinfo>
-    cat $rc0           >> $rc                 # <show_vars>
+    echo "# $_version"                > $rc
+    echo "lmtoy_repo=$(lmtoy_repo)"  >> $rc
+    lmtinfo.py $obsnum               >> $rc   # <lmtinfo>
+    cat $rc0                         >> $rc   # <show_vars>
 fi
 echo "date=\"$date\"     # begin"    >> $rc
 show_args                            >> $rc   # <show_args>

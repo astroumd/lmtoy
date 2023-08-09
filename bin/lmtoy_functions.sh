@@ -15,6 +15,12 @@ function lmtoy_version {
     echo "$v  $g  $d  $h"
 }
 
+function lmtoy_repo {
+    # fine grained repo version
+    local _repo=$(cd $LMTOY;git rev-list --count HEAD)
+    echo $_repo
+}
+
 function lmtoy_date {
     # standard ISO date, by default in local time.   Use "-u" to switch to UT time
     date +%Y-%m-%dT%H:%M:%S $*
