@@ -75,6 +75,7 @@ if [ $debug -gt 0 ]; then
     set -e
     which python
     python --version
+    test_mpl
 fi
 #             put in bash error trap mode
 if [ $error -gt 0 ]; then
@@ -103,9 +104,6 @@ if [ "$(which module)" != "" ]; then
 else
     echo "No modules loaded"
 fi
-
-#             report matplotlib environment
-test_mpl
 
 #             bootstrap information on the obsnum to figure out the instrument dependent workflow 
 [ ! -d $WORK_LMT/tmp ] && mkdir -p $WORK_LMT/tmp
