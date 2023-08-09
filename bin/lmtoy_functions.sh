@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="23-jul-2023"
+lmtoy_version="8-aug-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -45,6 +45,7 @@ function lmtoy_report {
 }
 
 function lmtoy_args {
+    # set the command line args as shell variables, and save them in _lmtoy_args
     # require arguments, but if -h/--help given, give the inline help
     if [ -z $1 ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
 	set +x
@@ -56,8 +57,17 @@ function lmtoy_args {
     for arg in "$@"; do
 	export "$arg"
     done
-    # save them (they are saved in lmtoy_args.log)
+    # save them (for each run they are appended to lmtoy_args.log)
     _lmtoy_args="$@"
+}
+
+function show_args {
+    # show the latest command line args
+    echo "# <show_args>"
+    for arg in ${_lmtoy_args}; do
+	echo "$arg"
+    done
+    echo "# </show_args>"
 }
 
 function lmtoy_decipher_obsnums {
@@ -93,9 +103,11 @@ function lmtoy_decipher_obsnums {
 	obsnums1=$(echo $obsnums | sed 's/,/ /g')
     fi
     obsnum=${on0}
-    echo OBSNUM: $obsnum
-    echo OBSNUMS: $obsnums
-    echo OBSNUMS1: $obsnums1
+    if [ $debug = 1 ]; then
+	echo OBSNUM: $obsnum
+	echo OBSNUMS: $obsnums
+	echo OBSNUMS1: $obsnums1
+    fi
 }
 
 function printf_red {
@@ -112,12 +124,22 @@ function printf_green {
     echo -e "${RED}$*${NC}"
 }
 
+function printf_green_file {
+    my_file=$1
+    while read -r line
+    do
+	printf_green "$line"
+    done < "$my_file"
+}
+
 function show_vars {
     # helper function to show value of shell variables using bash dynamic variables
     # meant to be stored in an rc file
+    echo "# <show_vars>"
     for _arg in "$@"; do
 	echo "${_arg}=${!_arg}"
     done
+    echo "# </show_vars>"    
     
 }
 
@@ -144,8 +166,8 @@ function lmtoy_rsr1 {
     #  7. final rsr_sum,    using badlags and badcb1,badcb2
 
     # log the version
-    lmtoy_version > lmtoy.rc
-    # set the dreampy.log logger filename in the local OBSNUM directory
+    lmtoy_version >> lmtoy.rc
+    # set the dreampy.log logger filename in the local OBSNUM directory (also needed for parallel processing)
     export DREAMPY_LOG='dreampy.log'
 
     # spec1:    output spectrum rsr.$obsnum.driver.txt
@@ -177,9 +199,8 @@ function lmtoy_rsr1 {
 	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t1 $t2   > rsr_driver0.log 2>&1
 	mv rsr.driver.png rsr.driver0.png
 	# 2.
-	echo "LMTOY>> rsr_tsys.py -s $obsnum"
-	rsr_tsys.py -s $obsnum   > rsr_tsys0.log   2>&1
-	mv rsr.tsys.png rsr.tsys0.png
+	echo "LMTOY>> rsr_tsys.py -y rsr.tsys0.png $obsnum"
+	rsr_tsys.py -y rsr.tsys0.png $obsnum  > rsr_tsys0.log   2>&1
 	# we ignore any 'BADCB0' in here
     fi
 
@@ -194,8 +215,8 @@ function lmtoy_rsr1 {
 	if [ "$shortlags" != "" ]; then
 	    bopts="$bopts --short_min $(echo $shortlags | tabcols - 1)  --short_hi $(echo $shortlags | tabcols - 2)"
 	fi
-	echo "LMTOY>> badlags.py -d -s $bopts --spike $spike $obsnum"
-	badlags.py -d -s $bopts --spike $spike $obsnum > rsr_badlags.log 2>&1
+	echo "LMTOY>> badlags.py -d -y badlags.png $bopts --spike $spike $obsnum"
+	badlags.py -d -y badlags.png $bopts --spike $spike $obsnum > rsr_badlags.log 2>&1
 	if [ "$badlags" = 0 ]; then
 	    echo "LMTOY>> no badlags requested, still making a plot - you almost never want to do this"
 	    mv badlags.png badlags.$obsnum.png
@@ -221,10 +242,10 @@ function lmtoy_rsr1 {
 	#             Only make this plot for single obsnum's
 	if [ "$obsnum" -gt 0 ]; then
 	    # 5.
-	    echo "LMTOY>> rsr_tsys.py -b $badlags    -s $obsnum"
-	    echo "LMTOY>> rsr_tsys.py -b $badlags -t -s $obsnum"
-	    rsr_tsys.py -b $badlags    -s $obsnum         > rsr_tsys2.log 2>&1
-	    rsr_tsys.py -b $badlags -t -s $obsnum         > rsr_tsys1.log 2>&1
+	    echo "LMTOY>> rsr_tsys.py -b $badlags -t -y rsr.spectrum.png $obsnum"
+	    echo "LMTOY>> rsr_tsys.py -b $badlags    -y rsr.tsys.png     $obsnum"
+	    rsr_tsys.py -b $badlags -t -y rsr.spectrum.png $obsnum         > rsr_tsys2.log 2>&1
+	    rsr_tsys.py -b $badlags    -y rsr.tsys.png     $obsnum         > rsr_tsys1.log 2>&1
 	    grep CB rsr_tsys0.log  > tab0
 	    grep CB rsr_tsys2.log  > tab2
 	    paste tab0 tab2 | awk '{print $0," ratio:",$11/$5}'  > rsr_tsys_badcb.log
@@ -240,7 +261,7 @@ function lmtoy_rsr1 {
 	    rsr_badcb -r $badlags >> $rfile 
 	    rsr_badcb -b $badlags >> $blanking
 	fi
-	echo "PJT1 obsnum=$obsnum obsnums=$obsnums"	
+	#echo "PJT1 obsnum=$obsnum obsnums=$obsnums"	
     elif [ ! -z "$obsnums" ]; then
 	#  only for obsnum combinations
 	echo "PJT2 obsnum=$obsnum obsnums=$obsnums"
@@ -251,7 +272,7 @@ function lmtoy_rsr1 {
 	echo "Using existing $badlags - forgetting initial settings"
 	rsr_badcb -b $badlags >> $blanking
 	rsr_badcb -r $badlags >> $rfile
-	echo "PJT3 obsnum=$obsnum obsnums=$obsnums"
+	#echo "PJT3 obsnum=$obsnum obsnums=$obsnums"
     fi
     
     #   We have two similar scripts of difference provenance that produce a final spectrum
@@ -313,13 +334,11 @@ function lmtoy_rsr1 {
 	    done
 	    #echo S1=$s1
 	    #echo S2=$s2
-	    rsr_spectra.py -s -o $spec1 $s1
-	    rsr_spectra.py -s -o $spec2 $s2
+	    rsr_spectra.py -y rsr.spectra.png -o $spec1 $s1
+	    rsr_spectra.py -y rsr.spectra.png -o $spec2 $s2
 	    
-	    rsr_spectra.py -s old/$spec1 $spec1
-	    mv rsr.spectra.png rsr.spectra.cmp1.png
-	    rsr_spectra.py -s old/$spec2 $spec2
-	    mv rsr.spectra.png rsr.spectra.cmp2.png
+	    rsr_spectra.py -y rsr.spectra.cmp1.png old/$spec1 $spec1
+	    rsr_spectra.py -y rsr.spectra.cmp2.png old/$spec2 $spec2
 	    if [[ -n "$NEMO" ]]; then
 		grep -v nan old/$spec1 | grep -v ^# > junk1a.tab
 		grep -v nan     $spec1 | grep -v ^# > junk1b.tab
@@ -354,11 +373,10 @@ function lmtoy_rsr1 {
     else
 	zoom="--zoom $speczoom"	
     fi
-    echo "LMTOY>> rsr_spectra.py -s  $zoom   --title $src $spec1 $spec2"
-    rsr_spectra.py -s     $zoom --title "$src .$wpre" $spec1 $spec2
-    mv rsr.spectra.png rsr.spectra_zoom.png
-    rsr_spectra.py -s           --title "$src .$wpre" $spec1 $spec2
-    rsr_spectra.py -s -g        --title "$src .$wpre" $spec1 $spec2
+    echo "LMTOY>> rsr_spectra.py -y rsr.spectra_zoom.png  $zoom --title $src $spec1 $spec2"
+    rsr_spectra.py -y rsr.spectra_zoom.png $zoom --title "$src .$wpre" $spec1 $spec2
+    rsr_spectra.py -y rsr.spectra.png            --title "$src .$wpre" $spec1 $spec2
+    rsr_spectra.py -y rsr.spectra.svg            --title "$src .$wpre" $spec1 $spec2
 
     # update the rc file (badcb here is deprecated)
     if [[ 0 = 1 ]]; then
@@ -403,6 +421,7 @@ function lmtoy_rsr1 {
 	    #   catch bad fits
 	    echo  "rms= 0"                                              >> linecheck.log
 	    echo  "rms= 0"                                              >> linecheck.log
+	    # if files are not zero size, they can be plotted....
 	    if [ -s spec1.tab ]; then
 		tabplot spec1.tab 1 2,3,4 111-4 111 line=1,1 color=2,3,4 ycoord=0 yapp=spec1.$dev/$dev
 	    fi
@@ -448,8 +467,10 @@ function lmtoy_rsr1 {
 
 
 function lmtoy_seq1 {
+    time=/usr/bin/time
     # input: obsnum, ... (lots)
     # this will process a single bank in an $obsnum; $bank and $oid needs to be set
+    
 
     # log the version
     lmtoy_version >> lmtoy.rc
@@ -459,6 +480,11 @@ function lmtoy_seq1 {
     fi
     # record
     echo "LMTOY>> rc=$rc rc1=$rc1 bank=$bank oid=$oid"
+    if [ ! -e "$rc1" ]; then
+	echo "PJT_WARNING: we should not need to do this $rc -> $rc1 copy here"
+	#cp $rc $rc1
+	#rc=$rc1
+    fi
 
     # fix potential pix_list
     pix_list=$(pix_list.py $pix_list)
@@ -479,7 +505,7 @@ function lmtoy_seq1 {
 	    use_restfreq=""	    
 	    echo "WARNING: resetting restfreq not supported yet"
 	fi
-	process_otf_map2.py \
+	$time process_otf_map2.py \
 	    -p $DATA_LMT \
 	    -o $s_nc \
 	    --obsnum $obsnum \
@@ -552,20 +578,26 @@ function lmtoy_seq1 {
 	    --pix_list $pix_list \
 	    --binning 10,1
 
-	echo "LMTOY>> stats_wf"
-	stats_wf.py -s -b ${s_on}.bstats.tab    ${s_on}.wf.fits > stats_wf0.tab
-	mv stats_wf0.png ${s_on}.wf0.png
-	stats_wf.py -s                       -t ${s_on}.wf.fits > stats_wf1.tab
-	mv stats_wf1.png ${s_on}.wf1.png	
+	echo "LMTOY>> stats_wf.py -y ${s_on}.wf0.png  -b ${s_on}.bstats.tab    ${s_on}.wf.fits"
+	stats_wf.py -y ${s_on}.wf0.png  -b ${s_on}.bstats.tab    ${s_on}.wf.fits > stats__${bank}_wf0.tab
+	stats_wf.py -y ${s_on}.wf1.png  -t                       ${s_on}.wf.fits > stats__${bank}_wf1.tab
 	delta=$(tabtrend ${s_on}.bstats.tab 2 | tabstat - robust=t qac=t | txtpar - p0=QAC,1,4)
-	tabpeak ${s_on}.bstats.tab delta=5*$delta > ${s_on}.birdies.tab	
+	tabpeak ${s_on}.bstats.tab delta=5*$delta > ${s_on}.birdies.tab
+
+	# stats__${bank}_wf0.tab can be used to estimate bad beams; use 5-sigma above the mean
+	clip=$(tabstat stats__${bank}_wf0.tab 2 qac=t robust=t | txtpar - %1+5*%2 p0=1,3 p1=1,4)
+	bb=pix_list=$(tabmath  stats__${bank}_wf0.tab - -%1 all "selfie=ifgt(%2,$clip,1,0)")
+	echo "LMTOY>> bad beams might be $bb"
+	if [ ! -e pix_list__${bank}.txt ]; then
+	    echo $bb | sed 's/ /,/g' > pix_list__${bank}.txt
+	fi
     fi
     
 
     #  convert SpecFile to FITScube
     if [ $makecube = 1 ]; then
 	echo "LMTOY>> grid_data native"
-	grid_data.py \
+	$time grid_data.py \
 	    --program_path spec_driver_fits \
 	    -i $s_nc \
 	    -o $s_fits \
@@ -590,7 +622,7 @@ function lmtoy_seq1 {
 	echo "@todo this needs a new option to bin in channel space"
 	s_fits2=$s_fits.fits
 	w_fits2=$w_fits.fits
-	grid_data.py \
+	$time grid_data.py \
 	    --program_path spec_driver_fits \
 	    -i $s_nc \
 	    -o $s_fits2 \
@@ -722,7 +754,8 @@ function lmtoy_seq1 {
 	    echo "rms=$rms     # rms[mK] in center"      >> $rc
 	    echo "rms0=$rms0   # RMS/radiometer ratio"   >> $rc
 
-	    # hack
+	    # add a smooth cube version as well
+	    # @todo  it seems the WCS of the nfs is off by 1
 	    fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.cubespecs.tab
 	    echo -n "cubespec : ";  tail -1  $s_on.cubespec.tab
 	    echo -n "cubespecs: ";  tail -1  $s_on.cubespecs.tab
@@ -732,17 +765,36 @@ function lmtoy_seq1 {
 	    echo "# tmp file to plot full spectral range for ${s_on} bank=$bank"   > full_spectral_range
 	    nemoinp "$vmin,0.0" newline=f                                         >> full_spectral_range
 	    nemoinp "$vmax,0.0" newline=f                                         >> full_spectral_range
-	    tabmath ${s_on}.cubespec.tab  - %1/1000,%2 all > cubespec
-	    tabmath ${s_on}.cubespecs.tab - %1/1000,%2 all > cubespecs
-	    #   set the height at 1-sigma of the RMS in the smoothed (cubespecs) spectrum
-	    h=$(tabtrend cubespecs 2 | tabstat -  | txtpar - %1*1.0 p0=disp,1,2)
+	    tabmath ${s_on}.cubespec.tab  - %1/1000,%2 all > native
+	    tabmath ${s_on}.cubespecs.tab - %1/1000,%2 all > smooth-4x4x4
+	    #   RMS in baseline region
+	    #   set the height at 1-sigma of the RMS in the smoothed (4x4x4) spectrum ($hs)
+	    hn=$(tabtrend native       2 | tabstat - qac=t robust=t  | txtpar - %1*1.0 p0=QAC,1,4)	    
+	    hs=$(tabtrend smooth-4x4x4 2 | tabstat - qac=t robust=t  | txtpar - %1*1.0 p0=QAC,1,4)
+	    echo "rms_baseline_n=$hn" >> $rc
+	    echo "rms_baseline_s=$hs" >> $rc
+	    echo "# straight line where vlsr is"          > vlsr
+	    nemoinp "$vlsr,-$hs" newline=f               >> vlsr
+	    nemoinp "$vlsr,$hs"  newline=f               >> vlsr
+	    #   flux
+	    center_flux_n=$(sort -n native       | tabint -)
+	    center_flux_s=$(sort -n smooth-4x4x4 | tabint -)
+	    echo "center_flux_n=$center_flux_n    # central pixel" >> $rc
+	    echo "center_flux_s=$center_flux_s    # central pixel" >> $rc	    
 	    #   box coordinates, assumed we did dv=,dw=      @todo use the uactually used b_ parameters
-	    b=$(echo $vlsr,$dv,$dw | tabmath - - %1-%2-%3,-$h,%1-%2,$h,%1+%2,-$h,%1+%2+%3,$h all | tabcsv -)
-	    tab_plot.py -s --xrange $vmin,$vmax --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
+	    b=$(echo $vlsr,$dv,$dw | tabmath - - %1-%2-%3,-$hs,%1-%2,$hs,%1+%2,-$hs,%1+%2+%3,$hs all | tabcsv -)
+	    #   baseline range
+	    br=$(echo $vlsr,$dv,$dw | tabmath - - %1-%2-%3,%1+%2+%3 all)
+	    tab_plot.py --xrange $vmin,$vmax --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
 			--boxes $b \
 			--title "${s_on} VLSR_range: $vmin $vmax" \
-			cubespec cubespecs full_spectral_range
-	    mv tab_plot.png spectrum_${bank}.png
+			-y spectrum_${bank}.png \
+			native smooth-4x4x4 vlsr full_spectral_range 
+	    tab_plot.py --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
+			--boxes $b \
+			--title "${s_on} VLSR_range: $br" \
+			-y spectrum_${bank}_zoom.png \
+			native smooth-4x4x4 vlsr
 	    
 	    # NEMO plotting ?
 	    if [ $viewnemo = 1 ]; then
@@ -810,12 +862,11 @@ function lmtoy_seq1 {
 	echo "LMTOY>> skipping ADMIT post-processing"
     fi
 
-    # maskmoment
-    if [ $maskmoment = 1 ]; then
+    if [ $maskmoment == 1 ]; then
 	echo "LMTOY>> Running maskmoment vlsr=$vlsr"
-	mm1.py $s_on.nf.fits   $vlsr > maskmoment.nf.log   2>&1
+	mm1.py $s_on.nf.fits   $vlsr > maskmoment__${bank}.nf.log   2>&1
 	# hack
-	mm1.py $s_on.nfs.fits  $vlsr > maskmoment.nfs.log  2>&1
+	mm1.py $s_on.nfs.fits  $vlsr > maskmoment__${bank}.nfs.log  2>&1
     else
 	echo "LMTOY>> skipping maskmoment"	
     fi
@@ -825,12 +876,15 @@ function lmtoy_seq1 {
     
     # seq_readme > $pdir/README.html
     cp $LMTOY/docs/README_sequoia.md README_files.md
-    echo "LMTOY>> Making summary index.html for bank=$bank"
+    echo "LMTOY>> Making summary index.html for bank=$bank rc=$rc"
     grep bank= $rc
     echo "LMTOY>> Making summary index.html for oid=$oid"
     mk_index.sh
     # cheat and rename it for all files access
     mv index.html README.html
+
+    # record the processing time, since this is a bank specific rc file
+    echo "date=\"$(lmtoy_date)\"     # end " >> $rc
     
 } # lmtoy_seq1
 
@@ -839,7 +893,7 @@ function lmtoy_bs1 {
     # this will process a single bank in an $obsnum
 
     # log the version
-    lmtoy_version > lmtoy.rc
+    lmtoy_version >> lmtoy.rc
     # keep an IFPROC header
     if [ ! -e lmtoy_$obsnum.ifproc ]; then
 	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
@@ -854,8 +908,8 @@ function lmtoy_bs1 {
     # full average -> bs-1.png
     echo "LMTOY>> process_bs.py --obs_list $obsnum -o $spec --pix_list $pix_list --use_cal --block -1 --stype $stype  --bank $bank"
     process_bs.py --obs_list $obsnum -o $spec --pix_list $pix_list --use_cal --block -1 --stype $stype --bank $bank
-    seq_spectra.py -s $spec
-    seq_spectra.py -s -z $spec
+    seq_spectra.py -y seq.spectra.png $spec
+    seq_spectra.py -y seq.spectra.svg $spec
 
     out4=$(tabmath $spec - %2*1000 all | tabstat -  qac=t robust=t label=$spec)
     printf_red $out4
@@ -895,7 +949,7 @@ function lmtoy_ps1 {
     # this will process a single bank in an $obsnum
 
     # log the version
-    lmtoy_version > lmtoy.rc
+    lmtoy_version >> lmtoy.rc
     # keep an IFPROC header
     if [ ! -e lmtoy_$obsnum.ifproc ]; then
 	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
@@ -907,8 +961,8 @@ function lmtoy_ps1 {
     # full average -> bs-1.png
     echo "LMTOY>> process_ps.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1 --stype $stype"
     process_ps.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1 --stype $stype
-    seq_spectra.py -s ${src}_${obsnum}.txt
-    seq_spectra.py -s -z ${src}_${obsnum}.txt
+    seq_spectra.py -y seq.spectra.png ${src}_${obsnum}.txt
+    seq_spectra.py -y seq.spectra.svg ${src}_${obsnum}.txt
 
     out4=$(tabmath ${src}_${obsnum}.txt - %2*1000 all | tabstat -  qac=t robust=t label=${src}_${obsnum}.txt)
     printf_red $out4

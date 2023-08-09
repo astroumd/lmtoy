@@ -2,26 +2,34 @@
 #
 #    inspect and plot the chassis and band (C/B) based Tsys (or with -t the Spectrum)
 
-"""Usage: rsr_tsys.py [options] OBSNUM
+_version = "1-aug-2023"
+
+_help = """Usage: rsr_tsys.py [options] OBSNUM
 
 Options:
-  -s                      Don't show interactive plot, save plotfile instead.
+  -y PLOTFILE             Save plotfile instead of interactive. Optional
   -b --badlags BADLAGS    Use this badlags file. Optional.
   -t                      Show spectrum instead of tsys
   -r --rms RMS            Use this RMS (in K) for Tsys jitter to determine a BADCB [Default: 25.0]
   -h --help               This help
-  --version               The script version
-
-The saved plotfile has a fixed name, rsr.spectra.png (or rsr.spectra.svg)
+  -v --version               The script version
 
 """
-_version = "16-mar-2023"
-
-
 
 import sys
 import numpy as np
 from docopt import docopt
+
+#                    command line options
+Qspec    = False
+
+#                    trigger "badcb" on the RMS in the adjacent-channel differences ("jitter")
+
+
+
+av = docopt(_help, options_first=True, version='rsr_tsys.py %s' % _version)
+print(av)
+
 
 
 from dreampy3.redshift.utils.fileutils import make_generic_filename
@@ -29,22 +37,10 @@ from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 # from dreampy3.redshift.plots import RedshiftPlot
 
 
-#                    command line options
-Qshow    = True
-Qspec    = False
-ext      = 'png'
-#                    trigger "badcb" on the RMS in the adjacent-channel differences ("jitter")
-
-
-
-av = docopt(__doc__,options_first=True, version='rsr_spectra.py %s' % _version)
-print(av)
-
-
-if av['-s']:
-    Qshow = False
 if av['-t']:
     Qspec = True
+
+plotfile = av['-y']
 badlags = av['--badlags']
 rms_min  = float(av['--rms'])
 obsnum = int(av['OBSNUM'])
@@ -61,7 +57,7 @@ if badlags != None:
     dreampy3.badlags(badlags)
 
 import matplotlib
-if Qshow:
+if plotfile == None:
     matplotlib.use('qt5agg')
 import matplotlib.pyplot as plt
 print('mpl backend tsys',matplotlib.get_backend())
@@ -115,9 +111,8 @@ else:
     plt.ylabel("Tsys (K)")
     plt.ylim([40,310])
 plt.legend()
-if Qshow:
+if plotfile == None:
     plt.show()
 else:
-    pout = "%s.%s" % (base,ext)
-    plt.savefig(pout)
-    print("%s writtten" % pout)
+    plt.savefig(plotfile)
+    print("%s writtten" % plotfile)

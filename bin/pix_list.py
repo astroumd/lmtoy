@@ -1,11 +1,7 @@
 #! /usr/bin/env python
 #
-#   @todo    for single IF beams 0..15 are allowed
-#            for dual IF beams 0..31 are allowed,
-#                where beams 0..15 for bank=0, and
-#                      beams 16..31 for bank=1
+#   return absolute numbers of the beams selected
 #
-
 
 
 import os
@@ -14,11 +10,15 @@ import sys
 # from docopt import docopt
 from lmtoy import runs
 
+all = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15"
 
 if len(sys.argv) == 1:
-    print("0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15")
+    print(all)
     sys.exit(0)
 
+if sys.argv[1] == 'all':
+    print(all)
+    sys.exit(0)
     
 pl=sys.argv[1]
 

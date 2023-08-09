@@ -155,10 +155,12 @@ for ext in "" "__0" "__1"; do
 	rf=$restfreq
     fi
     if [ "$ext" == "__0" ]; then
-	rf=$(echo $restfreq | tabcols - 1)
+	# rf=$(echo $restfreq | tabcols - 1)
+	rf=$restfreq
     fi
     if [ "$ext" == "__1" ]; then
-	rf=$(echo $restfreq | tabcols - 2)
+	# rf=$(echo $restfreq | tabcols - 2)
+	rf=$restfreq
     fi    
       
     base1=$(base "$ext" "")
@@ -192,6 +194,7 @@ for ext in "" "__0" "__1"; do
     echo "e.g. a combination obsnums will not have figures 1..7"              >> $html
     echo "as they are only created for the individual obsnums"                >> $html
     echo "<OL>"                                                               >> $html
+
 
 
     #base1="${src}_${obsnum}"
@@ -228,34 +231,39 @@ for ext in "" "__0" "__1"; do
 	echo "           <br><IMG SRC=$base2.2.png>"                              >> $html
 	echo "         <IMG SRC=first_$base2.2.png>"                              >> $html
 	
-	# 3a
-	echo "  <br> Waterfall RMS [K] as function of channel number"             >> $html
-	echo "       (RMS vs. reversed CHANNEL)"                                  >> $html
-	echo "       - this is where birdies show up best, or check *bstats*"     >> $html
-	echo "           <br><IMG SRC=${base1}.wf1.png>"                          >> $html
-	echo "         <IMG SRC=first_${base1}.wf1.png>"                          >> $html
-	
 	# 4.
+	echo "  <LI> Waterfall RMS [K] as function of channel number"             >> $html
+	echo "       (RMS vs. CHANNEL)"                                           >> $html
+	echo "       - this is where birdies show up best, or check *bstats*"     >> $html
+	echo "     <br> Note that when birdies were flagged, the RMS will now"    >> $html
+	echo "          show a dip due to interpolation"                          >> $html
+	echo "           <br><IMG SRC=${base1}.wf0.png>"                          >> $html
+	echo "         <IMG SRC=first_${base1}.wf0.png>"                          >> $html
+	
+	# 5.
 	echo "  <LI> RMS [K] residuals from a ${b_order}-order baseline fit"      >> $html
 	echo "       as function of sample time."                                 >> $html
 	echo "       Each beam should give roughly the same RMS,"                 >> $html
 	echo "       though during gridding RMS is used as a weight."             >> $html
+	echo "   <br>Reasonable values are ~0.5K for the 800MHz wideband,"        >> $html
+	echo "   1K for intermediate 400MHz, and 2K for 200MHz narrowband,"       >> $html
+	echo "   for an assumed Tsys ~ 100K and 0.1s sample time."                >> $html
 	echo "           <br><IMG SRC=$base2.3.png>"                              >> $html
 	echo "         <IMG SRC=first_$base2.3.png>"                              >> $html
 	
-	# 5.
+	# 6.
 	echo "  <LI> Spectra for the whole map, overplotted for each beam"        >> $html
 	echo "       (vlsr=$vlsr)"                                                >> $html
 	echo "           <br><IMG SRC=$base3.1.png>"                              >> $html
 	echo "         <IMG SRC=first_$base3.1.png>"                              >> $html
 	
-	# 6.
+	# 7.
 	echo "  <LI> Spectra for center beam, overplotted for each beam"          >> $html
 	echo "       (vlsr=$vlsr)"                                                >> $html	
 	echo "           <br><IMG SRC=$base3.2.png>"                              >> $html
 	echo "         <IMG SRC=first_$base3.2.png>"                              >> $html
 	
-	# 7.
+	# 8.
 	echo "  <LI> mean_spectra_plot for each beam."                            >> $html
 	echo "       Unless there is strong signal, each spectrum should look"    >> $html
 	echo "       the same kind of noisy with zero baseline"                   >> $html
@@ -273,35 +281,39 @@ for ext in "" "__0" "__1"; do
 	echo "  <br>obsnums=${obsnums}<br><br>"                               >> $html
     fi    
     
-    # 8.
+    # 9.
     echo "  <LI> Sky coverage + histogram as defined how often sky pixel was seen"  >> $html
     echo "       (sky pixels are about half of LMT beam size)"                      >> $html
     echo "           <br><IMG SRC=$base1.wt.png>"                                   >> $html
     echo "         <IMG SRC=first_$base1.wt.png>"                                   >> $html
     
-    # 9.
+    # 10.
     echo "  <LI> Moment-0 estimate [K.m/s] (<A HREF=index_admit>ADMIT</A>)"   >> $html
-    echo "       plus histogram."                                             >> $html
+    echo "       plus histogram of image values."                             >> $html
     echo "           <br><IMG SRC=$base1.mom0.png>"                           >> $html
     echo "         <IMG SRC=first_$base1.mom0.png>"                           >> $html
     
-    # 10.
+    # 11.
     echo "  <LI> Peak temperature [mK]"                                       >> $html
-    echo "       plus histogram."                                             >> $html
+    echo "       plus histogram of image value."                              >> $html
     echo "           <br><IMG SRC=$base1.peak.png>"                           >> $html
     echo "         <IMG SRC=first_$base1.peak.png>"                           >> $html
     
-    # 11.
+    # 12.
     echo "  <LI> RMS estimate [mK] (central value: $rms mK)"                  >> $html
-    echo "       plus histogram."                                             >> $html
+    echo "       plus histogram of image values."                             >> $html
     echo "           <br><IMG SRC=$base1.rms.png>"                            >> $html
     echo "         <IMG SRC=first_$base1.rms.png>"                            >> $html
 
-    # 12.
+    # 13.
     echo "  <LI> Spectral coverage of raw and extracted cube,"                >> $html
-    echo "       with 1-sigma baseline box drawn"                             >> $html
+    echo "       with 1-sigma baseline box drawn."                            >> $html
+    echo "     Shown are full range (left) and extracted range (right)"       >> $html
+    echo "     spectrum of the central pixel,"                                >> $html
+    echo "     for a native and smooth binned cube."                          >> $html
+    echo "       (vlsr=$vlsr)"                                                >> $html
     echo "           <br><IMG SRC=spectrum_${bank}.png>"                      >> $html
-
+    echo "          <IMG SRC=spectrum_${bank}_zoom.png>"                      >> $html    
     
     echo "</OL>"                                                              >> $html
     
@@ -343,6 +355,16 @@ for ext in "" "__0" "__1"; do
     for ff in $f ; do
 	if [ -e $ff ]; then
 	    echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
+	fi
+	((i=i+1))
+    done
+
+    c=("noise flat cube"    "noise flat smoothed cube")
+    f="${base1}.nf.fits     ${base1}.nfs.fits"
+    i=0    
+    for ff in $f; do
+	if [ -e $ff ]; then
+	    echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html	    
 	fi
 	((i=i+1))
     done

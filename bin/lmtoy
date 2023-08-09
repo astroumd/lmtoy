@@ -12,6 +12,10 @@ os=$(uname -s)
 gitbv() {
     _branch=$(cd $1;git branch --show-current)
     _counter=$(cd $1;git rev-list --count HEAD)
+    _lastdate=$(cd $1;git log -1 --format="%at" | xargs -I{} date -d @{} +%Y/%m/%d_%H:%M:%S)
+    _branch="$(printf %-10s $_branch)"
+    _counter="$(printf %-10s $_counter)"
+    
 }    
 
 if [ -z $LMTOY ]; then
@@ -56,13 +60,13 @@ if [ "$1" == dev ]; then
     echo "fitsccd:          "  $(fitsccd help=V)
     echo "----------------------------------------------------------"
     gitbv $LMTOY
-    echo "lmtoy:          Branch:$_branch Counter:$_counter"
+    echo "lmtoy:          Branch:$_branch Counter:$_counter Date: $_lastdate"
     gitbv $LMTOY/SpectralLineReduction
-    echo "lmtslr:         Branch:$_branch Counter:$_counter"
+    echo "lmtslr:         Branch:$_branch Counter:$_counter Date: $_lastdate"
     gitbv $LMTOY/LinePointing
-    echo "linepointing:   Branch:$_branch Counter:$_counter"
+    echo "linepointing:   Branch:$_branch Counter:$_counter Date: $_lastdate"
     gitbv $LMTOY/dreampy3    
-    echo "dreampy:        Branch:$_branch Counter:$_counter"
+    echo "dreampy:        Branch:$_branch Counter:$_counter Date: $_lastdate"
     gitbv $LMTOY/nemo
-    echo "nemo:           Branch:$_branch Counter:$_counter"
+    echo "nemo:           Branch:$_branch Counter:$_counter Date: $_lastdate"
 fi

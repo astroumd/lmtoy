@@ -22,16 +22,15 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       are 6 bands, sometimes the word **board** is used as well, although
       the ordering of bands and boards is different. bands are ordered
       in frequency (by our convention).
-      For
       See also **bank**
 
     bank
       A set of spectrometers that cover the same *IF* band at the same
       resolution (and number of channels).
       There is no side-band restriction.   For SEQUOIA
-      we only two banks currently, though both need to be in the
+      we use two banks currently, though both need to be in the
       band below 100GHz or in the band above 100GHz.
-    . For the MSIP 1mm receiver there are
+      For the MSIP 1mm receiver there are
       two, although they have one in USB and one in LSB.
 
     beam
@@ -47,9 +46,15 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       Note that for some instruments beams are also interpreted while
       including other simulteanously taken data in another band/polarization
 
+    Beam Switching
+      This is a variation on position switching using a receiver
+      with multiple pixels. The "Main" and "Reference" positions on the sky are
+      calculated so that the receiver is always pointing at the source. This is most
+      useful for point sources.
+
     beammap
       A special observing mode (always in Az-El?) where you map around
-      a strong source, e.g. Ori-KL.
+      a strong source, e.g. Ori-KL. Usually a small field.
 
     board
       for SLR these are the roach boards (4 or 8). For RSR they
@@ -60,11 +65,13 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
     bufpos
       WARES variable to denote what type of data is being received.
       bufpos: 0=on 1=off 2=sky 3=hot.
-      A value of 100 can be added if ...(TBD)...
+      A value of 100 can be added if a reference a grid posititon in
+      a grid map needs to be made.
 
     cell
       (most people would call this a pixel, but at LMT
-      **pixel** is an overloaded word for the beams. In the gridder we
+      **pixel** is an overloaded word also used for the
+      beams in Sequoia. In the gridder we
       use --cell=. This will be the pixel size in the final FITS
       images.
 
@@ -95,6 +102,13 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
       beam if normally given in **FITS** keywords BMAJ,BMIN,BPA.  The
       term **resolution**
 
+    grid map
+      A sequence of spectra taken on a regular grid of sky points. In this procedure,
+      the telescope tracks a specifc position in the grid as the "Main" position in a
+      position switched spectrum. The procedure allows the user to defne a single integration
+      on the "Reference" position to be used for all points or allows the user to interleave additional
+      "Reference" spectra into the observation. 
+
     horn
       Another term used for :term:`beam` or :term:`pixel`.
     
@@ -116,6 +130,10 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 
     OMAR
       something with omaya? Or is this another term for OMAYA
+
+    OTF Mapping
+      In this procedure the telescope is scanned across the sky to sample the emission.
+      The samples are then "gridded" into a map.
    
     PHAMAS
       (Phased Array Receiver for Millimeter Astronomy): 64 element receiver - prototype.
@@ -126,6 +144,10 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 
     plotly
       dash uses plotly, which is a data analytics framework working within a browser environment.
+
+    Position Switching
+      This is a standard way to obtain spectra by switching
+      between a "Main" and "Reference" position on the sky.
 
     ProjectId
       Each LMT observing proposal has a unique proposal ID assigned. An example is **2018-S1-MU-46**,

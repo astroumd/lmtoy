@@ -37,6 +37,12 @@ lmtinfo.py grep Arp143
 lmtinfo.py grep MX-3 Pointing
 lmtinfo.py grep 2023 LineCheck Bs
 
+# Allocate and use scratch space for WORK_LMT, maybe extend for a few days
+ws_allocate lmtoy
+export WORK_LMT=/scratch/workspace/lmtslr_umass_edu-lmtoy
+ws_list
+ws_allocate -x lmtoy 5
+
 #  running pipeline for SEQ/Map
 SLpipeline.sh admit=0 restart=1 obsnum=99481 pix_list=1,2,3,4,6,7,8,9,10,11,12,13,14,15 dv=300 dw=500
 SLpipeline.sh admit=1 restart=1 obsnums=99481,99480,99478,99477

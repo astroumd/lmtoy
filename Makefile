@@ -55,7 +55,7 @@ URL21 = https://github.com/GreenBankObservatory/dysh
 
 
 install:
-	@echo "The installation has a few manual steps:"
+	@echo "The installation has a few manual steps, it is best to consult the docs/install_lmtoy script for an example"
 	@echo "1. install python (or skip it if you have it)"
 	@echo "  make install_python"
 	@echo "  source python_start.sh"
@@ -70,6 +70,7 @@ install:
 	@echo "    make pull                  update all git repos"
 	@echo "    make status                view git status in all repos"
 	@echo "    make update                recompile updated repos"
+	@echo "    make help                  a full list of all documented help"
 	@echo "For a full list, type:  'make help'"
 	@echo ""
 
@@ -337,30 +338,27 @@ common: lmtoy_venv
 ADMIT = 0
 bench:  bench1 bench2
 
-## bench1:   RSR benchmark (obsnum=33551)
+## bench1:   RSR benchmark: obsnum=33551
 bench1:
-	$(TIME) SLpipeline.sh obsnum=33551 restart=1 linecheck=1 admit=$(ADMIT)
-	@echo "QAC_STATS: rsr.33551.driver.sum.txt 2.0904e-05 0.00095051 -0.00407884 0.0459238 0.173963 0.156462 1186 [expected]"
-	@echo "QAC_STATS: rsr.33551.blanking.sum.txt 4.19332e-05 0.000950482 -0.00385069 0.0459053 0.210346 0.188981 1186 [expected]"
+	$(TIME) SLpipeline.sh obsnum=33551 restart=1 linecheck=1 meta=0 admit=$(ADMIT)
+	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench1.txt'
 	@echo "================================================================================================================="
 	@echo xdg-open  $(WORK_LMT)/2014ARSRCommissioning/33551/README.html
 
 ## bench1a:  RSR benchmark with identical combination
 bench1a:
-	$(TIME) SLpipeline.sh obsnums=33551,33551 restart=1 admit=$(ADMIT)
+	$(TIME) SLpipeline.sh obsnums=33551,33551 restart=1 meta=0 admit=$(ADMIT)
 
-## bench2:   SEQ benchmark (obsnum=79448)
+## bench2:   SEQ benchmark: obsnum=79448
 bench2:
-	$(TIME) SLpipeline.sh obsnum=79448 restart=1 map_coord_use=1 admit=$(ADMIT)
-	@echo "QAC_STATS: IRC+10216_79448-full 0.00256137 0.242578 -563.449 634.86 85230.4 0.0531463 5696559 [expected]"
-	@echo "QAC_STATS: IRC+10216_79448-cent 0.00280355 0.213226 -2.42886 15.3425 91513 0.123691 3684458 [expected]"
-	@echo "QAC_STATS: RMS/radiometer 1.84299 0.135224 1.23069 5.1088 10313 1 5021 [expected]"
+	$(TIME) SLpipeline.sh obsnum=79448 restart=1 map_coord_use=1 meta=0 maskmoment=$(ADMIT) admit=$(ADMIT)
+	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench2.txt'
 	@echo "========================================================================================"
 	@echo xdg-open  $(WORK_LMT)/2018S1SEQUOIACommissioning/79448/README.html
 
 ## bench2a:  SEQ benchmark with identical combination
 bench2a:
-	$(TIME) SLpipeline.sh obsnums=79448,79448 restart=1 admit=$(ADMIT)
+	$(TIME) SLpipeline.sh obsnums=79448,79448 restart=1 meta=0 admit=$(ADMIT)
 
 ## bench5:   pure CPU bench from NEMO (man 5 bench)
 bench5:

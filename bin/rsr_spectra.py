@@ -3,11 +3,12 @@
 #    plot one or more RSR spectra, optionally a band or piece of the spectrum
 #
 
-"""Usage: rsr_spectra.py [options] SPECTRUM1 [SPECTRUM2...]
+_version = "1-aug-2023"
+
+_help = """Usage: rsr_spectra.py [options] SPECTRUM1 [SPECTRUM2...]
 
 Options:
-  -s                      Don't show interactive plot, save plotfile instead.
-  -g                      Use SVG instead of PNG for plotfile
+  -y PLOTFILE             Save plotfile instead, else interactive. Optional.
   -o SPECTRUM             Optional output file indicated a weighted average
   -a                      No weighted average, use a simple average [not implemented yet]
   -z --zoom CEN,WID       Zoom spectrum on a CEN and +/- WID. Optional.
@@ -17,7 +18,7 @@ Options:
   --kscale KSCALE         Scale factor to apply to spectrum  [Default: 1000]
   -h --help               This help
   --debug                 More debugging output
-  --version               The script version
+  -v --version            The script version
 
 One or more ASCII spectra are needed, with columns 1 and 2 designating the
 frequency (for RSR in GHz) and amplitude (for RSR in Kelvin).
@@ -29,18 +30,13 @@ Use the "-o" option to merge the instead, and write (and plot) the merged
 spectrum.   For rsr the presence of a 3rd column insidicates the dispersion in
 the spectra, which will translate into a weight ~ 1/dispersion^2
 
-The saved plotfile has a fixed name, rsr.spectra.png (or rsr.spectra.svg)
-
 """
-_version = "24-jun-2023"
 
 import sys
 import numpy as np
 from docopt import docopt
 
-Qshow  = True               # -s
-ext    = 'png'              # -z
-base   = 'rsr.spectra' 
+# base   = 'rsr.spectra' 
 title  = 'RSR spectra'      # --title
 xtitle = 'Freq (GHz)'       
 ytitle = 'Ta (K)'
@@ -49,7 +45,7 @@ band_edges = [ (71.72, 79.69), (78.02 , 85.99),  (85.41,  93.38),
                (90.62, 98.58), (96.92, 104.88), (104.31, 112.28)]
 
 
-av = docopt(__doc__,options_first=True, version='rsr_spectra.py %s' % _version)
+av = docopt(_help, options_first=True, version='rsr_spectra.py %s' % _version)
 
 
 
@@ -72,17 +68,17 @@ if av['-o']:
     merge = av['-o']
 else:
     Qmerge = False
-    
-if av['-s']:
-    Qshow = False
+
+plotfile = av['-y']
 
 import matplotlib
-if Qshow:
+if plotfile == None:
     matplotlib.use('qt5agg')
 else:
     # if the next statement was not used on unity, occasionally it would fine Qt5Agg, and thus fail
     # this else clause is NOT used in rsr_tsys.py, which has the same patters as this routine, and
     # never failed making a Tsys plot, go figure unity!
+    # note added later:    "export MPLBACKEND=agg"   seems to do the trick
     matplotlib.use('agg')
 import matplotlib.pyplot as plt
 print('mpl backend spectra',matplotlib.get_backend())
@@ -106,9 +102,6 @@ if band >= 0 and band <=5:
     print("Using band edges ",be)
     plt.xlim(be)
     xtitle = xtitle + '   [RSR Band %d]' % band
-
-if av['-g']:
-    ext = 'svg'
 
 spectra = [av['SPECTRUM1']]
 spectra = spectra + av['SPECTRUM2']
@@ -153,11 +146,10 @@ plt.ylabel(ytitle)
 #plt.ylim([0,1])
 plt.title(title)
 plt.legend()
-if Qshow:
+if plotfile == None:
     plt.show()
 else:
-    pout = "%s.%s" % (base,ext)
-    plt.savefig(pout)
-    print("%s writtten" % pout)
+    plt.savefig(plotfile)
+    print("%s writtten" % plotfile)
 
 
