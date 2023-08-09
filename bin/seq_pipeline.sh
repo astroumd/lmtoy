@@ -15,7 +15,7 @@
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 # @todo   vlsr= only takes correct effect on the first run, not a re-run
 
-_version="seq_pipeline: 8-aug-2023"
+_version="seq_pipeline: 9-aug-2023"
 
 echo "LMTOY>> $_version"
 
@@ -47,12 +47,12 @@ birdies=0
 map_coord_use=-1
 #            - parameters that directly match the SLR scripts
 pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-rms_cut=-4
-location=0,0
-resolution=12.5   # will be computed from skyfreq
-cell=6.25         # will be computed from resolution/2
-nppb=-1           # number of points per beam (positive will override cell=)
-rmax=3            # number of pixels/resolutions to extend convolved signal
+rms_cut=-4          # absolute or if negative, normalized to robust sigma cut
+location=0,0        # location (in arcsec) w.r.t. center where spectrum is shown
+# resolution=12.5   # will be computed from skyfreq
+# cell=6.25         # will be computed from resolution/2
+# nppb=-1           # number of points per beam (positive will override cell=)
+rmax=3              # number of pixels/resolutions to extend convolved signal
 otf_select=1
 otf_a=1.1
 otf_b=4.75
@@ -64,16 +64,17 @@ sample=-1
 otf_cal=0
 edge=0            #  1:  fuzzy edge  0: good sharp edge where M (mask) > 0 [should be default]
 bank=-1           # -1:  all banks 0..numbands-1; otherwise select that bank (0,1,...)
-                  #      note that oid=0,1 are reserved for bank=0,1 
 
 #                 debug (set -x)
-debug=0
+debug=0           # add lots of verbosities
+
 
 #--HELP
-show_vars="extent dv dw birdies map_coord_use pix_list rms_cut location resolution \
-           cell nppb rmax otf_select otf_a otf_b otf_c noise_sigma b_order stype \
+show_vars="extent dv dw birdies map_coord_use pix_list rms_cut location \
+           rmax otf_select otf_a otf_b otf_c noise_sigma b_order stype \
            sample otf_cal edge bank \
           "
+          #  resolution cell nppb \
 
 
 # unset these, since setting them will give a new meaning, different from the lmtinfo based defaults
@@ -211,7 +212,7 @@ if [[ $first == 1 ]] || [[ "$_lmtoy_args"  == *"pix_list="* ]]; then
     echo "pix_list=$(pix_list.py $pix_list)" >> $rc
 fi
 
-if [[ $first == 1 ]] || [[ "$_lmtoy_args"  == *"resolution="* ]] || [[ "$_lmtoy_args"  == *"cell="* ]] ||  [[ "$_lmtoy_args"  == *"nppb="* ]]; then
+if [[ "$_lmtoy_args"  == *"resolution="* ]] || [[ "$_lmtoy_args"  == *"cell="* ]] ||  [[ "$_lmtoy_args"  == *"nppb="* ]]; then
     # @todo   new hack to allow resolution/cell > 2       
     echo "# resolution hack"        >> $rc
     echo resolution=$resolution     >> $rc
