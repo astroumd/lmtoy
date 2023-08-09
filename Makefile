@@ -351,7 +351,7 @@ bench1a:
 
 ## bench2:   SEQ benchmark: obsnum=79448
 bench2:
-	$(TIME) SLpipeline.sh obsnum=79448 restart=1 map_coord_use=1 meta=0 admit=$(ADMIT)
+	$(TIME) SLpipeline.sh obsnum=79448 restart=1 map_coord_use=1 meta=0 maskmoment=$(ADMIT) admit=$(ADMIT)
 	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench2.txt'
 	@echo "========================================================================================"
 	@echo xdg-open  $(WORK_LMT)/2018S1SEQUOIACommissioning/79448/README.html
