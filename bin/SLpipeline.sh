@@ -384,8 +384,10 @@ if [ -n "$rsync" ]; then
     rsync -av ${pdir}_TAP.tar $rsync1
 fi
 
-# report matplotlib environment again
-test_mpl
+if [ $debug -gt 0 ]; then
+    # report matplotlib environment again
+    test_mpl
+fi
 
 # final reminder of parameters
 lmtoy_report
