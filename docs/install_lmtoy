@@ -14,9 +14,10 @@
 #     2-dec-2021:     add admit, use embedded DATA_LMT and WORK_LMT if none else given
 #     9-nov-2022:     various overhaul for Unity to allow "mknemo builds for pgplot, cfitsio
 #     2-dec-2022:     keep a (dummy?) etc/ProjectId.tab
+#     8-aug-2023:     for Version 1.0 
 #
 
-version=21-jun-2023
+version=8-aug-2023
 
 #--HELP
 #   Keywords for installation
@@ -28,7 +29,7 @@ venv=0                            # set to 1 if you want to bypass a new anacond
 nemo=1                            # set to 0 if you don't need NEMO (not recommended) or use existing $NEMO
 pgplot=1                          # set to 1 if you want PGPLOT in NEMO, instead of simple PS driver, use 2 for self-built
 mknemo=0                          # use mknemo builds for pgplot, hdf5, netcdf4, cfitsio
-data_lmt=${DATA_LMT:-data_lmt}    # give sensible default for $DATA_LMT   lma:/lma1/lmt/data_lmt/
+data_lmt=${DATA_LMT:-data_lmt}    # give sensible default for $DATA_LMT - use an existing one to speed up testing
 work_lmt=${WORK_LMT:-work_lmt}    # give sensible default for $WORK_LMT
 admit=1                           # install ADMIT ?
 pipeline=1                        # full pipeline run on bench files? 
@@ -41,7 +42,8 @@ sleep=5                           # peter's safety valve
 #   install_lmtoy                                             # typical ubuntu with pre-conditions, full test w/ admit
 #   install_lmtoy  mknemo=1 pgplot=2 wget=wgetc admit=0       # unity with no modules loaded, all self-contained
 #                  data_lmt=/nese/toltec/dataprod_lmtslr/data_lmt     # or add the big $DATA_LMT on unity
-#                  data_lmt=$DATA_LMT work_lmt=$WORK_LMT              # or inherit previous one for a redo test
+#                  data_lmt=/lma1/lmt/data_lmt/                       # or the one on lma
+#                  data_lmt=$DATA_LMT   work_lmt=$WORK_LMT            # or inherit previous one for a redo test
 #
 #--HELP
 
