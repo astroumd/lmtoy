@@ -124,6 +124,14 @@ function printf_green {
     echo -e "${RED}$*${NC}"
 }
 
+function printf_green_file {
+    my_file=$1
+    while read -r line
+    do
+	printf_green "$line"
+    done < "$my_file"
+}
+
 function show_vars {
     # helper function to show value of shell variables using bash dynamic variables
     # meant to be stored in an rc file
@@ -580,8 +588,8 @@ function lmtoy_seq1 {
 	clip=$(tabstat stats__${bank}_wf0.tab 2 qac=t robust=t | txtpar - %1+5*%2 p0=1,3 p1=1,4)
 	bb=pix_list=$(tabmath  stats__${bank}_wf0.tab - -%1 all "selfie=ifgt(%2,$clip,1,0)")
 	echo "LMTOY>> bad beams might be $bb"
-	if [ ! -e pix_list_${bank}.txt ]; then
-	    echo $bb | sed 's/ /,/g' > pix_list_${bank}.txt
+	if [ ! -e pix_list__${bank}.txt ]; then
+	    echo $bb | sed 's/ /,/g' > pix_list__${bank}.txt
 	fi
     fi
     
