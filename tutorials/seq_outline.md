@@ -59,7 +59,7 @@ A few popular fits viewers are:
 5. Archives data:   stored in **DataVerse** - online https://dp.lmtgtm.org/
 
 
-The command **lmtinfo.py** can be used to *find* data. Multiple search times can
+The command **lmtinfo.py** can be used to *find* data. Multiple search terms can
 be *and-ed* together. It only operates on the RAW data in $DATA_LMT
 
 
@@ -78,7 +78,7 @@ be *and-ed* together. It only operates on the RAW data in $DATA_LMT
 
 **TAP** = Timely Analysis Products
 
-**SRDP** = Scienc Ready Data Products
+**SRDP** = Science Ready Data Products
 
 1. unity@umass:  TAP produced at LMT  http://taps.lmtgtm.org/lmtslr/2021-S1-US-3/TAP/
 
@@ -90,7 +90,7 @@ be *and-ed* together. It only operates on the RAW data in $DATA_LMT
 
 3. lma@umd:  https://www.astro.umd.edu/~teuben/work_lmt/2018-S1-MU-8/demo/
 
-   These are experiments on improving the pipeline
+   These are experiments while developing the pipeline
 
 
 
@@ -121,7 +121,6 @@ https://www.astro.umd.edu/~teuben/work_lmt/2021-S1-US-3/97520/README.html
 ### 3.5 Select FITS files
 
 Or download the SRDP tar file
-	  
 	  
 ## 4. SLpipeline
 
@@ -185,28 +184,3 @@ and for sequoia:
      otf_cal=0
      edge=0
      bank=-1           # -1 means all banks 0..numbands-1
-
-	 
-
-## 5. Installing
-
-Installing can be as simple as this:
-
-      wget https://astroumd.github.io/lmtoy/install_lmtoy
-      bash install_lmtoy
-	  
-which took 8.5 mins on my laptop.  You will get various LMT tools, a few
-packages, like CASA, ADMIT, NEMO and LMT's python.
-
-Users do this to set up your shell (e.g. in you ~/.bashrc file)
-
-      source lmtoy/lmtoy_start.sh
-	  
-an example of using a SEQ dataset of M51
-
-      lmtinfo.py grep 2018-S1-MU-8  Map 115.2712
-
-shows 14 obsnums
-
-      lmtinfo.py 91112
-      SLpipeline.sh obsnum=91112
