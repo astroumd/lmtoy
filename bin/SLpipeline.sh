@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 8-aug-2023"
+_version="SLpipeline: 9-aug-2023"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -388,6 +388,7 @@ if [ $debug -gt 0 ]; then
     # report matplotlib environment again
     test_mpl
 fi
+dump_vars $pdir/bash_vars.txt
 
 # final reminder of parameters
 lmtoy_report

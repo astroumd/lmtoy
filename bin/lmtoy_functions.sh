@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="8-aug-2023"
+lmtoy_version="9-aug-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -140,7 +140,13 @@ function show_vars {
 	echo "${_arg}=${!_arg}"
     done
     echo "# </show_vars>"    
-    
+}
+
+function dump_vars {
+    # dump all shell variables to a file
+    dumpfile=$1
+    set -o posix
+    set | sort > $dumpfile
 }
 
 function qac_select {
