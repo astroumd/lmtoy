@@ -1,62 +1,66 @@
-#! /bin/csh -f
+#! /bin/env bash
 #
-#  Install an anaconda3 (or miniconda3) python. A full install takes about 2 mins,
-#  assuming you have the .sh file
+# install anaconda3, plus a sourceable python_start script
 #
-#  An alternative is to set up a special conda environment for NEMO, e.g.
-#
-#     conda create -n nemo1 python=x.x -y
-#     source activate nemo1
-#     conda install -n nemo1 [package]
-#     source deactivate
-#     conda remove -n nemo1 -all
-#
-#  but this has not been experimented with.
-#
-#  May-2020        os=Linux/MacOSX
-#  Nov-2020        for lmtoy
 
-set url   = https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
-set url   = https://repo.anaconda.com/archive/Anaconda3-2020.07-MacOSX-x86_64.sh
-set url   = https://repo.anaconda.com/archive/Anaconda3-2020.07-Linux-x86_64.sh
-set url   = https://repo.anaconda.com/archive/Anaconda3-2020.11-%s-x86_64.sh
-set url   = https://repo.anaconda.com/archive/Anaconda3-2021.04-%s-x86_64.sh       # 3.8.8
-set url   = https://repo.anaconda.com/archive/Anaconda3-2021.11-%s-x86_64.sh       # 3.9.8 sphinx install broken?
-#set url   = https://repo.anaconda.com/archive/Anaconda3-2022.05-%s-x86_64.sh      # 3.9.12 sphinx - pyregion also broken now
-set url   = https://repo.anaconda.com/archive/Anaconda3-2022.10-%s-x86_64.sh      # 3.9.13 sphinx
+#--HELP
+# default parameters
+    url=https://repo.anaconda.com/archive/Anaconda3-%s-%s-x86_64.sh
+                   # anaconda3 versions available:
+version=2020.07    # 3.8.3
+version=2020.11    # 3.8.5
+version=2021.04    # 3.8.8
+version=2021.11    # 3.9.8  but sphinx not working?
+version=2022.05    # 3.9.12 sphinx
+version=2022.10    # 3.9.13 sphinx
+#version=2023.03-0  # 3.10.9
+#version=2023.03-1  # 3.10.9
 
-set dir   = `pwd`/anaconda3
-set wget  = wget
-set os    = `uname -s`
+   dir=$(pwd)/anaconda3       # where anaconda will be located
+  wget=wgetc                  # use wgetc is you have my cashing version
+    os=$(uname -s)            # Handles Linux or Darwin, sorry no Windows
+#--HELP
 
-# you better know what you are doing here
-foreach arg ($*)
-  set $arg
-end
+# some help?    
+ if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+    set +x
+    awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
+    exit 0
+fi
+   
+# override parameters
+for arg in "$@"; do
+  export "$arg"
+done
 
-if ($os == Darwin) set os = MacOSX
 
-set mc3 = `printf $url $os`
-set msh = $mc3:t
+if [ "$os" = "Darwin" ]; then
+    os=MacOSX
+fi
 
+mc3=$(printf $url $version $os)
 $wget $mc3
+
+msh=$(basename $mc3)
+
+
+if [ ! -e $msh ]; then
+    echo "File $msh not found. Wrong version=$version ?"
+    exit 0
+fi
+
+
 bash $msh -b -p $dir
 
-setenv PATH "$dir/bin:$PATH"
-
+export PATH="$dir/bin:$PATH"
 conda update -y conda
 pip3 install --upgrade pip
 
-if ( -e requirements.txt) then
-    pip3 install -r requirements.txt
-endif
+#    write sourceable shell startup recipes
+echo "set path = ($dir/bin "'$path); rehash'  > python_start.csh
+echo "export PATH=${dir}/bin:"'$PATH'         > python_start.sh
 
-
-# write the source-able shell startup files
-
-echo "set path = ($dir/bin "'$path); rehash'  >> python_start.csh
-echo "export PATH=${dir}/bin:"'$PATH'         >> python_start.sh
-
-echo "Created python_start.[c]sh files for you"
-
+pip freeze > $dir/freeze.log
+echo Created python_start files for $version in $pwd
+python --version
 
