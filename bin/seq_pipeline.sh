@@ -15,7 +15,7 @@
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 # @todo   vlsr= only takes correct effect on the first run, not a re-run
 
-_version="seq_pipeline: 30-jul-2023"
+_version="seq_pipeline: 8-aug-2023"
 
 echo "LMTOY>> $_version"
 
@@ -278,13 +278,18 @@ if [ $bank != -1 ]; then
     nb=1
 elif [ $numbands == 2 ]; then
     # new style, April 2023 and beyond
-    echo "LMTOY>> looping over numbands=$numbands"
+    echo "LMTOY>> looping over numbands=$numbands restfreq=$restfreq"
+    IFS="," read -a restfreqs <<< $restfreq
     for b in $(seq 1 $numbands); do
 	bank=$(expr $b - 1)
 	oid=$bank    # not used yet
 	echo "LMTOY>> Preparing for bank=$bank"
 	rc1=lmtoy_${obsnum}__${bank}.rc
-	[ ! -e $rc1 ] && cp $rc $rc1 && rc=$rc1
+	if [ ! -e $rc1 ]; then
+	   cp $rc $rc1
+	   rc=$rc1
+	   echo "restfreq=${restfreqs[$bank]}  # special for bank=$bank " >> $rc
+	fi
 	s_on=${src}_${obsnum}__${bank}
 	s_nc=${s_on}.nc
 	s_fits=${s_on}.fits

@@ -5,14 +5,14 @@
 
 from docopt import docopt
 
-_version = "23-jul-2023"
+_version = "8-aug-2023"
 
 _help    = """Usage: stats_wf.py [options] FITSFILE
 
 Show some statistics of a waterfall cube.
 
 Options:
-  -s                   Save plot, no interactive plot.
+  -y PLOTFILE          Save plotfile instead, else interactive. Optional.
   -t                   Plot along time instead of channel
   -b BIRDIEFILE        Output birdie file. Optional
   -d                   Add more debug
@@ -31,7 +31,6 @@ av = docopt(_help,options_first=True, version=_version)
 Qdebug = av['-d']
 if Qdebug:
     print(av)
-
 
 
 import os
@@ -71,20 +70,20 @@ if 'CHAN0' in head:
 else:
     print("Warning: old style FITS file without CHAN0, assuming 0")
     chan0 = 0
-print('chan0:',chan0)
+print('# chan0:',chan0)
 
 if av['-t']:
     axis = 0     # plot along time
 else:
     axis = 1     # plot along channel
 
-# showing interactive plot/
-Qshow = not av['-s']
+plotfile = av['-y']
+    
 
 # output birdie file
 birdiefile = av['-b']
 if birdiefile:
-    print("writing birdie file", birdiefile)
+    print("# writing birdie file", birdiefile)
 
     
 print("# beam RMS <rms_chan> <rms_time>")
@@ -133,13 +132,8 @@ plt.ylabel('RMS')
 
 plt.legend()
 
-if Qshow:
+if plotfile == None:
     plt.show()
 else:
-    filename = 'stats_wf%d.png' % axis
-    plt.savefig(filename)
-    print("Wrote %s" % filename)
-
-
-
-
+    plt.savefig(plotfile)
+    print("# Wrote %s" % plotfile)

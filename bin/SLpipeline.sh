@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 30-jul-2023"
+_version="SLpipeline: 8-aug-2023"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -24,7 +24,7 @@ obsnums=0                      #    obsnums= for combinations of existing obsnum
                                # the remainder are optional parameters
 debug=0         # add bash debug (1)
 error=0         # add bash error (1)
-restart=0       # if set, force a fresh restart by deleting old obsnum pipeline results
+restart=0       # 1=force single fresh restart  2=restart + autorun  (always deletes old obsnum)
 exist=0         # if set, and the obsnum exists, skip running pipeline 
 tap=0           # save the TAP in a tar file?
 srdp=0          # save the SRDP in a tar file?
@@ -38,6 +38,7 @@ nproc=1         # number of processors to use (keep it at 1)
 rsync=""        # rsync address for the TAP file (used at LMT/malt)
 oid=""          # experimental parallel processing using __$oid 
 goal=Science    # Science, or override with: Pointing,Focus
+webrun=""       # optional directive for webrun to do parameter checking (seq/map, seq/bs, rsr, ....)
 
 #  Optional instrument specific pipeline can be added as well but are not known here
 #  A few examples:
@@ -144,13 +145,13 @@ if [ $exist == 1 ] && [ -d $pidir/$obsnum ]; then
     echo "LMTOY>> Skipping work for $pidir/$obsnum, it already exists"
     exit 0
 fi
-if [ $restart = "-1" ]; then
+if [ $restart -lt 0 ]; then
     if [ -d $pdir ]; then
 	echo "LMTOY>> Warning: restart=-1 and $pdir already exists"
 	exit 0
     fi
 fi
-if [ $restart = "1" ]; then
+if [ $restart -gt 0 ]; then
     echo "LMTOY>> Cleaning $pdir in $sleep seconds...."
     sleep $sleep
     rm -rf $pdir
@@ -184,6 +185,10 @@ if [ $goal == "Science" ]; then
 	if [ $obsnums = 0 ]; then
 	    echo "LMTOY>> seq_pipeline.sh pdir=$pdir $*"
 	    $time         seq_pipeline.sh pdir=$pdir $*   > $pdir/lmtoy_$obsnum.log 2>&1
+	    # seq now allows a 2nd run, looping over the banks with improved keys
+	    if [ $restart = 2 ]; then
+		echo "LMTOY>> Re-running in restart=2 auto-re-run mode"
+	    fi
 	else
 	    obsnum=${on0}_${on1}
 	    cd $WORK_LMT

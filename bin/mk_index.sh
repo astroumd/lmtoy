@@ -155,10 +155,12 @@ for ext in "" "__0" "__1"; do
 	rf=$restfreq
     fi
     if [ "$ext" == "__0" ]; then
-	rf=$(echo $restfreq | tabcols - 1)
+	# rf=$(echo $restfreq | tabcols - 1)
+	rf=$restfreq
     fi
     if [ "$ext" == "__1" ]; then
-	rf=$(echo $restfreq | tabcols - 2)
+	# rf=$(echo $restfreq | tabcols - 2)
+	rf=$restfreq
     fi    
       
     base1=$(base "$ext" "")
@@ -192,6 +194,7 @@ for ext in "" "__0" "__1"; do
     echo "e.g. a combination obsnums will not have figures 1..7"              >> $html
     echo "as they are only created for the individual obsnums"                >> $html
     echo "<OL>"                                                               >> $html
+
 
 
     #base1="${src}_${obsnum}"
@@ -234,8 +237,8 @@ for ext in "" "__0" "__1"; do
 	echo "       - this is where birdies show up best, or check *bstats*"     >> $html
 	echo "     <br> Note that when birdies were flagged, the RMS will now"    >> $html
 	echo "          show a dip due to interpolation"                          >> $html
-	echo "           <br><IMG SRC=${base1}.wf1.png>"                          >> $html
-	echo "         <IMG SRC=first_${base1}.wf1.png>"                          >> $html
+	echo "           <br><IMG SRC=${base1}.wf0.png>"                          >> $html
+	echo "         <IMG SRC=first_${base1}.wf0.png>"                          >> $html
 	
 	# 5.
 	echo "  <LI> RMS [K] residuals from a ${b_order}-order baseline fit"      >> $html
@@ -352,6 +355,16 @@ for ext in "" "__0" "__1"; do
     for ff in $f ; do
 	if [ -e $ff ]; then
 	    echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
+	fi
+	((i=i+1))
+    done
+
+    c=("noise flat cube"    "noise flat smoothed cube")
+    f="${base1}.nf.fits     ${base1}.nfs.fits"
+    i=0    
+    for ff in $f; do
+	if [ -e $ff ]; then
+	    echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html	    
 	fi
 	((i=i+1))
     done
