@@ -35,9 +35,9 @@ meta=0          # 1 or 2:  1=activate update for frontend db (for dataverse)
 sleep=2         # add few seconds before running, allowing quick interrupt
 nproc=1         # number of processors to use (keep it at 1)
 rsync=""        # rsync address for the TAP file (used at LMT/malt)
-oid=""          # experimental parallel processing using __$oid 
+oid=""          # experimental parallel processing using __$oid  == currently not in use ==
 goal=Science    # Science, or override with: Pointing,Focus
-webrun=""       # optional directive for webrun to do parameter checking (seq/map, seq/bs, rsr, ....)
+webrun=""       # optional directive for webrun to do parameter checking (SEQ/map, SEQ/Bs, RSR, ....)
 
 #  Optional instrument specific pipeline can be added as well but are not known here
 #  A few examples:
@@ -102,7 +102,7 @@ echo "LMTOY>> OMP_NUM_THREADS=$OMP_NUM_THREADS"
 if [ "$(which module)" != "" ]; then
     echo "$(module list)"
 else
-    echo "No modules loaded"
+    echo "LMTOY>> No modules loaded"
 fi
 
 #             bootstrap information on the obsnum to figure out the instrument dependent workflow 
