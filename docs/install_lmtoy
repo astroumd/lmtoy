@@ -16,7 +16,7 @@
 #     2-dec-2022:     keep a (dummy?) etc/ProjectId.tab
 #
 
-version=19-jun-2023
+version=21-jun-2023
 
 #--HELP
 #   Keywords for installation
@@ -34,12 +34,14 @@ admit=1                           # install ADMIT ?
 pipeline=1                        # full pipeline run on bench files? 
 docs=0                            # make docs? (produces the html tree)
 debug=0                           # shell in debug mode? (set -x)
+sleep=5                           # peter's safety valve
 
 
 # Usage examples:
 #   install_lmtoy                                             # typical ubuntu with pre-conditions, full test w/ admit
 #   install_lmtoy  mknemo=1 pgplot=2 wget=wgetc admit=0       # unity with no modules loaded, all self-contained
 #                  data_lmt=/nese/toltec/dataprod_lmtslr/data_lmt     # or add the big $DATA_LMT on unity
+#                  data_lmt=$DATA_LMT work_lmt=$WORK_LMT              # or inherit previous one for a redo test
 #
 #--HELP
 
@@ -63,11 +65,12 @@ fi
 echo LMTOY install script version $version
 
 if [ -z $LMTOY ]; then
-    echo "Warning, installing a new LMTOY in $lmtoy, removing the old one, if present"
-    sleep 5
+    echo "Warning, installing a new LMTOY in $lmtoy, removing the old one, if present in $sleep seconds"
+    sleep $sleep
 else
     echo "Warning, you have (an old?) LMTOY=$LMTOY loaded, this could be dangerous. Continuing at your own risk"
-    sleep 5
+    echo "Your new LMTOY will be in `readlink -f $lmtoy`"
+    sleep $sleep
 fi
 
 
