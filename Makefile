@@ -55,7 +55,7 @@ URL21 = https://github.com/GreenBankObservatory/dysh
 
 
 install:
-	@echo "The installation has a few manual steps:"
+	@echo "The installation has a few manual steps, it is best to consult the docs/install_lmtoy script for an example"
 	@echo "1. install python (or skip it if you have it)"
 	@echo "  make install_python"
 	@echo "  source python_start.sh"
@@ -70,6 +70,7 @@ install:
 	@echo "    make pull                  update all git repos"
 	@echo "    make status                view git status in all repos"
 	@echo "    make update                recompile updated repos"
+	@echo "    make help                  a full list of all documented help"
 	@echo "For a full list, type:  'make help'"
 	@echo ""
 
@@ -337,7 +338,7 @@ common: lmtoy_venv
 ADMIT = 0
 bench:  bench1 bench2
 
-## bench1:   RSR benchmark (obsnum=33551)
+## bench1:   RSR benchmark: obsnum=33551
 bench1:
 	$(TIME) SLpipeline.sh obsnum=33551 restart=1 linecheck=1 admit=$(ADMIT)
 	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench1.txt'
@@ -348,7 +349,7 @@ bench1:
 bench1a:
 	$(TIME) SLpipeline.sh obsnums=33551,33551 restart=1 admit=$(ADMIT)
 
-## bench2:   SEQ benchmark (obsnum=79448)
+## bench2:   SEQ benchmark: obsnum=79448
 bench2:
 	$(TIME) SLpipeline.sh obsnum=79448 restart=1 map_coord_use=1 admit=$(ADMIT)
 	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench2.txt'
