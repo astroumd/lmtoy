@@ -1,0 +1,13 @@
+# sudo apt install $(grep -v ^# requirements.apt)
+build-essential
+gfortran
+xorg-dev
+git
+tcsh
+cmake
+pgplot5
+libcfitsio-dev
+autoconf
+libnetcdf-dev
+netcdf-bin
+imagemagick
