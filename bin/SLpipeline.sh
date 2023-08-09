@@ -31,8 +31,7 @@ srdp=0          # save the SRDP in a tar file?
 raw=0           # save the RAW data in a tar file?
 grun=1          # save the script generator?
 admit=0         # run ADMIT ?
-dv=1            # do some DataVerse preparation work?
-meta=0          # activate update for frontend db (for dataverse)
+meta=0          # 1 or 2:  1=activate update for frontend db (for dataverse)
 sleep=2         # add few seconds before running, allowing quick interrupt
 nproc=1         # number of processors to use (keep it at 1)
 rsync=""        # rsync address for the TAP file (used at LMT/malt)
@@ -325,10 +324,10 @@ echo "obsnum_list=$obsnum_list" >> $pdir/lmtoy_$obsnum.rc
 echo "date=\"$(lmtoy_date)\"     # end " >> $pdir/lmtoy_$obsnum.rc
 
 # make a metadata yaml file for later ingestion into DataVerse
-if [ $dv = 1 ]; then
+if [ $meta -gt 0 ]; then
     echo "LMTOY>> make metadata ($meta) for DataVerse"
     mk_metadata.py -y  $pdir/lmtmetadata.yaml $pdir
-    if [ $meta = 1 ]; then
+    if [ $meta -gt 1 ]; then
 	# @todo will this work reliably on NFS mounted media?
 	db=$WORK_LMT/example_lmt.db
 	flock --verbose $db.flock mk_metadata.py -y  $pdir/lmtmetadata.yaml -f $db $pdir 
