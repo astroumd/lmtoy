@@ -68,7 +68,9 @@ if __name__ == "__main__":
         vlsr = float(vlsr)
     beam2 = av['--beam']
     if beam2 == None:
-        beams = 15.0       # for LMT
+        beam2 = 15.0       # for LMT
+    else:
+        beam2 = float(beam2)        
     ff = av['FITS_FILE']
 
     if not os.path.exists(ff):
