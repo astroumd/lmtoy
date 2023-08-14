@@ -153,7 +153,7 @@ nemo:
 	git clone $(URL5)
 
 maskmoment:
-	git clone --branch teuben1 $(URL6)
+	git clone --branch teuben2 $(URL6)
 
 sculpt:
 	git clone $(URL7)
