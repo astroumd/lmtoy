@@ -10,8 +10,6 @@ import os
 import sys
 
 try:
-    lmtoy = os.environ['LMTOY']
-    sys.path.append(lmtoy + '/maskmoment')
     import maskmoment
 except:
     print("no maskmoment; skipping")
@@ -78,8 +76,10 @@ if __name__ == "__main__":
     gal  = ff
     cube = ff
     mout = ff
-    print("cube: ",cube)
-    print("vlsr: ",vlsr)
+    beam2 = 15
+    print("cube:  ",cube)
+    print("vlsr:  ",vlsr)
+    print("beam2: ",beam2)
 
     # example 0:
     maskmoment.maskmoment(img_fits=cube,
@@ -97,14 +97,14 @@ if __name__ == "__main__":
 
     # example 2:
     maskmoment.maskmoment(img_fits=cube,
-                          snr_hi=3, snr_lo=3, fwhm=15, vsm=None, minbeam=2,
+                          snr_hi=3, snr_lo=3, fwhm=beam2, vsm=None, minbeam=2,
                           outname='%s.smomsk' % mout)
     fn3 = "%s.smomsk" % mout
     quadplot(fn3)
 
     # example 3
     maskmoment.maskmoment(img_fits=cube,
-                          snr_hi=4, snr_lo=2, fwhm=15, vsm=None, minbeam=2,
+                          snr_hi=4, snr_lo=2, fwhm=beam2, vsm=None, minbeam=2,
                           output_2d_mask=True,                   
                           outname='%s.dilsmomsk' % mout) 
     fn4 = "%s.dilsmomsk" % mout
