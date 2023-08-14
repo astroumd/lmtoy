@@ -38,7 +38,7 @@ def quadplot(basename, extmask=None):
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12,12))
     mom0 = fits.getdata(basename+'.mom0.fits.gz')
     ax1.imshow(mom0,origin='lower',cmap='CMRmap')
-<    ax1.set_title(basename+' - Moment 0',fontsize='x-large')
+    ax1.set_title(basename+' - Moment 0',fontsize='x-large')
     mom1 = fits.getdata(basename+'.mom1.fits.gz')
     ax2.imshow(mom1,origin='lower',cmap='jet')
     ax2.set_title(basename+' - Moment 1',fontsize='x-large')
