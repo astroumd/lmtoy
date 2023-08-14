@@ -14,7 +14,7 @@
 #set -e
 #set -x
 
-_version="2-aug-2023"
+_version="12-aug-2023"
 
 if [ -z "$1" ]; then
     src0=""
@@ -113,7 +113,13 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
 	bank=$(expr $b - 1)
 
 	rc0=($o/lmtoy_*${on}__${bank}.rc)
-	[ -e $rc0 ] && rc=$rc0 && source $rc
+	if [ -e $rc0 ]; then
+	    rc=$rc0
+	    source $rc
+	    ext="__$bank"
+	else
+	    ext=""
+	fi
 	
 	date_obs=$(grep date_obs $rc | awk -F= '{print $2}')
 	date=$(grep date= $rc | tail -1 | awk -F= '{print $2}' | awk '{print $1}')
@@ -144,7 +150,10 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
 	if [ -e comments.txt ]; then
 	    # nov2022:   we allow obsnum.args to go after the # symbol in comments.txt
 	    #comments=$(grep -w ^$obsnum comments.txt | cut -d' ' -f2-)
-	    comments=$(grep -w ^$obsnum comments.txt | cut -d' ' -f2- | awk -F\# '{print $1}')
+	    comments=$(grep -w ^${obsnum}${ext} comments.txt | cut -d' ' -f2- | awk -F\# '{print $1}')
+	    if [ -z "$comments" ]; then
+		comments=$(grep -w ^${obsnum} comments.txt | cut -d' ' -f2- | awk -F\# '{print $1}')		
+	    fi
 	else
 	    comments=""
 	fi

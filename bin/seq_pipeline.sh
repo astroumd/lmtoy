@@ -121,6 +121,7 @@ if [ ! -e $rc ]; then
     echo "LMTOY>> creating bootstrap $rc"
     echo "#! rc=$rc:"                             > $rc
     echo "# $_version bootstrap version rc"      >> $rc
+    echo "lmtoy_repo=$(lmtoy_repo)"              >> $rc
     lmtinfo.py $obsnum                           >> $rc   # <lmtinfo>
     cat $rc0                                     >> $rc   # <show_vars>
     show_args                                    >> $rc   # <show_args>
