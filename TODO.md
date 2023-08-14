@@ -17,3 +17,9 @@
 - split parameters in single obsnum and combo (where only gridding is allowed) - useful for webrun
 - verify script that checks a runfile (or rc file)
 - pointing offsets from ifproc in meta-data ?
+
+## Longer term plans
+
+- SpecFile to be replaced with an SDFITS file.
+- integration with dysh
+- advanced mapping programs (cf. dysh)
