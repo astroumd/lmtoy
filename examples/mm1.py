@@ -6,15 +6,25 @@
 #  adapted for LMT pipeline results
 #  Also writes a README.html for web summary pages
 
+_version = "14-aug-2023"
+
+_help = """Usage: mm1.py [options] FITS_FILE
+
+-v --vlsr VLSR      The expected VLSR of the signal
+-b --beam BEAM      Smooth beam to be used
+-h --help           Give this help
+--version           Report version
+
+mm1.py uses the maskmoment package to find signal, and construct
+moments 0,1 and 2 maps. It also computes a global spectrum for
+the whole field.
+"""
+
+
+
 import os
 import sys
-
-try:
-    import maskmoment
-except:
-    print("no maskmoment; skipping")
-    sys.exit(0)
-    
+import maskmoment
 
 from astropy.io import fits
 from astropy.table import Table
@@ -22,6 +32,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings("ignore")
+from docopt import docopt
 
 def quadplot(basename, extmask=None):
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12,12))
@@ -51,14 +62,16 @@ def help(cmd):
         sys.exit(0)
 
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        help(sys.argv[0])
-
-    ff = sys.argv[1]
-    if len(sys.argv) > 2:
-        vlsr = 1575
+    av = docopt(_help, options_first=True, version='mm1.py %s' % _version)
+    vlsr =  av['--vlsr']
+    if vlsr != None:
+        vlsr = float(vlsr)
+    beam2 = av['--beam']
+    if beam2 == None:
+        beam2 = 15.0       # for LMT
     else:
-        vlsr = None
+        beam2 = float(beam2)        
+    ff = av['FITS_FILE']
 
     if not os.path.exists(ff):
         print("File %s does not exist" % ff)
@@ -76,7 +89,6 @@ if __name__ == "__main__":
     gal  = ff
     cube = ff
     mout = ff
-    beam2 = 15
     print("cube:  ",cube)
     print("vlsr:  ",vlsr)
     print("beam2: ",beam2)
@@ -152,6 +164,7 @@ if __name__ == "__main__":
     fp.write("for more information on <B>maskmoment</B>")
     fp.write("<OL>\n");
     fp.write("<LI> Flux summary                          <br> <IMG SRC=%s>\n" % (fn5))
+    fp.write("<LI> Flux in central pixel (pipeline)      <br> <IMG SRC=../spectrum_0_zoom.png>\n")
     fp.write("<LI> <B>dilmsk:</B>    Dilated Mask        <br> <IMG SRC=%s.png>\n" % (fn1))
     fp.write("<LI> <B>dilmskpad:</B> Dilated Mask Padded <br> <IMG SRC=%s.png>\n" % (fn2))
     fp.write("<LI> <B>smomsk:</B>    Smoothed Mask       <br> <IMG SRC=%s.png>\n" % (fn3))

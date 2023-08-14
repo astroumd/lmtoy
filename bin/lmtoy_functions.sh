@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="9-aug-2023"
+lmtoy_version="14-aug-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -876,9 +876,9 @@ function lmtoy_seq1 {
 
     if [ $maskmoment == 1 ]; then
 	echo "LMTOY>> Running maskmoment vlsr=$vlsr"
-	mm1.py $s_on.nf.fits   $vlsr > maskmoment__${bank}.nf.log   2>&1
+	mm1.py --vlsr $vlsr --beam 25 $s_on.nf.fits > maskmoment__${bank}.nf.log   2>&1
 	# hack
-	mm1.py $s_on.nfs.fits  $vlsr > maskmoment__${bank}.nfs.log  2>&1
+	mm1.py --vlsr $vlsr --beam 35 $s_on.nfs.fits > maskmoment__${bank}.nfs.log  2>&1
     else
 	echo "LMTOY>> skipping maskmoment"	
     fi
