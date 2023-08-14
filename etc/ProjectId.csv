@@ -124,14 +124,16 @@
 2018-S1-MU-46     , Region_J-K,        M.Heyer?             
 2018-S1-MU-64     , Sextans_A, 	       A.Bolatto?	       
 #   
-# 2018-S1-MU-1
-# 2018-S1-MU-25
+2018-S1-MU-1      , IRAS_*,            A.Gómez
+2018-S1-MU-25     , Titan,             M.Chavez
 # 2018-S1-MU-26
 # 2018-S1-MU-31
+2018-S1-MU-45     , L1157-B1,          A.Gómez
 # 2018-S1-MU-57
-# 2018-S1-MU-65
+2018-S1-MU-65     , IRAS04166+2706_*,  G.Narayanan
 2018-S1-MU-66     , IRAS*,	       C.Rodriguez          
-# 2018-S1-MU-67
+2018-S1-MU-67     , M83,               J.Wall
+#                                       (Wall retired)
 # 2018-S1-MU-78
 # 2018-S1-MU-79
 # 2018-S1-MU-8
