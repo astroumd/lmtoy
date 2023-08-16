@@ -15,7 +15,7 @@
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 # @todo   vlsr= only takes correct effect on the first run, not a re-run
 
-_version="seq_pipeline: 9-aug-2023"
+_version="seq_pipeline: 14-aug-2023"
 
 echo "LMTOY>> $_version"
 
@@ -33,7 +33,7 @@ viewspec=1
 viewcube=0
 viewnemo=1
 admit=0
-maskmoment=1
+maskmoment=0
 clean=1
 #            - meta parameters that will compute other parameters for SLR scripts
 extent=0       # half the size of the (square) box on the sky for gridding (arcsec)
