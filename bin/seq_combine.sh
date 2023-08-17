@@ -10,7 +10,7 @@
 #
 
 
-version="seq_combine: 31-jul-2023"
+version="seq_combine: 14-aug-2023"
 
 echo "LMTOY>> $version"    
 
@@ -85,10 +85,13 @@ echo "bank=$bank"
 # @todo   always do boostrap,   read the $bank if $bank was given
 
 files=(*/$on0/lmtoy_${on0}.rc)
-echo "For $on0 : ${#files[@]} ${files[@]}"
+echo "LMTOY>> For $on0 : ${#files[@]} ${files[@]}"
 if [ ${#files[@]} == 1 ]; then
     rc0=$files
-else
+elif [ ${#files[@]} -gt 1 ]; then
+    echo "LMTOY>> winging it with the first one"
+    rc0=${files[0]}
+else    
     echo "LMTOY>>  no bootstrap rc file found for $on0"
     exit 0
 fi
