@@ -110,7 +110,7 @@ should be recomputed!
 
       #              1. BEAM/TIME filtering
     bank=-1           # -1 means all banks 0..numbands-1
-    pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+    pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15       # start with - will deduct from the 0..15 list
     sample=-1         # not used until the gridding stage
 	              # @todo deal with vlsr=, restfreq= and different lines
 
@@ -122,7 +122,7 @@ should be recomputed!
     
     b_regions=       even number of channels (in km/s) where baseline is defined (dw= can do this symmetrically)
     l_regions=       line fit region(s)
-    slice=           the cube to be cut (usually from the extreme b_regions)
+    slice=           the cube to be cut (defaults from the extreme b_regions)
 
       #              3. CALIBRATION
     birdies=0        birdie channels need to be in original (1based?) channel space
