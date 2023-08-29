@@ -1,7 +1,9 @@
 # Running SLpipeline via a web interface
 
-At the moment this is a discussion document. The source code for the webrun environment
-is currently in:    https://github.com/lmtmc/lmt_web
+At the moment this is a discussion document. The source code for the
+webrun environment is currently in: https://github.com/lmtmc/lmt_web
+
+
 
 ## Reminder of nomenclature in the LMTOY environment in this document
 
@@ -160,6 +162,27 @@ This is the suggested workflow for SEQ/Map
 6. calibrations (SEQ): how spectra are calibrated
 7. gridding (SEQ): how map is gridded: mapsize, resolution, cell
 8. output:  overall flow, output products etc.
+
+###  Simple one-source project
+
+
+###  Multiple source
+
+The PI will want to experiment and compare an OTF map made from the standard pipeline
+and a modified one where beam 10 was also removed.  Inspecting the standard pipeline showed
+that beams 0 and 5 were removed,
+
+     cd $WORK_LMT/lmtoy_run/lmtoy_2021-S1-MX-3                # get to the script generator
+     make runs                                                # ensure we have the latest run files
+     grep Arp91 *.run1b > test1                               # exctract just that source (and/or bank)
+     grep Arp91 *.run2b > test2                               # exctract just that source (and/or bank)     
+     awk '{print $0,"pix_list=-0,5,10"}' test1 > test1a       # add the new pix_list
+     sbatch_lmtoy.sh test1a                                   # submit individual obsnums
+     <wait till this SLURM job done>
+     sbatch_lmtoy.sh test2                                    # submit combination obsnums
+     <wait till this SLURM job done>
+     make summary
+    
 
 
 ## Open Questions
