@@ -156,13 +156,15 @@ The current lmtoy/docs/ui slides suggest the following workflow, perhaps in a Pr
 This is the suggested workflow for SEQ/Map
 
 1. sessions:  select a session
-2. sources:   select one or more sessions
-3. obsnums:   select one or more sources, also pick a bank (and what about freq setup)
-4. beams (SEQ): select which beams to keep, and what time ranges to reject   [bank confusion]
+2. sources:   select one or more sources, and a bank if applicable
+3. obsnums:   select one or more obsnums, (and what about freq setup)
+4. beams (SEQ): select which beams to keep, and what time ranges to reject
 5. baselines (SEQ): select spectral range where baselines are to be measured
 6. calibrations (SEQ): how spectra are calibrated
 7. gridding (SEQ): how map is gridded: mapsize, resolution, cell
 8. output:  overall flow, output products etc.
+
+
 
 ###  Simple one-source project
 
