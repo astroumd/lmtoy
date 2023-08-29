@@ -17,15 +17,16 @@ Some of these are environment variables, others so noted for convenience
 
 ## Overview for the lmtslr user:
 
-This is how the pipeline is normally run from the main *lmtslr* account.
+This is how the pipeline is normally run via a CLI from the main *lmtslr* account
 
 We start from the directory where the project script generator lives, generate
 run files for this project and submit them to SLURM. Note that each
-command here can only be run when the previous command has finished!
+(sbatch_lmtoy.sh) command here can only be run when the previous command has finished!
 
       cd $WORK_LMT/lmtoy_run/lmtoy_$PID
       git pull
       make runs
+          [should find out which run files there are to run]
       sbatch_lmtoy.sh $PID.run1
       sbatch_lmtoy.sh $PID.run2
       make summary
