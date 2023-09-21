@@ -1,3 +1,5 @@
+# 2023
+
 2023-S1-MX-1,A Multicolor View of the Black Hole Environment in M87,Arturo I. Gomez-Ruiz
 2023-S1-MX-2,Unraveling the nature of the Cen A jet: From cm to mm on light- day scales,Arturo I. Gomez-Ruiz
 2023-S1-MX-3,Resolving Polarization in Sgr A* with LMT + GMVA + ALMA,David Omar S�nchez-Arg�elles
@@ -106,36 +108,38 @@
 2023-S1-US-31,When the Wind Blows: hi-res mapping of outflow feedback from massive protostars,Jonathan Tan
 2023-S1-US-32,LMT+TolTEC observations of the highest redshift cluster merger shock,Emily Moravec
 2023-S1-US-33,Determining the Mass and Spectral Index of Peter Pan Disk J0501,William Schap
-# older projects
+
+# 2021
+
 2021-S1-MX-3      , edge-survey,       S.Sanchez	       
-2021-S1-MX-5      , NGC6946, 	       Salome	       
+2021-S1-MX-5      , NGC6946, 	       Q.Salome	       
 2021-S1-MX-14     , L1157-B1,          A.Gomez.Ruiz	       
-2021-S1-MX-26     , PG.../IRAS...,     Longinotti           
+2021-S1-MX-26     , IRAS*/PG*,         A.Longinotti           
 2021-S1-MX-34     , NGP*,G12*, 	       A.Montana	       
 2021-S1-UM-1      , BKP7323_CO,        M.Heyer	       
-2021-S1-UM-3      , UGCA281, 	       M.Heyer	       
+2021-S1-UM-3      , UGCA281, 	       D.Calzetti	       
 2021-S1-UM-11     , J*.*, 	       M.Yun		       
 2021-S1-US-3      , M100, 	       I.Yoon	       
-2021-S1-US-17     , J1557+1540,        Jiangtao 	       
-2021-S1-US-19     , Cyg_X-1,	       Unknown	       
-# even older
-2018-S1-MU-8      , M51/NGC628,        M.Heyer
-2018-S1-MU-45     , L1157-B1,	       A.Gomez.Ruiz
-2018-S1-MU-46     , Region_J-K,        M.Heyer?             
-2018-S1-MU-64     , Sextans_A, 	       A.Bolatto?	       
-#   
-2018-S1-MU-1      , IRAS_*,            A.Gómez
+2021-S1-US-17     , J1557+1540,        L.Jiangtao 	       
+2021-S1-US-19     , Cyg_X-1,	       T.Maccarone
+
+# 2018
+
+2018-S1-MU-1      , IRAS_*,            A.Gomez
+2018-S1-MU-8      , M51/NGC628,        D.Calzetti
+#2018S1-MU-8        <- typo for MU-8
 2018-S1-MU-25     , Titan,             M.Chavez
-# 2018-S1-MU-26
-# 2018-S1-MU-31
-2018-S1-MU-45     , L1157-B1,          A.Gómez
-# 2018-S1-MU-57
+2018-S1-MU-26     , Az_G12_26.         A.Montana
+2018-S1-MU-31     , OH2.6-0.4,         C.Zuniga
+2018-S1-MU-45     , L1157-B1,          A.Gomez
+2018-S1-MU-46     , Region_J-K,        L.Loinard          
+2018-S1-MU-57     , HerBS-195,         D.Hughes
+2018-S1-MU-64     , Sextans_A, 	       D.Mayya	       
 2018-S1-MU-65     , IRAS04166+2706_*,  G.Narayanan
 2018-S1-MU-66     , IRAS*,	       C.Rodriguez          
-2018-S1-MU-67     , M83,               J.Wall
-#                                       (Wall retired)
-# 2018-S1-MU-78
-# 2018-S1-MU-79
-# 2018-S1-MU-8
-# 2018-S1-MU-90
-#   any projectId with the string "Commissioning" will need to be recognized as such
+2018-S1-MU-67     , M83,               B.Wall
+2018-S1-MU-78     , J*,                M.Yun
+2018-S1-MU-79     , UM_488/GP_J1448/,  A.Jaskot
+#2018-S1-MU-90      <- no science data
+
+#   any projectId with the string "Commissioning" is recognized as such and not used here
