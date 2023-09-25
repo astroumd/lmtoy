@@ -385,3 +385,14 @@ any re-design of the SLR (RSR to a lesser extent?) is quite major, given the ext
 constraint that the IFPROC and 4 ROACH file each have their own clock, but mostly
 the 125Hz IFPROC needs to be re-sampled for the 10Hz ROACH files.more j
 	    
+## Diagramming
+
+If mermaid has been installed, the following may look pretty
+
+```mermaid
+  graph TD;
+      A-->B;
+      A-->C;
+      B-->D;
+      C-->D;
+```
