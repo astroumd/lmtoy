@@ -1,8 +1,8 @@
 # Running SLpipeline via a web interface
 
 At the moment this is a discussion document. The source code for the
-webrun environment is currently in: https://github.com/lmtmc/lmt_web
-
+webrun environment is currently in
+development in: https://github.com/lmtmc/lmt_web
 
 
 ## Reminder of nomenclature in the LMTOY environment in this document
@@ -185,13 +185,49 @@ that beams 0 and 5 were removed,
      sbatch_lmtoy.sh test2                                    # submit combination obsnums
      <wait till this SLURM job done>
      make summary
-    
 
 
-## Open Questions
+## Data
 
-Q1: How many compute nodes do we give the PI. One for all PIs?
+Summarizing the LMT data flow:
 
-Q2: What if a PI has data from different PID's that need to be combined?
+```mermaid
+   graph LR;
+   A[DATA: LMT MC]-->B[DATA: malt]
+   B-->C[DATA: Unity]
+   C-->D(WORK: lmtslr)
+   C-->E(WORK: helpdesk)
+   D-->F(WORK: PI sessions)   
+```
 
-    the pipeline user can do this, but a webrun doesn't have a solution for this yet.
+where currently we have
+
+```
+
+            DATA_LMT                                WORK_LMT
+ LMT_MC:    ???                                             -
+ 
+ malt:      /home/lmtslr/data_lmt3                  /home/lmtslr/work_lmt
+ unity:     /nese/toltec/dataprod_lmtslr/data_lmt   /nese/toltec/dataprod_lmtslr/work_lmt
+                                                    /nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/peter
+ lma:       /lma1/lmt/data_lmt/                     /lma1/teuben/LMT/work_lmt
+```
+
+## Workflow Examples
+
+###  
+
+```mermaid
+   graph TD;
+      %% simple single OBSNUM flow
+      A[pick a PID using a password]-->B[pick a Session]
+      B-->C[pick source(s)]
+      C-->D[pick obsnum(s)]
+      D-->E[pick bank iff SEQ]
+      E-->F(Display and Edit Run Parameters)
+      F-->G(Submit to SLURM)
+      G-->H{Wait for SLURM to finish}
+      H-->I[make summary]
+      I-->J[display URL to view summary]
+      
+```
