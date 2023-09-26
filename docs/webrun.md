@@ -221,8 +221,8 @@ where currently we have
    graph TD;
       %% simple single OBSNUM flow
       A[pick a PID using a password]-->B[pick a Session]
-      B-->C[pick source(s)]
-      C-->D[pick obsnum(s)]
+      B-->C[pick source/s]
+      C-->D[pick obsnum/s]
       D-->E[pick bank iff SEQ]
       E-->F(Display and Edit Run Parameters)
       F-->G(Submit to SLURM)
