@@ -146,6 +146,8 @@ if __name__ == "__main__":
     lmtdata.add_metadata("projectTitle", header(rc,"projectTitle",debug))
     lmtdata.add_metadata("PIName",       header(rc,"PIName",debug))
     lmtdata.add_metadata("obsnum",       header(rc,"obsnum",debug))
+    lmtdata.add_metadata("subobsnum",    header(rc,"subobsnum",debug))
+    lmtdata.add_metadata("scannum",      header(rc,"scannum",debug))
     lmtdata.add_metadata("obsnumList",   header(rc,"obsnum_list",debug))
     lmtdata.add_metadata("obsDate",      header(rc,"date_obs",debug))
     lmtdata.add_metadata("targetName",   header(rc,"src",debug))
