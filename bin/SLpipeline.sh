@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 9-aug-2023"
+_version="SLpipeline: 19-sep-2023"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -28,6 +28,7 @@ restart=0       # 1=force single fresh restart  2=restart + autorun  (always del
 exist=0         # if set, and the obsnum exists, skip running pipeline 
 tap=0           # save the TAP in a tar file?
 srdp=0          # save the SRDP in a tar file?
+sdfits=0        # save the calibrated spectra in SDFITS (or netCDF)
 raw=0           # save the RAW data in a tar file?
 grun=1          # save the script generator?
 admit=0         # run ADMIT ?
@@ -344,7 +345,7 @@ if [ $tap != 0 ]; then
     for ext in $products; do
 	find $ProjectId/$obsnum -name \*$ext  >> $pdir/tar.log
     done
-    tar cf ${pdir}_TAP.tar `cat $pdir/tar.log`
+    tar -cf ${pdir}_TAP.tar `cat $pdir/tar.log`
 fi
  
 if [ $grun != 0 ]; then
@@ -364,7 +365,12 @@ fi
 
 if [ $srdp != 0 ]; then
     echo "Creating Scientific Ready Data Producs (SRDP) in $pidir/${obsnum}_SRDP.tar"
-    tar cf $ProjectId/${obsnum}_SRDP.tar $ProjectId/$obsnum
+    tar -cf $ProjectId/${obsnum}_SRDP.tar --exclude="*.nc" $ProjectId/$obsnum
+fi
+
+if [ $sdfits != 0 ]; then
+    echo "Creating spectra (SDFITS) in $pidir/${obsnum}_SDFITS.tar"
+    tar -cf $ProjectId/${obsnum}_SDFITS.tar $ProjectId/$obsnum/*.nc
 fi
 
 if [ $raw != 0 ] && [ $obsnums = 0 ]; then
