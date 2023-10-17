@@ -31,7 +31,7 @@ import astropy.units as u
 import dvpipe.utils as utils
 from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 
-_version = "09-oct-2023"
+_version = "17-oct-2023"
 
 def header(rc, key, debug=False):
     """
@@ -146,6 +146,12 @@ if __name__ == "__main__":
     lmtdata.add_metadata("projectID",    header(rc,"ProjectId",debug))
     lmtdata.add_metadata("projectTitle", header(rc,"projectTitle",debug))
     lmtdata.add_metadata("PIName",       header(rc,"PIName",debug))
+
+    #lmtdata.add_metadata("obsnum",       header(rc,"obsnum",debug))
+    #lmtdata.add_metadata("subobsnum",    header(rc,"subobsnum",debug))
+    #lmtdata.add_metadata("scannum",      header(rc,"scannum",debug))
+    #lmtdata.add_metadata("obsnumList",   header(rc,"obsnum_list",debug))
+
 
     # NEW:  obsInfo dict - one per true obsnum
     #     obsNum - int (must now be an number!)
