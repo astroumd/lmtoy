@@ -16,7 +16,7 @@ Useful tools for the LMTOY script generators (lmtoy_$PID)
 import os
 import sys
 
-_version = "24-jul-2023"
+_version = "17-oct-2023"
 
 def pix_list(pl):
     """ convert a strong like "-0,-1" to proper pixlist by removing
@@ -108,6 +108,28 @@ def getargs_old(obsnum, flags=True):
             if line[0] == '#': continue
             args = args + line.strip() + " "
     return args
+
+def verify(runfile, debug=False):
+    """ verify a runfile if the argument are good enough to be sent to the pipeline
+    """
+    if not os.path.exists(runfile):
+        err = "Runfile %s does not exist" % runfile
+        return err
+    
+    lines = open(runfile).readlines()
+    for line in lines:
+        if debug:
+            print(line.strip())
+        if line[0] == '#':
+            continue
+        w = line.split()
+        if w[0] != 'SLpipeline.sh':
+            err = "not an SLpipeline runfile:" + line
+            return err
+        if w[1][:7] != 'obsnum=':
+            err = "not an SLpipeline runfile with obsnum=: " + w[1]
+            return err
+    return None
 
 def mk_runs(project, on, pars1, pars2, argv=None):
     """ top level
