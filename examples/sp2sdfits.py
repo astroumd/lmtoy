@@ -2,9 +2,9 @@
 #
 #  Convert a FITS HDU spectrum to an SDFITS file, mostly for dysh
 #
-#  tested with J17293-CO10.fits
+#  tested with J17293-CO10.fits (a CLASS spectrum; not to be confused with their MATRIX sdfits dialect)
 #
-#   ./sp2sdfits.py J17293-CO10.fits
+#   sp2sdfits.py J17293-CO10.fits
 #
 #   from dysh.fits.sdfitsload import SDFITSLoad
 #   a = SDFITSLoad('J17293-CO10.sdfits')
@@ -16,7 +16,7 @@
 #   plt.show()
 #
 
-_version = "13-oct-2023"
+_version = "18-oct-2023"
 
 _help = """Usage: sp2sdfits [options] FITS_FILE
 
