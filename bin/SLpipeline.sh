@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 19-sep-2023"
+_version="SLpipeline: 31-oct-2023"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -324,12 +324,13 @@ echo "date=\"$(lmtoy_date)\"     # end " >> $pdir/lmtoy_$obsnum.rc
 
 # make a metadata yaml file for later ingestion into DataVerse
 if [ $meta -gt 0 ]; then
-    echo "LMTOY>> make metadata ($meta) for DataVerse"
-    mk_metadata.py -y  $pdir/lmtmetadata.yaml $pdir
+    echo "LMTOY>> make metadata ($meta) for DataVerse in $pdir"
     if [ $meta -gt 1 ]; then
 	# @todo will this work reliably on NFS mounted media?
 	db=$WORK_LMT/example_lmt.db
 	flock --verbose $db.flock mk_metadata.py -y  $pdir/lmtmetadata.yaml -f $db $pdir 
+    else
+	mk_metadata.py -y  $pdir/lmtmetadata.yaml $pdir
     fi
 fi
 # produce TAP, RSRP, RAW tar files, whichever are requested.
