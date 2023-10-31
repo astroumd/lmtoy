@@ -25,6 +25,7 @@ obsnums=0                      #    obsnums= for combinations of existing obsnum
 debug=0         # add bash debug (1)
 error=0         # add bash error (1)
 restart=0       # 1=force single fresh restart  2=restart + autorun  (always deletes old obsnum)
+nese=0          # 0=work all on nese    1=raw on nese, work on /work    2=raw from /work, work on /work [placeholder]
 exist=0         # if set, and the obsnum exists, skip running pipeline 
 tap=0           # save the TAP in a tar file?
 srdp=0          # save the SRDP in a tar file?
@@ -371,7 +372,11 @@ fi
 
 if [ $sdfits != 0 ]; then
     echo "Creating spectra (SDFITS) in $pidir/${obsnum}_SDFITS.tar"
-    tar -cf $ProjectId/${obsnum}_SDFITS.tar $ProjectId/$obsnum/*.nc
+    if [ -e  $ProjectId/$obsnum/*.nc ]; then
+	tar -cf $ProjectId/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
+    else
+	tar -cf $ProjectId/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md
+    fi
 fi
 
 if [ $raw != 0 ] && [ $obsnums = 0 ]; then
