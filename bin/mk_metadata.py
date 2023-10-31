@@ -31,7 +31,7 @@ import astropy.units as u
 import dvpipe.utils as utils
 from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 
-_version = "17-oct-2023"
+_version = "31-oct-2023"
 
 def header(rc, key, debug=False):
     """
@@ -140,7 +140,7 @@ if __name__ == "__main__":
 
     # open the LMG and write some common metadata
     # -- see also example() in lmtmetadatagroup.py
-    lmtdata = LmtMetadataGroup('SLpipeline',dbfile=dbfile, yamlfile=yamlfile)
+    lmtdata = LmtMetadataGroup('SLpipeline', dbfile=dbfile, yamlfile=yamlfile)
     lmtdata.add_metadata("observatory",  "LMT")
     lmtdata.add_metadata("LMTInstrument",instrument)
     lmtdata.add_metadata("projectID",    header(rc,"ProjectId",debug))
@@ -270,6 +270,8 @@ if __name__ == "__main__":
         print("instrument=%s not implemented yet" % instrument)
 
     # validate=True is now default
-    lmtdata.write_to_db()   
-    lmtdata.write_to_yaml()
+    if yamlfile != None:
+        lmtdata.write_to_yaml()
+    if dbfile != None:
+        lmtdata.write_to_db()   
 
