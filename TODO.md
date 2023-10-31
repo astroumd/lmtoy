@@ -2,47 +2,51 @@
 
 ## Planned for version 1.1 (January 1, 2024)
 
-- active github issues:  https://github.com/astroumd/lmtoy/issues
+- active github issues:  https://github.com/astroumd/lmtoy/issues ; Some important ones:
+  - 48: allow missing roach files
+  - 47: "wtn" has wrong beam
+  - 46: SEQ low power can crash pipeline
+  - 45: RSR not commutative **+Min**
 
 - autorun mode (restart=2) [partially implemented]
-- fill in all metadata for DV
-- verify.py ; obsmode
-- webrun.sh
-
+- finalize all metadata for DV   [meta=0,1,2] **+Marc**
+- webrun: **+Xia**
+  - verify.py ; obsmode (INSTR/MODE)
+  - webrun.sh
+  - parameters.txt
+  - lmt_web_lite
 
 - stage/unstage on unity in case we do the work in /work and rsync to /nese (or /scratch?)
 
 - add the repo counter into the fits header of final output [currently only in lmtoy_repo=]
-* revive maskmoment (has an import issue) [done?]
-- resolve tsys_aver in lmtslr/spec/spec.py as per Heyer
+- revive maskmoment (has an import issue) [done?]
+- resolve tsys_aver in lmtslr/spec/spec.py as per **Heyer**
 - RMS0:   should we define some <Tsys>?  Currently RMS0 is defined per 100K (as is for RSR)
 - SEQ/Bs only one bank works now [depending if observations planned]
 - SEQ/Ps not implemented [depending if observations planned]
 - Autoscaling the rather wide HTML pages for SEQ summary
 - split parameters in single obsnum and combo (where only gridding is allowed) - useful for webrun
-- verify script that checks a runfile (or rc file) - for webrun
 - pointing offsets from ifproc in meta-data ?
-- fix manual creation, including flow diagrams via e.g. mermaid
 - automated generation of the script generator?
-- FITS export option for spectra
-- the never finished manual
+- FITS export option for spectra [sp2sdfits.py now exists]
+- the never finished manual (flow diagrams w/ mermaid?)
 
 ## Longer term wishes (March 2024)
 
 - SpecFile (netCDF format) to be replaced with an SDFITS file.
-- integrations with dysh
+- integrations with dysh  (e.g. sp2sdfits)
 - advanced mapping programs (cf. dysh)
+- SDHDF ?
 
 ## Random
 
 - SLpipeline
-
   - SEQ needs to log its commands
   - use "INSTR/MODE" in SLpipeline
-  - safe frontends SLpipeline vs. SLpipeline.sh,  etc.
+  - safe frontends SLpipeline vs. SLpipeline.sh,  etc. - see verify
 - script generator for SEQ numbands=2
-- sbatch_lmtoy should learn how to use fewer cpu's
-- create summaries of observations
+- sbatch_lmtoy should learn how to use fewer cpu's [check w/ Grant]
+- create flexible summaries of observations
   - obsnum,date,bad_beam
   - efficiency of observations
 
