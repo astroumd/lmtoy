@@ -154,6 +154,10 @@ if __name__ == "__main__":
     lmtdata.add_metadata("publicDate",   get_publicDate(header(rc,"ProjectId")))
     lmtdata.add_metadata("isPolarimetry",      False)    # or True if HWP mode not ABSENT
     lmtdata.add_metadata("halfWavePlateMode", "ABSENT")  # or FIXED or ROTATING
+    # 0 = unprocessed, 1 = pipeline processed, 2 = DA improvement
+    # toltec has different definitions and includes level 3.
+    # Leave this set to 1 for SLR.
+    lmtdata.add_metadata("processingLevel", 1)
 
 
     
