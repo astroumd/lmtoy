@@ -96,6 +96,12 @@ def get_version():
     lines = fp.readlines()
     fp.close()
     return lines[0].strip()
+
+def get_publicDate(projectId):
+    """
+    return the date the data will go public
+    """
+    return "2099-12-31"
     
 if __name__ == "__main__":
 
@@ -131,7 +137,6 @@ if __name__ == "__main__":
     # get version, as comment (or metadata?)
     print("# LMTOY version %s" % get_version())
     
-
     # deal with the enum's we use for instrument on the DV side
     # valid names:  TolTEC, MSIP1mm, SEQUOIA, RSR, OMAYA
     instrument = header(rc,"instrument", debug)
@@ -146,7 +151,11 @@ if __name__ == "__main__":
     lmtdata.add_metadata("projectID",    header(rc,"ProjectId",debug))
     lmtdata.add_metadata("projectTitle", header(rc,"projectTitle",debug))
     lmtdata.add_metadata("PIName",       header(rc,"PIName",debug))
-    lmtdata.add_metadata("publicDate",   "2099-12-31")   # @todo
+    lmtdata.add_metadata("publicDate",   get_publicDate(header(rc,"ProjectId")))
+    lmtdata.add_metadata("isPolarimetry",     0)
+    lmtdata.add_metadata("halfWavePlateMode", "ABSENT")
+    
+    
 
     #lmtdata.add_metadata("obsnum",       header(rc,"obsnum",debug))
     #lmtdata.add_metadata("subobsnum",    header(rc,"subobsnum",debug))
