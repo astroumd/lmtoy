@@ -152,8 +152,10 @@ if __name__ == "__main__":
     lmtdata.add_metadata("projectTitle", header(rc,"projectTitle",debug))
     lmtdata.add_metadata("PIName",       header(rc,"PIName",debug))
     lmtdata.add_metadata("publicDate",   get_publicDate(header(rc,"ProjectId")))
-    lmtdata.add_metadata("isPolarimetry",     0)
-    lmtdata.add_metadata("halfWavePlateMode", "ABSENT")
+    lmtdata.add_metadata("isPolarimetry",      False)    # or True if HWP mode not ABSENT
+    lmtdata.add_metadata("halfWavePlateMode", "ABSENT")  # or FIXED or ROTATING
+
+
     
     
 
