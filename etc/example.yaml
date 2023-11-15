@@ -33,7 +33,7 @@ isPolarimetry: 0.0
 obsInfo:
 - intTime: 1800.0
   obsComment: This is an observation comment
-  obsDate: '2023-11-07T13:38:42.813641'
+  obsDate: '2023-11-07T15:53:16.779766'
   obsGoal: SCIENCE
   obsNum: 12345
   opacity225: 0.05
@@ -41,7 +41,7 @@ obsInfo:
   subObsNum: 88
 - intTime: 1200.0
   obsComment: This is another observation comment
-  obsDate: '2023-11-07T13:38:42.820739'
+  obsDate: '2023-11-07T15:53:16.786865'
   obsGoal: SCIENCE
   obsNum: 12346
   opacity225: 0.053
@@ -51,7 +51,7 @@ observatory: LMT
 pipeVersion: '1.0'
 projectID: 2021-S1-US-3
 projectTitle: Life, the Universe, and Everything
-publicDate: '2023-11-07T13:38:42.812455'
+publicDate: '2023-11-07T15:53:16.778040'
 referenceID: '12345_12346'
 targetName: NGC 5948
 totalIntTime: 3000.0
