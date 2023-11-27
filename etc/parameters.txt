@@ -1,0 +1,6 @@
+obsnum        a single observation number, typically 6 digits, e.g. 123456
+obsnums       a comma separated series of obsnums to stack observations
+bank          select a bank from a WARES based instrument; -1 means all banks, 0 is the first bank
+b_order       baseline order of a polynomial baseline subtraction in WARES based instruments
+extent        half the size of the (square) box on the sky for gridding (in arcsec)
+

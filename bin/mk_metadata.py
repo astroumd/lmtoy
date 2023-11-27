@@ -31,7 +31,7 @@ import astropy.units as u
 import dvpipe.utils as utils
 from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 
-_version = "17-oct-2023"
+_version = "7-nov-2023"
 
 def header(rc, key, debug=False):
     """
@@ -96,6 +96,12 @@ def get_version():
     lines = fp.readlines()
     fp.close()
     return lines[0].strip()
+
+def get_publicDate(projectId):
+    """
+    return the date the data will go public
+    """
+    return "2099-12-31"
     
 if __name__ == "__main__":
 
@@ -131,7 +137,6 @@ if __name__ == "__main__":
     # get version, as comment (or metadata?)
     print("# LMTOY version %s" % get_version())
     
-
     # deal with the enum's we use for instrument on the DV side
     # valid names:  TolTEC, MSIP1mm, SEQUOIA, RSR, OMAYA
     instrument = header(rc,"instrument", debug)
@@ -140,12 +145,23 @@ if __name__ == "__main__":
 
     # open the LMG and write some common metadata
     # -- see also example() in lmtmetadatagroup.py
-    lmtdata = LmtMetadataGroup('SLpipeline',dbfile=dbfile, yamlfile=yamlfile)
+    lmtdata = LmtMetadataGroup('SLpipeline', dbfile=dbfile, yamlfile=yamlfile)
     lmtdata.add_metadata("observatory",  "LMT")
     lmtdata.add_metadata("LMTInstrument",instrument)
     lmtdata.add_metadata("projectID",    header(rc,"ProjectId",debug))
     lmtdata.add_metadata("projectTitle", header(rc,"projectTitle",debug))
     lmtdata.add_metadata("PIName",       header(rc,"PIName",debug))
+    lmtdata.add_metadata("publicDate",   get_publicDate(header(rc,"ProjectId")))
+    lmtdata.add_metadata("isPolarimetry",      False)    # or True if HWP mode not ABSENT
+    lmtdata.add_metadata("halfWavePlateMode", "ABSENT")  # or FIXED or ROTATING
+    # 0 = unprocessed, 1 = pipeline processed, 2 = DA improvement
+    # toltec has different definitions and includes level 3.
+    # Leave this set to 1 for SLR.
+    lmtdata.add_metadata("processingLevel", 1)
+
+
+    
+    
 
     #lmtdata.add_metadata("obsnum",       header(rc,"obsnum",debug))
     #lmtdata.add_metadata("subobsnum",    header(rc,"subobsnum",debug))
@@ -185,7 +201,10 @@ if __name__ == "__main__":
     
 
     # isCombined - bool, True if more than one obsnum/combined data
-    lmtdata.add_metadata("isCombined", False)
+    if obsinfo["obsNum"].find("_") > 0:
+        lmtdata.add_metadata("isCombined", True)
+    else:
+        lmtdata.add_metadata("isCombined", False)
 
     # obsnumlist is deprecated
     #lmtdata.add_metadata("obsnumList",   header(rc,"obsnum_list",debug))
@@ -270,6 +289,8 @@ if __name__ == "__main__":
         print("instrument=%s not implemented yet" % instrument)
 
     # validate=True is now default
-    lmtdata.write_to_db()   
-    lmtdata.write_to_yaml()
+    if yamlfile != None:
+        lmtdata.write_to_yaml()
+    if dbfile != None:
+        lmtdata.write_to_db()   
 

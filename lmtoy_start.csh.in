@@ -1,4 +1,4 @@
-># @EDIT_MSG@
+# @EDIT_MSG@
 # for (t)csh : source this file
 
 setenv LMTOY  @LMTOY@

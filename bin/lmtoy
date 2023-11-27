@@ -59,6 +59,8 @@ if [ "$1" == dev ]; then
     echo "tabplot:          "  $(tabplot help=V)
     echo "fitsccd:          "  $(fitsccd help=V)
     echo "----------------------------------------------------------"
+    python -m site
+    echo "----------------------------------------------------------"
     gitbv $LMTOY
     echo "lmtoy:          Branch:$_branch Counter:$_counter Date: $_lastdate"
     gitbv $LMTOY/SpectralLineReduction
@@ -69,4 +71,5 @@ if [ "$1" == dev ]; then
     echo "dreampy:        Branch:$_branch Counter:$_counter Date: $_lastdate"
     gitbv $LMTOY/nemo
     echo "nemo:           Branch:$_branch Counter:$_counter Date: $_lastdate"
+    
 fi
