@@ -4,17 +4,26 @@
 
 - active github issues:  https://github.com/astroumd/lmtoy/issues ; Some important ones:
   - 48: allow missing roach files
-  - 47: "wtn" has wrong beam
+  - 47: "wtn" has the wrong beam plotted
   - 46: SEQ low power can crash pipeline
   - 45: RSR not commutative **+Min**
 
 - autorun mode (restart=2) [partially implemented]
+
 - finalize all metadata for DV   [meta=0,1,2] **+Marc**
-- webrun: **+Xia**
+- fix metadata for combination runs (obsInfo)
+
+- Webrun
   - verify.py ; obsmode (INSTR/MODE)
   - webrun.sh
-  - parameters.txt
+  - etc/parameters.txt
   - lmt_web_lite
+
+
+- FITS export option for spectra
+
+- SEQ/Bs only one bank works now [depending if observations planned]
+- SEQ/Ps not implemented [depending if observations planned]
 
 - stage/unstage on unity in case we do the work in /work and rsync to /nese (or /scratch?)
 
@@ -22,8 +31,6 @@
 - revive maskmoment (has an import issue) [done?]
 - resolve tsys_aver in lmtslr/spec/spec.py as per **Heyer**
 - RMS0:   should we define some <Tsys>?  Currently RMS0 is defined per 100K (as is for RSR)
-- SEQ/Bs only one bank works now [depending if observations planned]
-- SEQ/Ps not implemented [depending if observations planned]
 - Autoscaling the rather wide HTML pages for SEQ summary
 - split parameters in single obsnum and combo (where only gridding is allowed) - useful for webrun
 - pointing offsets from ifproc in meta-data ?
