@@ -37,6 +37,7 @@
 - integrations with dysh  (e.g. sp2sdfits)
 - advanced mapping programs (cf. dysh)
 - SDHDF ?
+- docker image for lmtoy
 
 ## Random
 
