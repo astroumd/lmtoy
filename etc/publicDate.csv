@@ -1,0 +1,7 @@
+# public release dates per - these will wind up in the lmtmetadata.yaml as publicDate
+# dates should be in ISO yyyy-mm-dd format.
+2021-S1,2024-12-31
+2023-S1,2025-12-31
+2024-S1,2026-12-31
+#                      NOTE: these dates are just placeholders, have not been confirmed
+
