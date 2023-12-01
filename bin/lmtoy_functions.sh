@@ -194,6 +194,7 @@ function lmtoy_rsr1 {
     f=""
     nbs=""
     nbs="--no-baseline-sub"
+    do="--date_obs $date_obs"
     if [ "$xlines" != "" ]; then
 	l="--exclude $(echo $xlines | sed 's/,/ /g')"
     else
@@ -207,8 +208,8 @@ function lmtoy_rsr1 {
     # as well as process old data. Thus we want all 'bad_lagsC' in dreampyrc to be ""
     if [[ $first == 1 ]]; then
 	# 1.
-	echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t1 $t2"
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf0.pdf -p -b $blo $t1 $t2   > rsr_driver0.log 2>&1
+	echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o $do -w rsr.wf0.pdf -p -b $blo $t1 $t2"
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o $do -w rsr.wf0.pdf -p -b $blo $t1 $t2   > rsr_driver0.log 2>&1
 	mv rsr.driver.png rsr.driver0.png
 	# 2.
 	echo "LMTOY>> rsr_tsys.py -y rsr.tsys0.png $obsnum"
@@ -245,8 +246,8 @@ function lmtoy_rsr1 {
 	# this gives 'BADCB1'
 	
 	# 4.
-	echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo $t1 $t2 --badlags $badlags"
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o -w rsr.wf.pdf -p -b $blo $t1 $t2 --badlags $badlags > rsr_driver1.log 2>&1	
+	echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o $do -w rsr.wf.pdf -p -b $blo $t1 $t2 --badlags $badlags"
+	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o $do -w rsr.wf.pdf -p -b $blo $t1 $t2 --badlags $badlags > rsr_driver1.log 2>&1	
 
 
 	# Tsys plot:  rsr.tsys.png  - only done for single obsnum - also lists BADCB's
@@ -299,11 +300,11 @@ function lmtoy_rsr1 {
     if [ $sgf != 0 ]; then
 	f="-f $sgf -n $notch"
     fi
-    echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t1 $t2 $f $nbs"
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t1 $t2 $f $nbs   > rsr_driver_nbs.log 2>&1
+    echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $do $b $r $l $o $w -p -b $blo $t1 $t2 $f $nbs"
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $do $b $r $l $o $w -p -b $blo $t1 $t2 $f $nbs   > rsr_driver_nbs.log 2>&1
     mv rsr.driver.png rsr.driver_nbs.png
-    echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t1 $t2 $f"
-    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $b $r $l $o $w -p -b $blo $t1 $t2 $f   > rsr_driver.log 2>&1
+    echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $do $b $r $l $o $w -p -b $blo $t1 $t2 $f"
+    python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum  $do $b $r $l $o $w -p -b $blo $t1 $t2 $f   > rsr_driver.log 2>&1
     #  grab the total integration time from the driver @todo is this the right one?
     inttime=$(grep "Integration Time" $spec1 | awk '{print $4}')
     echo "inttime=$(printf %.1f $inttime) # sec" >> $rc
