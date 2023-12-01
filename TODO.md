@@ -4,6 +4,7 @@
 
 - active github issues:  https://github.com/astroumd/lmtoy/issues
 
+- RSR needs an obsdate in the header
 - autorun mode (restart=2) [partially implemented]
 - fill in all metadata for DV
 - verify.py and etc/parameters.txt ; obsmode   
