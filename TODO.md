@@ -8,6 +8,7 @@
   - 46: SEQ low power can crash pipeline
   - 45: RSR not commutative **+Min**
 
+- RSR needs an obsdate in the header
 - autorun mode (restart=2) [partially implemented]
 
 - finalize all metadata for DV   [meta=0,1,2] **+Marc**
