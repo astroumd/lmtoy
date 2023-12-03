@@ -19,11 +19,12 @@
   - etc/parameters.txt
   - lmt_web_lite
 
-
 - FITS export option for spectra
 
 - SEQ/Bs only one bank works now [depending if observations planned]
 - SEQ/Ps not implemented [depending if observations planned]
+
+- check if combo's can be done (check sources etc.)
 
 - stage/unstage on unity in case we do the work in /work and rsync to /nese (or /scratch?)
 
