@@ -28,10 +28,11 @@ import os
 import sys
 from docopt import docopt
 import astropy.units as u
+from astropy.coordinates import SkyCoord
 import dvpipe.utils as utils
 from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 
-_version = "7-nov-2023"
+_version = "5-dec-2023"
 
 def header(rc, key, debug=False):
     """
@@ -209,12 +210,18 @@ if __name__ == "__main__":
     # obsnumlist is deprecated
     #lmtdata.add_metadata("obsnumList",   header(rc,"obsnum_list",debug))
 
-    lmtdata.add_metadata("targetName",   header(rc,"src",debug))
-    lmtdata.add_metadata("RA",     float(header(rc,"ra",debug)))
-    lmtdata.add_metadata("DEC",    float(header(rc,"dec",debug)))
+    ra_deg  = float(header(rc,"ra", debug))
+    dec_deg = float(header(rc,"dec",debug))
+    c = SkyCoord(ra=ra_deg*u.degree, dec=dec_deg*u.degree, frame='icrs')
+    glon = c.galactic.l.value
+    glat = c.galactic.b.value
+    
+    lmtdata.add_metadata("targetName",      header(rc,"src",debug))
+    lmtdata.add_metadata("RA",              ra_deg)
+    lmtdata.add_metadata("DEC",             dec_deg)
     lmtdata.add_metadata("calibrationLevel",1)
-    lmtdata.add_metadata('galLon',    0.0)
-    lmtdata.add_metadata('galLat',    0.0)
+    lmtdata.add_metadata('galLon',          glon)
+    lmtdata.add_metadata('galLat',          glat)
     # lmtdata.add_metadata('boundingBox', 60.0)     deprecated
     lmtdata.add_metadata('pipeVersion', "1.0")
 
