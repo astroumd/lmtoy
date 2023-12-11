@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="17-aug-2023"
+lmtoy_version="5-dec-2023"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -904,7 +904,7 @@ function lmtoy_seq1 {
 
 function lmtoy_bs1 {
     # input: obsnum, ... (lots)
-    # this will process a single bank in an $obsnum
+    # this will process a single bank=$bank in an $obsnum
 
     # log the version
     lmtoy_version >> lmtoy.rc
@@ -912,26 +912,30 @@ function lmtoy_bs1 {
     if [ ! -e lmtoy_$obsnum.ifproc ]; then
 	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
     fi
+    # record
+    echo "LMTOY>> rc=$rc rc1=$rc1 bank=$bank oid=$oid"
+    
     spec=${src}_${obsnum}__${oid}.txt
-    echo "LMTOY>> spectrum in $spec"
+    echo "LMTOY>> spectrum will be in $spec"
 
-    # for a waterfall -> bs-2.png
-    echo "LMTOY>> process_bs.py --obs_list $obsnum--pix_list $pix_list --use_cal --block -2 --stype $stype --bank $bank"
-    process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -2 --stype $stype --bank $bank
+    # waterfall -> bs-2.png
+    echo "LMTOY>> process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -2 --stype $stype --bank $bank"
+                  process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -2 --stype $stype --bank $bank
 
-    # full average -> bs-1.png
-    echo "LMTOY>> process_bs.py --obs_list $obsnum -o $spec --pix_list $pix_list --use_cal --block -1 --stype $stype  --bank $bank"
-    process_bs.py --obs_list $obsnum -o $spec --pix_list $pix_list --use_cal --block -1 --stype $stype --bank $bank
-    seq_spectra.py -y seq.spectra.png $spec
-    seq_spectra.py -y seq.spectra.svg $spec
+    # full average -> bs-1.png   (final Bs spectrum)
+    echo "LMTOY>> process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -1 --stype $stype --bank $bank -o $spec"
+                  process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -1 --stype $stype --bank $bank -o $spec 
+    seq_spectra.py -y seq.spectra_${oid}.png $spec
+    seq_spectra.py -y seq.spectra_${oid}.svg $spec
 
+    # QAC robust stats off the spectrum
     out4=$(tabmath $spec - %2*1000 all | tabstat -  qac=t robust=t label=$spec)
     printf_red $out4
     
     # tsys
     dev=$(yapp_query png vps)
-    tabplot $spec ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  yapp=tsys.$dev/$dev
-    convert tsys.$dev tsys.jpg
+    tabplot $spec ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  yapp=tsys_${oid}.$dev/$dev
+    convert tsys_${oid}.$dev tsys_${oid}.jpg
     
     if [ -n "$NEMO" ]; then
 	echo "LMTOY>> Some NEMO post-processing"
@@ -960,7 +964,7 @@ function lmtoy_bs1 {
 
 function lmtoy_ps1 {
     # input: obsnum, ... (lots)
-    # this will process a single bank in an $obsnum
+    # this will process a single bank=$bank in an $obsnum
 
     # log the version
     lmtoy_version >> lmtoy.rc
@@ -968,23 +972,26 @@ function lmtoy_ps1 {
     if [ ! -e lmtoy_$obsnum.ifproc ]; then
 	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
     fi
+    # record
+    echo "LMTOY>> rc=$rc rc1=$rc1 bank=$bank oid=$oid"
 
-    # for a waterfall -> bs-2.png
-    process_ps.py --obs_list $obsnum -o junk2.txt --pix_list $pix_list --use_cal --block -2 --stype $stype
+    spec=${src}_${obsnum}__${oid}.txt
+    echo "LMTOY>> spectrum will be in $spec"
+    
+    # full average final Ps spectrum
+    echo "LMTOY>> process_ps.py --obs_list $obsnum --pix_list $pix_list --use_cal --stype $stype --bank $bank -o $spec"
+                  process_ps.py --obs_list $obsnum --pix_list $pix_list --use_cal --stype $stype --bank $bank -o $spec
+    seq_spectra.py -y seq.spectra_${oid}.png $spec
+    seq_spectra.py -y seq.spectra_${oid}.svg $spec
 
-    # full average -> bs-1.png
-    echo "LMTOY>> process_ps.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1 --stype $stype"
-    process_ps.py --obs_list $obsnum -o ${src}_${obsnum}.txt --pix_list $pix_list --use_cal --block -1 --stype $stype
-    seq_spectra.py -y seq.spectra.png ${src}_${obsnum}.txt
-    seq_spectra.py -y seq.spectra.svg ${src}_${obsnum}.txt
-
-    out4=$(tabmath ${src}_${obsnum}.txt - %2*1000 all | tabstat -  qac=t robust=t label=${src}_${obsnum}.txt)
+    # QAC robust stats off the spectrum
+    out4=$(tabmath $spec - %2*1000 all | tabstat -  qac=t robust=t label=$spec)
     printf_red $out4
     
     # tsys
-    dev=$(yapp_query png vps)
-    tabplot ${src}_${obsnum}.txt ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  yapp=tsys.$dev/$dev
-    convert tsys.$dev tsys.jpg
+    #dev=$(yapp_query png vps)
+    #tabplot $spec ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  yapp=tsys.$dev/$dev
+    #convert tsys.$dev tsys.jpg
     
     if [ -n "$NEMO" ]; then
 	echo "LMTOY>> Some NEMO post-processing"
