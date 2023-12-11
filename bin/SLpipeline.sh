@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 31-oct-2023"
+_version="SLpipeline: 6-dec-2023"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -238,15 +238,22 @@ if [ $goal == "Science" ]; then
 	
 	# @todo   only tested for one case
 	if [ -d $pdir ]; then
-	    echo "Re-Processing $obspgm 1MM in $pdir for $src"
+	    echo "Re-Processing 1MM $obspgm data in $pdir for $src"
 	else
-	    echo "Processing $obspgm 1MM in $pdir for $src"
+	    echo "Processing new 1MM $obspgm data in $pdir for $src"
+	    mkdir -p $pdir	    
 	fi
 	sleep $sleep
 	echo "$_lmtoy_args" >> $pdir/lmtoy_args.log	
 	if [ $obspgm == "Ps" ]; then
-	    mkdir -p $pdir
-	    (cd $pdir; process_ps.py --obs_list $obsnum --pix_list 2 --bank 0 -p $DATA_LMT )
+	    #(cd $pdir; process_ps.py --obs_list $obsnum --pix_list 2 --bank 0 -p $DATA_LMT )
+	    #
+	    echo "LMTOY>> seqps_pipeline.sh pdir=$pdir pix_list=0,1 $*"
+	    $time         seqps_pipeline.sh pdir=$pdir pix_list=0,1 $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	    seq_summary.sh $pdir/lmtoy_$obsnum.log
+	    lmtoy_date >> $pdir/date.log
+	    cp $pdir/lmtoy_$obsnum.log $pdir/lmtoy_$obsnum_$ldate.log
+	    echo Logfile also in: $pdir/lmtoy_$obsnum_$ldate.log
 	else
 	    echo "Skipping unknown obspgm=$obspgm"
 	fi
@@ -254,10 +261,11 @@ if [ $goal == "Science" ]; then
     elif [ $instrument = "SEQ" ] && [ $obspgm = "Bs" ]; then
 	
 	if [ -d $pdir ]; then
-	    echo "Re-Processing $obspgm SEQ in $pdir for $src (use restart=1 if you need a fresh start)"
+	    echo "Re-Processing SEQ $obspgm data in $pdir for $src (use restart=1 if you need a fresh start)"
 	    first=0
 	    lmtoy_date                             >> $pdir/date.log
 	else
+	    echo "Processing new SEQ $obspgm data in $pdir for $src"
 	    first=1
 	    mkdir -p $pdir	
 	fi
@@ -274,10 +282,11 @@ if [ $goal == "Science" ]; then
     elif [ $instrument = "SEQ" ] && [ $obspgm = "Ps" ]; then
 	
 	if [ -d $pdir ]; then
-	    echo "Re-Processing $obspgm SEQ in $pdir for $src (use restart=1 if you need a fresh start)"
+	    echo "Re-Processing SEQ $obspgm data in $pdir for $src (use restart=1 if you need a fresh start)"
 	    first=0
 	    lmtoy_date                             >> $pdir/date.log
 	else
+	    echo "Processing new SEQ $obspgm data in $pdir for $src"
 	    first=1
 	    mkdir -p $pdir	
 	fi
