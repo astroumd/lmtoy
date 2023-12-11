@@ -9,7 +9,7 @@
 #          If projectid is set, this is the subdirectory, within which obsnum is set
 #
 
-version="seqbs_pipeline: 2-mar-2023"
+version="seqbs_pipeline: 11-dec-2023"
 
 echo "LMTOY>> $version"
 
@@ -20,17 +20,18 @@ echo "LMTOY>> $version"
 #            - start or restart
 path=${DATA_LMT:-data_lmt}
 obsnum=79448
-obsid=""
+oid=""
 newrc=0
 pdir=""
 admit=1
 clean=1
 debug=0
+error=0
 #            - meta parameters that will compute other parameters for SLR scripts
 dv=100
 dw=250
 #            - parameters that directly match the SLR scripts
-pix_list=8,10
+pix_list=10,8
 stype=2
 rms_cut=-4
 bank=-1           # -1 means all banks 0..numbands-1
@@ -162,16 +163,19 @@ lmtoy_args "$@"
 
 #             pick one bank, or loop over all allowed banks
 if [ $bank != -1 ]; then
+    oid=$bank
     lmtoy_bs1
 elif [ $numbands == 1 ]; then
     # old style, we should not use it anymore
     bank=0
+    oid=0
     lmtoy_bs1
 else
     for b in $(seq 1 $numbands); do
 	bank=$(expr $b - 1)
+	oid=$bank
+	echo "======================================"	
 	echo "Preparing for bank = $bank / $numbands"
 	lmtoy_bs1
     done
-    # exit 0
 fi
