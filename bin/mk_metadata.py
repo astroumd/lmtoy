@@ -32,7 +32,7 @@ from astropy.coordinates import SkyCoord
 import dvpipe.utils as utils
 from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 
-_version = "5-dec-2023"
+_version = "12-dec-2023"
 
 def header(rc, key, debug=False):
     """
@@ -211,7 +211,7 @@ if __name__ == "__main__":
     #lmtdata.add_metadata("obsnumList",   header(rc,"obsnum_list",debug))
 
     ra_deg  = float(header(rc,"ra", debug))
-    dec_deg = float(header(rc,"dec",
+    dec_deg = float(header(rc,"dec",debug))
     c = SkyCoord(ra=ra_deg*u.degree, dec=dec_deg*u.degree, frame='icrs')
     glon = c.galactic.l.value
     glat = c.galactic.b.value
@@ -241,7 +241,7 @@ if __name__ == "__main__":
         
         
         band = dict()
-        band["slBand"] = 1
+        band["bandNum"] = 1
         band["formula"]='CO'               #   multiple lines not resolved yet
         band["transition"]='1-0'
         band["frequencyCenter"] = 97.981*u.Unit("GHz")
@@ -250,13 +250,14 @@ if __name__ == "__main__":
         band["beam"] = 20.0/3600.0
         # lineSens changed to winrms, contSens deprecated.
         band["winrms"] = 0.072*u.Unit("K")
-        #band["qaGrade"] = "A+++"
         band["qaGrade"] = -1;     # -1 .. 5
         band["nchan"] = 1024
+        band["bandName"] = "OTHER"    # we don't have special names for the spectral line bands
+                           
         lmtdata.add_metadata("band",band)
 
         if numbands > 1:
-            band["slBand"] = 2
+            band["bandNum"] = 2
             band["formula"]='HCN'               #   multiple lines not resolved yet
             band["transition"]='1-0'
             band["frequencyCenter"] = 97.981*u.Unit("GHz")
@@ -264,7 +265,7 @@ if __name__ == "__main__":
             band["bandwidth"] = 2.5
             band["beam"] = 20.0/3600.0
             band["winrms"] = 0.072*u.Unit("K")
-            band["qaGrade"] = "A+++"
+            band["qaGrade"] = -1;     # -1 .. 5                           
             band["nchan"] = 1024
             lmtdata.add_metadata("band",band)
             
@@ -280,13 +281,13 @@ if __name__ == "__main__":
         
 
         band = dict()
-        band["slBand"] = 1
+        band["bandNum"] = 1
         band["frequencyCenter"] = 92.5*u.Unit("GHz")
         band["bandwidth"] = 40.0*u.Unit("GHz")
         band["velocityCenter"] = 0.0
         band["beam"] = 20.0/3600.0        # as measured at the nominal (70+110)/2 ???
         band["winrms"] = 1*u.Unit("mK")
-        band["qaGrade"] = "A+++"
+        band["qaGrade"] = -1
         band["nchan"] = 1300
         band["formula"] = ""        # not applicable for RSR
         band["transition"] = ""     # not applicable for RSR
