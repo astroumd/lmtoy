@@ -239,7 +239,6 @@ if __name__ == "__main__":
 
         numbands = int(header(rc,"numbands",debug))
         
-        
         band = dict()
         band["bandNum"] = 1
         band["formula"]='CO'               #   multiple lines not resolved yet
@@ -265,8 +264,9 @@ if __name__ == "__main__":
             band["bandwidth"] = 2.5
             band["beam"] = 20.0/3600.0
             band["winrms"] = 0.072*u.Unit("K")
-            band["qaGrade"] = -1;     # -1 .. 5                           
+            band["qaGrade"] = -1;     # -1 .. 5
             band["nchan"] = 1024
+            band["bandName"] = "OTHER"    # we don't have special names for the spectral line bands
             lmtdata.add_metadata("band",band)
             
 
@@ -291,6 +291,7 @@ if __name__ == "__main__":
         band["nchan"] = 1300
         band["formula"] = ""        # not applicable for RSR
         band["transition"] = ""     # not applicable for RSR
+        band["bandName"] = "OTHER"  # we don't have special names for the spectral line bands
         
         lmtdata.add_metadata("band",band)
         
