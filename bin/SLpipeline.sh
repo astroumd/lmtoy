@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 6-dec-2023"
+_version="SLpipeline: 11-dec-2023"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -246,16 +246,14 @@ if [ $goal == "Science" ]; then
 	sleep $sleep
 	echo "$_lmtoy_args" >> $pdir/lmtoy_args.log	
 	if [ $obspgm == "Ps" ]; then
-	    #(cd $pdir; process_ps.py --obs_list $obsnum --pix_list 2 --bank 0 -p $DATA_LMT )
-	    #
-	    echo "LMTOY>> seqps_pipeline.sh pdir=$pdir pix_list=0,1 $*"
-	    $time         seqps_pipeline.sh pdir=$pdir pix_list=0,1 $*     > $pdir/lmtoy_$obsnum.log 2>&1
+	    echo "LMTOY>> seqps_pipeline.sh pdir=$pdir $*"
+	    $time         seqps_pipeline.sh pdir=$pdir $*     > $pdir/lmtoy_$obsnum.log 2>&1
 	    seq_summary.sh $pdir/lmtoy_$obsnum.log
 	    lmtoy_date >> $pdir/date.log
 	    cp $pdir/lmtoy_$obsnum.log $pdir/lmtoy_$obsnum_$ldate.log
 	    echo Logfile also in: $pdir/lmtoy_$obsnum_$ldate.log
 	else
-	    echo "Skipping unknown obspgm=$obspgm"
+	    echo "Skipping unknown obspgm=$obspgm for 1MM"
 	fi
 	
     elif [ $instrument = "SEQ" ] && [ $obspgm = "Bs" ]; then
