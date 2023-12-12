@@ -211,7 +211,7 @@ if __name__ == "__main__":
     #lmtdata.add_metadata("obsnumList",   header(rc,"obsnum_list",debug))
 
     ra_deg  = float(header(rc,"ra", debug))
-    dec_deg = float(header(rc,"dec",debug))
+    dec_deg = float(header(rc,"dec",
     c = SkyCoord(ra=ra_deg*u.degree, dec=dec_deg*u.degree, frame='icrs')
     glon = c.galactic.l.value
     glat = c.galactic.b.value
@@ -250,7 +250,8 @@ if __name__ == "__main__":
         band["beam"] = 20.0/3600.0
         # lineSens changed to winrms, contSens deprecated.
         band["winrms"] = 0.072*u.Unit("K")
-        band["qaGrade"] = "A+++"
+        #band["qaGrade"] = "A+++"
+        band["qaGrade"] = -1;     # -1 .. 5
         band["nchan"] = 1024
         lmtdata.add_metadata("band",band)
 
@@ -283,12 +284,12 @@ if __name__ == "__main__":
         band["frequencyCenter"] = 92.5*u.Unit("GHz")
         band["bandwidth"] = 40.0*u.Unit("GHz")
         band["velocityCenter"] = 0.0
-        band["beam"] = 20.0/3600.0
+        band["beam"] = 20.0/3600.0        # as measured at the nominal (70+110)/2 ???
         band["winrms"] = 1*u.Unit("mK")
         band["qaGrade"] = "A+++"
         band["nchan"] = 1300
-        band["formula"] = ""
-        band["transition"] = ""
+        band["formula"] = ""        # not applicable for RSR
+        band["transition"] = ""     # not applicable for RSR
         
         lmtdata.add_metadata("band",band)
         
