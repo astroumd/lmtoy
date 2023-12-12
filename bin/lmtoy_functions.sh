@@ -924,9 +924,10 @@ function lmtoy_bs1 {
 
     # full average -> bs-1.png   (final Bs spectrum)
     echo "LMTOY>> process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -1 --stype $stype --bank $bank -o $spec"
-                  process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -1 --stype $stype --bank $bank -o $spec 
-    seq_spectra.py -y seq.spectra_${oid}.png $spec
-    seq_spectra.py -y seq.spectra_${oid}.svg $spec
+                  process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -1 --stype $stype --bank $bank -o $spec
+    title="Spectrum LMT $instrument/$obspgm"
+    seq_spectra.py -t "$title" -y seq.spectra_${oid}.png $spec
+    seq_spectra.py -t "$title" -y seq.spectra_${oid}.svg $spec    
 
     # QAC robust stats off the spectrum
     out4=$(tabmath $spec - %2*1000 all | tabstat -  qac=t robust=t label=$spec)
@@ -992,8 +993,9 @@ function lmtoy_ps1 {
     # full average final Ps spectrum
     echo "LMTOY>> process_ps.py --obs_list $obsnum --pix_list $pix_list --use_cal --stype $stype --bank $bank -o $spec"
                   process_ps.py --obs_list $obsnum --pix_list $pix_list --use_cal --stype $stype --bank $bank -o $spec
-    seq_spectra.py -y seq.spectra_${oid}.png $spec
-    seq_spectra.py -y seq.spectra_${oid}.svg $spec
+    title="Spectrum LMT $instrument/$obspgm"
+    seq_spectra.py -t "$title" -y seq.spectra_${oid}.png $spec
+    seq_spectra.py -t "$title" -y seq.spectra_${oid}.svg $spec
 
     # QAC robust stats off the spectrum
     out4=$(tabmath $spec - %2*1000 all | tabstat -  qac=t robust=t label=$spec)
