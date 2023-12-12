@@ -1,17 +1,18 @@
 #! /usr/bin/env python
-#  template script written by NEMO::pytable
 #
-_version = "1-aug-2023"
+
+_version = "11-dec-2023"
 
 _help = """Usage: seq_spectra.py [options] TABLE [TABLE ...]
 
 Options:
   -y PLOTFILE             Save plotfile instead of interactive. Optional
+  -t TITLE                Plot title. Optional
   -h --help               This help
   -d --debug              Add debugging
   -v --version            The script version
 
-Multiple tables can be given.
+Multiple tables can be given, they are overplotted in different colors.
 
 """
 
@@ -25,7 +26,8 @@ if av['--debug']:
     print(av)
 
 
-plotfile = av['-y']    
+plotfile = av['-y']
+title = av['-t']
 tables = av['TABLE']
 n = 0
 
@@ -47,7 +49,10 @@ plt.ylabel('Ta (K)')
 #plt.ylim([0,1])
 #  @todo plot between +/- 5 sigma or so
 #plt.ylim([-0.01,0.01])
-plt.title('SEQ Bs spectra')
+if title == None:
+    plt.title('Spectra')
+else:
+    plt.title(title)    
 plt.legend()
 if plotfile == None:
     plt.show()
