@@ -966,6 +966,17 @@ function lmtoy_ps1 {
     # input: obsnum, ... (lots)
     # this will process a single bank=$bank in an $obsnum
 
+    # for 1MM only roach0 is used, so bank=0 is needed, and oid= is used to identify the "bank"
+    if [ $instrument = "1MM" ]; then
+	bank=0
+	if [ $oid == 0 ]; then
+	    pix_list=0,2
+	elif [ $oid == 1 ]; then
+	    pix_list=1,3
+	fi
+	echo "LMTOY>> 1MM overriding pix_list=$pix_list bank=$bank"
+    fi
+
     # log the version
     lmtoy_version >> lmtoy.rc
     # keep an IFPROC header
