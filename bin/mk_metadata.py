@@ -32,7 +32,7 @@ from astropy.coordinates import SkyCoord
 import dvpipe.utils as utils
 from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 
-_version = "12-dec-2023"
+_version = "19-dec-2023"
 
 def header(rc, key, debug=False):
     """
