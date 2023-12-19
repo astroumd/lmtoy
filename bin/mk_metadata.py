@@ -249,7 +249,7 @@ if __name__ == "__main__":
         band["beam"] = 20.0/3600.0
         # lineSens changed to winrms, contSens deprecated.
         band["winrms"] = 0.072*u.Unit("K")
-        band["qaGrade"] = -1;     # -1 .. 5
+        band["qaGrade"] = 0;     # 0 .. 5   (0 means not graded)
         band["nchan"] = 1024
         band["bandName"] = "OTHER"    # we don't have special names for the spectral line bands
                            
@@ -264,7 +264,7 @@ if __name__ == "__main__":
             band["bandwidth"] = 2.5
             band["beam"] = 20.0/3600.0
             band["winrms"] = 0.072*u.Unit("K")
-            band["qaGrade"] = -1;     # -1 .. 5
+            band["qaGrade"] = 0;     # -1 .. 5 (0 means not graded)
             band["nchan"] = 1024
             band["bandName"] = "OTHER"    # we don't have special names for the spectral line bands
             lmtdata.add_metadata("band",band)
@@ -287,7 +287,7 @@ if __name__ == "__main__":
         band["velocityCenter"] = 0.0
         band["beam"] = 20.0/3600.0        # as measured at the nominal (70+110)/2 ???
         band["winrms"] = 1*u.Unit("mK")
-        band["qaGrade"] = -1
+        band["qaGrade"] = 0;     # -1 .. 5 (0 means not graded)        
         band["nchan"] = 1300
         band["formula"] = ""        # not applicable for RSR
         band["transition"] = ""     # not applicable for RSR
