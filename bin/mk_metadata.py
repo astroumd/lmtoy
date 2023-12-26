@@ -28,10 +28,11 @@ import os
 import sys
 from docopt import docopt
 import astropy.units as u
+from astropy.coordinates import SkyCoord
 import dvpipe.utils as utils
 from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 
-_version = "7-nov-2023"
+_version = "19-dec-2023"
 
 def header(rc, key, debug=False):
     """
@@ -209,12 +210,18 @@ if __name__ == "__main__":
     # obsnumlist is deprecated
     #lmtdata.add_metadata("obsnumList",   header(rc,"obsnum_list",debug))
 
-    lmtdata.add_metadata("targetName",   header(rc,"src",debug))
-    lmtdata.add_metadata("RA",     float(header(rc,"ra",debug)))
-    lmtdata.add_metadata("DEC",    float(header(rc,"dec",debug)))
+    ra_deg  = float(header(rc,"ra", debug))
+    dec_deg = float(header(rc,"dec",debug))
+    c = SkyCoord(ra=ra_deg*u.degree, dec=dec_deg*u.degree, frame='icrs')
+    glon = c.galactic.l.value
+    glat = c.galactic.b.value
+    
+    lmtdata.add_metadata("targetName",      header(rc,"src",debug))
+    lmtdata.add_metadata("RA",              ra_deg)
+    lmtdata.add_metadata("DEC",             dec_deg)
     lmtdata.add_metadata("calibrationLevel",1)
-    lmtdata.add_metadata('galLon',    0.0)
-    lmtdata.add_metadata('galLat',    0.0)
+    lmtdata.add_metadata('galLon',          glon)
+    lmtdata.add_metadata('galLat',          glat)
     # lmtdata.add_metadata('boundingBox', 60.0)     deprecated
     lmtdata.add_metadata('pipeVersion', "1.0")
 
@@ -232,9 +239,8 @@ if __name__ == "__main__":
 
         numbands = int(header(rc,"numbands",debug))
         
-        
         band = dict()
-        band["slBand"] = 1
+        band["bandNum"] = 1
         band["formula"]='CO'               #   multiple lines not resolved yet
         band["transition"]='1-0'
         band["frequencyCenter"] = 97.981*u.Unit("GHz")
@@ -243,12 +249,14 @@ if __name__ == "__main__":
         band["beam"] = 20.0/3600.0
         # lineSens changed to winrms, contSens deprecated.
         band["winrms"] = 0.072*u.Unit("K")
-        band["qaGrade"] = "A+++"
+        band["qaGrade"] = 0;     # 0 .. 5   (0 means not graded)
         band["nchan"] = 1024
+        band["bandName"] = "OTHER"    # we don't have special names for the spectral line bands
+                           
         lmtdata.add_metadata("band",band)
 
         if numbands > 1:
-            band["slBand"] = 2
+            band["bandNum"] = 2
             band["formula"]='HCN'               #   multiple lines not resolved yet
             band["transition"]='1-0'
             band["frequencyCenter"] = 97.981*u.Unit("GHz")
@@ -256,8 +264,9 @@ if __name__ == "__main__":
             band["bandwidth"] = 2.5
             band["beam"] = 20.0/3600.0
             band["winrms"] = 0.072*u.Unit("K")
-            band["qaGrade"] = "A+++"
+            band["qaGrade"] = 0;     # -1 .. 5 (0 means not graded)
             band["nchan"] = 1024
+            band["bandName"] = "OTHER"    # we don't have special names for the spectral line bands
             lmtdata.add_metadata("band",band)
             
 
@@ -272,16 +281,17 @@ if __name__ == "__main__":
         
 
         band = dict()
-        band["slBand"] = 1
+        band["bandNum"] = 1
         band["frequencyCenter"] = 92.5*u.Unit("GHz")
         band["bandwidth"] = 40.0*u.Unit("GHz")
         band["velocityCenter"] = 0.0
-        band["beam"] = 20.0/3600.0
+        band["beam"] = 20.0/3600.0        # as measured at the nominal (70+110)/2 ???
         band["winrms"] = 1*u.Unit("mK")
-        band["qaGrade"] = "A+++"
+        band["qaGrade"] = 0;     # -1 .. 5 (0 means not graded)        
         band["nchan"] = 1300
-        band["formula"] = ""
-        band["transition"] = ""
+        band["formula"] = ""        # not applicable for RSR
+        band["transition"] = ""     # not applicable for RSR
+        band["bandName"] = "OTHER"  # we don't have special names for the spectral line bands
         
         lmtdata.add_metadata("band",band)
         
