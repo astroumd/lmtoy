@@ -2,6 +2,7 @@
 
 
      ProjectId.tab               used by DataVerse ingestor (maintained manually via phase2 reports)
+     ProjectId.csv               used by DataVerse ingestor (maintained manually via phase2 reports)
      linecheck.tab               default xlines for RSR calibration sources
      sources.tab                 default baseline interval for some SEQ calibration sources
      policy.xml                  for imagemagick - copy to ~/.config/ImageMagick/policy.xml
