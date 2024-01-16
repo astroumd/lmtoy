@@ -1,16 +1,16 @@
 #! /bin/bash
 #
-#  Wrapper to bin channels by 15 (for now)
+#  CASA wrapper to bin channels by 15 
 #
 #  Because both LMTOY and ADMIT (via casa) have their own python, we need a
 #  wrapper that loads CASA inside this script (via admit)
 #
 
 
-version="mm0.sh: 17-aug-2023"
+version="mm0.sh: 19-aug-2023"
 
-if [ -z $2 ]; then
-    echo "LMTOY>> Usage: input.fits output.fits"
+if [ -z "$2" ]; then
+    echo "LMTOY>> Usage: input.fits output.fits [bin_factor]"
     echo ""
     exit 0
 else
@@ -25,6 +25,11 @@ debug=0
 
 ifile=$1
 ofile=$2
+bin=15
+
+if [ ! -z "$3" ]; then
+    bin=$3
+fi
 
 #  put in bash debug mode
 if [ $debug = 1 ]; then
@@ -55,7 +60,7 @@ fi
 
 rm -rf junk15.im
 
-cmd1="imrebin(imagename=\"${ifile}\", outfile=\"junk15.im\", factor=[1, 1, 15])"
+cmd1="imrebin(imagename=\"${ifile}\", outfile=\"junk15.im\", factor=[1, 1, $bin])"
 cmd2="exportfits(\"junk15.im\",\"${ofile}\")"
 
 
