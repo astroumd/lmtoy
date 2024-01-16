@@ -34,6 +34,9 @@ maskmoment=1
 clean=1
 #                   debug
 debug=0
+#--HELP
+
+
 #    @todo fix this for combo, we should not need parameters as they are all inherited from the single obsnum run(s)
 if [ 1 = 0 ]; then
     unset pix_list
@@ -52,7 +55,6 @@ if [ 1 = 0 ]; then
     edge=0
 fi
 
-#--HELP
 show_vars="bank"
 
 source lmtoy_functions.sh
