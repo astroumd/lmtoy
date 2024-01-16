@@ -10,8 +10,9 @@ Useful tools to verify pipeline parameters
 import os
 import sys
 import re
+from lmtoy import runs
 
-_version = "26-sep-2023"
+_version = "17-oct-2023"
 
 _help = "This program is under development"
 
@@ -50,21 +51,6 @@ def read_rc(rcfile, debug=0):
             print("%s=%s" % (k,rc[k]))
     return rc
 
-def read_run(runfile, debug=0):
-    """ read a run file, and verify all arguments are ok
-    """
-    lines = open(runfile).readlines()
-    for line in lines:
-        if line[0] == '#':
-            continue
-        print(line.strip())
-        w = line.split()
-        if w[0] != 'SLpipeline.sh':
-            print("not an SLpipeline runfile")
-        if w[1][:7] != 'obsnum=':
-            print("not an SLpipeline runfile with obsnum=")
-
-
 #verify_listi(val, 0, 16)
 
 if __name__ == "__main__":
@@ -73,7 +59,8 @@ if __name__ == "__main__":
         sys.exit(0)
     my_file = sys.argv[1]
     if True:
-        read_run(my_file)
+        runs.verify(my_file)
+        #read_run(my_file)        
     else:
         debug = 0
         rc = read_rc(rcfile,debug)
