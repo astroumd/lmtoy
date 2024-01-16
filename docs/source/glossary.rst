@@ -48,7 +48,7 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 
     Beam Switching
       This is a variation on position switching using a receiver
-      with multiple pixels. The "Main" and "Reference" positions on the sky are
+      with multiple beams. The "Main" and "Reference" positions on the sky are
       calculated so that the receiver is always pointing at the source. This is most
       useful for point sources.
 
@@ -147,7 +147,8 @@ of some overloaded terms after the glossary. See :ref:`overloaded`.
 
     Position Switching
       This is a standard way to obtain spectra by switching
-      between a "Main" and "Reference" position on the sky.
+      between a "Main" and "Reference" position on the sky, usually using a single beam. For our
+      multi-beam receivers see also Beam Switching
 
     ProjectId
       Each LMT observing proposal has a unique proposal ID assigned. An example is **2018-S1-MU-46**,
