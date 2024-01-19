@@ -26,13 +26,14 @@ generic example is given.
 
 import os
 import sys
+import math
 from docopt import docopt
 import astropy.units as u
 from astropy.coordinates import SkyCoord
 import dvpipe.utils as utils
 from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 
-_version = "19-dec-2023"
+_version = "19-jan-2024"
 
 def header(rc, key, debug=False):
     """
@@ -102,7 +103,7 @@ def get_publicDate(projectId):
     """
     return the date the data will go public
     """
-    return "2099-12-31"
+    return "2099-12-31"    # @todo
     
 if __name__ == "__main__":
 
@@ -121,6 +122,10 @@ if __name__ == "__main__":
         lmtdata.write_to_yaml()        
         sys.exit(0)
 
+    # constants
+    c = 299792.458
+    pi = math.pi
+        
     # find and read the rc file and construct the rc {} dictionary
     # OBSNUM can be an actual OBSNUM or the OBSNUM directory 
     pdir = av['OBSNUM']
@@ -158,17 +163,12 @@ if __name__ == "__main__":
     # 0 = unprocessed, 1 = pipeline processed, 2 = DA improvement
     # toltec has different definitions and includes level 3.
     # Leave this set to 1 for SLR.
-    lmtdata.add_metadata("processingLevel", 1)
-
-
-    
-    
+    lmtdata.add_metadata("processingLevel", 1)     # @todo could be 1 or 2 
 
     #lmtdata.add_metadata("obsnum",       header(rc,"obsnum",debug))
     #lmtdata.add_metadata("subobsnum",    header(rc,"subobsnum",debug))
     #lmtdata.add_metadata("scannum",      header(rc,"scannum",debug))
     #lmtdata.add_metadata("obsnumList",   header(rc,"obsnum_list",debug))
-
 
     # NEW:  obsInfo dict - one per true obsnum
     #     obsNum - int (must now be an number!)
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     obsinfo["scanNum"]     = header(rc,"scannum",debug)
     obsinfo["intTime"]     = float(header(rc,"inttime",debug))
     obsinfo["obsGoal"]     = "SCIENCE"
-    obsinfo["obsComment"]  = "This is an observation comment"
+    obsinfo["obsComment"]  = "None"                        # @todo ???
     obsinfo["opacity225"]  = float(header(rc,"tau",debug))
     obsinfo["obsDate"]     = header(rc,"date_obs",debug)    
     lmtdata.add_metadata("obsInfo",obsinfo)
@@ -197,8 +197,7 @@ if __name__ == "__main__":
     #    100002, and 100003, the ref id is 100001c3_0.
     #lmtdata.add_metadata("referenceID", header(rc,"referenceId",debug))
     lmtdata.add_metadata("referenceID", "blabla")
-
-    lmtdata.add_metadata("totalIntTime", 100.0)    # seconds or astropy units
+    lmtdata.add_metadata("totalIntTime", float(header(rc,"inttime",debug)))    # @todo for combos this is incorrect
     
 
     # isCombined - bool, True if more than one obsnum/combined data
@@ -212,9 +211,9 @@ if __name__ == "__main__":
 
     ra_deg  = float(header(rc,"ra", debug))
     dec_deg = float(header(rc,"dec",debug))
-    c = SkyCoord(ra=ra_deg*u.degree, dec=dec_deg*u.degree, frame='icrs')
-    glon = c.galactic.l.value
-    glat = c.galactic.b.value
+    cs = SkyCoord(ra=ra_deg*u.degree, dec=dec_deg*u.degree, frame='icrs')
+    glon = cs.galactic.l.value
+    glat = cs.galactic.b.value
     
     lmtdata.add_metadata("targetName",      header(rc,"src",debug))
     lmtdata.add_metadata("RA",              ra_deg)
@@ -223,7 +222,7 @@ if __name__ == "__main__":
     lmtdata.add_metadata('galLon',          glon)
     lmtdata.add_metadata('galLat',          glat)
     # lmtdata.add_metadata('boundingBox', 60.0)     deprecated
-    lmtdata.add_metadata('pipeVersion', "1.0")
+    lmtdata.add_metadata('pipeVersion', "1.0")    # @todo
 
     
     if instrument == "SEQUOIA":
@@ -231,33 +230,35 @@ if __name__ == "__main__":
         #
         #  below here to be deciphered
         #
-        lmtdata.add_metadata("velocity",321.0)          # vlsr
+        vlsr = float(header(rc,"vlsr",debug))
+        lmtdata.add_metadata("velocity",vlsr)           # vlsr
         lmtdata.add_metadata("velDef","RADIO")          
         lmtdata.add_metadata("velFrame","LSR")
         lmtdata.add_metadata("velType","FREQUENCY")
-        lmtdata.add_metadata("z",0.001071)              # <-vlsr
+        lmtdata.add_metadata("z",vlsr/c)
 
         numbands = int(header(rc,"numbands",debug))
         
         band = dict()
         band["bandNum"] = 1
-        band["formula"]='CO'               #   multiple lines not resolved yet
-        band["transition"]='1-0'
-        band["frequencyCenter"] = 97.981*u.Unit("GHz")
-        band["velocityCenter"] = 0.0
-        band["bandwidth"] = 2.5
-        band["beam"] = 20.0/3600.0
+        band["formula"]='CO'               #   multiple lines not resolved yet    @todo
+        band["transition"]='1-0'           # @todo
+        band["frequencyCenter"] = 97.981*u.Unit("GHz")     # @todo
+        band["velocityCenter"] = 0.0                       # @todo
+        band["bandwidth"] = 2.5                            # @todo
+        band["beam"] = 20.0/3600.0                         # @todo
         # lineSens changed to winrms, contSens deprecated.
-        band["winrms"] = 0.072*u.Unit("K")
-        band["qaGrade"] = 0;     # 0 .. 5   (0 means not graded)
-        band["nchan"] = 1024
+        band["winrms"] = 0.072*u.Unit("K")                 # @todo
+        band["qaGrade"] = 0;                               # 0 .. 5   (0 means not graded) @todo
+        band["nchan"] = 1024                               # @todo
         band["bandName"] = "OTHER"    # we don't have special names for the spectral line bands
                            
         lmtdata.add_metadata("band",band)
 
         if numbands > 1:
+            # @todo
             band["bandNum"] = 2
-            band["formula"]='HCN'               #   multiple lines not resolved yet
+            band["formula"]='HCN'               #   multiple lines not resolved yet   @todo
             band["transition"]='1-0'
             band["frequencyCenter"] = 97.981*u.Unit("GHz")
             band["velocityCenter"] = 0.0
@@ -280,15 +281,20 @@ if __name__ == "__main__":
         lmtdata.add_metadata("z",0.0)                 # <-vlsr
         
 
+        # @todo data before feb-2018 were using a 32m dish
+        dish = 50     # dish diameter in m
+        freq = 90.0   # center-freq in GHz
+        beam = 1.15*c/(freq*dish)*(180/pi)/1e6    # now in degrees
+
         band = dict()
-        band["bandNum"] = 1
-        band["frequencyCenter"] = 92.5*u.Unit("GHz")
+        band["bandNum"] = int(1)
+        band["frequencyCenter"] = freq*u.Unit("GHz")
         band["bandwidth"] = 40.0*u.Unit("GHz")
         band["velocityCenter"] = 0.0
-        band["beam"] = 20.0/3600.0        # as measured at the nominal (70+110)/2 ???
-        band["winrms"] = 1*u.Unit("mK")
+        band["beam"] = beam
+        band["winrms"] = float(header(rc,"rms",debug))*u.Unit("K")
         band["qaGrade"] = 0;     # -1 .. 5 (0 means not graded)        
-        band["nchan"] = 1300
+        band["nchan"] = int(header(rc,"nchan",debug))
         band["formula"] = ""        # not applicable for RSR
         band["transition"] = ""     # not applicable for RSR
         band["bandName"] = "OTHER"  # we don't have special names for the spectral line bands
