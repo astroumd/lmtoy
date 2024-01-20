@@ -417,6 +417,12 @@ function lmtoy_rsr1 {
 	printf_red $(tabstat  $spec1 2 bad=0 robust=t qac=t)
 	printf_red $(tabstat  $spec2 2 bad=0 robust=t qac=t)
 
+	# for rc and archive yaml 
+	nchan=$(tabrows $spec1|wc -l)
+	rms=$(tabstat  $spec1 2 bad=0 robust=t qac=t | txtpar - p0=1,4)
+	echo "nchan=$nchan" >> $rc
+	echo "rms=$rms"     >> $rc
+	
 	# regress on the driver.sum.txt file
 	#regress=$(tabstat $spec1 2 bad=0 robust=t qac=t | txtpar - p0=1,4)
 	regress=$(tabstat $spec1 2 bad=0 robust=t qac=t)
@@ -767,6 +773,9 @@ function lmtoy_seq1 {
 	    echo "rms=$rms     # rms[mK] in center"      >> $rc
 	    echo "rms0=$rms0   # RMS/radiometer ratio"   >> $rc
 
+	    nchan=$(ccdhead $s_on.ccd  | txtpar - p0=Size,1,4)
+	    echo "nchan=$nchan" >> $rc
+
 	    # add a smooth cube version as well
 	    # @todo  it seems the WCS of the nfs is off by 1
 	    fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.cubespecs.tab
@@ -967,7 +976,8 @@ function lmtoy_ps1 {
     # input: obsnum, ... (lots)
     # this will process a single bank=$bank in an $obsnum
 
-    # for 1MM only roach0 is used, so bank=0 is needed, and oid= is used to identify the "bank"
+    # for 1MM only roach0 is used, so bank=0 is needed, and oid= is used to identify the "bank" being 0 or 1
+    # we thus hardcode the bank itself to be 0,so it looks at the right roach
     if [ $instrument = "1MM" ]; then
 	bank=0
 	if [ $oid == 0 ]; then
@@ -991,13 +1001,14 @@ function lmtoy_ps1 {
     echo "LMTOY>> spectrum will be in $spec"
     
     # full average final Ps spectrum
-    echo "LMTOY>> process_ps.py --obs_list $obsnum --pix_list $pix_list --use_cal --stype $stype --bank $bank -o $spec"
-                  process_ps.py --obs_list $obsnum --pix_list $pix_list --use_cal --stype $stype --bank $bank -o $spec
+    sargs="--slice [-40,40]"
+    echo "LMTOY>> process_ps.py --obs_list $obsnum --pix_list $pix_list --use_cal --stype $stype --bank $bank -o $spec $sargs"
+                  process_ps.py --obs_list $obsnum --pix_list $pix_list --use_cal --stype $stype --bank $bank -o $spec $sargs
     title="Spectrum LMT $instrument/$obspgm"
     seq_spectra.py -t "$title" -y seq.spectra_${oid}.png $spec
     seq_spectra.py -t "$title" -y seq.spectra_${oid}.svg $spec
 
-    # QAC robust stats off the spectrum
+    # QAC robust stats off the spectrum in mK
     out4=$(tabmath $spec - %2*1000 all | tabstat -  qac=t robust=t label=$spec)
     printf_red $out4
     
