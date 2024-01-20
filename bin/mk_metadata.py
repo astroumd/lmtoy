@@ -51,14 +51,44 @@ def header(rc, key, debug=False):
     else:
         if debug:
             print("# PJT: unknown key ",key)
+            print(rc)
 
-def get_rc(filename, debug=False):
+def rc_file(pdir, bank = None):
+    """ find an rc file
+        lmtoy_OBSNUM.rc or lmtoy_OBSNUM__BANK.rc
+    """
+    if pdir.rfind('/') > 0:
+        #print("PJT - dir")
+        obsnum = pdir.split('/')[-1]
+        if bank==None:
+            rcfile = pdir + '/lmtoy_%s.rc' % obsnum
+        else:
+            rcfile = pdir + '/lmtoy_%s__%d.rc' % (obsnum,bank)
+    else:
+        #print("PJT - obsnum")        
+        obsnum = pdir
+        if bank==None:
+            rcfile =  '%s/lmtoy_%s.rc' % (obsnum,obsnum)
+        else:
+            rcfile =  '%s/lmtoy_%s__%d.rc' % (obsnum,obsnum,bank)
+    if not os.path.exists(rcfile):
+        print("File %s does not exist" % rcfile)
+        sys.exit(0)
+    #print("PJT rc_file",rcfile)
+    return rcfile
+
+def get_rc(rcfile, rc=None, debug=False):
     """
     input:
-    filename   name of the rc file
+    rcfile     name of the rc file
+    rc         optional existing rc dictionary to use
     returns:   the "rc" (string-string) dictionary 
     """
-    rc = {}
+    if rc==None:
+        rc = {}
+    else:
+        print("DEBUG rc:",rc)
+        
     try:
         print("# opening  ",rcfile)
         fp = open(rcfile)
@@ -104,6 +134,50 @@ def get_publicDate(projectId):
     return the date the data will go public
     """
     return "2099-12-31"    # @todo
+
+# constants
+_c  = 299792.458
+_pi = math.pi
+        
+
+
+def lmt_beam(freq, dish=50.0, factor=1.15):
+    """ compute FWHM beam for the LMT
+    """
+    beam = factor*_c/(freq*dish)*(180/_pi)/1e6    # now in degrees
+    return beam
+
+_lines = []
+
+def guess_line(restfreq, debug=False):
+    """ guess the  form and trans for given restfreq
+    All we have is a common table... since this is not in the header
+    $LMTOY/etc/lines.list   has     (restfreq,form,trans)
+    """
+    if len(_lines) == 0:
+        lfile = os.environ['LMTOY'] + '/etc/lines.list'
+        fp = open(lfile)
+        lines = fp.readlines()
+        fp.close()
+        for line in lines:
+            if line[0] == '#': continue
+            w = line.split()
+            if len(w) == 3:
+                rf = float(w[0])
+                lf = w[1]
+                tf = w[2]
+                _lines.append((rf,lf,tf))
+        if debug:
+            print("Found %d in lines.list" % len(_lines))
+    #  example line:   110.2013543 13co 1-0
+    for l in _lines:
+        d = abs(l[0]-restfreq)
+        if d < 0.001:
+            if debug:
+                print("Found",l[1],l[2])
+            return (l[1],l[2])
+    return ("None","None")
+
     
 if __name__ == "__main__":
 
@@ -122,23 +196,11 @@ if __name__ == "__main__":
         lmtdata.write_to_yaml()        
         sys.exit(0)
 
-    # constants
-    c = 299792.458
-    pi = math.pi
-        
     # find and read the rc file and construct the rc {} dictionary
     # OBSNUM can be an actual OBSNUM or the OBSNUM directory 
     pdir = av['OBSNUM']
-    if pdir.rfind('/') > 0:
-        obsnum = pdir.split('/')[-1]
-        rcfile = pdir + '/lmtoy_%s.rc' % obsnum
-    else:
-        obsnum = pdir        
-        rcfile =  '%s/lmtoy_%s.rc' % (obsnum,obsnum)
-    if not os.path.exists(rcfile):
-        print("File %s does not exist" % rcfile)
-        sys.exit(0)
-    rc = get_rc(rcfile, debug)
+    rcfile = rc_file(pdir)
+    rc = get_rc(rcfile, debug=debug)
 
     # get version, as comment (or metadata?)
     print("# LMTOY version %s" % get_version())
@@ -180,8 +242,8 @@ if __name__ == "__main__":
     #     opacity225 - opacity at 225 GHz
     obsinfo = dict()
     obsinfo["obsNum"]      = header(rc,"obsnum",debug)
-    obsinfo["subObsNum"]   = header(rc,"subobsnum",debug)
-    obsinfo["scanNum"]     = header(rc,"scannum",debug)
+    obsinfo["subObsNum"]   = header(rc,"subobsnum",debug)      # normally 0 for us
+    obsinfo["scanNum"]     = header(rc,"scannum",debug)        # normally 1 for us
     obsinfo["intTime"]     = float(header(rc,"inttime",debug))
     obsinfo["obsGoal"]     = "SCIENCE"
     obsinfo["obsComment"]  = "None"                        # @todo ???
@@ -196,18 +258,14 @@ if __name__ == "__main__":
     #    For example. For a combined reduction of 3 obsnums 100001, 
     #    100002, and 100003, the ref id is 100001c3_0.
     #lmtdata.add_metadata("referenceID", header(rc,"referenceId",debug))
-    lmtdata.add_metadata("referenceID", "blabla")
+    lmtdata.add_metadata("referenceID", "SLR")   # @todo
     lmtdata.add_metadata("totalIntTime", float(header(rc,"inttime",debug)))    # @todo for combos this is incorrect
-    
 
     # isCombined - bool, True if more than one obsnum/combined data
     if obsinfo["obsNum"].find("_") > 0:
         lmtdata.add_metadata("isCombined", True)
     else:
         lmtdata.add_metadata("isCombined", False)
-
-    # obsnumlist is deprecated
-    #lmtdata.add_metadata("obsnumList",   header(rc,"obsnum_list",debug))
 
     ra_deg  = float(header(rc,"ra", debug))
     dec_deg = float(header(rc,"dec",debug))
@@ -221,52 +279,63 @@ if __name__ == "__main__":
     lmtdata.add_metadata("calibrationLevel",1)
     lmtdata.add_metadata('galLon',          glon)
     lmtdata.add_metadata('galLat',          glat)
-    # lmtdata.add_metadata('boundingBox', 60.0)     deprecated
     lmtdata.add_metadata('pipeVersion', "1.0")    # @todo
 
     
     if instrument == "SEQUOIA":
-        #lmtdata.add_metadata("origin",  "lmtoy v0.6")
-        #
-        #  below here to be deciphered
-        #
+
+        # @todo deal with other obspgm's, this is still Map only
+
+        rcfile = rc_file(pdir, 0)     # get bank=0, should always be present
+        rc = get_rc(rcfile, debug=debug)
+
         vlsr = float(header(rc,"vlsr",debug))
         lmtdata.add_metadata("velocity",vlsr)           # vlsr
         lmtdata.add_metadata("velDef","RADIO")          
         lmtdata.add_metadata("velFrame","LSR")
         lmtdata.add_metadata("velType","FREQUENCY")
-        lmtdata.add_metadata("z",vlsr/c)
+        lmtdata.add_metadata("z",vlsr/_c)               # @todo
 
         numbands = int(header(rc,"numbands",debug))
+
+        skyfreq = float(header(rc,"skyfreq",debug))
+        restfreq = float(header(rc,"restfreq",debug))
+        (line_form, line_trans) = guess_line(restfreq)
+        rms = float(header(rc,"rms",debug))
         
         band = dict()
         band["bandNum"] = 1
-        band["formula"]='CO'               #   multiple lines not resolved yet    @todo
-        band["transition"]='1-0'           # @todo
-        band["frequencyCenter"] = 97.981*u.Unit("GHz")     # @todo
-        band["velocityCenter"] = 0.0                       # @todo
+        band["formula"]=line_form
+        band["transition"]=line_trans
+        band["frequencyCenter"] = skyfreq*u.Unit("GHz")    # @todo  or should this be restfreq
+        band["velocityCenter"] = vlsr                      # @todo
         band["bandwidth"] = 2.5                            # @todo
-        band["beam"] = 20.0/3600.0                         # @todo
-        # lineSens changed to winrms, contSens deprecated.
-        band["winrms"] = 0.072*u.Unit("K")                 # @todo
+        band["beam"] = lmt_beam(skyfreq)
+        band["winrms"] = rms*u.Unit("mK")
         band["qaGrade"] = 0;                               # 0 .. 5   (0 means not graded) @todo
-        band["nchan"] = 1024                               # @todo
+        band["nchan"] =  int(header(rc,"nchan"))
         band["bandName"] = "OTHER"    # we don't have special names for the spectral line bands
-                           
         lmtdata.add_metadata("band",band)
 
         if numbands > 1:
-            # @todo
+
+            rcfile = rc_file(pdir, 1)     # get bank=1; we only have 2 banks now
+            rc = get_rc(rcfile, debug=debug)
+
+            skyfreq = float(header(rc,"skyfreq",debug))
+            restfreq = float(header(rc,"restfreq",debug))
+            rms = float(header(rc,"rms",debug))
+            
             band["bandNum"] = 2
-            band["formula"]='HCN'               #   multiple lines not resolved yet   @todo
-            band["transition"]='1-0'
-            band["frequencyCenter"] = 97.981*u.Unit("GHz")
-            band["velocityCenter"] = 0.0
-            band["bandwidth"] = 2.5
-            band["beam"] = 20.0/3600.0
-            band["winrms"] = 0.072*u.Unit("K")
+            band["formula"]='HCN'               #   @todo
+            band["transition"]='1-0'            #   @todo
+            band["frequencyCenter"] = skyfreq*u.Unit("GHz")
+            band["velocityCenter"] = vlsr    # @todo
+            band["bandwidth"] = 2.5          # @todo
+            band["beam"] = lmt_beam(skyfreq)
+            band["winrms"] = rms*u.Unit("mK")
             band["qaGrade"] = 0;     # -1 .. 5 (0 means not graded)
-            band["nchan"] = 1024
+            band["nchan"] = int(header(rc,"nchan"))
             band["bandName"] = "OTHER"    # we don't have special names for the spectral line bands
             lmtdata.add_metadata("band",band)
             
@@ -279,12 +348,11 @@ if __name__ == "__main__":
         lmtdata.add_metadata("velFrame","SRC")
         lmtdata.add_metadata("velType","FREQUENCY")
         lmtdata.add_metadata("z",0.0)                 # <-vlsr
-        
 
         # @todo data before feb-2018 were using a 32m dish
         dish = 50     # dish diameter in m
         freq = 90.0   # center-freq in GHz
-        beam = 1.15*c/(freq*dish)*(180/pi)/1e6    # now in degrees
+        beam = lmt_beam(freq, dish)
 
         band = dict()
         band["bandNum"] = int(1)
@@ -298,7 +366,6 @@ if __name__ == "__main__":
         band["formula"] = ""        # not applicable for RSR
         band["transition"] = ""     # not applicable for RSR
         band["bandName"] = "OTHER"  # we don't have special names for the spectral line bands
-        
         lmtdata.add_metadata("band",band)
         
     else:
