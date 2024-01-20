@@ -307,8 +307,8 @@ if __name__ == "__main__":
         band["bandNum"] = 1
         band["formula"]=line_form
         band["transition"]=line_trans
-        band["frequencyCenter"] = skyfreq*u.Unit("GHz")    # @todo  or should this be restfreq
-        band["velocityCenter"] = vlsr                      # @todo
+        band["frequencyCenter"] = restfreq*u.Unit("GHz")
+        band["velocityCenter"] = vlsr
         band["bandwidth"] = 2.5                            # @todo
         band["beam"] = lmt_beam(skyfreq)
         band["winrms"] = rms*u.Unit("mK")
@@ -329,8 +329,8 @@ if __name__ == "__main__":
             band["bandNum"] = 2
             band["formula"]='HCN'               #   @todo
             band["transition"]='1-0'            #   @todo
-            band["frequencyCenter"] = skyfreq*u.Unit("GHz")
-            band["velocityCenter"] = vlsr    # @todo
+            band["frequencyCenter"] = restfreq*u.Unit("GHz")
+            band["velocityCenter"] = vlsr
             band["bandwidth"] = 2.5          # @todo
             band["beam"] = lmt_beam(skyfreq)
             band["winrms"] = rms*u.Unit("mK")
