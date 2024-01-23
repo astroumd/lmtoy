@@ -15,7 +15,7 @@
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 # @todo   vlsr= only takes correct effect on the first run, not a re-run
 
-_version="seq_pipeline: 14-aug-2023"
+_version="seq_pipeline: 22-jan-2024"
 
 echo "LMTOY>> $_version"
 
@@ -231,6 +231,7 @@ if [ $numbands = -2 ]; then
     echo "numbands=1  # feb 2023 bug"                  >> $rc
     echo "skyfreq=$(echo $skyfreq | tabcols - 1)"      >> $rc
     echo "restfreq=$(echo $restfreq | tabcols - 1)"    >> $rc
+    echo "bandwidth=$(echo $bandwidth | tabcols - 1)"  >> $rc    
 fi
 
 # check if numbands=2 and only one restfreq given; if so, set numbands=1 etc.
@@ -239,18 +240,20 @@ if [ $numbands = 2 ]; then
     rf2="$(echo $restfreq | tabcols - 2)"
     echo "LMTOY>> rf1=$rf1 rf2=$rf2"
     if [ $rf1 = 0.0 ]; then
-	echo "numbands=1  # only RF2 used"             >> $rc
-	echo "skyfreq=$(echo $skyfreq | tabcols - 2)"  >> $rc
-	echo "restfreq=$(echo $restfreq | tabcols - 2)">> $rc
-	echo "oid=1    # not used yet"                 >> $rc
-	echo "bank=1"                                  >> $rc
+	echo "numbands=1  # only RF2 used"               >> $rc
+	echo "skyfreq=$(echo $skyfreq | tabcols - 2)"    >> $rc
+	echo "restfreq=$(echo $restfreq | tabcols - 2)"  >> $rc
+	echo "bandwidth=$(echo $bandwidth | tabcols - 2)">> $rc	
+	echo "oid=1    # not used yet"                   >> $rc
+	echo "bank=1"                                    >> $rc
     fi
     if [ $rf2 = 0.0 ]; then
-	echo "numbands=1  # only RF1 used"             >> $rc
-	echo "skyfreq=$(echo $skyfreq | tabcols - 1)"  >> $rc
-	echo "restfreq=$(echo $restfreq | tabcols - 1)">> $rc
-	echo "oid=0     # not used yet"                >> $rc
-	echo "bank=0"                                  >> $rc
+	echo "numbands=1  # only RF1 used"               >> $rc
+	echo "skyfreq=$(echo $skyfreq | tabcols - 1)"    >> $rc
+	echo "restfreq=$(echo $restfreq | tabcols - 1)"  >> $rc
+	echo "bandwidth=$(echo $bandwidth | tabcols - 1)">> $rc		
+	echo "oid=0     # not used yet"                  >> $rc
+	echo "bank=0"                                    >> $rc
     fi
 fi
 
@@ -281,7 +284,9 @@ if [ $bank != -1 ]; then
 elif [ $numbands == 2 ]; then
     # new style, April 2023 and beyond
     echo "LMTOY>> looping over numbands=$numbands restfreq=$restfreq"
+    IFS="," read -a skyfreqs <<< $skyfreq
     IFS="," read -a restfreqs <<< $restfreq
+    IFS="," read -a bandwidths <<< $bandwidth
     for b in $(seq 1 $numbands); do
 	bank=$(expr $b - 1)
 	oid=$bank    # not used yet
@@ -290,7 +295,9 @@ elif [ $numbands == 2 ]; then
 	if [ ! -e $rc1 ]; then
 	   cp $rc $rc1
 	   rc=$rc1
-	   echo "restfreq=${restfreqs[$bank]}  # special for bank=$bank " >> $rc
+	   echo "skyfreq=${skyfreqs[$bank]}      # special for bank=$bank " >> $rc
+	   echo "restfreq=${restfreqs[$bank]}    # special for bank=$bank " >> $rc
+	   echo "bandwidth=${bandwidths[$bank]}  # special for bank=$bank " >> $rc	   
 	fi
 	s_on=${src}_${obsnum}__${bank}
 	s_nc=${s_on}.nc
