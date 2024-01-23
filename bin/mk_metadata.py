@@ -33,7 +33,7 @@ from astropy.coordinates import SkyCoord
 import dvpipe.utils as utils
 from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 
-_version = "19-jan-2024"
+_version = "22-jan-2024"
 
 def header(rc, key, debug=False):
     """
@@ -241,9 +241,9 @@ if __name__ == "__main__":
     #     obsComment - comment string
     #     opacity225 - opacity at 225 GHz
     obsinfo = dict()
-    obsinfo["obsNum"]      = header(rc,"obsnum",debug)
-    obsinfo["subObsNum"]   = header(rc,"subobsnum",debug)      # normally 0 for us
-    obsinfo["scanNum"]     = header(rc,"scannum",debug)        # normally 1 for us
+    obsinfo["obsNum"]      = header(rc,"obsnum",debug)              # @todo  now an int ?
+    obsinfo["subObsNum"]   = int(header(rc,"subobsnum",debug))      # normally 0 for us
+    obsinfo["scanNum"]     = int(header(rc,"scannum",debug))        # normally 1 for us
     obsinfo["intTime"]     = float(header(rc,"inttime",debug))
     obsinfo["obsGoal"]     = "SCIENCE"
     obsinfo["obsComment"]  = "None"                        # @todo ???
@@ -261,11 +261,13 @@ if __name__ == "__main__":
     lmtdata.add_metadata("referenceID", "SLR")   # @todo
     lmtdata.add_metadata("totalIntTime", float(header(rc,"inttime",debug)))    # @todo for combos this is incorrect
 
-    # isCombined - bool, True if more than one obsnum/combined data
+    # isCombined - bool, True if more than one obsnum/combined data            @todo   is printed at 0.0
     if obsinfo["obsNum"].find("_") > 0:
         lmtdata.add_metadata("isCombined", True)
+        #lmtdata.add_metadata("isCombined", 1)
     else:
         lmtdata.add_metadata("isCombined", False)
+        #lmtdata.add_metadata("isCombined", 0)
 
     ra_deg  = float(header(rc,"ra", debug))
     dec_deg = float(header(rc,"dec",debug))
@@ -276,7 +278,7 @@ if __name__ == "__main__":
     lmtdata.add_metadata("targetName",      header(rc,"src",debug))
     lmtdata.add_metadata("RA",              ra_deg)
     lmtdata.add_metadata("DEC",             dec_deg)
-    lmtdata.add_metadata("calibrationLevel",1)
+    lmtdata.add_metadata("calibrationLevel",1)          # @todo   is printed as 1.0
     lmtdata.add_metadata('galLon',          glon)
     lmtdata.add_metadata('galLat',          glat)
     lmtdata.add_metadata('pipeVersion', "1.0")    # @todo
@@ -298,40 +300,48 @@ if __name__ == "__main__":
 
         numbands = int(header(rc,"numbands",debug))
 
+        # process bank=0
+
         skyfreq = float(header(rc,"skyfreq",debug))
         restfreq = float(header(rc,"restfreq",debug))
+        bw = float(header(rc,"bandwidth",debug))
         (line_form, line_trans) = guess_line(restfreq)
         rms = float(header(rc,"rms",debug))
-        
+        nchan = int(header(rc,"nchan"))
+        nchan0 = int(header(rc,"nchan0"))
+            
         band = dict()
         band["bandNum"] = 1
         band["formula"]=line_form
         band["transition"]=line_trans
         band["frequencyCenter"] = restfreq*u.Unit("GHz")
         band["velocityCenter"] = vlsr
-        band["bandwidth"] = 2.5                            # @todo
+        band["bandwidth"] = bw*u.Unit("GHz")
         band["beam"] = lmt_beam(skyfreq)
         band["winrms"] = rms*u.Unit("mK")
         band["qaGrade"] = 0;                               # 0 .. 5   (0 means not graded) @todo
-        band["nchan"] =  int(header(rc,"nchan"))
+        band["nchan"] =  nchan
         band["bandName"] = "OTHER"    # we don't have special names for the spectral line bands
         lmtdata.add_metadata("band",band)
 
         if numbands > 1:
+            # process bank=1
 
             rcfile = rc_file(pdir, 1)     # get bank=1; we only have 2 banks now
             rc = get_rc(rcfile, debug=debug)
 
             skyfreq = float(header(rc,"skyfreq",debug))
             restfreq = float(header(rc,"restfreq",debug))
+            bw = float(header(rc,"bandwidth",debug))
+            (line_form, line_trans) = guess_line(restfreq)            
             rms = float(header(rc,"rms",debug))
             
             band["bandNum"] = 2
-            band["formula"]='HCN'               #   @todo
-            band["transition"]='1-0'            #   @todo
+            band["formula"]=line_form
+            band["transition"]=line_trans
             band["frequencyCenter"] = restfreq*u.Unit("GHz")
             band["velocityCenter"] = vlsr
-            band["bandwidth"] = 2.5          # @todo
+            band["bandwidth"] = bw*u.Unit("GHz")
             band["beam"] = lmt_beam(skyfreq)
             band["winrms"] = rms*u.Unit("mK")
             band["qaGrade"] = 0;     # -1 .. 5 (0 means not graded)
