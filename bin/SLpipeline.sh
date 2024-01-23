@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 11-dec-2023"
+_version="SLpipeline: 22-jan-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -33,7 +33,7 @@ sdfits=0        # save the calibrated spectra in SDFITS (or netCDF)
 raw=0           # save the RAW data in a tar file?
 grun=1          # save the script generator?
 admit=0         # run ADMIT ?
-meta=0          # 1 or 2:  1=activate update for frontend db (for dataverse)
+meta=1          # 1 or 2:  1=activate update for frontend db (for dataverse)
 sleep=2         # add few seconds before running, allowing quick interrupt
 nproc=1         # number of processors to use (keep it at 1)
 rsync=""        # rsync address for the TAP file (used at LMT/malt)
