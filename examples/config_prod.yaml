@@ -1,0 +1,5 @@
+# vim: et ts=2 sts=2 sw=2
+---
+dvpipe:
+  dataverse:
+    base_url: https://dp.lmtgtm.org
