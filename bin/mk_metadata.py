@@ -176,7 +176,7 @@ def guess_line(restfreq, debug=False):
             if debug:
                 print("Found",l[1],l[2])
             return (l[1],l[2])
-    return ("None","None")
+    return ("Unknown","Unknown")
 
     
 if __name__ == "__main__":
@@ -210,6 +210,8 @@ if __name__ == "__main__":
     instrument = header(rc,"instrument", debug)
     if instrument == "SEQ":
         instrument = "SEQUOIA"
+    if instrument == "1MM":
+        instrument = "MSIP1MM"
 
     # open the LMG and write some common metadata
     # -- see also example() in lmtmetadatagroup.py
@@ -284,8 +286,8 @@ if __name__ == "__main__":
     lmtdata.add_metadata('pipeVersion', "1.0")    # @todo
 
     
-    if instrument == "SEQUOIA":
-
+    if instrument == "SEQUOIA" or instrument == "MSIP1MM":     # @todo this is only for mapping so far
+   
         # @todo deal with other obspgm's, this is still Map only
 
         rcfile = rc_file(pdir, 0)     # get bank=0, should always be present
