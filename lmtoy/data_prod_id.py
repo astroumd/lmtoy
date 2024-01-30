@@ -21,7 +21,7 @@ def _make_unique_id(obsnums, is_sorted=False):
 
     return unique_id
 
-def make_lmtoy_data_prod_id(obsnums, n=-1, hash_len=7):
+def make_lmtoy_data_prod_id(obsnums, n=-1, hash_len=8):
     """Return the reference ID for lmtoy data product
        
     Input:
@@ -42,7 +42,8 @@ def make_lmtoy_data_prod_id(obsnums, n=-1, hash_len=7):
     uid = _make_unique_id(obsnums, is_sorted=True)
     #return f"o{obsnum0}_c{n_obs}_{uid[:hash_len]}"        # toltec combo
     #return f"{obsnum0}_{obsnum1}_{uid[:hash_len]}_{n}"
-    return f"{obsnum0}_{obsnum1}_{uid[:hash_len]}"
+    #return f"{obsnum0}_{obsnum1}_{uid[:hash_len]}"
+    return f"{obsnum0}_{obsnum1}__{uid[:hash_len//2]}_{uid[hash_len//2:hash_len]}"
 
 if __name__ == '__main__':
 
