@@ -1,6 +1,6 @@
 # TODO's and ISSUES
 
-## Planned for version 1.1 (January 1, 2024)
+## Planned for version 1.1 (March 1, 2024)
 
 - active github issues:  https://github.com/astroumd/lmtoy/issues ; Some important ones:
   - 48: allow missing roach files
@@ -8,7 +8,6 @@
   - 46: SEQ low power can crash pipeline
   - 45: RSR not commutative **+Min**
 
-- RSR needs an obsdate in the header
 - autorun mode (restart=2) [partially implemented]
 
 - finalize all metadata for DV   [meta=0,1,2] **+Marc**
@@ -20,7 +19,7 @@
   - etc/parameters.txt
   - lmt_web_lite
 
-- FITS export option for spectra
+- FITS export option for spectra [mostly done, but not checked with dysh]
 
 - SEQ/Bs only one bank works now [depending if observations planned]
 - SEQ/Ps not implemented [depending if observations planned]
