@@ -262,16 +262,20 @@ if __name__ == "__main__":
     lmtdata.add_metadata("obsInfo",obsinfo)
 
     if isCombined:
-        # assemble all obsinfo's for all obsnum's in the combo - this single one is just a hack        
-        if True:
-            # loop over all obsnum's
-            for o in obsnums.split(','):
-                fn = '../%s/lmtmetadata.yaml' % o
-                print("YAML Reading",fn)
-                fp = open(fn)
+        # assemble all obsinfo's for all obsnum's in the combo 
+        for o in obsnums.split(','):
+            fn = '../%s/lmtmetadata.yaml' % o
+            print("YAML Reading",fn)
+            fp = open(fn)
+            if False:
+                # native yaml
                 y = yaml.safe_load(fp)
                 o = y['obsInfo'][0]
-                lmtdata.add_metadata("obsInfo",o)
+            else:
+                # directly using out dvpipe
+                y = LMTMetadataBlock(yamlfile=fn,load_data=True)
+                o = y.metadata['obsInfo'][0]
+            lmtdata.add_metadata("obsInfo",o)
     
     # ref_id - string identifier. Following Toltec convention:
     #    * Single obsnum:  {obsnum}_{reduction_id} 
