@@ -3,7 +3,7 @@
 ## Planned for version 1.1 (March 1, 2024)
 
 - active github issues:  https://github.com/astroumd/lmtoy/issues ; Some important ones:
-  - 48: allow missing roach files
+  - 48: allow missing roach files  **Kamal**
   - 47: "wtn" has the wrong beam plotted
   - 46: SEQ low power can crash pipeline
   - 45: RSR not commutative **+Min**
@@ -39,10 +39,10 @@
 - FITS export option for spectra [sp2sdfits.py now exists]
 - the never finished manual (flow diagrams w/ mermaid?)
 
-## Longer term wishes (March 2024)
+## Longer term wishes (>March 2024)
 
 - SpecFile (netCDF format) to be replaced with an SDFITS file.
-- integrations with dysh  (e.g. sp2sdfits)
+- interoperability with dysh  (e.g. sp2sdfits)
 - advanced mapping programs (cf. dysh)
 - SDHDF ?
 - docker image for lmtoy
