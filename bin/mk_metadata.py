@@ -33,8 +33,9 @@ import astropy.units as u
 from astropy.coordinates import SkyCoord
 import dvpipe.utils as utils
 from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
+from dvpipe.pipelines.metadatablock import MetadataBlock
 
-_version = "1-feb-2024"
+_version = "2-feb-2024"
 
 def header(rc, key, debug=False):
     """
@@ -267,13 +268,13 @@ if __name__ == "__main__":
             fn = '../%s/lmtmetadata.yaml' % o
             print("YAML Reading",fn)
             fp = open(fn)
-            if False:
+            if True:
                 # native yaml
                 y = yaml.safe_load(fp)
                 o = y['obsInfo'][0]
             else:
-                # directly using out dvpipe
-                y = LMTMetadataBlock(yamlfile=fn,load_data=True)
+                # directly using out dvpipe  @todo  this doesn't work
+                y = MetadataBlock(yamlfile=fn,load_data=True)
                 o = y.metadata['obsInfo'][0]
             lmtdata.add_metadata("obsInfo",o)
     
