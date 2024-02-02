@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 22-jan-2024"
+_version="SLpipeline: 2-feb-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -332,6 +332,7 @@ echo "date=\"$(lmtoy_date)\"     # end " >> $pdir/lmtoy_$obsnum.rc
 
 # make a metadata yaml file for later ingestion into DataVerse
 if [ $meta -gt 0 ]; then
+    cd $pdir
     echo "LMTOY>> make metadata ($meta) for DataVerse in $pdir"
     if [ $meta -gt 1 ]; then
 	# @todo will this work reliably on NFS mounted media?
@@ -339,6 +340,7 @@ if [ $meta -gt 0 ]; then
 	flock --verbose $db.flock mk_metadata.py -y  $pdir/lmtmetadata.yaml -f $db $pdir 
     else
 	mk_metadata.py -y  $pdir/lmtmetadata.yaml $pdir
+	cp $pdir/lmtmetadata.yaml $WORK_LMT/$ProjectId/${obsnum}_lmtmetadata.yaml
     fi
 fi
 # produce TAP, RSRP, RAW tar files, whichever are requested.
@@ -374,15 +376,18 @@ fi
 
 if [ $srdp != 0 ]; then
     echo "Creating Scientific Ready Data Producs (SRDP) in $pidir/${obsnum}_SRDP.tar"
-    tar -cf $ProjectId/${obsnum}_SRDP.tar --exclude="*.nc" $ProjectId/$obsnum
+    #tar -cf $ProjectId/${obsnum}/${obsnum}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/$obsnum
+    tar -cf $ProjectId/${obsnum}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/$obsnum    
 fi
 
 if [ $sdfits != 0 ]; then
     echo "Creating spectra (SDFITS) in $pidir/${obsnum}_SDFITS.tar"
     if [ -e  $ProjectId/$obsnum/*.nc ]; then
-	tar -cf $ProjectId/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
+	#tar -cf $ProjectId/${obsnum}/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
+	tar -cf $ProjectId/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc	
     else
-	tar -cf $ProjectId/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md
+	#tar -cf $ProjectId/${obsnum}/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md
+	tar -cf $ProjectId/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md	
     fi
 fi
 
