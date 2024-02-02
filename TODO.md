@@ -11,7 +11,7 @@
 - autorun mode (restart=2) [partially implemented]
 
 - finalize all metadata for DV   [meta=0,1,2] **+Marc**
-- fix metadata for combination runs (obsInfo)
+- fix metadata for combination runs (obsInfo) - can be delayed as we don't combine in the archive yet
 
 - Webrun
   - verify.py ; obsmode (INSTR/MODE)

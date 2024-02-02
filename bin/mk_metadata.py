@@ -27,13 +27,14 @@ generic example is given.
 import os
 import sys
 import math
+import yaml
 from docopt import docopt
 import astropy.units as u
 from astropy.coordinates import SkyCoord
 import dvpipe.utils as utils
 from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 
-_version = "22-jan-2024"
+_version = "1-feb-2024"
 
 def header(rc, key, debug=False):
     """
@@ -227,12 +228,16 @@ if __name__ == "__main__":
     # 0 = unprocessed, 1 = pipeline processed, 2 = DA improvement
     # toltec has different definitions and includes level 3.
     # Leave this set to 1 for SLR.
-    lmtdata.add_metadata("processingLevel", 1)     # @todo could be 1 or 2 
+    lmtdata.add_metadata("processingLevel", 1)     # @todo could be 1 or 2
 
-    #lmtdata.add_metadata("obsnum",       header(rc,"obsnum",debug))
-    #lmtdata.add_metadata("subobsnum",    header(rc,"subobsnum",debug))
-    #lmtdata.add_metadata("scannum",      header(rc,"scannum",debug))
-    #lmtdata.add_metadata("obsnumList",   header(rc,"obsnum_list",debug))
+    # isCombined - bool, True if more than one obsnum/combined data            @todo   is printed as 0.0
+    if header(rc,"obsnum").find("_") > 0:
+        isCombined = True
+        obsnums = header(rc,"obsnum_list")
+    else:
+        isCombined = False
+        obsnums = ""
+    lmtdata.add_metadata("isCombined", isCombined)
 
     # NEW:  obsInfo dict - one per true obsnum
     #     obsNum - int (must now be an number!)
@@ -243,15 +248,34 @@ if __name__ == "__main__":
     #     obsComment - comment string
     #     opacity225 - opacity at 225 GHz
     obsinfo = dict()
-    obsinfo["obsNum"]      = header(rc,"obsnum",debug)              # @todo  now an int ?
+    obsinfo["obsNum"]      = header(rc,"obsnum",debug)           
     obsinfo["subObsNum"]   = int(header(rc,"subobsnum",debug))      # normally 0 for us
     obsinfo["scanNum"]     = int(header(rc,"scannum",debug))        # normally 1 for us
     obsinfo["intTime"]     = float(header(rc,"inttime",debug))
     obsinfo["obsGoal"]     = "SCIENCE"
-    obsinfo["obsComment"]  = "None"                        # @todo ???
+    if isCombined:
+        obsinfo["obsComment"]  = "Combining %s" % obsnums
+    else:
+        obsinfo["obsComment"]  = "None"                        # @todo ???
     obsinfo["opacity225"]  = float(header(rc,"tau",debug))
     obsinfo["obsDate"]     = header(rc,"date_obs",debug)    
     lmtdata.add_metadata("obsInfo",obsinfo)
+
+    if isCombined:
+        # assemble all obsinfo's for all obsnum's in the combo 
+        for o in obsnums.split(','):
+            fn = '../%s/lmtmetadata.yaml' % o
+            print("YAML Reading",fn)
+            fp = open(fn)
+            if False:
+                # native yaml
+                y = yaml.safe_load(fp)
+                o = y['obsInfo'][0]
+            else:
+                # directly using out dvpipe
+                y = LMTMetadataBlock(yamlfile=fn,load_data=True)
+                o = y.metadata['obsInfo'][0]
+            lmtdata.add_metadata("obsInfo",o)
     
     # ref_id - string identifier. Following Toltec convention:
     #    * Single obsnum:  {obsnum}_{reduction_id} 
@@ -262,14 +286,6 @@ if __name__ == "__main__":
     #lmtdata.add_metadata("referenceID", header(rc,"referenceId",debug))
     lmtdata.add_metadata("referenceID", "SLR")   # @todo
     lmtdata.add_metadata("totalIntTime", float(header(rc,"inttime",debug)))    # @todo for combos this is incorrect
-
-    # isCombined - bool, True if more than one obsnum/combined data            @todo   is printed at 0.0
-    if obsinfo["obsNum"].find("_") > 0:
-        lmtdata.add_metadata("isCombined", True)
-        #lmtdata.add_metadata("isCombined", 1)
-    else:
-        lmtdata.add_metadata("isCombined", False)
-        #lmtdata.add_metadata("isCombined", 0)
 
     ra_deg  = float(header(rc,"ra", debug))
     dec_deg = float(header(rc,"dec",debug))
@@ -337,7 +353,8 @@ if __name__ == "__main__":
             bw = float(header(rc,"bandwidth",debug))
             (line_form, line_trans) = guess_line(restfreq)            
             rms = float(header(rc,"rms",debug))
-            
+
+            band = dict()
             band["bandNum"] = 2
             band["formula"]=line_form
             band["transition"]=line_trans
