@@ -28,7 +28,8 @@ Instructions for installing **LMTOY**:
    Make sure you can convert a pdf to png, on some machines the file /etc/ImageMagick-6/policy.xml did not give
    mortal users enough permission.
                <policy domain="coder" rights="read | write" pattern="PDF" />
-
+   this requires root priviliges. There is also a way for each user to do it.
+               cp $LMTOY/etc/policy.xml ~/.config/ImageMagick/policy.xml
   
 2) Install LMTOY (e.g. do this within the previously created ~/LMT)
 
