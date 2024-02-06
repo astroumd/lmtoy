@@ -2,16 +2,25 @@
 
 ## Planned for version 1.1 (March 1, 2024)
 
-- active github issues:  https://github.com/astroumd/lmtoy/issues ; Some important ones:
+- active github issues:  https://github.com/astroumd/lmtoy/issues
   - 48: allow missing roach files  **Kamal**
   - 47: "wtn" has the wrong beam plotted
   - 46: SEQ low power can crash pipeline
   - 45: RSR not commutative **+Min**
+  - 36: final DataVerse items **marc**
+  - 35: inttime not correct - we need the ON time only,not ON+OFF+CAL
 
+- python versions via install_anaconda3:
+  version=2021.04    # 3.8.8     aplpy OK, some spyder complaints
+  version=2022.10    # 3.9.13
+  version=2023.03-1  # 3.10.9    aplpy fails
+  version=2023.09-0  # 3.11.5
+
+
+- re-install with a new python:
+  make pip install_lmtslr install_dreampy3 install_dvpipe install_maskmoment
+  
 - autorun mode (restart=2) [partially implemented]
-
-- finalize all metadata for DV   [meta=0,1,2] **+Marc**
-- fix metadata for combination runs (obsInfo) - can be delayed as we don't combine in the archive yet
 
 - Webrun
   - verify.py ; obsmode (INSTR/MODE)
