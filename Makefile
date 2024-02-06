@@ -238,6 +238,11 @@ install_python:
 lmtoy_venv:
 	python3 -m venv lmtoy_venv
 
+## basic:     pip install all the basic but essential ones
+basic:
+	make pip install_lmtslr install_dreampy3 install_dvpipe install_maskmoment
+
+## pip:       basic requirement and lmtoy itself
 pip:
 	pip3 install -r requirements.txt
 	pip3 install -e .
@@ -335,30 +340,31 @@ common: lmtoy_venv
 
 # ---------------------------- benchmarks -------------------------------------------------------------------------------------------
 
+META  = 1
 ADMIT = 0
 bench:  bench1 bench2
 
 ## bench1:   RSR benchmark: obsnum=33551
 bench1:
-	$(TIME) SLpipeline.sh obsnum=33551 restart=1 linecheck=1 meta=0 admit=$(ADMIT)
+	$(TIME) SLpipeline.sh obsnum=33551 restart=1 linecheck=1 admit=$(ADMIT) meta=$(META)
 	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench1.txt'
 	@echo "================================================================================================================="
 	@echo xdg-open  $(WORK_LMT)/2014ARSRCommissioning/33551/README.html
 
 ## bench1a:  RSR benchmark with identical combination
 bench1a:
-	$(TIME) SLpipeline.sh obsnums=33551,33551 restart=1 meta=0 admit=$(ADMIT)
+	$(TIME) SLpipeline.sh obsnums=33551,33551 restart=1 admit=$(ADMIT) meta=$(META)
 
 ## bench2:   SEQ benchmark: obsnum=79448
 bench2:
-	$(TIME) SLpipeline.sh obsnum=79448 restart=1 map_coord_use=1 meta=0 maskmoment=$(ADMIT) admit=$(ADMIT)
+	$(TIME) SLpipeline.sh obsnum=79448 restart=1 map_coord_use=1 maskmoment=$(ADMIT) admit=$(ADMIT) meta=$(META)
 	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench2.txt'
 	@echo "========================================================================================"
 	@echo xdg-open  $(WORK_LMT)/2018S1SEQUOIACommissioning/79448/README.html
 
 ## bench2a:  SEQ benchmark with identical combination
 bench2a:
-	$(TIME) SLpipeline.sh obsnums=79448,79448 restart=1 meta=0 admit=$(ADMIT)
+	$(TIME) SLpipeline.sh obsnums=79448,79448 restart=1 admit=$(ADMIT) meta=$(META)
 
 ## bench5:   pure CPU bench from NEMO (man 5 bench)
 bench5:
