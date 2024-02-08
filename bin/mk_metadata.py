@@ -253,23 +253,6 @@ if __name__ == "__main__":
     #     obsGoal - SCIENCE or OTHER
     #     obsComment - comment string
     #     opacity225 - opacity at 225 GHz (can be 0)
-    obsinfo = dict()
-    obsinfo["obsNum"]      = obsnum
-    obsinfo["subObsNum"]   = int(header(rc,"subobsnum",debug))      # normally 0 for us
-    obsinfo["scanNum"]     = int(header(rc,"scannum",debug))        # normally 1 for us
-    obsinfo["intTime"]     = float(header(rc,"inttime",debug))
-    obsinfo["obsGoal"]     = "SCIENCE"
-    if isCombined:
-        obsinfo["obsComment"]  = "Combining %s" % obsnums
-    else:
-        obsinfo["obsComment"]  = "None"                        # @todo ???
-    opacity225 = float(header(rc,"tau",debug))
-    if opacity225 == 0.0:
-        obsinfo["opacity225"]  = -1.0
-    else:
-        obsinfo["opacity225"]  = opacity225
-    obsinfo["obsDate"]     = header(rc,"date_obs",debug)    
-    lmtdata.add_metadata("obsInfo",obsinfo)
 
     if isCombined:
         # assemble all obsinfo's for all obsnum's in the combo 
@@ -288,8 +271,25 @@ if __name__ == "__main__":
             lmtdata.add_metadata("obsInfo",o)
         ref_id = data_prod_id.make_lmtoy_data_prod_id(obsnums.split(','))
     else:
+        obsinfo = dict()
+        obsinfo["obsNum"]      = int(obsnum)
+        obsinfo["subObsNum"]   = int(header(rc,"subobsnum",debug))      # normally 0 for us
+        obsinfo["scanNum"]     = int(header(rc,"scannum",debug))        # normally 1 for us
+        obsinfo["intTime"]     = float(header(rc,"inttime",debug))
+        obsinfo["obsGoal"]     = "SCIENCE"
+        if isCombined:
+            obsinfo["obsComment"]  = "Combining %s" % obsnums
+        else:
+            obsinfo["obsComment"]  = "None"                        # @todo ???
+        opacity225 = float(header(rc,"tau",debug))
+        if opacity225 == 0.0:
+            obsinfo["opacity225"]  = -1.0
+        else:
+            obsinfo["opacity225"]  = opacity225
+        obsinfo["obsDate"]     = header(rc,"date_obs",debug)    
+        lmtdata.add_metadata("obsInfo",obsinfo)
         ref_id = obsnum
-    
+
     # ref_id - string identifier. 
     lmtdata.add_metadata("referenceID", ref_id)
     inttime = float(header(rc,"inttime",debug))
