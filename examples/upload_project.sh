@@ -85,9 +85,9 @@ done;
 # upload and publish (-b major)
 for index in ${out}/*.yaml; do
     if [ "$verbose" -ne 0 ] || [ $dryrun -ne 0 ] ; then
-        echo "dvpipe -c config_prod.yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p lmtdata"
+        echo "dvpipe -c config_prod.yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p $dvname
     fi
     if [ "$dryrun" -eq 0 ];then
-        dvpipe -c config_prod.yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p lmtdata
+        dvpipe -c config_prod.yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p $dvname
     fi
 done
