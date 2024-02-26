@@ -7,6 +7,7 @@
 # Valid arguments are:
 #
 # dryrun   - If non-zero, just echo commands, don't execute them
+# dvname   - Name of the dataverse to upload to. Default: lmtdata
 # envfile  - file with API credentials
 # in - input directory with project/obsnum/*.tar
 # out - output dir
@@ -14,13 +15,14 @@
 #             If 1, existing directory will be removed. 
 #             If anything else , script will exit if $out exists.
 # verbose  - If non-zero, echo dvpipe commands before executing
-# @TODO add a project= key allow selection of specific project?
+# @todo add a project= key allow selection of specific project?
 #-------------------------------------------------------------
 
 #-------------------------------------------------------------
 # Defaults:
 #-------------------------------------------------------------
 dryrun=0
+dvname=lmtdata
 envfile=su_prod.env
 in=data_prod  # Ask Zhiyuan, this may be required to be data_prod in dvpipe
 out=ready_for_upload
