@@ -66,9 +66,10 @@ A reminder on the directory locations:
 and password protected URLs:
 
        http://taps.lmtgtm.org/lmtslr/lmtoy_run/        - LMTOY pipeline index list to all projects
-       http://taps.lmtgtm.org/lmtslr/2021-S1-US-3/     - Example of a ProjectId
-       http://taps.lmtgtm.org/lmtslr/2021-S1-US-3/TAP  - Example of the lightweight TAPs of a project
-       https://www.astro.umd.edu/~teuben/work_lmt/     - peter's non-official experiments
+       http://taps.lmtgtm.org/lmtslr/$PID              - Example of a ProjectId
+       http://taps.lmtgtm.org/lmthelpdesk/$USER/$PID   - Example of a ProjectId done by a DA
+       http://taps.lmtgtm.org/lmtslr/$PID/TAP          - Example of the lightweight TAPs of a project
+       https://www.astro.umd.edu/~teuben/work_lmt/     - peter's LMTOY experiments
        http://wiki.lmtgtm.org/lmtwiki
 
 ## 2.1 Steps
@@ -129,6 +130,10 @@ and password protected URLs:
 
        cd $LMTOY/lmtoy_run
        make index
+
+  The result of this can be seen via
+
+       xdg-open http://taps.lmtgtm.org/lmtslr/lmtoy_run/
 
 * DA team monitors what has been reduced
   - re-run *dark* pipeline and see if parameters needs adjusting (mk_runs.py and comments.txt)
