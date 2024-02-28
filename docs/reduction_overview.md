@@ -1,4 +1,4 @@
-# Outline for Data Reduction flow for Spectra Line Receivers:
+# 1. Outline for Data Reduction flow for Spectra Line Receivers:
 
 1. Observations for an obsnum completed.
 2. data files for just completed obsnum transferred to disk on data reduction
@@ -30,7 +30,7 @@
 11. Proposer transfers home their final data cubes/spectra with great happiness.
 
 
-## List of Steps for Proposer from Grant's email of May 10.
+## 1.1 List of Steps for Proposer from Grant's email of May 10.
 
 Here's the list of steps I was talking about during the telecon.  This
 was just me thinking out loud, I could be convinced of other
@@ -51,7 +51,7 @@ What steps does a user of the LMT need to take from the post-proposal acceptance
 10. Iterate by going back to step 5 if needed.
 
 
-# Overview of the LMTOY pipeline steps
+# 2. Overview of the LMTOY pipeline steps
 
 LMTOY has been installed at **malt** (@LMT) and **unity** (@UMass), plus development copies
 exist at UMD and Peter's laptop.
@@ -71,7 +71,7 @@ and password protected URLs:
        https://www.astro.umd.edu/~teuben/work_lmt/     - peter's non-official experiments
        http://wiki.lmtgtm.org/lmtwiki
 
-## Steps
+## 2.1 Steps
 
 1. We skip the many steps prior to an observation. This list starts with RAW data showing up on malt
   (recall the data taking computer needs to rsync the RAW data to malt first, so there is a small
@@ -131,3 +131,61 @@ and password protected URLs:
        make index
 
 * DA team monitors what has been reduced
+
+* Archivie ingestion. There are a  few unchecked items for the *yaml* file:
+  - **qaGrade**  (see discussion below)
+  - **obsComment**   - currently None
+  - **publicDate**   - currently 2099-12-31
+
+
+## Grading a project (email from Lee)
+
+The DAs assign a grade -1 or 1-5 for each OBSNUM. They are approximate
+estimations of the quality of the data, not the signal level, The considerations
+that go into a grade:
+
+1, absolute tau
+2. stability of tau over time
+3. rms compared to expected for frequency, time, and elevation of observation
+4. stability of system temperature
+5. number of good beams compared to expected
+6. baseline stability/hardware issues/pointing/focus issues
+
+Definitions are grades:
+
+* -1: QAFAIL -- hardware/pointing/focus issues, system temperature >
+  10x expectation rms > 10x expectation. The expectation is that these
+  data are unusable for science.
+
+* 1: bad but maybe usable-- tau/system temperature highly variable with
+  time (>50%, after consideration of elevation effect), system
+  temperature > 5x normal, missing > 50% of beams. highly variable
+  baselines
+
+* 2: poor -- rms > 4x expectation, tau/system temperature variable with
+  time >20% level, hardware issue that affect the waterfall plot for
+  many beams
+
+* 3: typical, OK -- nothing wrong with the data. reasonable stability
+  of tau and system temperature, nominal number of beams and no major
+  structures in waterfall plot.
+
+* 4: good -- tau better than typical, no apparent hardware
+  problems. Waterfall plots look good for good beams. rms within
+  factor of 2 of expectation
+
+* 5: excellent -- very stable tau and system temperature, no apparent
+  hardware problems. tau < 0.2 at frequency of observation
+
+In this grading system, all data graded 3,4,5 should be usable for science.
+Hopefully these three grades should include >80% of the data.
+
+Grade of 2 means that the PI should look closely at the data and see if
+it is appropriate to be used.
+
+Gard of 1 means that the PI should carefully consider the problem with the
+data before using it. The data may be usable in limited situations.
+
+In counting the time accumulated for a project, the QA grade would be considered.
+Grades 3,4,5 would definitely be considered successful. The observatory will
+need to decide about grade2.
