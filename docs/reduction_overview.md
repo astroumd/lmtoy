@@ -112,7 +112,7 @@ and password protected URLs:
   It also depends on having symlinks between the $WORK_LMT/$PID and $WORK_LMT/lmtoy_run/
 
   It would be useful to have the phase-2 spreadsheet here, so some of the pipeline parameters
-  can be extracted.  Are we allowed to keep a copy here ?
+  can be extracted. QUESTION: *Are we allowed to keep a copy here ?*
 
   - add obsnums of the source (there's a script than can make a template)
 
@@ -131,11 +131,14 @@ and password protected URLs:
        make index
 
 * DA team monitors what has been reduced
+  - re-run *dark* pipeline and see if parameters needs adjusting (mk_runs.py and comments.txt)
+  
+   
 
 * Archive ingestion. There are a  few unchecked items for the *yaml* file:
   - **qaGrade**  (see discussion below)
   - **publicDate**   - currently 2099-12-31
-  - **obsComment**   - currently None, usse shift-report? use comments.txt ?
+  - **obsComment**   - currently None, use shift-report? use comments.txt ?
 
 
 ## Grading a project (email from Lee)
