@@ -132,10 +132,10 @@ and password protected URLs:
 
 * DA team monitors what has been reduced
 
-* Archivie ingestion. There are a  few unchecked items for the *yaml* file:
+* Archive ingestion. There are a  few unchecked items for the *yaml* file:
   - **qaGrade**  (see discussion below)
-  - **obsComment**   - currently None
   - **publicDate**   - currently 2099-12-31
+  - **obsComment**   - currently None, usse shift-report? use comments.txt ?
 
 
 ## Grading a project (email from Lee)
