@@ -1,5 +1,6 @@
-#!/bin/bash 
+#!/bin/bash
 
+#--HELP 
 #-------------------------------------------------------------
 # Script to prepare and upload projects to LMT Dataverse
 #
@@ -7,7 +8,7 @@
 # Valid arguments are:
 #
 # dryrun   - If non-zero, just echo commands, don't execute them
-# envfile  - file with API credentials
+# envfile  - file with API credentials  [$HOME/.ssh/su_prod.env]
 # in - input directory with project/obsnum/*.tar
 # out - output dir
 # overwrite - overwrite the output dir.  
@@ -21,15 +22,22 @@
 # Defaults:
 #-------------------------------------------------------------
 dryrun=0
-envfile=su_prod.env
+envfile=$HOME/.ssh/su_prod.env
 in=data_prod  # Ask Zhiyuan, this may be required to be data_prod in dvpipe
 out=ready_for_upload
 overwrite=0
 verbose=0
+#--HELP
 
 #-------------------------------------------------------------
 # simple keyword=value command line parser for bash
 #-------------------------------------------------------------
+if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+    set +x
+    awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
+    exit 0
+fi
+
 for arg in "$@"; do
   export "$arg"
 done
