@@ -1,4 +1,4 @@
-# Outline for Data Reduction flow for Spectra Line Receivers:
+# 1. Outline for Data Reduction flow for Spectra Line Receivers:
 
 1. Observations for an obsnum completed.
 2. data files for just completed obsnum transferred to disk on data reduction
@@ -30,9 +30,12 @@
 11. Proposer transfers home their final data cubes/spectra with great happiness.
 
 
-## List of Steps for Proposer from Grant's email of May 10.
+## 1.1 List of Steps for Proposer from Grant's email of May 10.
 
-Here's the list of steps I was talking about during the telecon.  This was just me thinking out loud, I could be convinced of other approaches.  I initially wrote this list to help identify what software we're missing on the TolTEC side.
+Here's the list of steps I was talking about during the telecon.  This
+was just me thinking out loud, I could be convinced of other
+approaches.  I initially wrote this list to help identify what
+software we're missing on the TolTEC side.
 
 What steps does a user of the LMT need to take from the post-proposal acceptance period to the end of data reduction?
 
@@ -46,3 +49,151 @@ What steps does a user of the LMT need to take from the post-proposal acceptance
 8. Download and review the data reduction products (need a plan and new software for this, baseline is to use a Dataverse instance)
 9. Characterize the reduction quality 
 10. Iterate by going back to step 5 if needed.
+
+
+# 2. Overview of the LMTOY pipeline steps
+
+LMTOY has been installed at **malt** (@LMT) and **unity** (@UMass), plus development copies
+exist at UMD and Peter's laptop.
+
+A reminder on the directory locations:
+
+       $LMTOY                 LMTOY software tree
+       $DATA_LMT              raw data
+       $WORK_LMT              reduced data are in a Project_Id/ObsNum hierarachy
+       $WORK_LMT/lmtoy_run    script generators
+
+and password protected URLs:
+
+       http://taps.lmtgtm.org/lmtslr/lmtoy_run/        - LMTOY pipeline index list to all projects
+       http://taps.lmtgtm.org/lmtslr/$PID              - Example of a ProjectId
+       http://taps.lmtgtm.org/lmthelpdesk/$USER/$PID   - Example of a ProjectId done by a DA
+       http://taps.lmtgtm.org/lmtslr/$PID/TAP          - Example of the lightweight TAPs of a project
+       https://www.astro.umd.edu/~teuben/work_lmt/     - peter's LMTOY experiments
+       http://wiki.lmtgtm.org/lmtwiki
+
+## 2.1 Steps
+
+1. We skip the many steps prior to an observation. This list starts with RAW data showing up on malt
+  (recall the data taking computer needs to rsync the RAW data to malt first, so there is a small
+   delay)
+      
+* On **malt** we run the pipeline watcher from a special directory from the **lmtslr** user account
+  where LMTOY is installed:
+
+       cd SLpipeline.d
+       SLpipeline_run.sh
+
+  This will keep a running log what obsnums are being taken, and their instrument, obsgoal etc.
+
+  The **lmtinfo.py** command will see new obsnums as they have been processed by the **lmtinfo.py build**
+  process. This is usually fast on **malt** as we don't keep a lot of data here.
+
+  As soon as new "science" data arrive, it will run the pipeline, summarize some results in red
+  on the screen, and copy the lightweight TAP's to unity.
+ 
+  NOTE we have no idea what projects and obsnums are being done. All we see on screen is
+
+  ...
+
+  TODO: check if a new project is now properly installed on **Unity** in their supposed location
+  $WORK_LMT/$PID/TAP 
+
+
+* On **unity** we need to ensure the TAP's are visible in the TAP URL of the ProjectID; this may
+  need manual labor. (already done via malt?)
+
+* The script generator needs to be be prepared.
+
+  The steps are detailed in lmtoy_run/README.md, and the important directories are:
+  
+       $WORK_LMT/$PID                        where the data will go
+       $WORK_LMT/lmtoy_run/lmtoy_$PID        where the script generator lives (also on github)
+
+  It also depends on having symlinks between the $WORK_LMT/$PID and $WORK_LMT/lmtoy_run/
+
+  It would be useful to have the phase-2 spreadsheet here, so some of the pipeline parameters
+  can be extracted. QUESTION: *Are we allowed to keep a copy here ?*
+
+  - add obsnums of the source (there's a script than can make a template)
+
+  - add comments to comments.txt
+
+  - "make runs" : created the *run files
+
+  - "sbatch_lmtoy.sh *.run1a
+
+  - "make summary"    (this depends on the symlinks)
+
+* A daily summary of all PID is in $WORK_LMT/lmtoy_run/README.html and visible to the pipeline admins,
+  (but not the PI !!)
+
+       cd $LMTOY/lmtoy_run
+       make index
+
+  The result of this can be seen via
+
+       xdg-open http://taps.lmtgtm.org/lmtslr/lmtoy_run/
+
+* DA team monitors what has been reduced
+  - re-run *dark* pipeline and see if parameters needs adjusting (mk_runs.py and comments.txt)
+  
+   
+
+* Archive ingestion. There are a  few unchecked items for the *yaml* file:
+  - **qaGrade**  (see discussion below)
+  - **publicDate**   - currently 2099-12-31
+  - **obsComment**   - currently None, use shift-report? use comments.txt ?
+
+
+## Grading a project (email from Lee)
+
+The DAs assign a grade -1 or 1-5 for each OBSNUM. They are approximate
+estimations of the quality of the data, not the signal level, The considerations
+that go into a grade:
+
+1, absolute tau
+2. stability of tau over time
+3. rms compared to expected for frequency, time, and elevation of observation
+4. stability of system temperature
+5. number of good beams compared to expected
+6. baseline stability/hardware issues/pointing/focus issues
+
+Definitions are grades:
+
+* -1: QAFAIL -- hardware/pointing/focus issues, system temperature >
+  10x expectation rms > 10x expectation. The expectation is that these
+  data are unusable for science.
+
+* 1: bad but maybe usable-- tau/system temperature highly variable with
+  time (>50%, after consideration of elevation effect), system
+  temperature > 5x normal, missing > 50% of beams. highly variable
+  baselines
+
+* 2: poor -- rms > 4x expectation, tau/system temperature variable with
+  time >20% level, hardware issue that affect the waterfall plot for
+  many beams
+
+* 3: typical, OK -- nothing wrong with the data. reasonable stability
+  of tau and system temperature, nominal number of beams and no major
+  structures in waterfall plot.
+
+* 4: good -- tau better than typical, no apparent hardware
+  problems. Waterfall plots look good for good beams. rms within
+  factor of 2 of expectation
+
+* 5: excellent -- very stable tau and system temperature, no apparent
+  hardware problems. tau < 0.2 at frequency of observation
+
+In this grading system, all data graded 3,4,5 should be usable for science.
+Hopefully these three grades should include >80% of the data.
+
+Grade of 2 means that the PI should look closely at the data and see if
+it is appropriate to be used.
+
+Gard of 1 means that the PI should carefully consider the problem with the
+data before using it. The data may be usable in limited situations.
+
+In counting the time accumulated for a project, the QA grade would be considered.
+Grades 3,4,5 would definitely be considered successful. The observatory will
+need to decide about grade2.

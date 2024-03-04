@@ -7,21 +7,24 @@
 # Command line arguments, key=value.
 # Valid arguments are:
 #
-# dryrun   - If non-zero, just echo commands, don't execute them
-# envfile  - file with API credentials  [$HOME/.ssh/su_prod.env]
-# in - input directory with project/obsnum/*.tar
-# out - output dir
+# dryrun    - If non-zero, just echo commands, don't execute them
+# dvname    - Name of the dataverse to upload to. Default: lmtdata
+# envfile   - file with API credentials  [$HOME/.ssh/su_prod.env]
+# in        - input directory with project/obsnum/*.tar
+# out       - output dir
 # overwrite - overwrite the output dir.  
 #             If 1, existing directory will be removed. 
 #             If anything else , script will exit if $out exists.
-# verbose  - If non-zero, echo dvpipe commands before executing
-# @TODO add a project= key allow selection of specific project?
+# verbose   - If non-zero, echo dvpipe commands before executing
+#
+# @todo add a project= key allow selection of specific project?
 #-------------------------------------------------------------
 
 #-------------------------------------------------------------
 # Defaults:
 #-------------------------------------------------------------
 dryrun=0
+dvname=lmtdata
 envfile=$HOME/.ssh/su_prod.env
 in=data_prod  # Ask Zhiyuan, this may be required to be data_prod in dvpipe
 out=ready_for_upload
@@ -91,9 +94,9 @@ done;
 # upload and publish (-b major)
 for index in ${out}/*.yaml; do
     if [ "$verbose" -ne 0 ] || [ $dryrun -ne 0 ] ; then
-        echo "dvpipe -c config_prod.yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p lmtdata"
+        echo "dvpipe -c config_prod.yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p $dvname"
     fi
     if [ "$dryrun" -eq 0 ];then
-        dvpipe -c config_prod.yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p lmtdata
+        dvpipe -c config_prod.yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p $dvname
     fi
 done
