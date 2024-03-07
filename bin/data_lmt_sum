@@ -1,0 +1,11 @@
+#! /bin/bash
+#
+
+# report checksum of SLR data
+
+for o in $*; do
+    for nc in $DATA_LMT/ifproc/*_${o}_*.nc $DATA_LMT/spectrometer/roach?/*_${o}_*.nc;  do
+	printf "%s\n" "$(sum $nc) $nc"
+    done
+done
+	 
