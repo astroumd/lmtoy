@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# @todo add a project= key allow selection of specific project?
+# @todo Ask Zhiyuan, is $in required to be data_prod in dvpipe?
 #--HELP 
 #-------------------------------------------------------------
 # Script to prepare and upload projects to LMT Dataverse
@@ -17,7 +19,6 @@
 #             If anything else , script will exit if $out exists.
 # verbose   - If non-zero, echo dvpipe commands before executing
 #
-# @todo add a project= key allow selection of specific project?
 #-------------------------------------------------------------
 
 #-------------------------------------------------------------
@@ -26,7 +27,7 @@
 dryrun=0
 dvname=lmtdata
 envfile=$HOME/.ssh/su_prod.env
-in=data_prod  # Ask Zhiyuan, this may be required to be data_prod in dvpipe
+in=data_prod  
 out=ready_for_upload
 overwrite=0
 verbose=0
@@ -84,7 +85,7 @@ fi
 # create the YAMLs needed by dataverse in $out
 for directory in ${in}/*; do
     if [ "$verbose" -ne 0 ] || [ $dryrun -ne 0 ] ; then
-        echo "dvpipe -c config_prod.yaml -e ${envfile} -g lmtslr create_index -d $directory -o ${out}"
+        echo "dvpipe -c config_prod.yaml -e ${envfile} -g lmtslr create_index -d $directory -o ${out} " 
     fi
     if [ "$dryrun" -eq 0 ];then
         dvpipe -c config_prod.yaml -e ${envfile} -g lmtslr create_index -d $directory -o ${out}
