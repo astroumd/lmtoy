@@ -1,7 +1,7 @@
 #! /bin/bash
 #
 
-echo "last data received"
+echo "# $(date) : most recent DATA_LMT=$DATA_LMT"
 
 (cd $DATA_LMT/ifproc; ls -t | head -1)
 for b in 0 1 2 3 4 5 6 7; do
