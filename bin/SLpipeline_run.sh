@@ -6,7 +6,7 @@
 # trap errors
 #set -e
 
-version="SLpipeline: 13-may-2023"
+version="SLpipeline: 8-mar-2024"
 
 #--HELP
 
@@ -80,6 +80,7 @@ echo "OK, $run/data_lmt.log is ready: Found $nobs $key obsnums from $on0 to $on1
 echo "DATE-OBS's from run $d0 to $d1"
 echo "# $(date +%Y-%m-%dT%H:%M:%S) - new run w/ $version" >> rsync.log
 
+
 # looping to find new Science obsnums 
 while [ $sleep -ne 0 ]; do
     ls -ltr $DATA_LMT/ifproc/           | tail -3
@@ -113,6 +114,10 @@ while [ $sleep -ne 0 ]; do
 	    # untap the TAP on unity
 	    ssh lmtslr_umass_edu@unity "(cd work_lmt/$pid; ../do_untap *TAP.tar)"
 	    (cd $WORK_LMT/$pid; mk_summary1.sh > README.html)
+	    # maintaining the last 100...
+	    tail -100 rsync.log | tac > last100.log
+	    mk_last100.sh last100.log > last100.html
+	    rsync -av last100.log last100.html $(printf $rsync lmtoy_run/)
 	else
 	    echo SLpipeline.sh obsnum=$on2 restart=1 rsync=$rsync $extra
 	fi
