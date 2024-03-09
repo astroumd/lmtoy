@@ -16,7 +16,7 @@ Useful tools for the LMTOY script generators (lmtoy_$PID)
 import os
 import sys
 
-_version = "17-oct-2023"
+_version = "8-mar-2024"
 
 def pix_list(pl):
     """ convert a strong like "-0,-1" to proper pixlist by removing
@@ -131,8 +131,12 @@ def verify(runfile, debug=False):
             return err
     return None
 
-def mk_runs(project, on, pars1, pars2, argv=None):
+def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     """ top level
+       project    - PID, e.g. "2024-S1-MX-2"
+       on         - dictionary of sources and their assocciated obsnums
+       pars1,2,3  - SLpipeline parameters for this tier-1,2,3 run (called a,b,c)
+       argv       - optional for CLI
     """
 
     if argv != None:
@@ -185,35 +189,46 @@ def mk_runs(project, on, pars1, pars2, argv=None):
 
 
     print("Creating run files")
-    
-    run1  = '%s.run1'  % project
+
+    # @todo   fix this, it's hardcoded for a 3-tier system (a,b,c)
     run1a = '%s.run1a' % project
     run1b = '%s.run1b' % project
-    run2  = '%s.run2'  % project
+    run1c = '%s.run1c' % project
+
     run2a = '%s.run2a' % project
     run2b = '%s.run2b' % project
+    run2c = '%s.run2c' % project
 
-    fp1  = open(run1,  "w")
-    fp1a = open(run1a, "w")
-    fp1b = open(run1b, "w")
-    fp2  = open(run2,  "w")    
-    fp2a = open(run2a, "w")
-    fp2b = open(run2b, "w")
+    fp1 = list(range(3))
+    fp2 = list(range(3))
+
+    fp1[0] = open(run1a, "w")
+    fp1[1] = open(run1b, "w")
+    fp1[2] = open(run1c, "w")
+    
+    fp2[0] = open(run2a, "w")
+    fp2[1] = open(run2b, "w")
+    fp2[2] = open(run2c, "w")
 
 
     pars4 = getpars(on)
 
     # single obsnums
     n1 = 0
-    for s in on.keys():
-        for o1 in on[s]:
+    for s in on.keys():     # loop over sources
+        for o1 in on[s]:    # loop over obsnums
+            cmd1 = ["" for i in range(3)]
+            cmd2 = ["" for i in range(3)]
+
             o = abs(o1)
-            cmd1a = "SLpipeline.sh obsnum=%d _s=%s %s restart=1 " % (o,s,pars1[s])
-            cmd1b = "SLpipeline.sh obsnum=%d _s=%s %s %s" % (o,s,pars2[s], getargs(o,pars4))
-            cmd1  = "SLpipeline.sh obsnum=%d _s=%s %s %s %s" % (o,s,pars1[s], pars2[s], getargs(o,pars4))
-            fp1a.write("%s\n" % cmd1a)
-            fp1b.write("%s\n" % cmd1b)
-            fp1.write("%s\n" % cmd1)
+            if s in pars1:
+                cmd1[0] = "SLpipeline.sh obsnum=%d _s=%s %s restart=1 " % (o,s,pars1[s])
+            if s in pars2:
+                cmd1[1] = "SLpipeline.sh obsnum=%d _s=%s %s %s" % (o,s,pars2[s], getargs(o,pars4))
+            if pars3 != None and s in pars3:
+                cmd1[2]  = "SLpipeline.sh obsnum=%d _s=%s %s %s %s" % (o,s,pars1[s], pars3[s], getargs(o,pars4))
+            for i in range(3):
+                if len(cmd1[i]) > 0:  fp1[i].write("%s\n" % cmd1[i])
             n1 = n1 + 1
 
     #                           combination obsnums
@@ -230,15 +245,24 @@ def mk_runs(project, on, pars1, pars2, argv=None):
             else:
                 obsnums = obsnums + ",%d" % o
         print('%s[%d/%d] :' % (s,n3,len(on[s])), obsnums)
-        cmd2a = "SLpipeline.sh _s=%s admit=0 restart=1 obsnums=%s" % (s, obsnums)
-        cmd2b = "SLpipeline.sh _s=%s admit=1 srdp=1    obsnums=%s" % (s, obsnums)
-        fp2a.write("%s\n" % cmd2a)
-        fp2b.write("%s\n" % cmd2b)
+        cmd1 = ["" for i in range(3)]
+        cmd2 = ["" for i in range(3)]
+        
+        if s in pars1:
+            cmd2[0] = "SLpipeline.sh _s=%s admit=0 restart=1 obsnums=%s" % (s, obsnums)
+        if s in pars2:
+            cmd2[1] = "SLpipeline.sh _s=%s admit=1 srdp=1    obsnums=%s" % (s, obsnums)
+        if pars3 != None and s in pars3:
+            cmd2[2] = "SLpipeline.sh _s=%s admit=1 srdp=1    obsnums=%s" % (s, obsnums)
+        for i in range(3):
+            if len(cmd2[i]) > 0:  fp2[i].write("%s\n" % cmd2[i])
         n2 = n2 + 1
 
-    print("A proper re-run of %s should be in the following order:" % project)
+    print("A proper re-run of %s should be in the following order: (note some of these may be empty)" % project)
     print(run1a)
     print(run2a)
     print(run1b)
     print(run2b)
+    print(run1c)
+    print(run2c)
     print("Where there are %d single obsnum runs, and %d combination obsnums" % (n1,n2))
