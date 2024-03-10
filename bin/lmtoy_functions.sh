@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="5-dec-2023"
+lmtoy_version="10-mar-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -179,6 +179,10 @@ function lmtoy_rsr1 {
 
     # log the version
     lmtoy_version >> lmtoy.rc
+    # keep an IFPROC header (even though RSR doesn't have it, we steal the name)
+    if [ ! -e lmtoy_$obsnum.ifproc ]; then
+	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
+    fi
     # set the dreampy.log logger filename in the local OBSNUM directory (also needed for parallel processing)
     export DREAMPY_LOG='dreampy.log'
 
@@ -808,6 +812,7 @@ function lmtoy_seq1 {
 	    #   baseline range
 	    br=$(echo $vlsr,$dv,$dw | tabmath - - %1-%2-%3,%1+%2+%3 all)
 	    tab_plot.py --xrange $vmin,$vmax --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
+			--irange 1,$nchan0 \
 			--boxes $b \
 			--title "${s_on} VLSR_range: $vmin $vmax" \
 			-y spectrum_${bank}.png \
