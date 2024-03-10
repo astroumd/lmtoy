@@ -16,7 +16,7 @@ Useful tools for the LMTOY script generators (lmtoy_$PID)
 import os
 import sys
 
-_version = "8-mar-2024"
+_version = "10-mar-2024"
 
 def pix_list(pl):
     """ convert a strong like "-0,-1" to proper pixlist by removing
@@ -226,7 +226,7 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
             if s in pars2:
                 cmd1[1] = "SLpipeline.sh obsnum=%d _s=%s %s %s" % (o,s,pars2[s], getargs(o,pars4))
             if pars3 != None and s in pars3:
-                cmd1[2]  = "SLpipeline.sh obsnum=%d _s=%s %s %s %s" % (o,s,pars1[s], pars3[s], getargs(o,pars4))
+                cmd1[2]  = "SLpipeline.sh obsnum=%d _s=%s %s %s" % (o,s, pars3[s], getargs(o,pars4))
             for i in range(3):
                 if len(cmd1[i]) > 0:  fp1[i].write("%s\n" % cmd1[i])
             n1 = n1 + 1
