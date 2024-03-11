@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="5-dec-2023"
+lmtoy_version="1-feb-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -910,6 +910,434 @@ function lmtoy_seq1 {
     echo "date=\"$(lmtoy_date)\"     # end " >> $rc
     
 } # lmtoy_seq1
+
+function lmtoy_seq2 {
+    time=/usr/bin/time
+    # input: obsnum, ... (lots)
+    # this "seq2" is really optimized for "1mm", where only beams 0..3 are
+    # used, and beams 0,2 are the two polarizations to be added for bank=0
+    # and beams 1,3 the two polarizations for bank=1
+    
+
+    # log the version
+    lmtoy_version >> lmtoy.rc
+    # keep an IFPROC header
+    if [ ! -e lmtoy_$obsnum.ifproc ]; then
+	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
+    fi
+    # record
+    echo "LMTOY>> rc=$rc rc1=$rc1 bank=$bank oid=$oid"
+    if [ ! -e "$rc1" ]; then
+	echo "PJT_WARNING: we should not need to do this $rc -> $rc1 copy here"
+	#cp $rc $rc1
+	#rc=$rc1
+    fi
+
+    # fix potential pix_list
+    pix_list=$(pix_list.py $pix_list)
+
+    #  convert RAW to SpecFile (hardcoded parameters are hardcoded for a good resaon)
+    if [ $makespec = 1 ]; then
+	echo "LMTOY>> process_otf_map2 in 2 seconds bank=$bank"
+	sleep 2
+	if [ $otf_cal = 1 ]; then
+	    use_otf_cal="--use_otf_cal"
+	else
+	    use_otf_cal=""
+	fi
+	if [ -z $restfreq ]; then
+	    use_restfreq=""
+	else
+	    use_restfreq="--restfreq $restfreq"
+	    use_restfreq=""	    
+	    echo "WARNING: resetting restfreq not supported yet"
+	fi
+	$time process_otf_map2.py \
+	    -p $DATA_LMT \
+	    -o $s_nc \
+	    --obsnum $obsnum \
+	    --pix_list $pix_list \
+	    --bank $bank \
+	    --stype $stype \
+	    --use_cal \
+	    $use_otf_cal \
+	    $use_restfreq \
+	    --map_coord $map_coord_use \
+	    --x_axis VLSR \
+	    --b_order $b_order \
+	    --b_regions $b_regions \
+	    --l_region $l_regions \
+	    --slice $slice \
+	    --eliminate_list $birdies
+	lmtinfo2.py $s_nc >> $rc
+    fi
+
+    # bug:  --use_otf_cal does not work here?? (maybe it does now)
+    # bug?   x_axis FLSR doesn't seem to go into freq mode
+
+
+    # bug:   even if pix_list=10 figure 5 still shows all pixels
+    #  pointings:  -240 .. 270    -259 .. 263      510x520
+
+    if [ $viewspec = 1 ]; then
+	# waterfall plot
+	echo "LMTOY>> view_spec_file"
+	view_spec_file.py \
+	    -i $s_nc \
+            --pix_list $pix_list \
+	    --rms_cut $rms_cut \
+	    --plot_range=-1,1 \
+	    --plots ${s_on}_specviews
+    
+	# show spectra, each pixel gets a different curve/color
+	echo "LMTOY>> view_spec_point"	
+	view_spec_point.py \
+	    -i $s_nc \
+	    --pix_list $pix_list \
+	    --rms_cut $rms_cut \
+	    --location $location \
+	    --plots ${s_on}_specpoint,png,1
+	 
+	echo "LMTOY>> view_spec_point"	
+	view_spec_point.py \
+	    -i $s_nc \
+	    --pix_list $pix_list \
+	    --rms_cut $rms_cut \
+	    --location $location \
+	    --radius 20 \
+	    --plots ${s_on}_specpoint,png,2
+    fi
+    
+    #  convert SpecFile to waterfall in fits format
+    if [ $makewf = 1 ]; then
+	echo "LMTOY>> make_spec_fits (waterfall)"    
+	rm -rf ${s_on}.wf.fits 
+	make_spec_fits.py \
+	    -i $s_nc \
+	    -o ${s_on}.wf.fits \
+	    --pix_list $pix_list
+	
+	
+	rm -rf ${s_on}.wf10.fits 
+	make_spec_fits.py \
+	    -i $s_nc \
+	    -o ${s_on}.wf10.fits \
+	    --pix_list $pix_list \
+	    --binning 10,1
+
+	echo "LMTOY>> stats_wf.py -y ${s_on}.wf0.png  -b ${s_on}.bstats.tab    ${s_on}.wf.fits"
+	stats_wf.py -y ${s_on}.wf0.png  -b ${s_on}.bstats.tab    ${s_on}.wf.fits > stats__${bank}_wf0.tab
+	stats_wf.py -y ${s_on}.wf1.png  -t                       ${s_on}.wf.fits > stats__${bank}_wf1.tab
+	delta=$(tabtrend ${s_on}.bstats.tab 2 | tabstat - robust=t qac=t | txtpar - p0=QAC,1,4)
+	tabpeak ${s_on}.bstats.tab delta=5*$delta > ${s_on}.birdies.tab
+
+	# stats__${bank}_wf0.tab can be used to estimate bad beams; use 5-sigma above the mean
+	clip=$(tabstat stats__${bank}_wf0.tab 2 qac=t robust=t | txtpar - %1+5*%2 p0=1,3 p1=1,4)
+	bb=pix_list=$(tabmath  stats__${bank}_wf0.tab - -%1 all "selfie=ifgt(%2,$clip,1,0)")
+	echo "LMTOY>> bad beams might be $bb"
+	if [ ! -e pix_list__${bank}.txt ]; then
+	    echo $bb | sed 's/ /,/g' > pix_list__${bank}.txt
+	fi
+    fi
+    
+
+    #  convert SpecFile to FITScube
+    if [ $makecube = 1 ]; then
+	echo "LMTOY>> grid_data native"
+	$time grid_data.py \
+	    --program_path spec_driver_fits \
+	    -i $s_nc \
+	    -o $s_fits \
+	    -w $w_fits \
+	    --resolution  $resolution \
+	    --cell        $cell \
+	    --pix_list    $pix_list \
+	    --rms_cut     $rms_cut \
+	    --x_extent    $x_extent \
+	    --y_extent    $y_extent \
+	    --otf_select  $otf_select \
+	    --rmax        $rmax \
+	    --otf_a       $otf_a \
+	    --otf_b       $otf_b \
+	    --otf_c       $otf_c \
+	    --edge        $edge \
+	    --sample      $sample \
+	    --n_samples   256 \
+	    --noise_sigma $noise_sigma
+
+	echo "LMTOY>> grid_data smooth"
+	echo "@todo this needs a new option to bin in channel space"
+	s_fits2=$s_fits.fits
+	w_fits2=$w_fits.fits
+	$time grid_data.py \
+	    --program_path spec_driver_fits \
+	    -i $s_nc \
+	    -o $s_fits2 \
+	    -w $w_fits2 \
+	    --resolution  $(nemoinp 2*$resolution) \
+	    --cell        $cell \
+	    --pix_list    $pix_list \
+	    --rms_cut     $rms_cut \
+	    --x_extent    $x_extent \
+	    --y_extent    $y_extent \
+	    --otf_select  $otf_select \
+	    --rmax        $rmax \
+	    --otf_a       $otf_a \
+	    --otf_b       $otf_b \
+	    --otf_c       $otf_c \
+	    --edge        $edge \
+	    --sample      $sample \
+	    --n_samples   256 \
+	    --noise_sigma $noise_sigma
+	
+    fi
+
+    # bug:  when rmax=5  r=12/c=2.4  malloc(): unsorted double linked list corrupted
+
+    # limits controls figure 5, but not figure 3, which is scaled for the whole map
+    # @todo  tmax_range   tint_range
+    if [ $viewcube = 1 ]; then
+	echo "LMTOY>> view_cube"
+	view_cube.py -i $s_fits \
+		     --v_range=$v_range \
+		     --v_scale=1000 \
+		     --location=$location \
+		     --scale=0.000278 \
+		     --limits=-$x_extent,$x_extent,-$y_extent,$y_extent \
+		     --tmax_range=-1,12 \
+		     --tint_range=-1,400 \
+		     --plot_type TMAX \
+		     --interpolation bilinear
+    fi
+    
+    if [ -n "$NEMO" ]; then
+	echo "LMTOY>> Some NEMO post-processing"
+	echo "        @todo rid the code of fits header stealing"
+
+	# cleanup from a previous run
+	rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.rms.ccd $s_on.head1 \
+	   $s_on.data1 $s_on.n.fits $s_on.nfs.fits $s_on.mom0.ccd $s_on.mom1.ccd \
+	   $s_on.wt2.fits $s_on.wt3.fits $s_on.wtn.fits $s_on.wtr.fits $s_on.wtr3.fits $s_on.wtr4.fits \
+	   $s_on.mom0.fits $s_on.mom1.fits $s_on.rms.fits \
+	   $s_on.peak.fits $s_on.ccd.fits $s_on.ns.fits
+
+	if [ -e $s_fits ]; then
+	    # convert to CCD
+	    fitsccd $s_fits $s_on.ccd    axistype=1
+	    fitsccd $w_fits $s_on.wt.ccd axistype=1
+
+	    # get size and use nz1-nz2 to exclude from the axis for the rms (mom=-2) map
+	    # @todo should use dv/dw:
+	    # with m=nz/2/(1+dv/dw)    nz1=m nz2=nz-m
+	    nz=$(ccdhead $s_on.ccd | txtpar - p0=Size,1,4)
+	    nz1=$(nemoinp $nz/4 format=%d)
+	    nz2=$(nemoinp $nz-$nz1)
+	    
+	    ccdspec $s_on.ccd > $s_on.cubespec.tab
+	    ccdstat $s_on.ccd bad=0 robust=t planes=0 > $s_on.cubestat.tab
+	    echo "LMTOY>> STATS  $s_on.ccd     centerbox robust"
+	    ccdsub  $s_on.ccd -    centerbox=0.5,0.5 | ccdstat - bad=0 robust=t qac=t label=on
+	    echo "LMTOY>> STATS  $s_on.wt.ccd  centerbox robust"
+	    ccdsub  $s_on.wt.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t qac=t label=wt
+	    
+	    # convert flux flat to noise flat
+	    wmax=$(ccdstat $s_on.wt.ccd  | grep ^Min | awk '{print $6}')
+	    #wmax=$(ccdstat $s_on.wt.ccd  | txtpar - p0=Min,1,6)
+	    
+	    ccdmath $s_on.wt.ccd $s_on.wtn.ccd "sqrt(%1/$wmax)"
+	    ccdmath $s_on.ccd,$s_on.wtn.ccd $s_on.n.ccd '%1*%2' replicate=t
+	    ccdmom $s_on.n.ccd - mom=0	        | ccdmath - $s_on.mom0.ccd %1/1000
+	    ccdmom $s_on.n.ccd - mom=1 rngmsk=t | ccdmath - $s_on.mom1.ccd %1/1000
+	    ccdmom $s_on.n.ccd - mom=8	        | ccdmath - $s_on.peak.ccd %1*1000	    
+	    #ccdsub $s_on.n.ccd - z=1:$nz1,$nz2:$nz | ccdmom -  $s_on.rms.ccd  mom=-2
+	    ccdsub $s_on.ccd - z=1:$nz1,$nz2:$nz | ccdmom -  - mom=-2 | ccdmath - $s_on.rms.ccd %1*1000
+	    # ccdmom $s_on.n.ccd - $s_on.rms.ccd  mom=-2 arange=0:$nz1,$nz2:$nz-1
+
+	    #ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "ifne(%1,0,2/(%1*%1),0)"
+	    ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "%1/sqrt(2)"
+	    ccdfits $s_on.wt2.ccd $s_on.wt2.fits # fitshead=$w_fits ndim=2
+	    # e.g. [[-646,-396],[-196,54]] -> -646,-396,-196,54
+	    zslabs=$(echo $b_regions | sed 's/\[//g' | sed 's/\]//g')
+	    echo SLABS: $b_regions == $zslabs
+	    ccdslice $s_on.ccd - zslabs=$zslabs zscale=1000 | ccdmom - - mom=-2  | ccdmath - $s_on.wt3.ccd "%1"
+	    ccdfits $s_on.wt3.ccd               $s_on.wt3.fits  # fitshead=$w_fits  ndim=2
+	    ccdmath $s_on.wt2.ccd,$s_on.wt3.ccd $s_on.wtr.ccd   %2/%1
+	    ccdfits $s_on.wtr.ccd               $s_on.wtr.fits  # fitshead=$w_fits  ndim=2
+	    ccdmath $s_on.rms.ccd,$s_on.wt3.ccd $s_on.wtr3.ccd  %2/%1
+	    ccdfits $s_on.wtr3.ccd              $s_on.wtr3.fits # fitshead=$w_fits  ndim=2
+	    fitsccd radiometer.rms.fits - | ccdmath -,$s_on.rms.ccd $s_on.wtr4.ccd %2/%1/1000
+	    ccdfits $s_on.wtr4.ccd              $s_on.wtr4.fits # fitshead=$w_fits  ndim=2
+
+	    scanfits $s_fits $s_on.head1 select=header
+	    ccdfits $s_on.n.ccd  $s_on.n.fits
+
+	    scanfits $s_on.n.fits $s_on.data1 select=data
+	    cat $s_on.head1 $s_on.data1 > $s_on.nf.fits
+
+	    # hack : a better smooth cube?
+	    fitsccd $s_on.fits.fits - |\
+		ccdsub - - nzaver=4 |\
+		ccdslice - - zrange=1:$nz:4 |\
+		ccdmath -,$s_on.wtn.ccd - '%1*%2' replicate=t |\
+		ccdfits - $s_on.nfs.fits # fitshead=$s_on.fits.fits
+
+	    # this was the old smooth, it detects too many lines
+	    ccdsmooth $s_on.n.ccd - dir=xyz nsmooth=5 | ccdfits - $s_on.ns.fits # fitshead=$s_fits
+	    
+	    # QAC_STATS:
+	    out1=$(ccdstat $s_on.ccd bad=0 qac=t robust=t label="${s_on}-full")
+	    out2=$(ccdsub  $s_on.ccd  - centerbox=0.5,0.5 | ccdstat - bad=0 qac=t robust=t label="${s_on}-cent")
+	    out3=$(ccdsub  $s_on.wtr4.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 qac=t robust=t label="RMS/radiometer")
+
+	    regress=$(ccdsub  $s_on.ccd  - centerbox=0.5,0.5 | ccdstat - bad=0 qac=t robust=t label="${s_on}-cent")
+	    echo "regress=\"$regress\"" >> $rc
+	    
+	    printf_red $out1
+	    printf_red $out2
+	    printf_red $out3
+
+	    rms=$(echo $out2  | txtpar - "%1*1000" p0=-cent,1,4)
+	    rms0=$(echo $out3 | txtpar - p0=radiometer,1,3)
+	    echo "rms=$rms     # rms[mK] in center"      >> $rc
+	    echo "rms0=$rms0   # RMS/radiometer ratio"   >> $rc
+
+	    nchan=$(ccdhead $s_on.ccd  | txtpar - p0=Size,1,4)
+	    echo "nchan=$nchan" >> $rc
+
+	    # add a smooth cube version as well
+	    # @todo  it seems the WCS of the nfs is off by 1
+	    fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.cubespecs.tab
+	    echo -n "cubespec : ";  tail -1  $s_on.cubespec.tab
+	    echo -n "cubespecs: ";  tail -1  $s_on.cubespecs.tab
+
+	    source $rc
+	    echo "TAB_PLOT   ${s_on} bank=$bank vminmax=$vmin,$vmax"
+	    echo "# tmp file to plot full spectral range for ${s_on} bank=$bank"   > full_spectral_range
+	    nemoinp "$vmin,0.0" newline=f                                         >> full_spectral_range
+	    nemoinp "$vmax,0.0" newline=f                                         >> full_spectral_range
+	    tabmath ${s_on}.cubespec.tab  - %1/1000,%2 all > native
+	    tabmath ${s_on}.cubespecs.tab - %1/1000,%2 all > smooth-4x4x4
+	    #   RMS in baseline region
+	    #   set the height at 1-sigma of the RMS in the smoothed (4x4x4) spectrum ($hs)
+	    hn=$(tabtrend native       2 | tabstat - qac=t robust=t  | txtpar - %1*1.0 p0=QAC,1,4)	    
+	    hs=$(tabtrend smooth-4x4x4 2 | tabstat - qac=t robust=t  | txtpar - %1*1.0 p0=QAC,1,4)
+	    echo "rms_baseline_n=$hn" >> $rc
+	    echo "rms_baseline_s=$hs" >> $rc
+	    echo "# straight line where vlsr is"          > vlsr
+	    nemoinp "$vlsr,-$hs" newline=f               >> vlsr
+	    nemoinp "$vlsr,$hs"  newline=f               >> vlsr
+	    #   flux
+	    center_flux_n=$(sort -n native       | tabint -)
+	    center_flux_s=$(sort -n smooth-4x4x4 | tabint -)
+	    echo "center_flux_n=$center_flux_n    # central pixel" >> $rc
+	    echo "center_flux_s=$center_flux_s    # central pixel" >> $rc	    
+	    #   box coordinates, assumed we did dv=,dw=      @todo use the uactually used b_ parameters
+	    b=$(echo $vlsr,$dv,$dw | tabmath - - %1-%2-%3,-$hs,%1-%2,$hs,%1+%2,-$hs,%1+%2+%3,$hs all | tabcsv -)
+	    #   baseline range
+	    br=$(echo $vlsr,$dv,$dw | tabmath - - %1-%2-%3,%1+%2+%3 all)
+	    tab_plot.py --xrange $vmin,$vmax --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
+			--boxes $b \
+			--title "${s_on} VLSR_range: $vmin $vmax" \
+			-y spectrum_${bank}.png \
+			native smooth-4x4x4 vlsr full_spectral_range 
+	    tab_plot.py --xlab "VLSR (km/s)" --ylab "Ta* (K)" \
+			--boxes $b \
+			--title "${s_on} VLSR_range: $br" \
+			-y spectrum_${bank}_zoom.png \
+			native smooth-4x4x4 vlsr
+	    
+	    # NEMO plotting ?
+	    if [ $viewnemo = 1 ]; then
+		dev=$(yapp_query png ps)
+		ccdplot $s_on.mom0.ccd yapp=$s_on.mom0.$dev/$dev
+		ccdplot $s_on.peak.ccd yapp=$s_on.peak.$dev/$dev		
+		ccdplot $s_on.mom1.ccd yapp=$s_on.mom1.$dev/$dev
+		ccdplot $s_on.rms.ccd  yapp=$s_on.rms.$dev/$dev
+		ccdplot $s_on.wt.ccd   yapp=$s_on.wt.$dev/$dev
+		ccdplot $s_on.wt2.ccd  yapp=$s_on.wt2.$dev/$dev
+		ccdplot $s_on.wt3.ccd  yapp=$s_on.wt3.$dev/$dev
+		ccdplot $s_on.wtn.ccd  yapp=$s_on.wtn.$dev/$dev
+		ccdplot $s_on.wtr.ccd  yapp=$s_on.wtr.$dev/$dev
+		ccdplot $s_on.wtr3.ccd yapp=$s_on.wtr3.$dev/$dev
+		ccdplot $s_on.wtr4.ccd yapp=$s_on.wtr4.$dev/$dev
+	    fi
+	    
+	    # Plotting via APLPY
+	    if [ 1 = 1 ]; then
+		ccdfits $s_on.mom0.ccd  $s_on.mom0.fits ndim=2
+		ccdfits $s_on.peak.ccd  $s_on.peak.fits ndim=2
+		ccdfits $s_on.mom1.ccd  $s_on.mom1.fits ndim=2
+		ccdfits $s_on.rms.ccd   $s_on.rms.fits  ndim=2
+		ccdfits $s_on.wtn.ccd   $s_on.wtn.fits  ndim=2
+		fitsplot.py $s_on.mom0.fits --hist
+		fitsplot.py $s_on.peak.fits --hist
+		fitsplot.py $s_on.mom1.fits --hist
+		fitsplot.py $s_on.rms.fits --hist
+		fitsplot.py $s_on.wt.fits --hist
+		fitsplot.py $s_on.wt2.fits --hist
+		fitsplot.py $s_on.wt3.fits --hist
+		fitsplot.py $s_on.wtn.fits --hist
+		fitsplot.py $s_on.wtr.fits --hist
+		fitsplot.py $s_on.wtr3.fits --hist
+		fitsplot.py $s_on.wtr4.fits --hist
+	    fi
+
+	    # remove useless files
+	    if [ $clean -eq 1 ]; then
+		rm -f $s_on.n.fits $s_on.head1 $s_on.data1 *.ccd
+	    fi
+	    
+	    echo "LMTOY>> Created $s_on.nf.fits and $s_on.nfs.fits"
+	else
+	    echo "LMTOY>> Problems finding $s_fits. Skipping NEMO work."
+	fi
+	
+    fi
+    
+    if [ $admit == 1 ]; then
+	echo "LMTOY>> ADMIT post-processing"
+	if [ -e $s_on.nfs.fits ]; then
+	    lmtoy_admit.sh $s_on.nfs.fits
+	fi
+	if [ -e $s_on.ns.fits ]; then
+	    lmtoy_admit.sh $s_on.ns.fits
+	fi
+	if [ -e $s_on.nf.fits ]; then
+	    lmtoy_admit.sh $s_on.nf.fits
+	else
+	    # this will likely look awful since the edges are more noisy
+	    lmtoy_admit.sh $s_fits
+	fi
+    else
+	echo "LMTOY>> skipping ADMIT post-processing"
+    fi
+
+    if [ $maskmoment == 1 ]; then
+	# @todo   this can fail (e.g. for bench2 79448) due to too much emission?
+	echo "LMTOY>> Running maskmoment $s_on.nf.fits vlsr=$vlsr"
+	mm1.py --vlsr $vlsr --beam 25 $s_on.nf.fits > maskmoment__${bank}.nf.log   2>&1
+	# hack
+	mm1.py --vlsr $vlsr --beam 35 $s_on.nfs.fits > maskmoment__${bank}.nfs.log  2>&1
+    else
+	echo "LMTOY>> skipping maskmoment"	
+    fi
+    
+    echo "LMTOY>> Created $s_fits and $w_fits"
+    echo "LMTOY>> Parameter file used: rc=$rc"
+    
+    # seq_readme > $pdir/README.html
+    cp $LMTOY/docs/README_sequoia.md README_files.md
+    echo "LMTOY>> Making summary index.html for bank=$bank rc=$rc"
+    grep bank= $rc
+    echo "LMTOY>> Making summary index.html for oid=$oid"
+    mk_index.sh
+    # cheat and rename it for all files access
+    mv index.html README.html
+
+    # record the processing time, since this is a bank specific rc file
+    echo "date=\"$(lmtoy_date)\"     # end " >> $rc
+    
+} # lmtoy_seq2
 
 function lmtoy_bs1 {
     # input: obsnum, ... (lots)
