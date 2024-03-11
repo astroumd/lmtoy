@@ -3,7 +3,7 @@
 #    plot one or more RSR spectra, optionally a band or piece of the spectrum
 #
 
-_version = "1-aug-2023"
+_version = "7-mar-2024"
 
 _help = """Usage: tab_plot.py [options] TABLE1 [TABLE2...]
 
@@ -16,6 +16,7 @@ Options:
   --ylab YLAB             Y-axis label [Default: Y]
   --xrange XMIN,XMAX      Min and Max of X-coordinate. Optional.
   --yrange YMIN,YMAX      Min and Max of Y-coordinate. Optional.
+  --irange IMIN,IMAX      Min and Max of X-coordinates on top axis (twiny). Optional.
   --size SIZE             Plotsize in inches. [Default: 8.0]
   --dpi DPI               DPI of plot. [Default: 100]
   --ycoord YCOORD         Dashed line at YCOORD. Optional.
@@ -82,6 +83,12 @@ if av['--yrange'] != None:
     ymin = float(cw[0])
     ymax = float(cw[1])
 
+imin = imax = None
+if av['--irange'] != None:
+    cw = av['--irange'].split(',')
+    imin = float(cw[0])
+    imax = float(cw[1])
+
 xlab = av['--xlab']
 ylab = av['--ylab']
 
@@ -98,11 +105,21 @@ import matplotlib.pyplot as plt
 print('mpl backend spectra',matplotlib.get_backend())
     
 
-plt.figure(figsize=(size,size), dpi=dpi)
+fig=plt.figure(99,figsize=(size,size), dpi=dpi)
+fig.clf()
+fig,ax1 = plt.subplots(num=99)
+if imin != None:
+    ax2 = ax1.twiny()
+    ax2.set_xlim(imin,imax)
+    ax2.set_xlabel('Channel Number')    
+    nchan = 512
+    chan_ticks = np.arange(0,imax+nchan,nchan)   # maybe make it depend on 800MHz, 400MHz, 200 MHz   512/800*BW
+    print("CHAN_TICKS:",chan_ticks)
+    ax2.set_xticks(chan_ticks)
 if xmin != None:
-    plt.xlim(xmin,xmax)
+    ax1.set_xlim(xmin,xmax)
 if ymin != None:
-    plt.xlim(ymin,ymax)
+    ax1.set_ylim(ymin,ymax)
 
 spectra = [av['TABLE1']]
 spectra = spectra + av['TABLE2']
@@ -112,11 +129,11 @@ data = list(range(nfiles))
 for i in range(nfiles):
     f = spectra[i]
     data[i] = np.loadtxt(f).T
-    plt.step(data[i][0]*xscale, data[i][1]*yscale, label=f, where='mid')
+    ax1.step(data[i][0]*xscale, data[i][1]*yscale, label=f, where='mid')
 
 if ycoord != None:
     print("ycoord",ycoord)
-    plt.plot([xmin,xmax],[ycoord,ycoord],'--')
+    ax1.plot([xmin,xmax],[ycoord,ycoord],'--')
 
 if boxes != None:
     print(boxes)
@@ -129,13 +146,13 @@ if boxes != None:
         xb[2] = boxes[i0+2]; yb[2] = boxes[i0+3]
         xb[3] = boxes[i0+0]; yb[3] = boxes[i0+3]
         xb[4] = boxes[i0+0]; yb[4] = boxes[i0+1]
-        plt.plot(xb,yb, color='black')
+        ax1.plot(xb,yb, color='black')
         print('BOX',i,xb,yb)
         
 
 
-plt.xlabel(xlab)
-plt.ylabel(ylab)
+ax1.set_xlabel(xlab)
+ax1.set_ylabel(ylab)
 plt.title(title)
 plt.legend()
 if plotfile == None:
