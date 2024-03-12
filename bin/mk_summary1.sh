@@ -14,7 +14,7 @@
 #set -e
 #set -x
 
-_version="12-aug-2023"
+_version="11-mar-2024"
 
 if [ -z "$1" ]; then
     src0=""
@@ -88,11 +88,13 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
     if [ ! -e $o/lmtoy.rc ]; then
 	continue
     fi
-    # allow obsnum__ALIAS
+    # allow obsnum__ALIAS    @todo   dunder allows a private dunder notation in the comments.txt (instead of __0 and __1)
     if [[ "$o" == *"__"* ]]; then
 	on=$(echo $o | awk -F__ '{print $1}')
+	dunder=$(echo $o | awk -F__ '{print $2}')
     else
 	on=$o
+	dunder=""
     fi
     # bootstrap rc file
     rc=($o/lmtoy_*$on.rc)
@@ -152,7 +154,10 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
 	    #comments=$(grep -w ^$obsnum comments.txt | cut -d' ' -f2-)
 	    comments=$(grep -w ^${obsnum}${ext} comments.txt | cut -d' ' -f2- | awk -F\# '{print $1}')
 	    if [ -z "$comments" ]; then
-		comments=$(grep -w ^${obsnum} comments.txt | cut -d' ' -f2- | awk -F\# '{print $1}')		
+		comments=$(grep -w ^${obsnum}${dunder} comments.txt | cut -d' ' -f2- | awk -F\# '{print $1}')
+		if [ -z "$comments" ]; then
+		    comments=$(grep -w ^${obsnum} comments.txt | cut -d' ' -f2- | awk -F\# '{print $1}')
+		fi
 	    fi
 	else
 	    comments=""
