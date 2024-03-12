@@ -1,12 +1,21 @@
 #! /bin/bash
-#
+# 
+# Usage:  data_lmt_last [-3] [-l]
 
-echo "# $(date) : most recent DATA_LMT=$DATA_LMT"
+flags=${1:--tl}
+n=1
 
-(cd $DATA_LMT/ifproc; ls -t | head -1)
+echo "# $(date) : $n most recent DATA_LMT=$DATA_LMT"
+
+
+function my_head {
+    grep -v total | head -$n 
+}
+
+(cd $DATA_LMT/ifproc; ls $flags | my_head)
 for b in 0 1 2 3 4 5 6 7; do
-    (cd $DATA_LMT/spectrometer/roach$b; ls -t | head -1)
+    (cd $DATA_LMT/spectrometer/roach$b; ls $flags | my_head)
 done
 for b in 0 1 2 3; do
-    (cd $DATA_LMT/RedshiftChassis$b; ls -t | head -1)
+    (cd $DATA_LMT/RedshiftChassis$b; ls $flags | my_head)
 done
