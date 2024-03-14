@@ -11,10 +11,11 @@ version="SLpipeline_run1: 14-mar-2024"
 
 #--HELP
 
-Usage: SLpipeline_run1.sh OBSNUM PID  [extra args for SLpipeline.sh]
-
-This script does not allow CLI parameter assignment, but the following ones
-are hardcoded in this script
+#Usage: SLpipeline_run1.sh OBSNUM PID  [extra args for SLpipeline.sh]
+#
+#This script does not allow CLI parameter assignment, but the following ones
+#are hardcoded in this script
+#
 
 rsync1=teuben@lma.astro.umd.edu:/lma1/lmt/TAP_lmt
 rsync2=lmtslr_umass_edu@unity:/nese/toltec/dataprod_lmtslr/work_lmt/%s
