@@ -23,7 +23,7 @@ debug=0                         # lots extra output
 
 #--HELP
 
-if [ "$1" == "--help" ] || [ "$1" == "-h" ];then
+if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
     set +x
     awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
     exit 0
