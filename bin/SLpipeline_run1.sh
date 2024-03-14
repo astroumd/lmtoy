@@ -11,7 +11,7 @@ version="SLpipeline_run1: 14-mar-2024"
 
 #--HELP
 
-Usage: SLpipeline_run1.sh PID  OBSNUM  [extra args for SLpipeline.sh]
+Usage: SLpipeline_run1.sh OBSNUM PID  [extra args for SLpipeline.sh]
 
 This script does not allow CLI parameter assignment, but the following ones
 are hardcoded in this script
@@ -29,8 +29,8 @@ if [ "$1" == "--help" ] || [ "$1" == "-h" ];then
     exit 0
 fi
 
-pid=$1
-obsnum=$2
+obsnum=$1
+pid=$2
 shift
 shift
 extra=$*
