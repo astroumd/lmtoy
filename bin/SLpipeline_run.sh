@@ -6,7 +6,7 @@
 # trap errors
 #set -e
 
-version="SLpipeline: 8-mar-2024"
+version="SLpipeline: 16-mar-2024"
 
 #--HELP
 
@@ -96,12 +96,16 @@ while [ $sleep -ne 0 ]; do
     echo "$on2"
     if [ $on1 != $on2 ]; then
 	pid=$(egrep $key $run/data_lmt.lag | tail -1 | awk '{print $7}')
+	goal=$(egrep $key $run/data_lmt.lag | tail -1 | awk '{print $4}')
 	tail -1 $run/data_lmt.lag
 	printf_red Found new obsnum=$on2 pid=$pid
 	if [ -e SLpipeline.in ]; then
 	    extra=$(grep -v ^# SLpipeline.in)
 	else
 	    extra=""
+	fi
+	if [ $goal == "LineCheck" ]; then
+	    extra="$extra linecheck=1"
 	fi
 	echo "Found extra args:   $extra"
 	if [ $dryrun = 0 ]; then
