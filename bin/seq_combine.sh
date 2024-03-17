@@ -10,7 +10,7 @@
 #
 
 
-version="seq_combine: 14-aug-2023"
+version="seq_combine: 16-mar-2024"
 
 echo "LMTOY>> $version"    
 
@@ -161,7 +161,7 @@ for bank in $banks; do
     ons=""        # accumulates the .nc filenames
     sumtime=0     # accumulates the integration time
     for on in $obsnums1; do
-	fon=$(ls */$on/${src}_${on}__${bank}.nc)
+	fon=$(ls */$on/*_${on}__${bank}.nc)
 	# there better be just one
 	if [ -e $fon ]; then
 	    ons="$ons ${fon}"
