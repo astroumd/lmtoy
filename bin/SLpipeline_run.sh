@@ -6,7 +6,17 @@
 # trap errors
 #set -e
 
-version="SLpipeline: 16-mar-2024"
+
+#   catch ^C and remove the lockfile
+function error1 {
+    echo "Interrupted!  Removing lockfile SLpipeline.pid"
+    rm SLpipeline.pid
+    exit 0
+}
+
+trap 'error1'  SIGINT
+
+version="SLpipeline: 18-mar-2024"
 
 #--HELP
 
@@ -50,6 +60,15 @@ if [ $debug = 1 ]; then
 fi
 
 run=$work/SLpipeline.d
+mkdir -p $run/logs
+
+if [ -e SLpipeline.pid ]; then
+    echo "Already have $run/SLpipeline.pid running."
+    echo "Kill or remove this lockfile"
+    exit 1
+else
+    echo "$$" > SLpipeline.pid
+fi
 
 printf_red "This is SLpipeline_run version $version in $run"
 
@@ -109,6 +128,9 @@ while [ $sleep -ne 0 ]; do
 	fi
 	echo "Found extra args:   $extra"
 	if [ $dryrun = 0 ]; then
+	    # march 2024: we now spawn
+	    SLpipeline_run1.sh $on2 $pid $extra > logs/$pid.log 2>&1
+	elif [ $dryrun = 2 ]; then
 	    # ensure the rsync directory exists and use a symlink on unity
 	    ssh lmtslr_umass_edu@unity mkdir -p work_lmt/$pid
 	    # run pipeline here and copy TAP accross
@@ -123,7 +145,7 @@ while [ $sleep -ne 0 ]; do
 	    mk_last100.sh last100.log > last100.html
 	    rsync -av last100.log last100.html $(printf $rsync lmtoy_run/)
 	else
-	    echo SLpipeline.sh obsnum=$on2 restart=1 rsync=$rsync $extra
+	    echo "SLpipeline.sh obsnum=$on2 restart=1 rsync=$rsync $extra"
 	fi
 	cp $run/data_lmt.lag $run/data_lmt.log
 	on1=$on2
