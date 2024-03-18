@@ -15,7 +15,7 @@
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 # @todo   vlsr= only takes correct effect on the first run, not a re-run
 
-_version="seq_pipeline: 10-mar-2024"
+_version="seq_pipeline: 16-mar-2024"
 
 echo "LMTOY>> $_version"
 
@@ -31,7 +31,7 @@ makecube=1     # (re)make a fits cube
 makewf=1
 viewspec=1
 viewcube=0
-viewnemo=1
+nemo=1
 admit=0
 maskmoment=0
 clean=1
@@ -268,6 +268,10 @@ source $rc
 echo "LMTOY>> this is your startup rc=$rc file:"
 cat $rc
 echo "LMTOY>> Sleeping for 2 seconds before continuing"
+if [ $nemo == 0 ]; then
+    echo "LMTOY>> Warning: nemo=0"
+    unset NEMO
+fi
 sleep 2
 
 if [ $bank != -1 ]; then
