@@ -1,6 +1,8 @@
 # LMTOY cheat sheet
 
-## lmtslr@malt: the lightweight TAPs pipeline
+A brief reminder on the commands we use to operate the pipeline and everything around it
+
+## 1. Lightweight TAPs Pipeline: lmtslr@malt
 
 **malt** is the computer at LMT that we use to run the pipeline while data have been
 taken. The lightweight TAP's are sent to Unity, where they can be viewed.
@@ -21,16 +23,23 @@ The user **lmtslr** runs the commands here.
 
        SLpipeline_run1.sh 113271 2024-S1-MX-24 dv=10 dw=10
 
-## script generator work can be done anywhere, since it's git controlled
+## 2. Script Generator
+
+This work can be done anywhere, since it's git controlled. But it depends on the user having
+installed the **gh** command, otherwise it's annoying work in the browser
 
 0. Set the project id in a convenient shell variable we are working with in this cheat sheet
 
        PID=2024-S1-MX-24
 
-1. Bootstrap
+1. Bootstrap a new project script generator (the **gh** command is needed here)
 
        cd $WORK_LMT/lmtoy_run
        ./mk_project.sh $PID
+       make links
+
+   The last step, the links, are convenient for going back and forth between where the pipeline
+   data are and where the script generator is.
 
 2. Edit Makefile to add lmtoy_2024-S1-MX-24 to the specific year
 
@@ -49,7 +58,14 @@ The user **lmtslr** runs the commands here.
        git commit -m "new project"  Makefile comments.txt README.md
        git push
 
-## lmtslr_umass_edu@unity
+5. Typically at the end of observing season, a record of all the obsnums is saved as well:
+
+       lmtinfo.py $PID > lmtinfo.txt
+       git add lmtinfo.txt
+       git commit -m "observing records" lmtinfo.txt
+       git push
+
+## 3. Main Pipeline: lmtslr_umass_edu@unity
 
 1. Check if new raw data has come in
 
@@ -57,7 +73,7 @@ The user **lmtslr** runs the commands here.
 
    Pay attention to the "Last recorded obsnum" and the SEQ and RSR obsnums listed in the output.
 
-2. Update the "lmtinfo" database if new data should be added. Note the value
+2. Update the "lmtinfo" database if new data should be added.
 
        cd $DATA_LMT
        lmtinfo.py last
@@ -69,8 +85,18 @@ The user **lmtslr** runs the commands here.
 3. Record the new value for last.obsnum
 
         tabcols data_lmt.log 2 | head -1  > last.obsnum
+
+   (there has to be a better way)
 	
 
+4. Update your script generators
+
+        cd $WORK_LMT/lmtoy_run/
+	make git git pull
+	#
+	make status
+
+   Depending if you left unchecked portions, you may need to commit those.
 
 4. Find out if there are new obsnums for a specific project
 
@@ -103,7 +129,12 @@ The user **lmtslr** runs the commands here.
 
         make summary index
 
+8. Ingest in the archive. Here we have to make sure that the final runs were done with "admit=1 sdfits=1 srdp=1"
 
-## lmthelpdesk_umass_edu@@unity 
+cd $WORK_LMT/lmtoy_run/lmtoy_$PID
 
 
+## 4. Helpdesk Pipeline: lmthelpdesk_umass_edu@@unity 
+
+Many things overlap with how the final pipeline is run and submit, except the work in git. Generally the DA's work
+in a git branch, so the work can be shared with the main pipeline work. More details to come here.
