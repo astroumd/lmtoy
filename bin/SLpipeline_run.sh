@@ -128,8 +128,8 @@ while [ $sleep -ne 0 ]; do
 	fi
 	echo "Found extra args:   $extra"
 	if [ $dryrun = 0 ]; then
-	    # march 2024: we now spawn
-	    SLpipeline_run1.sh $on2 $pid $extra > logs/$pid.log 2>&1
+	    # march 2024: we now spawn and log per obsnum
+	    SLpipeline_run1.sh $on2 $pid $extra > logs/$on2.log 2>&1 &
 	elif [ $dryrun = 2 ]; then
 	    # ensure the rsync directory exists and use a symlink on unity
 	    ssh lmtslr_umass_edu@unity mkdir -p work_lmt/$pid
