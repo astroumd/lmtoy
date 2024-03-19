@@ -5,6 +5,10 @@
 flags=${1:--tl}
 n=1
 
+if [ -e $DATA_LMT/last.obsnum ]; then
+    echo "# Last recorded obsnum: $(cat $DATA_LMT/last.obsnum)" 
+fi
+
 echo "# $(date) : $n most recent DATA_LMT=$DATA_LMT"
 
 
