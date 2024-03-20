@@ -1,4 +1,4 @@
-# LMTOY cheat sheet
+# LMTOY cheat sheet (March 2024)
 
 A brief reminder on the commands various stakeholders use to operate the pipeline and archive ingestion.
 
