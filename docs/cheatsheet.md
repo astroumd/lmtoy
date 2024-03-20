@@ -182,7 +182,18 @@ installed the **gh** (github CLI) command, otherwise it's annoying work in the b
 ## 4. Helpdesk Pipeline: lmthelpdesk_umass_edu@unity 
 
 Many things overlap with how the final pipeline is run and submit, except the work in git. Generally the DA's work
-in a git branch, so the work can be shared with the main pipeline work. More details to come here.
+in a git branch, so the work can be shared with the main pipeline work. More details to come here, but here are
+some points where it will differ:
+
+1. setting up a DA workflow (since they all share the same account)
+
+2. branching in git
+
+3. setting up your own YEAR file in lmtoy_run so you only see the projects you want to see, not all stuff back to 2018....
+
+4. the viewing URLs will be helpdesk specific
+
+5. the handoff to the general pipeline manager
 
 
 ## 5. PI remote execution
