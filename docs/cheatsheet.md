@@ -48,7 +48,7 @@ The user **lmtslr** runs the commands here.
 
 5. After this the most recent 100 TAP's produced are on this list:
 
-       http://taps.lmtgtm.org/lmtslr/lmtoy_run/last100.html
+       	xdg-open http://taps.lmtgtm.org/lmtslr/lmtoy_run/last100.html
 
 6. There is also a way to make these TAPs available via a tunnel on a browser that runs
    on **malt** itself, but this is for emergency only and is usually not available as the TAP
@@ -103,7 +103,7 @@ installed the **gh** (github CLI) command, otherwise it's annoying work in the b
 
        data_lmt_last
 
-   Pay attention to the "Last recorded obsnum" and the SEQ and RSR obsnums listed in the output.
+   Pay attention to the "Last recorded obsnum" and the latest SEQ and RSR obsnums listed in the output.
 
 2. Update the "lmtinfo" database if new data should be added.
 
@@ -112,13 +112,13 @@ installed the **gh** (github CLI) command, otherwise it's annoying work in the b
        # note the last obsnum, and replace it in the next line
        make new2 OBSNUM0=$(lmtinfo.py last)
 
-   This process can take a few mins
+   This process can take a few mins. After this, make sure that last.obsnum is updated.
 
-3. Record the new value for last.obsnum
+3. Record the new value for **last.obsnum**
 
         tabcols data_lmt.log 2 | head -1  > last.obsnum
 
-   (there has to be a better way)
+   (there will be a better way)
 	
 
 4. Update your script generators
@@ -161,9 +161,10 @@ installed the **gh** (github CLI) command, otherwise it's annoying work in the b
 
         make summary index
 
-   The following URL's will then give access to this project:
+   The following URL's will then give access to the master list, and this PID project in particular
 
-	xdg-open http://taps.lmtgtm.org/lmtslr/$PID
+        xdg-open http://taps.lmtgtm.org/lmtslr/lmtoy_run
+        xdg-open http://taps.lmtgtm.org/lmtslr/$PID	
 
 8. Ingest in the archive. Here we have to make sure that the final runs were done with "admit=1 sdfits=1 srdp=1"
 
