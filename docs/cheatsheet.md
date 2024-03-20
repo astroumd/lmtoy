@@ -134,6 +134,11 @@ installed the **gh** (github CLI) command, otherwise it's annoying work in the b
 
         source_obsnum.sh $PID
 
+4. Or do a more manual search (many options here)
+
+        lmtinfo.py grep 2024-03-17 Science 
+        lmtinfo.py grep 2024-03-17 LineCheck Bs
+
 5. Add obsnums and/or sources to the script generator
 
         cd $WORK_LMT/lmtoy_run/lmtoy_$PID
@@ -174,7 +179,7 @@ installed the **gh** (github CLI) command, otherwise it's annoying work in the b
    Details on the arguments to be determined. In theory, the script generator knows what to ingest, but perhaps
    these need to be confirmed on the commandline. Once this button is pushed, there's no way back.
 
-## 4. Helpdesk Pipeline: lmthelpdesk_umass_edu@@unity 
+## 4. Helpdesk Pipeline: lmthelpdesk_umass_edu@unity 
 
 Many things overlap with how the final pipeline is run and submit, except the work in git. Generally the DA's work
 in a git branch, so the work can be shared with the main pipeline work. More details to come here.
