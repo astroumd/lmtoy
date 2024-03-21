@@ -185,7 +185,38 @@ Many things overlap with how the final pipeline is run and submit, except the wo
 in a git branch, so the work can be shared with the main pipeline work. More details to come here, but here are
 some points where it will differ:
 
+0. Logging into the helpdesk account will have no LMTOY loaded, because the account is shared with TOLTEC and those
+   two accounts having conflicting python environments.   So, we manually load LMTOY with a command:
+
+        lmtoy
+
+1. After this you need to identify yourself as a specific helpdesk person, using an identifyer, usually your name
+
+        work_lmt peter
+
+   This will set up your LMTOY environment ($WORK_LMT, $DATA_LMT etc.), you can view those with the lmtoy command
+   again:
+
+        lmtoy
+	->
+        DATA_LMT:    /nese/toltec/dataprod_lmtslr/data_lmt
+        WORK_LMT:    /nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/peter
+
+2. Reminder on some sample URLs:
+
+        http://taps.lmtgtm.org/lmthelpdesk/peter/lmtoy_run/
+
+        http://taps.lmtgtm.org/lmthelpdesk/peter/2024-S1-US-5/
+
+
+
 1. setting up a DA workflow (since they all share the same account)
+
+   1. each DA gets their own $WORK_LMT, where the pipeline data will be stored. Typically this would be ....
+
+   2. The lmtoy_run should be in $WORK_LMT/lmtoy_run
+
+   3. Under the lmtoy_run directory will be all the script generators for the projects, e.g. lmtoy_2021-S1-US-3
 
 2. branching in git
 
@@ -199,3 +230,20 @@ some points where it will differ:
 ## 5. PI remote execution
 
 Something needs to be written down how a remote PI webrun is impacted when new data arrives.
+
+
+## 6. Noteworthy Tricks
+
+1. It's possible to combine data across projects. An example is 2024-S1-UM-1, which is a followup from 2023-S1-UM-8
+
+2. Mosaic'd data of which the field names are different, need a trick in the mk_runs.py file. See 2024-S1-MX-2
+
+3. Using the "dunder" (double underscore) appendix to an obsnum, one can keep multiple versions (e.g. with different
+   pipeline parameters).  Eventually the **oid=** might solve this too. But manual labor mean you need to rename
+   *all* affected obsnums as in this example:
+
+         mv 123456 123456__otfcal
+
+4. Removing all your jobs from the sbatch queue:
+
+         scancel $(squeue --me | tail +2 | awk '{print $1}')
