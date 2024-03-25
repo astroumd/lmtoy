@@ -16,7 +16,7 @@ Useful tools for the LMTOY script generators (lmtoy_$PID)
 import os
 import sys
 
-_version = "10-mar-2024"
+_version = "24-mar-2024"
 
 def pix_list(pl):
     """ convert a strong like "-0,-1" to proper pixlist by removing
@@ -50,28 +50,32 @@ def getpars(on):
     """
     pars4 = {}
     if os.path.exists("obsnum.args"):
-        print("WARNING: obsnum.args is deprecated, please use comments.txt now")
-        lines = open("obsnum.args").readlines()
-        for line in lines:
-            if line[0] == '#': continue
-            w = line.split()
-            pars4[int(w[0])] = w[1:]
-            print('PJT4-deprecated',w[0],w[1:])
+        print("ERROR: obsnum.args is deprecated, please use comments.txt now")
+        sys.exit(1)
 
     if os.path.exists("comments.txt"):
         lines = open("comments.txt").readlines()
         for line in lines:
             if line[0] == '#': continue
+            idx = line.find('QAFAIL')
+            if idx > 0:
+                extra='qagrade=-1'
+            else:
+                extra=''
             idx = line.find('#')
             w = line.split()
+            if len(w) == 0: continue
+            pars4[int(w[0])] = []            
             # loop over args,  and replace PI parameters
             if idx > 0:
-                pars4[int(w[0])] = []
                 for a in line[idx+1:].strip().split():
                     kv = a.split('=')
                     if kv[0] == 'pix_list':
                         a = 'pix_list=' + pix_list(kv[1])
                     pars4[int(w[0])].append(a)
+            # append 'extra' (QAFAIL induced)
+            if len(extra) > 0:
+                pars4[int(w[0])].append(extra)
 
     return pars4
 
