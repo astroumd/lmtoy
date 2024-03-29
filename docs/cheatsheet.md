@@ -119,7 +119,7 @@ installed the **gh** (github CLI) command, otherwise it's annoying work in the b
         tabcols data_lmt.log 2 | head -1  > last.obsnum
 
    (there will be a better way)
-	
+
 
 4. Update your script generators
 
@@ -160,7 +160,7 @@ installed the **gh** (github CLI) command, otherwise it's annoying work in the b
 
         sbatch_lmtoy.sh *run1a obsnum0=123456
 
-   would only process the pipeline for 123456 and up.
+   would only process the pipeline for obsnums 123456 and up.
 
 7. Make summary and update the master index
 
@@ -226,6 +226,10 @@ some points where it will differ:
 
 5. the handoff to the general pipeline manager
 
+6. grading (adding a qagrade= parameter to the pars) - what to do about QAFAIL. Set qagrade=-1 ?
+
+7. final public date, but this can be automated with a 'date +1yr' type script
+
 
 ## 5. PI remote execution
 
@@ -251,3 +255,12 @@ Something needs to be written down how a remote PI webrun is impacted when new d
 4. Removing all your jobs from the sbatch queue:
 
          scancel $(squeue --me | tail +2 | awk '{print $1}')
+
+5. If unity is too slow at the login node, set up your more personalized bash session as follows.  Example for 8GB and 4 hours,
+   adjust as needed.
+   
+         srun -n 1 -c 4 --mem=8G -p toltec-cpu -t 4:00:00 --x11 --pty bash
+	 
+   Unity helpdesk also recommends this command
+
+         unity-compute
