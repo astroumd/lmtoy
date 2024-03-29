@@ -21,7 +21,7 @@ new:
 	sort -r data_lmt.new                         >> data_lmt.log
 	rm data_lmt.new
 
-OBSNUM0=`cat last.obsnum`
+OBSNUM0=`tail -1 last.obsnum`
 last:
 	@echo $(OBSNUM0)
 new2:
