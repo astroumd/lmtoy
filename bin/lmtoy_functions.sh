@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="10-mar-2024"
+lmtoy_version="16-mar-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -24,6 +24,15 @@ function lmtoy_repo {
 function lmtoy_date {
     # standard ISO date, by default in local time.   Use "-u" to switch to UT time
     date +%Y-%m-%dT%H:%M:%S $*
+}
+
+function lmtoy_timer {
+    if [ -z "$1" ]; then
+	printf "$(expr $(date +%s) - $LMTOY_TIMER)s $$ $LMTOY_TIMER"
+    else
+	LMTOY_TIMER=$(date +%s)
+	printf "[$LMTOY_TIMER start $$]"
+    fi
 }
 
 function lmtoy_debug {
@@ -167,6 +176,8 @@ function qac_select {
 
 function lmtoy_rsr1 {
     # input:  first, obsnum, badlags, blanking, rfile, ....
+
+    echo "LMTOY>> _rsr1: $(lmtoy_timer) $$"
 
     # New order of reduction for single obsnum cases
     #  1. run rsr_driver to get a "first" spectrum, with whatever badlags are in dreampyrc
@@ -454,6 +465,9 @@ function lmtoy_rsr1 {
 
 	    printf_red LineCheck1 $(txtpar linecheck.log %1*1000,%2*1000,%3,%4/%3*c/1000*2.355 p0=a=,1,2 p1=b=,1,2 p2=c=,1,2 p3=d=,1,2)
 	    printf_red LineCheck2 $(txtpar linecheck.log %1*1000,%2*1000,%3,%4/%3*c/1000*2.355 p0=a=,2,2 p1=b=,2,2 p2=c=,2,2 p3=d=,2,2)
+
+	    #PJT txtpar linecheck.log %1*1000,%2*1000 p0=b=,1,2  p1=b=,1,3
+
 	fi
 
 	# try and fit the 4 strongest peaks, with xlines= a line integral is computed
@@ -782,6 +796,7 @@ function lmtoy_seq1 {
 
 	    # add a smooth cube version as well
 	    # @todo  it seems the WCS of the nfs is off by 1
+	    # @todo  use not central (ref) pixel, but use the location=  pipeline parameter
 	    fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.cubespecs.tab
 	    echo -n "cubespec : ";  tail -1  $s_on.cubespec.tab
 	    echo -n "cubespecs: ";  tail -1  $s_on.cubespecs.tab
