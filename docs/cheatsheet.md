@@ -248,6 +248,10 @@ Something needs to be written down how a remote PI webrun is impacted when new d
 
          mv 123456 123456__otfcal
 
+4. Update one or more NEMO programs
+
+         mknemo -u txtpar tabcols tabrows
+
 4. Removing all your jobs from the sbatch queue:
 
          scancel $(squeue --me | tail +2 | awk '{print $1}')

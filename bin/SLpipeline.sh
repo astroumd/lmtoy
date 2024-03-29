@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 2-feb-2024"
+_version="SLpipeline: 24-mar-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -40,6 +40,8 @@ rsync=""        # rsync address for the TAP file (used at LMT/malt)
 oid=""          # experimental parallel processing using __$oid  == currently not in use ==
 goal=Science    # Science, or override with: Pointing,Focus
 webrun=""       # optional directive for webrun to do parameter checking (SEQ/map, SEQ/Bs, RSR, ....)
+qagrade=""      # if given, the final grade recorded for the archive (QAFAIL enforces -1)
+public=""       # if given, the public data for archiving. Default is 1 year after today.
 
 #  Optional instrument specific pipeline can be added as well but are not known here
 #  A few examples:
@@ -329,6 +331,16 @@ echo "obsnum_list=$obsnum_list" >> $pdir/lmtoy_$obsnum.rc
 
 # record the processing time
 echo "date=\"$(lmtoy_date)\"     # end " >> $pdir/lmtoy_$obsnum.rc
+
+# record the qagrade, if one was given
+if [ ! -z $qagrade ]; then
+    echo "qagrade=$qagrade" >> $pdir/lmtoy_$obsnum.rc
+fi
+
+# record the public date, if one was given
+if [ ! -z $public ]; then
+    echo "date_public=$public" >> $pdir/lmtoy_$obsnum.rc
+fi
 
 # make a metadata yaml file for later ingestion into DataVerse
 if [ $meta -gt 0 ]; then

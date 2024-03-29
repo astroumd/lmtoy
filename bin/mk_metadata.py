@@ -35,8 +35,10 @@ import dvpipe.utils as utils
 from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 from dvpipe.pipelines.metadatablock import MetadataBlock
 from lmtoy import data_prod_id
+from datetime import date
+from dateutil.relativedelta import relativedelta
 
-_version = "7-feb-2024"
+_version = "24-mar-2024"
 
 def header(rc, key, debug=False):
     """
@@ -132,11 +134,17 @@ def get_version():
     fp.close()
     return lines[0].strip()
 
-def get_publicDate(projectId):
+def get_publicDate(rc, debug=False):
     """
-    return the date the data will go public
+    return the date the data will go public. ISO format  yyyy-mm-dd
+    should be a year after "now", unless one was present in the RC file
+    (e.g. when passed as public=yyyy-mm-dd to SLpipeline.sh)
     """
-    return "2099-12-31"    # @todo
+    public = header(rc,"date_public",debug)
+    if public != None:
+        return public
+    public_date = date.today() + relativedelta(years=1)
+    return public_date.isoformat()
 
 # constants
 _c  = 299792.458
@@ -184,6 +192,15 @@ def guess_line(restfreq, debug=False):
             return (l[1],l[2])
     return ("Unknown","Unknown")
 
+def get_qagrade(rc, debug=False):
+    qagrade = header(rc,"qagrade",debug)
+    if qagrade == None:
+        qagrade = 0
+    else:
+        qagrade = int(qagrade)
+    return qagrade
+
+
     
 if __name__ == "__main__":
 
@@ -227,7 +244,7 @@ if __name__ == "__main__":
     lmtdata.add_metadata("projectID",    header(rc,"ProjectId",debug))
     lmtdata.add_metadata("projectTitle", header(rc,"projectTitle",debug))
     lmtdata.add_metadata("PIName",       header(rc,"PIName",debug))
-    lmtdata.add_metadata("publicDate",   get_publicDate(header(rc,"ProjectId")))
+    lmtdata.add_metadata("publicDate",   get_publicDate(rc,debug))
     lmtdata.add_metadata("isPolarimetry",      False)    # or True if HWP mode not ABSENT
     lmtdata.add_metadata("halfWavePlateMode", "ABSENT")  # or FIXED or ROTATING
     # 0 = unprocessed, 1 = pipeline processed, 2 = DA improvement
@@ -346,7 +363,8 @@ if __name__ == "__main__":
         band["bandwidth"] = bw*nchan/nchan0*u.Unit("GHz")
         band["beam"] = lmt_beam(skyfreq)
         band["winrms"] = rms*u.Unit("mK")
-        band["qaGrade"] = 0;                               # 0 .. 5   (0 means not graded) @todo
+        band["qaGrade"] = get_qagrade(rc, debug)   # -1 .. 5 (0 means not graded)
+
         band["nchan"] =  nchan
         band["bandName"] = "OTHER"    # we don't have special names for the spectral line bands
         lmtdata.add_metadata("band",band)
@@ -373,7 +391,7 @@ if __name__ == "__main__":
             band["bandwidth"] = bw*nchan/nchan0*u.Unit("GHz")
             band["beam"] = lmt_beam(skyfreq)
             band["winrms"] = rms*u.Unit("mK")
-            band["qaGrade"] = 0;     # -1 .. 5 (0 means not graded)
+            band["qaGrade"] = get_qagrade(rc, debug)   # -1 .. 5 (0 means not graded)
             band["nchan"] = nchan
             band["bandwidth"] = bw*u.Unit("GHz")
             
@@ -406,7 +424,7 @@ if __name__ == "__main__":
            band["winrms"] = -1.0
         else:
            band["winrms"] = float(header(rc,"rms",debug))*u.Unit("K")
-        band["qaGrade"] = 0;     # -1 .. 5 (0 means not graded)        
+        band["qaGrade"] = get_qagrade(rc, debug)   # -1 .. 5 (0 means not graded)        <
         band["nchan"] = int(header(rc,"nchan",debug))
         band["formula"] = ""        # not applicable for RSR
         band["transition"] = ""     # not applicable for RSR
