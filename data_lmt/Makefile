@@ -34,6 +34,7 @@ new2:
 	cp data_lmt.log data_lmt.new
 	lmtinfo.py new $(OBSNUM0)  >> data_lmt.new
 	sort -r data_lmt.new | uniq > data_lmt.log
+	tabcols data_lmt.log 2 | head -1 >> last.obsnum
 	@echo "Most recent obsnum: `tabcols data_lmt.log 2 | head -1`"
 
 data:   ifproc RedshiftChassis0
