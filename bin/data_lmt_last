@@ -1,12 +1,16 @@
 #! /bin/bash
 # 
 # Usage:  data_lmt_last [-3] [-l]
+#
+#  @TODO   proper options
+#          -r    only show RSR
+#          -s    only show SEQ 
 
 flags=${1:--tl}
 n=1
 
 if [ -e $DATA_LMT/last.obsnum ]; then
-    echo "# Last recorded obsnum: $(cat $DATA_LMT/last.obsnum)" 
+    echo "# Last recorded obsnum: $(tail -1 $DATA_LMT/last.obsnum)" 
 fi
 
 echo "# $(date) : $n most recent DATA_LMT=$DATA_LMT"
