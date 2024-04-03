@@ -110,18 +110,11 @@ installed the **gh** (github CLI) command, otherwise it's annoying work in the b
        cd $DATA_LMT
        lmtinfo.py last
        # note the last obsnum, and replace it in the next line
-       make new2 OBSNUM0=$(lmtinfo.py last)
+       make new2 
 
-   This process can take a few mins. After this, make sure that last.obsnum is updated.
+   This process can take a few mins. After this, make sure that last.obsnum is updated correctly.
 
-3. Record the new value for **last.obsnum**
-
-        tabcols data_lmt.log 2 | head -1  > last.obsnum
-
-   (there will be a better way)
-
-
-4. Update your script generators
+3. Update your script generators
 
         cd $WORK_LMT/lmtoy_run/
 	make git git pull
