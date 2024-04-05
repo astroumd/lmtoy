@@ -7,6 +7,12 @@ if [ "$1" == help ] || [ "$1" == --help ] || [ "$1" == -h ]; then
     cat $LMTOY/docs/lmtoy.help
     exit 0
 fi
+
+if [ "$1" == cmd ] || [ "$1" == cmds ]; then
+    cat $LMTOY/docs/lmtoy.cmds
+    exit 0
+fi
+
 os=$(uname -s)
 
 gitbv() {
