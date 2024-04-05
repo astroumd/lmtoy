@@ -1,0 +1,37 @@
+#! /bin/bash
+# 
+# Usage:  work_lmt_missing
+#
+
+
+#        should be some output of 'lmtinfo.py grep Science'
+log=$1
+
+
+echo "# Instruments"
+tabcols $log 3|sort | uniq -c | sort -nr
+
+echo "# Obsmode"
+tabcols $log 5|sort | uniq -c | sort -nr
+
+echo "# ProjectId"
+tabcols $log 7|sort | uniq -c | sort -nr
+
+echo "# Observing time"
+tabcols $log 10| tabhist -
+
+echo "# Unique DATEOBS"
+tabcols $log  1 | awk -FT '{print $1}' | sort | uniq -c|wc
+
+cd $WORK_LMT
+
+while IFS= read -r line; do
+   o=$(echo $line | tabcols - 2)
+   i=$(echo $line | tabcols - 3)
+   p=$(echo $line | tabcols - 7)
+   if [ -d $p/$o ]; then
+      echo "OK $p/$o"
+   else
+      echo "MISSING $p/$o $i"
+   fi
+done < $log.log 
