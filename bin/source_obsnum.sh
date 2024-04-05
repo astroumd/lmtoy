@@ -64,7 +64,8 @@ echo ""
 echo "project=\"$pid\""
 echo ""
 echo "# Dictionary of sources, each with a list of obsnum's in this project"
-echo "# negative obsnums are ignored in the combinations"
+echo "# negative obsnums are ignored in the combinations. See also comments.txt"
+echo "# for obsnum specific comments and parameters!"
 echo "on = {}"
     
 for src in $(tabcols $log 1 | sort | uniq); do
@@ -83,7 +84,7 @@ for src in $(tabcols $log 1 | sort | uniq); do
 done
 
 echo ""
-echo "# parameters for the first pass of the pipeline"
+echo "# parameters for the first pass of the pipeline (restart=1 is automatically enforced here)"
 echo "pars1 = {}"
 echo ""
 
@@ -101,7 +102,7 @@ for src in $(tabcols $log 1 | sort | uniq); do
 done
 
 echo ""
-echo "# parameters for the (optional) thirds pass of the pipeline (usually for bank=1)"
+echo "# parameters for the (optional) third pass of the pipeline (usually for bank=1)"
 echo "pars2 = {}"
 echo ""
 
