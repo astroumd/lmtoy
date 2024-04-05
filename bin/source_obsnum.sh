@@ -50,7 +50,7 @@ dat=$DATA_LMT/data_lmt.log
 log=$WORK_LMT/tmp/$pid.obsnums.log
 g=1
 
-grep $pid $dat | grep $intent | grep -v Cal | tabcols - 6,2,7  > $log
+grep -w $pid $dat | grep $intent | grep -v Cal | tabcols - 6,2,7  > $log
 
 echo "# Using $dat"
 for pid in $(tabcols $log 3 | sort | uniq); do
