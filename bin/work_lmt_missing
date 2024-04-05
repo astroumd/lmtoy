@@ -34,4 +34,4 @@ while IFS= read -r line; do
    else
       echo "MISSING $p/$o $i"
    fi
-done < $log.log 
+done < $log 
