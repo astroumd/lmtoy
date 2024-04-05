@@ -6,7 +6,8 @@ We assume LMTOY is present and up to date.   This command
 
       lmtoy
 
-will inform you of some important parameters for your LMTOY.
+will inform you of some important parameters for your LMTOY. There are optional
+arguments **help** and **cmds** for more reminders on using LMTOY.
 
 We are also assuming you are working on a particular project, which
 we will set as an environment variable, for example
