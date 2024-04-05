@@ -36,14 +36,17 @@ we will set as an environment variable, for example
    and finally a specific run for bank=1 (run1c).
 
          sbatch_lmtoy.sh $PID.run1a
+	 squeue --me | nl -v 0
 	 
-         <patiently wait for all the runs to finish>
+	 <patiently wait until all your obsnums have exited from the queue>
       
          sbatch_lmtoy.sh $PID.run1b
 
          <patiently wait for all the runs to finish>
       
          sbatch_lmtoy.sh $PID.run1c
+
+         <patiently wait for all the runs to finish>
 
    When only one bank is present, only run1a and run1b is needed. For RSR data only run1a is needed.
 
@@ -56,7 +59,6 @@ we will set as an environment variable, for example
          http://taps.lmtgtm.org/lmtslr/$PID
 
 5. Now run the combination using the run2 script(s). Typically you only need
-
          
          sbatch_lmtoy.sh $PID.run2a
 
@@ -65,12 +67,13 @@ we will set as an environment variable, for example
 6. Again do a summary and view the results
 
          make summary
+         http://taps.lmtgtm.org/lmtslr/$PID	 
 
 ## Advanced use:
 
 1. Mosaiced fields
 
-Example:  2024-S1-MX-2
+   Example:  2024-S1-MX-2
 
 2. Combining data from different projects
 
@@ -85,7 +88,7 @@ Example: 2024-S1-UM-1 and 2023-S1-UM-8  (notably their pointing center is differ
 
          source_obsnum.sh $PID
 
-    If this looks different from what you have in your mk_runs.py file,
+    If this looks different from what you have in your **mk_runs.py** file,
     for example new sources and/or new obsnums, add them to the file
     and make new run files and sbatch them .
 
@@ -97,5 +100,5 @@ Example: 2024-S1-UM-1 and 2023-S1-UM-8  (notably their pointing center is differ
 
    pipeline parameters).  
 
-
-
+5. The files in the script generator directory are normally saved on github. That's for
+   another chapter.
