@@ -11,15 +11,16 @@
 #     scancel JOBID
 #     srun -n 1 -c 4 --mem=16G -p toltec-cpu -t 1:00:00 --x11 --pty bash
 #
-#  Typical usage:
+#  Example usage:
 #     sbatch_lmtoy.sh SLpipeline.sh obsnum=12345 
 #     sbatch_lmtoy.sh SLpipeline.sh obsnums=12345,12346
 #     sbatch_lmtoy.sh 2021-S1-US-3.run1a exist=1
 #     sbatch_lmtoy.sh 2021-S1-US-3.run1a obsnum0=123456
-#     sbatch_lmtoy.sh 2021-S1-US-3.run2a
+#     sbatch_lmtoy.sh 2021-S1-US-3.run2a grep=foobar
 #
 #     exist=1   will not process an obsnum if it already exists
 #     obsnum0=  will only process single obsnums at or beyond this obsnum0
+#     grep=     will only process lines where the grep word matched  @todo
 #
 #  Sample squeue output:
 #
@@ -35,7 +36,7 @@
 #
 #--HELP
 
-version="12-mar-2024"       # script version
+version="4-apr-2024"        # script version
 sleep=1                     # don't use 0, unity spawns too fast in a series
 
 if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
@@ -93,6 +94,11 @@ if [ $obsnum0 != 0 ]; then
 	echo "SKIP obsnum=$obsnum because obsnum0=$obsnum0"
 	exit 0
     fi
+fi
+
+if [ ! -z "$grep" ]; then
+    echo "GREP not supported yet"
+    exit 0
 fi
 
 #                                        sbatch run file

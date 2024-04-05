@@ -22,7 +22,7 @@ mk_header() {
 
 mk_trailer() {
     echo 'if __name__ == "__main__":'
-    echo '    runs.mk_runs(project, on, pars1, pars2)'
+    echo '    runs.mk_runs(project, on, pars1, pars2, pars3, sys.argv)'
 }
 
 if [ -z "$1" ]; then
@@ -92,7 +92,7 @@ for src in $(tabcols $log 1 | sort | uniq); do
 done
 
 echo ""
-echo "# parameters for the (optional) second pass of the pipeline"
+echo "# parameters for the (optional) second pass of the pipeline (e.g. for bank=0)"
 echo "pars2 = {}"
 echo ""
 
@@ -100,9 +100,19 @@ for src in $(tabcols $log 1 | sort | uniq); do
     echo "pars2[\"$src\"] = \"\""
 done
 
+echo ""
+echo "# parameters for the (optional) thirds pass of the pipeline (usually for bank=1)"
+echo "pars2 = {}"
+echo ""
+
+for src in $(tabcols $log 1 | sort | uniq); do
+    echo "pars3[\"$src\"] = \"\""
+done
+
+
 ns=$(tabcols $log 1 | sort | uniq | wc -l)
 echo ""
-echo "# Found $ns source(s)"
+echo "# Found $ns source(s) for $pid"
 echo ""
 
 mk_trailer
