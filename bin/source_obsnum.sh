@@ -22,7 +22,7 @@ mk_header() {
 
 mk_trailer() {
     echo 'if __name__ == "__main__":'
-    echo '    runs.mk_runs(project, on, pars1, pars2)'
+    echo '    runs.mk_runs(project, on, pars1, pars2, pars3, sys.argv)'
 }
 
 if [ -z "$1" ]; then
@@ -50,7 +50,7 @@ dat=$DATA_LMT/data_lmt.log
 log=$WORK_LMT/tmp/$pid.obsnums.log
 g=1
 
-grep $pid $dat | grep $intent | grep -v Cal | tabcols - 6,2,7  > $log
+grep -w $pid $dat | grep $intent | grep -v Cal | tabcols - 6,2,7  > $log
 
 echo "# Using $dat"
 for pid in $(tabcols $log 3 | sort | uniq); do
@@ -64,7 +64,8 @@ echo ""
 echo "project=\"$pid\""
 echo ""
 echo "# Dictionary of sources, each with a list of obsnum's in this project"
-echo "# negative obsnums are ignored in the combinations"
+echo "# negative obsnums are ignored in the combinations. See also comments.txt"
+echo "# for obsnum specific comments and parameters!"
 echo "on = {}"
     
 for src in $(tabcols $log 1 | sort | uniq); do
@@ -83,7 +84,7 @@ for src in $(tabcols $log 1 | sort | uniq); do
 done
 
 echo ""
-echo "# parameters for the first pass of the pipeline"
+echo "# parameters for the first pass of the pipeline (restart=1 is automatically enforced here)"
 echo "pars1 = {}"
 echo ""
 
@@ -92,7 +93,7 @@ for src in $(tabcols $log 1 | sort | uniq); do
 done
 
 echo ""
-echo "# parameters for the (optional) second pass of the pipeline"
+echo "# parameters for the (optional) second pass of the pipeline (e.g. for bank=0)"
 echo "pars2 = {}"
 echo ""
 
@@ -100,9 +101,19 @@ for src in $(tabcols $log 1 | sort | uniq); do
     echo "pars2[\"$src\"] = \"\""
 done
 
+echo ""
+echo "# parameters for the (optional) third pass of the pipeline (usually for bank=1)"
+echo "pars2 = {}"
+echo ""
+
+for src in $(tabcols $log 1 | sort | uniq); do
+    echo "pars3[\"$src\"] = \"\""
+done
+
+
 ns=$(tabcols $log 1 | sort | uniq | wc -l)
 echo ""
-echo "# Found $ns source(s)"
+echo "# Found $ns source(s) for $pid"
 echo ""
 
 mk_trailer

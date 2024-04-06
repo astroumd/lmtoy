@@ -1,0 +1,14 @@
+Common scripts in LMTOY 
+-----------------------
+lmtoy             - report status of LMTOY or give more help
+SLpipeline.sh     - pipeline (needs at least obsnum= or obsnums=)
+seq_pipeline.sh     - SEQ mapping pipeline
+rsr_pipeline.sh     - RSR pipeline
+lmtinfo.py        - report (or build) entries of database what your $DATA_LMT has
+lmtar             - create tar file of raw data for given obsnums
+sbatch_lmtoy.sh   - help sending (lots of) commands to Unity's sbatch queue
+source_obsnum.sh  - for given project, report what sources and obsnums belong together
+ifproc.sh         - report header for an OBSNUM
+data_lmt_last     - report most recent RAW data in $DATA_LMT
+fitsplot.py       - simple plot of a FITS 2D image
+tab_plot.py       - simple plotter of one or more tables
