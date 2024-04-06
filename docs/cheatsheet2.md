@@ -2,11 +2,13 @@
 
 We outline the steps to reduce data with LMTOY's SLpipeline on Unity.
 
-We assume LMTOY is present and up to date.   This command
+We assume LMTOY is present and up to date, and that you have a starting
+script generator for your project. First of all, this command
 
       lmtoy
 
-will inform you of some important parameters for your LMTOY.
+will inform you of some important parameters for your LMTOY. If that
+command doesn't exist, your shell has not been set up properly.
 
 We are also assuming you are working on a particular project, which
 we will set as an environment variable, for example
