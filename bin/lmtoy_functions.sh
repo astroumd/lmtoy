@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="28-mar-2024"
+lmtoy_version="6-apr-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -444,7 +444,7 @@ function lmtoy_rsr1 {
 	echo "regress=\"$regress\"" >> $rc
 
 	if [ $obsgoal = "LineCheck" ]; then
-	    echo "LMTOY>> LineCheck"
+	    echo "LMTOY>> LineCheck $xlines"
 	    rm -f spec1.tab spec2.tab
 	    #  good for I17208, I12112, I10565
 	    xrange=106:111
@@ -462,13 +462,28 @@ function lmtoy_rsr1 {
 	    if [ -s spec2.tab ]; then
 		tabplot spec2.tab 1 2,3,4 111-4 111 line=1,1 color=2,3,4 ycoord=0 yapp=spec2.$dev/$dev
 	    fi
-
+	    # gaussian fit  (base,peak: mK  freq: GHz  FWHM: km/s)
 	    linecheck1="$(txtpar linecheck.log %1*1000,%2*1000,%3,%4/%3*c/1000*2.355 p0=a=,1,2 p1=b=,1,2 p2=c=,1,2 p3=d=,1,2)"
 	    linecheck2="$(txtpar linecheck.log %1*1000,%2*1000,%3,%4/%3*c/1000*2.355 p0=a=,2,2 p1=b=,2,2 p2=c=,2,2 p3=d=,2,2)"
-	    echo linecheck1="\"$linecheck1\"" >> $rc
-	    echo linecheck2="\"$linecheck2\"" >> $rc
-	    printf_red LineCheck1 $linecheck1
-	    printf_red LineCheck2 $linecheck2
+
+	    # integral by summing under the profile  (K.km/s)
+	    if [ ! -z "$xlines" ]; then
+		xc=$(echo $xlines | tabcols - 1)
+		dx=$(echo $xlines | tabcols - 2)
+		dfv=$(nemoinp 1/$xc*c/1000)
+		int1=$(tabint $spec1 1 2 $xc-$dx $xc+$dx | tabmath - - %1*$dfv all)
+		int2=$(tabint $spec2 1 2 $xc-$dx $xc+$dx | tabmath - - %1*$dfv all)
+	    else
+		int1=0
+		int2=0
+	        df=0
+	    fi
+	    # recall that Flux = 1.064 * Peak * Width
+
+	    echo linecheck1="\"$linecheck1 $int1\"" >> $rc
+	    echo linecheck2="\"$linecheck2 $int2\"" >> $rc
+	    printf_red LineCheck1 $linecheck1 $int1
+	    printf_red LineCheck2 $linecheck2 $int2
 
 	fi
 
