@@ -466,13 +466,16 @@ function lmtoy_rsr1 {
 	    linecheck1="$(txtpar linecheck.log %1*1000,%2*1000,%3,%4/%3*c/1000*2.355 p0=a=,1,2 p1=b=,1,2 p2=c=,1,2 p3=d=,1,2)"
 	    linecheck2="$(txtpar linecheck.log %1*1000,%2*1000,%3,%4/%3*c/1000*2.355 p0=a=,2,2 p1=b=,2,2 p2=c=,2,2 p3=d=,2,2)"
 
-	    # integral by summing under the profile  (K.km/s)
+	    # integral by summing under the profile  (K.km/s) of the first line in xlines=
 	    if [ ! -z "$xlines" ]; then
 		xc=$(echo $xlines | tabcols - 1)
 		dx=$(echo $xlines | tabcols - 2)
-		dfv=$(nemoinp 1/$xc*c/1000)
-		int1=$(tabint $spec1 1 2 $xc-$dx $xc+$dx | tabmath - - %1*$dfv all)
-		int2=$(tabint $spec2 1 2 $xc-$dx $xc+$dx | tabmath - - %1*$dfv all)
+		int1=$(tabint $spec1 1 2 $xc-$dx $xc+$dx scale=c/$xc/1000)
+		int2=$(tabint $spec2 1 2 $xc-$dx $xc+$dx scale=c/$xc/1000)
+		a1=$(echo $linecheck1 | tabcols - 1)
+		a2=$(echo $linecheck2 | tabcols - 1)
+		int1=$(nemoinp $int1-2*$a1*$dx*c/$xc/1e6)
+		int2=$(nemoinp $int2-2*$a2*$dx*c/$xc/1e6)
 	    else
 		int1=0
 		int2=0
