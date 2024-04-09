@@ -3,6 +3,12 @@
 # Usage:  work_lmt_missing
 #
 
+if [ -z "$1" ]; then
+    echo "Usage: $0 logfile"
+    echo "   A logfile from lmtinfo.py is needed here, and statistics on these projects will be presented"
+    echo "   e.g. lmtinfo.py grep 2024-S1 Science SEQ > 2024_seq.log"
+    exit 0
+fi
 
 #        should be some output of 'lmtinfo.py grep Science'
 log=$1
@@ -34,4 +40,6 @@ while IFS= read -r line; do
    else
       echo "MISSING $p/$o $i"
    fi
-done < $log 
+done < $log
+
+
