@@ -13,10 +13,11 @@
 # dvname    - Name of the dataverse to upload to. Default: lmtdata
 # envfile   - file with API credentials  [$HOME/.ssh/su_prod.env]
 # in        - input directory with project/obsnum/*.tar
-# out       - output dir
+# out       - output dir, default: 'ready_for_upload'
 # overwrite - overwrite the output dir.  
 #             If 1, existing directory will be removed. 
 #             If anything else , script will exit if $out exists.
+# publish   - Upload and publish the data to dataverse after preparation
 # verbose   - If non-zero, echo dvpipe commands before executing
 #
 #-------------------------------------------------------------
@@ -30,6 +31,7 @@ envfile=$HOME/.ssh/su_prod.env
 in=data_prod  
 out=ready_for_upload
 overwrite=0
+publish=1
 verbose=0
 #--HELP
 
@@ -54,6 +56,7 @@ echo "envfile:   $envfile"
 echo "in:        $in"
 echo "out:       $out"
 echo "overwrite: $overwrite"
+echo "publish:   $publish"
 echo "verbose:   $verbose"
 
 #-------------------------------------------------------------
@@ -76,6 +79,7 @@ if [ -d "$out" ]; then
     echo "#### Error: $out exists. Use 'overwrite=1' to automatically remove it"
     exit 255
 fi
+mkdir $out
 
 # Probably here, you have to run mk_metadata meta=2
 
@@ -93,11 +97,13 @@ for directory in ${in}/*; do
 done;
 
 # upload and publish (-b major)
-for index in ${out}/*.yaml; do
-    if [ "$verbose" -ne 0 ] || [ $dryrun -ne 0 ] ; then
-        echo "dvpipe -c config_prod.yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p $dvname"
-    fi
-    if [ "$dryrun" -eq 0 ];then
-        dvpipe -c config_prod.yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p $dvname
-    fi
-done
+if [ "$publish" -eq 1 ]; then
+    for index in ${out}/*.yaml; do
+        if [ "$verbose" -ne 0 ] || [ $dryrun -ne 0 ] ; then
+            echo "dvpipe -c config_prod.yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p $dvname"
+        fi
+        if [ "$dryrun" -eq 0 ];then
+            dvpipe -c config_prod.yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p $dvname
+        fi
+    done
+fi
