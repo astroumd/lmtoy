@@ -22,6 +22,11 @@ we will set as an environment variable, for example
 
    This should have been set up for you. If not, contact PeterT.
 
+   You should pretty much always make sure these files are in sync with github, so do this to get
+   the latest:
+
+         git pull
+
 
 2. Inspect the **README.md**, **comments.txt** and **mk_runs.py** files for human and programmatic
    information, and keep them up to date.
@@ -34,22 +39,22 @@ we will set as an environment variable, for example
 
          make runs
 
-   The most complex ones are two-IF SEQ, where it creates a run1a, run1b and run1c file.
+   The most complex observations ones are two-IF SEQ, where it creates a run1a, run1b and run1c file.
    These refer to a fresh start for both banks (run1a), then a specific run for bank=0 (run1b)
    and finally a specific run for bank=1 (run1c).
 
          sbatch_lmtoy.sh $PID.run1a
-	 squeue --me | nl -v 0
-	 
-	 <patiently wait until all your obsnums have exited from the queue>
-      
+         squeue --me | nl -v 0
+
+   *patiently wait until all your obsnums have exited from the queue*
+
          sbatch_lmtoy.sh $PID.run1b
 
-         <patiently wait for all the runs to finish>
+   *patiently wait for all the runs to finish*
       
          sbatch_lmtoy.sh $PID.run1c
 
-         <patiently wait for all the runs to finish>
+   *patiently wait for all the runs to finish*
 
    When only one bank is present, only run1a and run1b is needed. For RSR data only run1a is needed.
 
@@ -57,7 +62,7 @@ we will set as an environment variable, for example
 
          make summary
 
-   The results can be viewed on
+   The results can then be viewed on
 
          http://taps.lmtgtm.org/lmtslr/$PID
 
