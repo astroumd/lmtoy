@@ -70,7 +70,7 @@ and password protected URLs:
        http://taps.lmtgtm.org/lmthelpdesk/$USER/$PID   - Example of a ProjectId done by a DA
        http://taps.lmtgtm.org/lmtslr/$PID/TAP          - Example of the lightweight TAPs of a project
        https://www.astro.umd.edu/~teuben/work_lmt/     - peter's LMTOY experiments
-       http://wiki.lmtgtm.org/lmtwiki
+       http://wiki.lmtgtm.org/lmtwiki                  - wiki / shift reports
 
 ## 2.1 Steps
 
@@ -82,9 +82,19 @@ and password protected URLs:
   where LMTOY is installed:
 
        cd SLpipeline.d
-       SLpipeline_run.sh
+       SLpipeline_run.sh > SLpipeline.log 2>&1
 
   This will keep a running log what obsnums are being taken, and their instrument, obsgoal etc.
+  
+  It will maintain a SLpipeline.pid file, so no two will run at the same time.
+
+  For each Science|LineCheck run it will spawn the pipeline via a script SLpipeline_run1.sh, and a logfile
+  of that OBSNUM will be in the log/ subdirectory. This will need periodic cleanup of very old logfiles.
+  Sometimes you might need to re-run an OBSNUM on malt, and sync up the TAP on unity, example:
+
+       SLpipeline_run1.sh  123456   2024-S1-NL-01   dv=10 dw=20
+
+  where the OBSNUM and PID are the first two required arguments, the remainder is the "extra" specific ones.
 
   The **lmtinfo.py** command will see new obsnums as they have been processed by the **lmtinfo.py build**
   process. This is usually fast on **malt** as we don't keep a lot of data here.
@@ -103,6 +113,19 @@ and password protected URLs:
 * On **unity** we need to ensure the TAP's are visible in the TAP URL of the ProjectID; this may
   need manual labor. (already done via malt?)
 
+* Ensure the data have arrived:
+
+       data_lmt_last
+
+  This will also report the last.obsnum that the database has.  If all data have arrived, do
+
+       cd $DATA_LMT
+       make new2 OBSNUM0=123456
+
+  for that last.obsnum value.   Then after this is done, update the new last.obnum:
+
+       echo 123456 > last.obsnum
+
 * The script generator needs to be be prepared.
 
   The steps are detailed in lmtoy_run/README.md, and the important directories are:
@@ -116,6 +139,8 @@ and password protected URLs:
   can be extracted. QUESTION: *Are we allowed to keep a copy here ?*
 
   - add obsnums of the source (there's a script than can make a template)
+
+        source_obsnum.sh $PID
 
   - add comments to comments.txt
 
