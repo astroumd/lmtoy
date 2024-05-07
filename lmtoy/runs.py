@@ -161,7 +161,7 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
                 obsnums.sort()
                 for o1 in obsnums:
                     print(o1)
-                print("# found %d obsnums" % len(obsnums))
+                print("# found %d obsnums for %s" % (len(obsnums),project))
                 return
             elif argv[1] == '-c':
                 for s in on.keys():
