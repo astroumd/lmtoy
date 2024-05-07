@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 24-mar-2024"
+_version="SLpipeline: 16-apr-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -27,10 +27,10 @@ error=0         # add bash error (1)
 restart=0       # 1=force single fresh restart  2=restart + autorun  (always deletes old obsnum)
 nese=0          # 0=work all on nese    1=raw on nese, work on /work    2=raw from /work, work on /work [placeholder]
 exist=0         # if set, and the obsnum exists, skip running pipeline 
-tap=0           # save the TAP in a tar file?
-srdp=0          # save the SRDP in a tar file?
-sdfits=0        # save the calibrated spectra in SDFITS (or netCDF)
-raw=0           # save the RAW data in a tar file?
+tap=0           # save the TAP in a tar file? (used on malt)
+srdp=0          # save the SRDP in a tar file in $PID/4dv
+sdfits=0        # save the calibrated spectra in SDFITS (or netCDF) in $PID/4dv
+raw=0           # save the RAW data in a tar file in the $PID
 grun=1          # save the script generator?
 admit=0         # run ADMIT ?
 meta=1          # 1 or 2:  1=activate update for frontend db (for dataverse)
@@ -342,6 +342,11 @@ if [ ! -z $public ]; then
     echo "date_public=$public" >> $pdir/lmtoy_$obsnum.rc
 fi
 
+# directory for dvpipe products for archive ingestion, also for links for PI
+dir4dv=$WORK_LMT/${ProjectId}/dir4dv/${ProjectId}/${obsnum}
+mkdir -p $dir4dv
+echo "LMTOY>> using dir4dv=$dir4dv"
+
 # make a metadata yaml file for later ingestion into DataVerse
 if [ $meta -gt 0 ]; then
     cd $pdir
@@ -351,8 +356,8 @@ if [ $meta -gt 0 ]; then
 	db=$WORK_LMT/example_lmt.db
 	flock --verbose $db.flock mk_metadata.py -y  $pdir/lmtmetadata.yaml -f $db $pdir 
     else
-	mk_metadata.py -y  $pdir/lmtmetadata.yaml $pdir
-	cp $pdir/lmtmetadata.yaml $WORK_LMT/$ProjectId/${obsnum}_lmtmetadata.yaml
+	mk_metadata.py -y $pdir/${obsnum}_lmtmetadata.yaml $pdir
+	cp $pdir/${obsnum}_lmtmetadata.yaml $dir4dv
     fi
 fi
 # produce TAP, RSRP, RAW tar files, whichever are requested.
@@ -389,17 +394,17 @@ fi
 if [ $srdp != 0 ]; then
     echo "Creating Scientific Ready Data Producs (SRDP) in $pidir/${obsnum}_SRDP.tar"
     #tar -cf $ProjectId/${obsnum}/${obsnum}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/$obsnum
-    tar -cf $ProjectId/${obsnum}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/$obsnum    
+    tar -cf $dir4dv/${obsnum}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/$obsnum    
 fi
 
 if [ $sdfits != 0 ]; then
     echo "Creating spectra (SDFITS) in $pidir/${obsnum}_SDFITS.tar"
     if [ -e  $ProjectId/$obsnum/*.nc ]; then
 	#tar -cf $ProjectId/${obsnum}/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
-	tar -cf $ProjectId/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc	
+	tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc	
     else
 	#tar -cf $ProjectId/${obsnum}/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md
-	tar -cf $ProjectId/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md	
+	tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md	
     fi
 fi
 
