@@ -26,7 +26,8 @@ we will set as an environment variable, for example
 2. Inspect the **README.md**, **comments.txt** and **mk_runs.py** files for human and programmatic
    information, and keep them up to date.
 
-   There should be more verbiage here what's in the *mk_runs.py** file....
+   There should be more verbiage here what's in the *mk_runs.py** file.... and a some python
+   knowledge is assumed (e.g. our use of {} for a dictionary and [] for list)
 
 
 3. When **mk_runs.py** has been edited, make *run* files for Unity's **sbatch** system
