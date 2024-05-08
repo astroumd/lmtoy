@@ -103,7 +103,7 @@ done
 
 echo ""
 echo "# parameters for the (optional) third pass of the pipeline (usually for bank=1)"
-echo "pars2 = {}"
+echo "pars3 = {}"
 echo ""
 
 for src in $(tabcols $log 1 | sort | uniq); do
