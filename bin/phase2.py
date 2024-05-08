@@ -18,6 +18,7 @@ keys = ['Source Name',                     #
         'Line Rest Frequency',             # restfreq
         'Line Width',                      # dv
         'Line Spectrometer Mode',          # 200MHz  (later: bandwidth in GHz)
+        'Spectrometer Mode',               # WIDE, ...
         '2nd Line Frequency',
         '2nd Line Width',
         '2nd Line Spectrometer Mode',      # is this always the same as 1st
