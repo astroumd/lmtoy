@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 16-apr-2024"
+_version="SLpipeline: 7-may-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -27,10 +27,11 @@ error=0         # add bash error (1)
 restart=0       # 1=force single fresh restart  2=restart + autorun  (always deletes old obsnum)
 nese=0          # 0=work all on nese    1=raw on nese, work on /work    2=raw from /work, work on /work [placeholder]
 exist=0         # if set, and the obsnum exists, skip running pipeline 
-tap=0           # save the TAP in a tar file? (used on malt)
-srdp=0          # save the SRDP in a tar file in $PID/4dv
+tap=0           # save the TAP in a tar/zip file? (used on malt)
+srdp=0          # save the SRDP in a tar/zip file in $PID/4dv
 sdfits=0        # save the calibrated spectra in SDFITS (or netCDF) in $PID/4dv
-raw=0           # save the RAW data in a tar file in the $PID
+raw=0           # save the RAW data in a tar/zip file in the $PID
+chunk=10g       # chunksize for zippping up what used to be a tar file (use 0 to get back to tar)
 grun=1          # save the script generator?
 admit=0         # run ADMIT ?
 meta=1          # 1 or 2:  1=activate update for frontend db (for dataverse)
@@ -392,19 +393,34 @@ if [ $grun != 0 ]; then
 fi
 
 if [ $srdp != 0 ]; then
-    echo "Creating Scientific Ready Data Producs (SRDP) in $pidir/${obsnum}_SRDP.tar"
+    echo "Creating Scientific Ready Data Producs (SRDP) in $dir4dv/${obsnum}_SRDP. (chunk=$chunk)"
     #tar -cf $ProjectId/${obsnum}/${obsnum}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/$obsnum
-    tar -cf $dir4dv/${obsnum}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/$obsnum    
+    if [ $chunk = 0 ]; then
+	tar -cf $dir4dv/${obsnum}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/$obsnum
+    else
+	rm -rf            $dir4dv/${obsnum}_SRDP.zip
+	zip -s $chunk -qr $dir4dv/${obsnum}_SRDP.zip $ProjectId/$obsnum	-x \*.nc
+    fi
 fi
 
 if [ $sdfits != 0 ]; then
-    echo "Creating spectra (SDFITS) in $pidir/${obsnum}_SDFITS.tar"
+    echo "Creating spectra (SDFITS) in $dir4dv/${obsnum}_SDFITS. (chunk=$chunk)"
     if [ -e  $ProjectId/$obsnum/*.nc ]; then
 	#tar -cf $ProjectId/${obsnum}/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
-	tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc	
+	if [ $chunk = 0 ]; then
+	    tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
+	else
+	    rm -rf            $dir4dv/${obsnum}_SDFITS.zip
+	    zip -s $chunk -qr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
+	fi
     else
 	#tar -cf $ProjectId/${obsnum}/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md
-	tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md	
+	if [ $chunk = 0 ]; then
+	    tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md
+	else
+	    rm -rf            $dir4dv/${obsnum}_SDFITS.zip
+	    zip -s $chunk -qr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md
+	fi
     fi
 fi
 
