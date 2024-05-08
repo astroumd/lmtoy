@@ -372,7 +372,10 @@ for ext in "" "__0" "__1"; do
 done
 
 c=("full SRDP tar"         "TAP data")
-f="../${obsnum}_SRDP.tar   ../${obsnum}_TAP.tar"
+#f="../${obsnum}_SRDP.tar   ../${obsnum}_TAP.tar"
+f="../dir4dv/$ProjectId/$obsnum/${obsnum}_SRDP.tar   ../dir4dv/$ProjectId/$obsnum/${obsnum}_TAP.tar"
+
+
 i=0
 for ff in $f ; do
     if [ -e $ff ]; then
