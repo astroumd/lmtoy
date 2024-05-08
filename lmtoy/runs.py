@@ -16,7 +16,7 @@ Useful tools for the LMTOY script generators (lmtoy_$PID)
 import os
 import sys
 
-_version = "24-mar-2024"
+_version = "8-may-2024"
 
 def pix_list(pl):
     """ convert a strong like "-0,-1" to proper pixlist by removing
@@ -65,6 +65,9 @@ def getpars(on):
             idx = line.find('#')
             w = line.split()
             if len(w) == 0: continue
+            if w[0].find('__'):
+                print("# cannot deal with __ yet in comments.txt")
+                continue
             pars4[int(w[0])] = []            
             # loop over args,  and replace PI parameters
             if idx > 0:
