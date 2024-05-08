@@ -29,6 +29,13 @@ echo "    </th>"
 echo "    <th>"
 echo "      ProjectId"
 echo "    </th>"
+echo "    <th>"
+echo "      Potential"
+echo "    </th>"
+echo "    <th>"
+echo "      Final"
+echo "    </th>"
+
 echo "  </tr>"
 
 while read -r line; do
