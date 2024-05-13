@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 7-may-2024"
+_version="SLpipeline: 13-may-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -355,10 +355,11 @@ if [ $meta -gt 0 ]; then
     if [ $meta -gt 1 ]; then
 	# @todo will this work reliably on NFS mounted media?
 	db=$WORK_LMT/example_lmt.db
-	flock --verbose $db.flock mk_metadata.py -y  $pdir/lmtmetadata.yaml -f $db $pdir 
+	flock --verbose $db.flock mk_metadata.py -y $pdir/${obsnum}_lmtmetadata.yaml -f $db $pdir 
     else
-	mk_metadata.py -y $pdir/${obsnum}_lmtmetadata.yaml $pdir
+        mk_metadata.py -y $pdir/${obsnum}_lmtmetadata.yaml $pdir
 	cp $pdir/${obsnum}_lmtmetadata.yaml $dir4dv
+	cp $pdir/lmtoy_${obsnum}*rc $dir4dv	
     fi
 fi
 # produce TAP, RSRP, RAW tar files, whichever are requested.
