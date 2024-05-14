@@ -4,7 +4,7 @@
 # @todo Ask Zhiyuan, is $in required to be data_prod in dvpipe?
 #--HELP 
 #-------------------------------------------------------------
-# Script to prepare and upload projects to LMT Dataverse
+# Script to prepare and upload projects to LMT Dataverse (14-may-2024)
 #
 # Command line arguments, key=value.
 # Valid arguments are:
@@ -59,6 +59,10 @@ echo "overwrite: $overwrite"
 echo "publish:   $publish"
 echo "verbose:   $verbose"
 
+# hardcoded
+yaml=$LMTOY/etc/config_prod.yaml
+
+
 #-------------------------------------------------------------
 # Error checking
 #-------------------------------------------------------------
@@ -89,10 +93,10 @@ mkdir $out
 # create the YAMLs needed by dataverse in $out
 for directory in ${in}/*; do
     if [ "$verbose" -ne 0 ] || [ $dryrun -ne 0 ] ; then
-        echo "dvpipe -c config_prod.yaml -e ${envfile} -g lmtslr create_index -d $directory -o ${out} " 
+        echo "dvpipe -c $yaml -e ${envfile} -g lmtslr create_index -d $directory -o ${out} " 
     fi
     if [ "$dryrun" -eq 0 ];then
-        dvpipe -c config_prod.yaml -e ${envfile} -g lmtslr create_index -d $directory -o ${out}
+        dvpipe -c $yaml -e ${envfile} -g lmtslr create_index -d $directory -o ${out}
     fi
 done;
 
@@ -100,10 +104,10 @@ done;
 if [ "$publish" -eq 1 ]; then
     for index in ${out}/*.yaml; do
         if [ "$verbose" -ne 0 ] || [ $dryrun -ne 0 ] ; then
-            echo "dvpipe -c config_prod.yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p $dvname"
+            echo "dvpipe -c $yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p $dvname"
         fi
         if [ "$dryrun" -eq 0 ];then
-            dvpipe -c config_prod.yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p $dvname
+            dvpipe -c $yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p $dvname
         fi
     done
 fi
