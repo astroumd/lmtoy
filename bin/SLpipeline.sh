@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 13-may-2024"
+_version="SLpipeline: 14-may-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -42,7 +42,7 @@ oid=""          # experimental parallel processing using __$oid  == currently no
 goal=Science    # Science, or override with: Pointing,Focus
 webrun=""       # optional directive for webrun to do parameter checking (SEQ/map, SEQ/Bs, RSR, ....)
 qagrade=""      # if given, the final grade recorded for the archive (QAFAIL enforces -1)
-public=""       # if given, the public data for archiving. Default is 1 year after today.
+public=""       # if given, the public data for archiving. Default is 1 year after today. Example:  2020-12-31
 
 #  Optional instrument specific pipeline can be added as well but are not known here
 #  A few examples:
@@ -395,7 +395,6 @@ fi
 
 if [ $srdp != 0 ]; then
     echo "Creating Scientific Ready Data Producs (SRDP) in $dir4dv/${obsnum}_SRDP. (chunk=$chunk)"
-    #tar -cf $ProjectId/${obsnum}/${obsnum}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/$obsnum
     if [ $chunk = 0 ]; then
 	tar -cf $dir4dv/${obsnum}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/$obsnum
     else
@@ -406,8 +405,8 @@ fi
 
 if [ $sdfits != 0 ]; then
     echo "Creating spectra (SDFITS) in $dir4dv/${obsnum}_SDFITS. (chunk=$chunk)"
-    if [ -e  $ProjectId/$obsnum/*.nc ]; then
-	#tar -cf $ProjectId/${obsnum}/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
+    count=$(ls -1 *.nc 2>/dev/null | wc -l)
+    if [ $count -gt 0 ]; then
 	if [ $chunk = 0 ]; then
 	    tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
 	else
@@ -415,7 +414,6 @@ if [ $sdfits != 0 ]; then
 	    zip -s $chunk -qr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
 	fi
     else
-	#tar -cf $ProjectId/${obsnum}/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md
 	if [ $chunk = 0 ]; then
 	    tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md
 	else
