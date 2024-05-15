@@ -405,7 +405,7 @@ fi
 
 if [ $sdfits != 0 ]; then
     echo "Creating spectra (SDFITS) in $dir4dv/${obsnum}_SDFITS. (chunk=$chunk)"
-    count=$(ls -1 *.nc 2>/dev/null | wc -l)
+    count=$(ls -1 $ProjectId/$obsnum/*.nc 2>/dev/null | wc -l)
     if [ $count -gt 0 ]; then
 	if [ $chunk = 0 ]; then
 	    tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
