@@ -42,3 +42,8 @@ been working so far.   If these are up, we should be good to go.
        https://dp.lmtgtm.org/dataverse/lmtdata/search
 
        https://dataverse.harvard.edu//dataverse/lmt
+
+
+    Common problems
+    - dataverse server needs a restart
+    - "mount -a" on the containers (toltec1-3)
