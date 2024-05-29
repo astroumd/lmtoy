@@ -24,6 +24,12 @@
   version=2023.03-1  # 3.10.9    aplpy fails
   version=2023.09-0  # 3.11.5
 
+  Also note that numpy 2.0 is upcoming and could have some impact.
+
+- SLpipeline_run.sh :   should spawn reduction, not run in place.
+
+- final spectrum in SEQ (tab_plot.py) should honor location=; ccdspec needs the patch
+
 - re-install with a new python:
   make pip install_lmtslr install_dreampy3 install_dvpipe install_maskmoment
   
