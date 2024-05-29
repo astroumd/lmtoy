@@ -1,11 +1,19 @@
 # TODO's and ISSUES
 
-## Planned for version 1.1 (March 1, 2024)
+## Planned for version 1.1 (April 1, 2024)
+
+- urgent unfiled issues:
+  - combos of e.g. MX-2 sometimes fail (hardware issue)
+  - combos of mosaic doesn't work?   they also take VERY long, where is the CPU going?
+  - LineCheck sometimes fails for blanking, when driver is ok (eg. 113206)
+  - Should oid= allow us to use ${obsnum}__${oid} - this would make it possible to make multiple (line) cubes
+  - can we create a different cube for bank0 and bank1 ?  should be possible.
 
 - active github issues:  https://github.com/astroumd/lmtoy/issues
+  - 51: SEQ/Ps html now broken for dual IF
   - 48: allow missing roach files  **Kamal**
   - 47: "wtn" has the wrong beam plotted
-  - 46: SEQ low power can crash pipeline
+  - 46: SEQ low power can crash pipeline (MX-2 example mentioned before)
   - 45: RSR not commutative **+Min**
   - 36: final DataVerse items **marc**
   - 35: inttime not correct - we need the ON time only,not ON+OFF+CAL
@@ -15,7 +23,6 @@
   version=2022.10    # 3.9.13
   version=2023.03-1  # 3.10.9    aplpy fails
   version=2023.09-0  # 3.11.5
-
 
 - re-install with a new python:
   make pip install_lmtslr install_dreampy3 install_dvpipe install_maskmoment
