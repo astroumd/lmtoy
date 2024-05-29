@@ -1,6 +1,6 @@
 # TODO's and ISSUES
 
-## Planned for version 1.1 (March 1, 2024)
+## Planned for version 1.1 (April 1, 2024)
 
 - active github issues:  https://github.com/astroumd/lmtoy/issues
   - 48: allow missing roach files  **Kamal**
@@ -15,6 +15,12 @@
   version=2022.10    # 3.9.13
   version=2023.03-1  # 3.10.9    aplpy fails
   version=2023.09-0  # 3.11.5
+
+  Also note that numpy 2.0 is upcoming and could have some impact.
+
+- SLpipeline_run.sh :   should spawn reduction, not run in place.
+
+- final spectrum in SEQ (tab_plot.py) should honor location=; ccdspec needs the patch
 
 
 - re-install with a new python:
