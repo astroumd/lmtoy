@@ -202,7 +202,6 @@ some points where it will differ:
         http://taps.lmtgtm.org/lmthelpdesk/peter/2024-S1-US-5/
 
 
-
 1. setting up a DA workflow (since they all share the same account)
 
    1. each DA gets their own $WORK_LMT, where the pipeline data will be stored. Typically this would be ....
@@ -212,6 +211,19 @@ some points where it will differ:
    3. Under the lmtoy_run directory will be all the script generators for the projects, e.g. lmtoy_2021-S1-US-3
 
 2. branching in git
+
+   If multiple people work on a project, it's adviced to work in a branch. After the branch is merged into main,
+   this branch can be deleted. If you want to re-use that name, it needs to be merged from main again.
+   An example:
+
+   1. Make a branch for testing:  "git checkout -b test1"
+   2. Editing and testing done in this branch. When done, the main branch can merge this in the next step.
+   3. Merge from the main branch:    "git checkout main;  git merge origin/test1"
+   4. Run the pipeline with this merged set. confirm it's ok.
+   5. In theory the test1 branch can be deleted.
+   6. If work in test1 continues, it needs a merge from main:  "git checkout test1; git merge origin/main"
+   7. If that merging is confusing , just start a new branch, say test2.
+
 
 3. setting up your own YEAR file in lmtoy_run so you only see the projects you want to see, not all stuff back to 2018....
 
