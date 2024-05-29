@@ -2,8 +2,7 @@
 
 There is an annual upgrade of Unity, and in 2023 this caused some havoc, so here's a check list
 of things that ought to work.   Here we assume LMTOY and friends are all installed and have
-been working so far.
-
+been working so far.   If these are up, we should be good to go.
 
 
 ## LMTOY
@@ -23,6 +22,9 @@ been working so far.
 3. Can we recompile tools
 
       mknemo tsf
+
+4. Advanced pipeline examples can be found in [cheatlist.md](cheatlist.md)
+   and [cheatlist2.md](cheatlist2.md)
       
 
 ## Web services
