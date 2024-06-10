@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 14-may-2024"
+_version="SLpipeline: 10-jun-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -328,19 +328,22 @@ else
 fi
 
 # record obsnum_list for the archiver
-echo "obsnum_list=$obsnum_list" >> $pdir/lmtoy_$obsnum.rc
+echo "obsnum_list=$obsnum_list"              >> $pdir/lmtoy_$obsnum.rc
 
 # record the processing time
-echo "date=\"$(lmtoy_date)\"     # end " >> $pdir/lmtoy_$obsnum.rc
+echo "date=\"$(lmtoy_date)\"     # end "     >> $pdir/lmtoy_$obsnum.rc
+
+# record the pipeline version
+echo "lmtoy_version=$(cat $LMTOY/VERSION)"   >> $pdir/lmtoy_$obsnum.rc
 
 # record the qagrade, if one was given
 if [ ! -z $qagrade ]; then
-    echo "qagrade=$qagrade" >> $pdir/lmtoy_$obsnum.rc
+    echo "qagrade=$qagrade"                  >> $pdir/lmtoy_$obsnum.rc
 fi
 
 # record the public date, if one was given
 if [ ! -z $public ]; then
-    echo "date_public=$public" >> $pdir/lmtoy_$obsnum.rc
+    echo "date_public=$public"               >> $pdir/lmtoy_$obsnum.rc
 fi
 
 # directory for dvpipe products for archive ingestion, also for links for PI
