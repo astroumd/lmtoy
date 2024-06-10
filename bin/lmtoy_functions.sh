@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="6-apr-2024"
+lmtoy_version="10-jun-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -1403,8 +1403,8 @@ function lmtoy_bs1 {
     echo "LMTOY>> process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -1 --stype $stype --bank $bank -o $spec"
                   process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -1 --stype $stype --bank $bank -o $spec
     title="Spectrum LMT $instrument/$obspgm"
-    seq_spectra.py -t "$title" -y seq.spectra_${oid}.png $spec
-    seq_spectra.py -t "$title" -y seq.spectra_${oid}.svg $spec    
+    seq_spectra.py -t "$title" -y seq.spectra__${oid}.png $spec
+    seq_spectra.py -t "$title" -y seq.spectra__${oid}.svg $spec    
 
     # QAC robust stats off the spectrum
     out4=$(tabmath $spec - %2*1000 all | tabstat -  qac=t robust=t label=$spec)
@@ -1412,8 +1412,8 @@ function lmtoy_bs1 {
     
     # tsys
     dev=$(yapp_query png vps)
-    tabplot $spec ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  yapp=tsys_${oid}.$dev/$dev
-    convert tsys_${oid}.$dev tsys_${oid}.jpg
+    tabplot $spec ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  yapp=tsys__${oid}.$dev/$dev
+    convert tsys__${oid}.$dev tsys__${oid}.jpg
     
     if [ -n "$NEMO" ]; then
 	echo "LMTOY>> Some NEMO post-processing"
@@ -1473,8 +1473,8 @@ function lmtoy_ps1 {
     echo "LMTOY>> process_ps.py --obs_list $obsnum --pix_list $pix_list --use_cal --stype $stype --bank $bank -o $spec $sargs"
                   process_ps.py --obs_list $obsnum --pix_list $pix_list --use_cal --stype $stype --bank $bank -o $spec $sargs
     title="Spectrum LMT $instrument/$obspgm"
-    seq_spectra.py -t "$title" -y seq.spectra_${oid}.png $spec
-    seq_spectra.py -t "$title" -y seq.spectra_${oid}.svg $spec
+    seq_spectra.py -t "$title" -y seq.spectra__${oid}.png $spec
+    seq_spectra.py -t "$title" -y seq.spectra__${oid}.svg $spec
 
     # QAC robust stats off the spectrum in mK
     out4=$(tabmath $spec - %2*1000 all | tabstat -  qac=t robust=t label=$spec)
