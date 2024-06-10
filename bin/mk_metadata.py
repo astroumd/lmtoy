@@ -38,7 +38,7 @@ from lmtoy import data_prod_id
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-_version = "24-mar-2024"
+_version = "10-jun-2024"
 
 def header(rc, key, debug=False):
     """
@@ -274,7 +274,7 @@ if __name__ == "__main__":
     if isCombined:
         # assemble all obsinfo's for all obsnum's in the combo 
         for o in obsnums.split(','):
-            fn = '../%s/lmtmetadata.yaml' % o
+            fn = '../%s/%s_lmtmetadata.yaml' % (o,o)
             print("YAML Reading",fn)
             fp = open(fn)
             if True:
@@ -323,7 +323,7 @@ if __name__ == "__main__":
     lmtdata.add_metadata("calibrationLevel",1)
     lmtdata.add_metadata('galLon',          glon)
     lmtdata.add_metadata('galLat',          glat)
-    lmtdata.add_metadata('pipeVersion', "1.0")    # @todo
+    lmtdata.add_metadata('pipeVersion', header(rc,"lmtoy_version"), debug)
 
     
     if instrument == "SEQUOIA" or instrument == "MSIP1MM":     # @todo this is only for mapping so far
