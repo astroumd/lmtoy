@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 10-jun-2024"
+_version="SLpipeline: 11-jun-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -28,8 +28,8 @@ restart=0       # 1=force single fresh restart  2=restart + autorun  (always del
 nese=0          # 0=work all on nese    1=raw on nese, work on /work    2=raw from /work, work on /work [placeholder]
 exist=0         # if set, and the obsnum exists, skip running pipeline 
 tap=0           # save the TAP in a tar/zip file? (used on malt)
-srdp=0          # save the SRDP in a tar/zip file in $PID/4dv
-sdfits=0        # save the calibrated spectra in SDFITS (or netCDF) in $PID/4dv
+srdp=1          # save the SRDP in a tar/zip file in $PID/4dv
+sdfits=1        # save the calibrated spectra in SDFITS (or netCDF) in $PID/4dv
 raw=0           # save the RAW data in a tar/zip file in the $PID
 chunk=10g       # chunksize for zippping up what used to be a tar file (use 0 to get back to tar)
 grun=1          # save the script generator?
@@ -428,8 +428,13 @@ fi
 
 if [ $raw != 0 ] && [ $obsnums = 0 ]; then
     # ensure only for obsnums = 0
-    echo "Creating raw (RAW) tar for $pdir for $obsnum $calobsnum in $pidir/${obsnum}_RAW.tar"
-    lmtar $ProjectId/${obsnum}_RAW.tar $calobsnum $obsnum
+    if [ $chunk = 0 ]; then
+	echo "Creating raw (RAW) tar for $pdir for $obsnum $calobsnum in $pidir/${obsnum}_RAW.tar"
+	lmtar $ProjectId/${obsnum}_RAW.tar $calobsnum $obsnum
+    else
+	echo "Creating raw (RAW) tar for $pdir for $obsnum $calobsnum in $pidir/${obsnum}_RAW.zip"
+	lmzip $ProjectId/${obsnum}_RAW.zip $calobsnum $obsnum
+    fi
 fi
 
 #  rsync TAP data to a remote?   e.g. rsync=teuben@lma.astro.umd.edu:/lma1/lmt/TAP_lmt
