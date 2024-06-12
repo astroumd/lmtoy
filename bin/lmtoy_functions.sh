@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="10-jun-2024"
+lmtoy_version="11-jun-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -23,6 +23,8 @@ function lmtoy_repo {
 
 function lmtoy_date {
     # standard ISO date, by default in local time.   Use "-u" to switch to UT time
+    # note that if used in filename, brainwasted windows doesn't know how to deal
+    # with a :, so use $(lmtoy_date | sed s/:/-/g)
     date +%Y-%m-%dT%H:%M:%S $*
 }
 
@@ -516,7 +518,8 @@ function lmtoy_rsr1 {
     echo "LMTOY>> Parameter file used: $rc"
     echo "LMTOY>> obsnum=$obsnum"
     
-    rsr_readme $obsnum $src > README.html
+    rsr_readme $obsnum $src > README.html   # TheSummary
+    ln -sf README.html 000README.html       # visually impaired people
     
     cp $LMTOY/docs/README_rsr.md README_files.md
 
