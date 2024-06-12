@@ -70,9 +70,10 @@ public=""       # if given, the public data for archiving. Default is 1 year aft
 time=/usr/bin/time
 
 #             set up LMTOY, parse command line so it's merged with the script parameters
+#             deal with brainwasted windows : in ldate
 source lmtoy_functions.sh
 lmtoy_args "$@"
-ldate=$(lmtoy_date)
+ldate=$(lmtoy_date | sed s/:/-/g)
 
 #             put in bash debug mode, and report some settings
 if [ $debug -gt 0 ]; then
