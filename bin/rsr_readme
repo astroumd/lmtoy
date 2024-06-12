@@ -65,6 +65,21 @@ echo "<p class='text-muted'>See <a href=\"#rsrnotes\">below</a> for notes on the
 echo " </div> <!-- col-->"
 echo "</div> <!-- row-->"
    
+# repeat-1
+# echo "<h4 class='card-title'>Final Spectrum</h4>"
+
+echo "<hr>"
+echo "<h4>Final Spectrum (full and zoomed) </h4>"
+echo "<hr>"
+
+echo "<div class='row'>"
+echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra.png'><img src='rsr.spectra.png' width='90%'></a><figcaption>The rsr_driver (blue) and rsr_sum (orange) spectra combined in a single plot</figcaption></figure></div>"
+echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra_zoom.png'><img src='rsr.spectra_zoom.png' width='90%'></a><figcaption>Zoomed in version of combined spectral plot [rsr_driver (blue), rsr_sum (orange)].</figcaption></figure></div>"
+echo "</div><!-- row -->"
+
+echo "<li class='list-group-item'><a href='rsr.$obsnum.driver.sum.txt'> ASCII table of final bandmerged spectrum</a> [driver;  Ta vs. GHz]</li></ul>"
+
+
 echo "<hr>"
 echo "<h2>RSR pipeline data products for obsnum=$obsnum</h2>"
 echo "<hr>"
@@ -166,14 +181,16 @@ if [ -e linecheck.log ]; then
 fi
 echo "</tbody></table>"
 
+# repeat-2
 echo "<div class='row'>"
 echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra.png'><img src='rsr.spectra.png' width='90%'></a><figcaption>The rsr_driver (blue) and rsr_sum (orange) spectra combined in a single plot</figcaption></figure></div>"
 echo "<div class='col-sm'> <figure class='figure'><a href='rsr.spectra_zoom.png'><img src='rsr.spectra_zoom.png' width='90%'></a><figcaption>Zoomed in version of combined spectral plot [rsr_driver (blue), rsr_sum (orange)].</figcaption></figure></div>"
 echo "</div><!-- row -->"
+
 echo "<ul class='list-group list-group-flush'> "
 echo "<li class='list-group-item'> <a href='rsr_sum.log'>rsr_sum log file</a></li>"
 echo "<li class='list-group-item'><a href='rsr.$obsnum.blanking'>blanking file</a></li>"
-echo "<li class='list-group-item'><a href='rsr.$obsnum.blanking.sum.txt'> ASCII table of final bandmerged spectrum</a></li></ul>"
+echo "<li class='list-group-item'><a href='rsr.$obsnum.driver.sum.txt'> ASCII table of final bandmerged spectrum</a></li></ul>"
 echo "<li class='list-group-item'><a href='rsr.spectra.svg.html'>Experimental SVG version of figure.</a> </li></ul>"
 echo "<li class='list-group-item'> <a href='rsr_peaks.log'>rsr_peaks log file</a></li>"
 # create the link, even though it may not exist yet
