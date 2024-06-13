@@ -9,6 +9,7 @@ In this directory you can find the following files, with the following name conv
 	     If the OBSNUM contains a dunder (double underscore) this file
 	     applies to a specific bank.
              For example  __0 for data from bank 0, and __1 for data from bank 1.
+	     Pipeline version 1.0 (<2024) did not use the dunder notation!
         
 Version:  13-jun-2024
 
