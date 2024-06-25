@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 11-jun-2024"
+_version="SLpipeline: 13-jun-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -347,6 +347,11 @@ if [ ! -z $public ]; then
     echo "date_public=$public"               >> $pdir/lmtoy_$obsnum.rc
 fi
 
+# visually challenged folks 
+if [ ! -e $pdir/000README.html ]; then
+    (cd $pdir ; ln -sf README.html 000README.html)
+fi
+
 # directory for dvpipe products for archive ingestion, also for links for PI
 dir4dv=$WORK_LMT/${ProjectId}/dir4dv/${ProjectId}/${obsnum}
 mkdir -p $dir4dv
@@ -402,8 +407,8 @@ if [ $srdp != 0 ]; then
     if [ $chunk = 0 ]; then
 	tar -cf $dir4dv/${obsnum}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/$obsnum
     else
-	rm -rf            $dir4dv/${obsnum}_SRDP.zip
-	zip -s $chunk -qr $dir4dv/${obsnum}_SRDP.zip $ProjectId/$obsnum	-x \*.nc
+	rm -rf             $dir4dv/${obsnum}_SRDP.zip
+	zip -s $chunk -qxr $dir4dv/${obsnum}_SRDP.zip $ProjectId/$obsnum	-x \*.nc
     fi
 fi
 
@@ -414,15 +419,15 @@ if [ $sdfits != 0 ]; then
 	if [ $chunk = 0 ]; then
 	    tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
 	else
-	    rm -rf            $dir4dv/${obsnum}_SDFITS.zip
-	    zip -s $chunk -qr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
+	    rm -rf             $dir4dv/${obsnum}_SDFITS.zip
+	    zip -s $chunk -qxr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
 	fi
     else
 	if [ $chunk = 0 ]; then
 	    tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md
 	else
-	    rm -rf            $dir4dv/${obsnum}_SDFITS.zip
-	    zip -s $chunk -qr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md
+	    rm -rf             $dir4dv/${obsnum}_SDFITS.zip
+	    zip -s $chunk -qxr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md
 	fi
     fi
 fi
