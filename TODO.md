@@ -3,7 +3,7 @@
 ## Planned for version 1.1 (April 1, 2024)
 
 - urgent unfiled issues:
-  - combos of e.g. MX-2 sometimes fail (hardware issue)
+  - combos of e.g. MX-2 sometimes fail (hardware issue)  [#46]
   - combos of mosaic doesn't work?   they also take VERY long, where is the CPU going?
   - LineCheck sometimes fails for blanking, when driver is ok (eg. 113206)
   - Should oid= allow us to use ${obsnum}__${oid} - this would make it possible to make multiple (line) cubes
@@ -24,9 +24,9 @@
   version=2023.03-1  # 3.10.9    aplpy fails
   version=2023.09-0  # 3.11.5
 
-  Also note that numpy 2.0 is upcoming and could have some impact.
+  Also note that numpy 2.0 is upcoming and could have some impact beyond 2026.
 
-- SLpipeline_run.sh :   should spawn reduction, not run in place.
+- SLpipeline_run.sh :   should spawn reduction, not run in place. [done]
 
 - final spectrum in SEQ (tab_plot.py) should honor location=; ccdspec needs the patch
 
@@ -41,12 +41,14 @@
   - etc/parameters.txt
   - lmt_web_lite
 
-- FITS export option for spectra [mostly done, but not checked with dysh]
+- FITS export option for spectra [mostly done, but not checked with dysh
+  - should there be an SDFITS option?
+
+- SDFITS conversion of .nc file
+  - rudimentary gridder exists
 
 - SEQ/Bs only one bank works now [depending if observations planned]
 - SEQ/Ps not implemented [depending if observations planned]
-
-- check if combo's can be done (check sources etc.)
 
 - stage/unstage on unity in case we do the work in /work and rsync to /nese (or /scratch?)
 
@@ -63,7 +65,7 @@
 
 ## Longer term wishes (>March 2024)
 
-- SpecFile (netCDF format) to be replaced with an SDFITS file.
+- SpecFile (netCDF format) to be replaced with an SDFITS file (just only convert)
 - interoperability with dysh  (e.g. sp2sdfits)
 - advanced mapping programs (cf. dysh)
 - SDHDF ?
