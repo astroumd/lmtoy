@@ -15,13 +15,23 @@ http://lmtgtm.org/
 
 This document describes the current toolbox of LMT tools that you might
 want to use to reduce LMT data.   It will cover most Spectral Line instruments
-(Sequioa, RSR, 1MM, B4R), but currently does not discuss continuum instruments.
+(Sequioa, RSR, 1MM, B4R), but does not discuss continuum instruments.
 
 The source code is available via https://github.com/astroumd/lmtoy which describes
 how to assemble the toolbox with the help of a number of existing
 codes. We also use the
 `github issue tracker <https://github.com/astroumd/lmtoy/issues>`_ for all things
 related to the toolbox.
+
+Concept of Operations
+=====================
+
+.. toctree::
+   :maxdepth: 2
+
+   conops
+   lmt_web_lite	      
+
 
 
 Installation
@@ -57,7 +67,18 @@ After this the data products can be found in the directory
 ``2018S1SEQUOIACommissioning/79448``. Currently by default the script
 runs the pipeline for obsnum=33551 (an RSR example) and obsnum=79448
 (a Sequoia example), and the results are under ``$WORK_LMT``.
-   
+
+Lightweight install
+-------------------
+
+A full install will be able to run the pipeline, but a simple lightweight install
+will be able to provide some capabilities. This lightweight install will not contain
+all the instrument based modules.
+
+.. code-block:: sh
+
+   git clone https://github.com/astroumd/lmtoy
+   pip install -e lmtoy		
 
 
 Spectral Line Reduction
@@ -73,6 +94,7 @@ Here is most of the manual
    fits
    tools
    pipeline
+   bench
    glossary
    FAQ
 
