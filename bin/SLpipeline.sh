@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 13-jun-2024"
+_version="SLpipeline: 25-jun-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -408,7 +408,7 @@ if [ $srdp != 0 ]; then
 	tar -cf $dir4dv/${obsnum}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/$obsnum
     else
 	rm -rf             $dir4dv/${obsnum}_SRDP.zip
-	zip -s $chunk -qxr $dir4dv/${obsnum}_SRDP.zip $ProjectId/$obsnum	-x \*.nc
+	zip -s $chunk  -qr $dir4dv/${obsnum}_SRDP.zip $ProjectId/$obsnum	-x \*.nc
     fi
 fi
 
@@ -420,14 +420,14 @@ if [ $sdfits != 0 ]; then
 	    tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
 	else
 	    rm -rf             $dir4dv/${obsnum}_SDFITS.zip
-	    zip -s $chunk -qxr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
+	    zip -s $chunk  -qr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
 	fi
     else
 	if [ $chunk = 0 ]; then
 	    tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md
 	else
 	    rm -rf             $dir4dv/${obsnum}_SDFITS.zip
-	    zip -s $chunk -qxr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md
+	    zip -s $chunk  -qr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md
 	fi
     fi
 fi
