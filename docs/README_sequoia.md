@@ -22,6 +22,8 @@ Version:  13-jun-2024
 
 	SRC_OBSNUM__0.nc            calibrated spectra (like an SDFITS file) before gridding; for bank 0
 	SRC_OBSNUM__1.nc            calibrated spectra (like an SDFITS file) before gridding; for bank 1
+	SRC_OBSNUM__0.sdfits        calibrated spectra in SDFITS format for bank 0 (future)
+	SRC_OBSNUM__1.sdfits        calibrated spectra in SDFITS format for bank 1 (future)
 
 	SRC_OBSNUM.wf.fits          waterfall cube (each plane is a beam)
 	SRC_OBSNUM.wf10.fits        waterfall cube - rebinned x10 in time
