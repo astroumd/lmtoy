@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="11-jun-2024"
+lmtoy_version="13-jun-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -519,7 +519,6 @@ function lmtoy_rsr1 {
     echo "LMTOY>> obsnum=$obsnum"
     
     rsr_readme $obsnum $src > README.html   # TheSummary
-    ln -sf README.html 000README.html       # visually impaired people
     
     cp $LMTOY/docs/README_rsr.md README_files.md
 
@@ -948,7 +947,7 @@ function lmtoy_seq1 {
     mk_index.sh
     # cheat and rename it for all files access
     mv index.html README.html
-
+    
     # record the processing time, since this is a bank specific rc file
     echo "date=\"$(lmtoy_date)\"     # end " >> $rc
     
