@@ -1,6 +1,6 @@
 # TODO's and ISSUES
 
-## Planned for version 1.1 (April 1, 2024)
+## Planned for version 1.2 (June 25, 2024)
 
 - urgent unfiled issues:
   - combos of e.g. MX-2 sometimes fail (hardware issue)  [#46]
@@ -44,7 +44,7 @@
 - FITS export option for spectra [mostly done, but not checked with dysh
   - should there be an SDFITS option?
 
-- SDFITS conversion of .nc file
+- SDFITS conversion of .nc file [#53]
   - rudimentary gridder exists
 
 - SEQ/Bs only one bank works now [depending if observations planned]
@@ -60,7 +60,7 @@
 - split parameters in single obsnum and combo (where only gridding is allowed) - useful for webrun
 - pointing offsets from ifproc in meta-data ?
 - automated generation of the script generator?
-- FITS export option for spectra [sp2sdfits.py now exists]
+- FITS export option for spectra [sp2sdfits.py now exists]  [#53]
 - the never finished manual (flow diagrams w/ mermaid?)
 
 ## Longer term wishes (>March 2024)
