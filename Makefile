@@ -366,9 +366,12 @@ bench2:
 bench2a:
 	$(TIME) SLpipeline.sh obsnums=79448,79448 restart=1 admit=$(ADMIT) meta=$(META)
 
-## bench3:   SEQ dual IF benchmark
+## bench3:   SEQ dual IF benchmark (about 1.5 min)
 bench3:
-	@echo $(TIME) SLpipeline.sh ... more to come here
+	$(TIME) SLpipeline.sh obsnum=110399 restart=1 extent=120 maskmoment=$(ADMIT) admit=$(ADMIT) meta=$(META)
+	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench3.txt'
+	@echo "========================================================================================"
+	@echo xdg-open  $(WORK_LMT)/2024S1SEQUOIACommissioning/110399/README.html
 
 ## bench4:   SEQ/Ps benchmark
 bench4:
