@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 25-jun-2024"
+_version="SLpipeline: 2-jul-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -28,10 +28,10 @@ restart=0       # 1=force single fresh restart  2=restart + autorun  (always del
 nese=0          # 0=work all on nese    1=raw on nese, work on /work    2=raw from /work, work on /work [placeholder]
 exist=0         # if set, and the obsnum exists, skip running pipeline 
 tap=0           # save the TAP in a tar/zip file? (used on malt)
-srdp=1          # save the SRDP in a tar/zip file in $PID/4dv
-sdfits=1        # save the calibrated spectra in SDFITS (or netCDF) in $PID/4dv
+srdp=1          # save the SRDP in a tar/zip file in $PID/dir4dv
+sdfits=1        # save the calibrated spectra in SDFITS (or netCDF) in $PID/dir4dv
 raw=0           # save the RAW data in a tar/zip file in the $PID
-chunk=10g       # chunksize for zippping up what used to be a tar file (use 0 to get back to tar)
+chunk=10g       # chunksize for zipping up what used to be a tar file (use 0 to get back to tar) [UNTESTED if > chunk]
 grun=1          # save the script generator?
 admit=0         # run ADMIT ?
 meta=1          # 1 or 2:  1=activate update for frontend db (for dataverse)
@@ -371,10 +371,14 @@ if [ $meta -gt 0 ]; then
 	cp $pdir/lmtoy_${obsnum}*rc $dir4dv	
     fi
 fi
-# produce TAP, RSRP, RAW tar files, whichever are requested.
+# produce TAP, RSRP, SDFITS, RAW tar files, whichever are requested.
 
 #        ensure we are in $WORK_LMT ("cd $WORK_LMT" doesn't work if it's ".")
+#        re-read the rc file in case we need new variables
 cd $WORK_LMT
+for _rc in $pdir/lmtoy_${obsnum}*.rc; do
+    source $_rc
+done
 
 if [ $tap != 0 ]; then
     echo "Creating Timely Analysis Products (TAP) with admit=$admit in ${pdir}_TAP.tar"
@@ -408,21 +412,22 @@ if [ $srdp != 0 ]; then
 	tar -cf $dir4dv/${obsnum}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/$obsnum
     else
 	rm -rf             $dir4dv/${obsnum}_SRDP.zip
-	zip -s $chunk  -qr $dir4dv/${obsnum}_SRDP.zip $ProjectId/$obsnum	-x \*.nc
+	zip -s $chunk  -qr $dir4dv/${obsnum}_SRDP.zip $ProjectId/$obsnum   -x $ProjectId/$obsnum/$sdfits_file
     fi
 fi
 
 if [ $sdfits != 0 ]; then
     echo "Creating spectra (SDFITS) in $dir4dv/${obsnum}_SDFITS. (chunk=$chunk)"
-    count=$(ls -1 $ProjectId/$obsnum/*.nc 2>/dev/null | wc -l)
-    if [ $count -gt 0 ]; then
+    if [ ! -z $sdfits_file ]; then
+        echo "LMTOY>> SDFITS: $sdfits_file"
 	if [ $chunk = 0 ]; then
 	    tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
 	else
 	    rm -rf             $dir4dv/${obsnum}_SDFITS.zip
-	    zip -s $chunk  -qr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
+	    zip -s $chunk  -qr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/$sdfits_file
 	fi
     else
+	echo "LMTOY>> SDFITS: should not get here, unless you intend to have no SDFITS file(s)"
 	if [ $chunk = 0 ]; then
 	    tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md
 	else

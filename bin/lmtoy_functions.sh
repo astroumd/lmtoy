@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="13-jun-2024"
+lmtoy_version="2-jul-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -515,6 +515,10 @@ function lmtoy_rsr1 {
 	echo "LMTOY>> skipping ADMIT post-processing"
     fi
 
+    # record the "sdfits" file, currently nothing
+    sdfits_file=""
+    echo "sdfits_file=$sdfits_file"  >> $rc
+
     echo "LMTOY>> Parameter file used: $rc"
     echo "LMTOY>> obsnum=$obsnum"
     
@@ -935,6 +939,10 @@ function lmtoy_seq1 {
     else
 	echo "LMTOY>> skipping maskmoment"	
     fi
+
+    # record the "sdfits" file, currently just the nc files, future might be real (sd)fits files
+    sdfits_file="*.nc"
+    echo "sdfits_file=$sdfits_file"  >> $rc
     
     echo "LMTOY>> Created $s_fits and $w_fits"
     echo "LMTOY>> Parameter file used: rc=$rc"
