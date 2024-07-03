@@ -10,7 +10,8 @@
 #   from dysh.fits.sdfitsload import SDFITSLoad
 #   a = SDFITSLoad('J17293-CO10.sdfits')
 #   sp=a.getspec(0)
-#   sp.plot()              <== not working yet, no freq axis
+#   sp.plot()
+#
 #   r=a.rawspectrum(0,0)
 #   import matplotlib.pyplot as plt
 #   plt.plot(r)
@@ -69,8 +70,6 @@ if __name__ == "__main__":
     av = docopt(_help, options_first=True, version='sp2sdfits. %s' % _version)
     ff = av['INPUT']      # fits or table
     _debug = av['--debug']
-    if _debug:
-        print("Debugging on")
 
     if not os.path.exists(ff):
         print("File %s does not exist" % ff)
@@ -89,7 +88,8 @@ if __name__ == "__main__":
         nchan = len(data.squeeze())
         d = d.reshape(1,nchan)
         print('Number of channels: ',nchan)
-        print(d.shape)
+        if _debug:
+            print(d.shape)
         
     elif ff.find('.txt') > 0:
         print("txt",ff)        
@@ -105,13 +105,15 @@ if __name__ == "__main__":
 
         # manually reading table, since we need the header elements
         data = np.loadtxt(ff).T
-        print(data.shape)        
+        if _debug:
+            print(data.shape)        
         freqs = data[0]
         temps = data[1]
         nchan = len(freqs)
         print("Number of RSR channels: ", nchan)
         d = temps.reshape(1,nchan)
-        print(d.shape)
+        if _debug:
+            print(d.shape)
     else:
         print("unknown mode");
         help(sys.argv[0])
@@ -155,9 +157,10 @@ if __name__ == "__main__":
             cols_append(h, "%s%d" % (key,i), 'D', cols)
 
 
-    cols.append(fits.Column(name='DATA',   format='%dE' % nchan , array=d, dim='(1,%d)' % nchan, unit=h['BUNIT']))
+    cols.append(fits.Column(name='DATA',   format='%dE' % nchan , array=d, dim='(%d)' % nchan, unit=h['BUNIT']))
     idata = len(cols)
-    print("DATA at column",idata)
+    if _debug:
+        print("DATA at column",idata)
 
 
     for key in ['ELEVATIO', 'AZIMUTH', 'EQUINOX', 'VELOCITY']:
