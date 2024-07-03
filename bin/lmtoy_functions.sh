@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="2-jul-2024"
+lmtoy_version="3-jul-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -408,6 +408,9 @@ function lmtoy_rsr1 {
     rsr_spectra.py -y rsr.spectra.png            --title "$src .$wpre" $spec1 $spec2
     rsr_spectra.py -y rsr.spectra.svg            --title "$src .$wpre" $spec1 $spec2
 
+    # convert ascii spectrum to sdfits (only handles the driver spectrum because of header)
+    sp2sdfits.py $spec1
+
     # update the rc file (badcb here is deprecated)
     if [[ 0 = 1 ]]; then
 	echo "BADCB deprecated here"
@@ -516,7 +519,7 @@ function lmtoy_rsr1 {
     fi
 
     # record the "sdfits" file, currently nothing
-    sdfits_file=""
+    sdfits_file="*.fits"
     echo "sdfits_file=$sdfits_file"  >> $rc
 
     echo "LMTOY>> Parameter file used: $rc"
