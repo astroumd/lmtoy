@@ -32,7 +32,17 @@ for dysh
 
 Tested examples are from:
     --class     Grenoble CLASS
-    --rsr       
+    --rsr
+
+Example of use:
+
+   $ sp2sdfits.py J17293-CO10.fits
+
+   dysh> from dysh.fits.sdfitsload import SDFITSLoad
+         a = SDFITSLoad('J17293-CO10.sdfits')
+         sp=a.getspec(0)
+         sp.plot() 
+
 """ 
 
 
