@@ -111,7 +111,7 @@ if __name__ == "__main__":
         
     elif ff.find('.txt') > 0:
         print("txt",ff)        
-        dname = ff.replace('.txt', '.sdfits')
+        dname = ff.replace('.txt', '.fits')
         mode = 1   # rsr txt spectrum only
 
         # reading data portion of the table, masking out the nan's
