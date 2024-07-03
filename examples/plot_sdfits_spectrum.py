@@ -17,7 +17,12 @@ else:
 
 hdu = fits.open(sdfits)
 d2 = hdu[1].data
+nmax = len(d2['DATA'])
+if n > nmax:
+    print("Good luck, only %d here" % nmax)
+    sys.exit(0)
 data = d2['DATA'][n]
+
 
 plt.figure()
 plt.plot(data)
