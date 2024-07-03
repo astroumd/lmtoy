@@ -24,13 +24,15 @@ _help = """Usage: sp2sdfits [options] INPUT
 
 --class             Assuming CLASS format. Tested.
 --ascii             Try an ASCII format. Not implemented.
---rsr               RSR driver format (GHz, K). Not tested yet.
+--rsr               RSR driver format (GHz, K, RMS). 
 -h --help           Give this help
 -d --debug          Add more debugging info
 -v --version        Report version
 
-sp2sdfits.py converts a selection of 1D spectrum format to an SDFITS file
-for dysh
+sp2sdfits.py converts a selection of 1D spectrum format to an
+SDFITS file for dysh. The output file replaces the extension
+of the input file with "sdfits". It will overwrite any existing
+file with that name.
 
 Tested examples are from:
     --class     Grenoble CLASS (assumed from .fits extension)
