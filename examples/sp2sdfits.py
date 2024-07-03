@@ -18,7 +18,7 @@
 #   plt.show()
 #
 
-_version = "2-jul-2024"
+_version = "3-jul-2024"
 
 _help = """Usage: sp2sdfits [options] INPUT
 
@@ -33,8 +33,8 @@ sp2sdfits.py converts a selection of 1D spectrum format to an SDFITS file
 for dysh
 
 Tested examples are from:
-    --class     Grenoble CLASS
-    --rsr       RSR ascii spectrum (needs extension .txt)
+    --class     Grenoble CLASS (assumed from .fits extension)
+    --rsr       RSR ascii spectrum (assumed from .txt extension)
 """ 
 
 
@@ -64,8 +64,24 @@ def cols_append(h, key, fmt, cols):
     else:
         print("Warning: skipping missing column %s for table" % key)
 
-        
-        
+def dms2deg(dms):
+    """ convert a string d:m:s to degrees
+    """
+    sign = 1
+    if dms[0] == '-':
+        sign = -1
+        dms = dms[1:]
+    if dms[0] == '+':
+        dms = dms[1:]
+    w = dms.split(':')
+    deg = float(w[0])
+    if len(w) > 1:
+        deg = deg + float(w[1])/60.0
+        if len(w) > 2:
+            deg = deg + float(w[2])/3600.0
+    return sign*deg
+
+
 if __name__ == "__main__":
     av = docopt(_help, options_first=True, version='sp2sdfits. %s' % _version)
     ff = av['INPUT']      # fits or table
@@ -94,38 +110,84 @@ if __name__ == "__main__":
     elif ff.find('.txt') > 0:
         print("txt",ff)        
         dname = ff.replace('.txt', '.sdfits')
-        mode = 1   # rsr txt spectrum only for now.
+        mode = 1   # rsr txt spectrum only
 
-        if True:
-            print("WARNING: you need a template for now")
-            # steal for now
-            hdu = fits.open('J17293-CO10.fits')
-            h = hdu[0].header
-            print(h)
-
-        # manually reading table, since we need the header elements
+        # reading data portion of the table, masking out the nan's
         data = np.loadtxt(ff).T
         if _debug:
-            print(data.shape)        
-        freqs = data[0]
-        temps = data[1]
+            print(data.shape)
+        sigma = data[2]
+        freqs = data[0][~np.isnan(sigma)] * 1e9     # input was GHz, need Hz
+        temps = data[1][~np.isnan(sigma)]
         nchan = len(freqs)
-        print("Number of RSR channels: ", nchan)
+        print("Number of RSR channels with no nan values: ", nchan)
         d = temps.reshape(1,nchan)
         if _debug:
             print(d.shape)
+        crpix1 = nchan//2
+        crval1 = freqs[nchan//2]
+        cdelt1 = freqs[1] - freqs[0]
+        #
+        h = {}
+        h['TELESCOP'] = 'LMT'
+        h['INSTRUME'] = 'RSR'
+        h['CRPIX1'] = crpix1
+        h['CRVAL1'] = crval1
+        h['CDELT1'] = cdelt1
+        h['CUNIT1'] = 'Hz'
+        h['CTYPE1'] = 'FREQ'
+        h['ORIGIN'] = 'LMTOY'
+        h['BUNIT'] = 'K'
+
+        # reading header portion of the table to fill more of the header
+        lines = open(ff).readlines()
+        for line in lines:
+            line.strip()
+            if line[0] != '#': continue
+            w = line.split()
+            if len(w) < 3: continue
+            if w[1] == 'Source:':
+                h['OBJECT'] = w[2]
+                h['EQUINOX'] = 2000
+                continue
+            if w[2] == 'RA:':
+                h['RA-DMS'] = w[3]                
+                h['CRVAL2'] = dms2deg(w[3])*15.0
+                h['CRPIX2'] = 0.0
+                h['CTYPE2'] = 'RA---GLS'
+                continue
+            if w[2] == 'DEC:':
+                h['DEC-DMS'] = w[3]
+                h['CRVAL3'] = dms2deg(w[3])
+                h['CRPIX3'] = 0.0                
+                h['CTYPE3'] = 'DEC--GLS'                
+                continue
+            if w[1] == 'Date' and w[3] == 'Observation:':
+                h['DATE-OBS'] = w[4]
+                continue
+            if w[1] == 'Date' and w[3] == 'Reduction:':
+                h['DATE'] = w[4]
+                continue
+            if w[1] == 'Average' and w[2] == 'Opacity':     # TAU-ATM
+                h['OPACITY'] = float(w[4])
+                continue
+            if w[1] == 'Integration' and w[2] == 'Time:':   # OBSTIME ?   (class uses it )
+                h['INTTIME'] = float(w[3])
+                continue
+        # done reading all header elements
+        
     else:
         print("unknown mode");
         help(sys.argv[0])
 
-    ifnum = 1  # 0 ?
-    plnum = 1  # 0 ?
-    fdnum = 1  # 0 ?
+    ifnum = 0
+    plnum = 0
+    fdnum = 0
 
     cols = []
 
-    # hacks for CLASS  ?
     if mode == 0:
+        # hacks for CLASS  ?
         rf = h['RESTFREQ']
         cols.append(fits.Column(name='RESTFREQ', format='D', array=[rf]))
         cols.append(fits.Column(name='VELDEF', format='8A' , array=['OPTI-HEL']))
@@ -144,7 +206,22 @@ if __name__ == "__main__":
         h['EQUINOX'] = 2000
         # WCS issue 
         h['CDELT2'] = 1.0        
-        h['CDELT3'] = 1.0        
+        h['CDELT3'] = 1.0
+    elif mode == 1:
+        # hacks for RSR        
+        rf = 115.2712018e9   # nominal CO(1-0) for restfreq
+        cols.append(fits.Column(name='RESTFREQ', format='D', array=[rf]))
+        cols.append(fits.Column(name='VELDEF', format='8A' , array=['OPTI-HEL']))    # @todo
+        h['VELOCITY'] = 0.0       # vlsr really
+        h['RADECSYS'] = 'FK5'
+        h['RADESYS']  = 'FK5'     # GBT seems to use RADESYS and RADECSYS
+        h['EQUINOX'] = 2000
+        # WCS issue 
+        h['CDELT2'] = 1.0        
+        h['CDELT3'] = 1.0
+
+    if _debug:
+        print("HEADER:::",h)
         
     
     cols.append(fits.Column(name='IFNUM',  format='I' , array=[ifnum]))
