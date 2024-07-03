@@ -92,11 +92,13 @@ mkdir $out
 #-------------------------------------------------------------
 # create the YAMLs needed by dataverse in $out
 for directory in ${in}/*; do
+    cmd="dvpipe -c $yaml -e ${envfile} -g lmtslr create_index -d $directory -o ${out}"
     if [ "$verbose" -ne 0 ] || [ $dryrun -ne 0 ] ; then
-        echo "dvpipe -c $yaml -e ${envfile} -g lmtslr create_index -d $directory -o ${out} " 
+        echo "$cmd"
     fi
     if [ "$dryrun" -eq 0 ];then
-        dvpipe -c $yaml -e ${envfile} -g lmtslr create_index -d $directory -o ${out}
+        #dvpipe -c $yaml -e ${envfile} -g lmtslr create_index -d $directory -o ${out}
+	eval $cmd
     fi
 done;
 

@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 #
 #  Convert a FITS HDU spectrum to an SDFITS file, mostly for dysh
+#  SDFITS should match GBTIDL's "keep" format?
 #
 #  tested with J17293-CO10.fits (a CLASS spectrum; not to be confused with their MATRIX sdfits dialect)
 #
@@ -9,30 +10,34 @@
 #   from dysh.fits.sdfitsload import SDFITSLoad
 #   a = SDFITSLoad('J17293-CO10.sdfits')
 #   sp=a.getspec(0)
-#   sp.plot()              <== not working yet, no freq axis
+#   sp.plot()
+#
 #   r=a.rawspectrum(0,0)
 #   import matplotlib.pyplot as plt
 #   plt.plot(r)
 #   plt.show()
 #
 
-_version = "18-oct-2023"
+_version = "3-jul-2024"
 
-_help = """Usage: sp2sdfits [options] FITS_FILE
+_help = """Usage: sp2sdfits [options] INPUT
 
 --class             Assuming CLASS format. Tested.
 --ascii             Try an ASCII format. Not implemented.
---rsr               RSR driver format (GHz, K). Not tested yet.
+--rsr               RSR driver format (GHz, K, RMS). 
 -h --help           Give this help
 -d --debug          Add more debugging info
 -v --version        Report version
 
-sp2sdfits.py converts a selection of 1D spectrum format to an SDFITS file
-for dysh
+sp2sdfits.py converts a selection of 1D spectrum format to an
+SDFITS file for dysh. The output file replaces the extension
+of the input file with "sdfits". It will overwrite any existing
+file with that name.
 
 Tested examples are from:
-    --class     Grenoble CLASS
-    --rsr
+
+    --class     Grenoble CLASS (assumed from .fits extension)
+    --rsr       RSR ascii spectrum (assumed from .txt extension)
 
 Example of use:
 
@@ -42,9 +47,7 @@ Example of use:
          a = SDFITSLoad('J17293-CO10.sdfits')
          sp=a.getspec(0)
          sp.plot() 
-
 """ 
-
 
 
 import os
@@ -58,94 +61,202 @@ import warnings
 warnings.filterwarnings("ignore")
 from docopt import docopt
 
+_debug = False
 
 def help(cmd):
     print("no help here")
     sys.exit(0)
 
-def cols_append(fits, h, key, fmt, cols, verbose=False):
+def cols_append(h, key, fmt, cols):
     if key in h:
-        if verbose:
+        if _debug:
             print("Copying %s = %s" % (key,h[key]))
         cols.append(fits.Column(name=key, format=fmt, array=[h[key]]))
     else:
         print("Warning: skipping missing column %s for table" % key)
 
-        
-        
+def dms2deg(dms):
+    """ convert a string d:m:s to degrees
+    """
+    sign = 1
+    if dms[0] == '-':
+        sign = -1
+        dms = dms[1:]
+    if dms[0] == '+':
+        dms = dms[1:]
+    w = dms.split(':')
+    deg = float(w[0])
+    if len(w) > 1:
+        deg = deg + float(w[1])/60.0
+        if len(w) > 2:
+            deg = deg + float(w[2])/3600.0
+    return sign*deg
+
+
 if __name__ == "__main__":
     av = docopt(_help, options_first=True, version='sp2sdfits. %s' % _version)
-    ff = av['FITS_FILE']
+    ff = av['INPUT']      # fits or table
+    _debug = av['--debug']
 
     if not os.path.exists(ff):
         print("File %s does not exist" % ff)
-        help(sys.argv[0])        
-    if ff.find('.fits') < 0:
-        print("Can only handle .fits files:",ff)
-        help(sys.argv[0])        
+        help(sys.argv[0])
 
-    dname = ff.replace('.fits','.sdfits')
+    if ff.find('.fits') > 0:
+        print("fits",ff)
+        dname = ff.replace('.fits','.sdfits')
+        mode = 0   # fits
 
-    hdu = fits.open(ff)
-    h = hdu[0].header
-    data   = hdu[0].data
-    print('Input data shape:   ',data.shape)
-    d = data
-    nchan = len(data.squeeze())
-    d.reshape(1,nchan)
-    print('Number of channels: ',nchan)
+        hdu = fits.open(ff)
+        h = hdu[0].header
+        data   = hdu[0].data
+        print('Input data shape:   ',data.shape)
+        d = data
+        nchan = len(data.squeeze())
+        d = d.reshape(1,nchan)
+        print('Number of channels: ',nchan)
+        if _debug:
+            print(d.shape)
+        
+    elif ff.find('.txt') > 0:
+        print("txt",ff)        
+        dname = ff.replace('.txt', '.fits')
+        mode = 1   # rsr txt spectrum only
 
-    
+        # reading data portion of the table, masking out the nan's
+        data = np.loadtxt(ff).T
+        if _debug:
+            print(data.shape)
+        sigma = data[2]
+        freqs = data[0][~np.isnan(sigma)] * 1e9     # input was GHz, need Hz
+        temps = data[1][~np.isnan(sigma)]
+        nchan = len(freqs)
+        print("Number of RSR channels with no nan values: ", nchan)
+        d = temps.reshape(1,nchan)
+        if _debug:
+            print(d.shape)
+        crpix1 = nchan//2
+        crval1 = freqs[nchan//2]
+        cdelt1 = freqs[1] - freqs[0]
+        #
+        h = {}
+        h['TELESCOP'] = 'LMT'
+        h['INSTRUME'] = 'RSR'
+        h['CRPIX1'] = crpix1
+        h['CRVAL1'] = crval1
+        h['CDELT1'] = cdelt1
+        h['CUNIT1'] = 'Hz'
+        h['CTYPE1'] = 'FREQ'
+        h['ORIGIN'] = 'LMTOY'
+        h['BUNIT'] = 'K'
 
-    ifnum = 1
-    plnum = 1
-    fdnum = 1
-    
+        # reading header portion of the table to fill more of the header
+        lines = open(ff).readlines()
+        for line in lines:
+            line.strip()
+            if line[0] != '#': continue
+            w = line.split()
+            if len(w) < 3: continue
+            if w[1] == 'Source:':
+                h['OBJECT'] = w[2]
+                h['EQUINOX'] = 2000
+                continue
+            if w[2] == 'RA:':
+                h['RA-DMS'] = w[3]                
+                h['CRVAL2'] = dms2deg(w[3])*15.0
+                h['CRPIX2'] = 0.0
+                h['CTYPE2'] = 'RA---GLS'
+                continue
+            if w[2] == 'DEC:':
+                h['DEC-DMS'] = w[3]
+                h['CRVAL3'] = dms2deg(w[3])
+                h['CRPIX3'] = 0.0                
+                h['CTYPE3'] = 'DEC--GLS'                
+                continue
+            if w[1] == 'Date' and w[3] == 'Observation:':
+                h['DATE-OBS'] = w[4]
+                continue
+            if w[1] == 'Date' and w[3] == 'Reduction:':
+                h['DATE'] = w[4]
+                continue
+            if w[1] == 'Average' and w[2] == 'Opacity':     # TAU-ATM
+                h['OPACITY'] = float(w[4])
+                continue
+            if w[1] == 'Integration' and w[2] == 'Time:':   # OBSTIME ?   (class uses it )
+                h['INTTIME'] = float(w[3])
+                continue
+        # done reading all header elements
+        
+    else:
+        print("unknown mode");
+        help(sys.argv[0])
+
+    ifnum = 0
+    plnum = 0
+    fdnum = 0
+
     cols = []
+
+    if mode == 0:
+        # hacks for CLASS  ?
+        rf = h['RESTFREQ']
+        cols.append(fits.Column(name='RESTFREQ', format='D', array=[rf]))
+        cols.append(fits.Column(name='VELDEF', format='8A' , array=['OPTI-HEL']))
+        # unsure what these fools are doing here, but CRVAL1 = 0 and it/s called an offset.
+        dfreq  = float(h['IMAGFREQ'])
+        if _debug:
+            print("Finding         crval1=%g" % h['CRVAL1'])        
+        crval1 = float(h['CRVAL1'])
+        h['CRVAL1'] = crval1 + dfreq
+        if _debug:
+            print("Trying to patch crval1=%g" % h['CRVAL1'])
+        # patch missing elements
+        h['VELOCITY'] = 0.0   # vlsr really
+        h['RADECSYS'] = 'FK5'
+        h['RADESYS'] = 'FK5'      # is that a dysh typo
+        h['EQUINOX'] = 2000
+        # WCS issue 
+        h['CDELT2'] = 1.0        
+        h['CDELT3'] = 1.0
+    elif mode == 1:
+        # hacks for RSR        
+        rf = 115.2712018e9   # nominal CO(1-0) for restfreq
+        cols.append(fits.Column(name='RESTFREQ', format='D', array=[rf]))
+        cols.append(fits.Column(name='VELDEF', format='8A' , array=['OPTI-HEL']))    # @todo
+        h['VELOCITY'] = 0.0       # vlsr really
+        h['RADECSYS'] = 'FK5'
+        h['RADESYS']  = 'FK5'     # GBT seems to use RADESYS and RADECSYS
+        h['EQUINOX'] = 2000
+        # WCS issue 
+        h['CDELT2'] = 1.0        
+        h['CDELT3'] = 1.0
+
+    if _debug:
+        print("HEADER:::",h)
+        
+    
     cols.append(fits.Column(name='IFNUM',  format='I' , array=[ifnum]))
     cols.append(fits.Column(name='PLNUM',  format='I' , array=[plnum]))
     cols.append(fits.Column(name='FDNUM',  format='I' , array=[fdnum]))
     for i in [1,2,3,4]:
         for key in ['CTYPE']:    # ? 'CUNIT' ?
-            cols_append(fits, h, "%s%d" % (key,i), '8A', cols, True)
+            cols_append(h, "%s%d" % (key,i), '8A', cols)
         for key in ['CRVAL', 'CDELT', 'CRPIX']:
-            cols_append(fits, h, "%s%d" % (key,i), 'D', cols)
+            cols_append(h, "%s%d" % (key,i), 'D', cols)
 
-    # hacks for CLASS  ?
-    if True:
-        rf = h['RESTFREQ']
-        cols.append(fits.Column(name='RESTFREQ', format='D', array=[rf]))
-        cols.append(fits.Column(name='VELDEF', format='A' , array=['OPTI-HEL']))
-        
-    cols.append(fits.Column(name='DATA',   format='%dE' % nchan , array=d, dim='(1,%d)' % nchan, unit=h['BUNIT']))
+
+    cols.append(fits.Column(name='DATA',   format='%dE' % nchan , array=d, dim='(%d)' % nchan, unit=h['BUNIT']))
     idata = len(cols)
-    print("DATA at column",idata)
+    if _debug:
+        print("DATA at column",idata)
 
 
-    for key in ['ELEVATIO', 'AZIMUTH']:
-        cols_append(fits, h, "%s" % key, 'D', cols)
+    for key in ['ELEVATIO', 'AZIMUTH', 'EQUINOX', 'VELOCITY']:
+        cols_append(h, "%s" % key, 'D', cols)
 
-    for key in ['OBJECT']:
-        cols_append(fits, h, "%s" % key, 'A', cols)
-
-    
-
-
-# OBSMODE OnOff:        
-    
-
-    # which cols are required?
-    # OBJECT, BANDWID, DATE-OBS, DURATION, EXPOSURE, TSYS
-    #
-    #UT      = ' 19:21:11.948'              /  Universal time at start
-    #LST     = ' 14:00:19.050'              /  Sideral time at start
-    # TUNIT from the DATA column in BUNIT from the FITS header....
-    #TTYPE1  = 'OBJECT  '           /   TFORM1  = '32A     '           /
-    #TTYPE2  = 'BANDWID '           /   TFORM2  = 'D       '           /
-    #TTYPE3  = 'DATE-OBS'           /   TFORM3  = '22A     '           /
-    #TTYPE4  = 'DURATION'           /   TFORM4  = 'D       '           /
-    #TTYPE5  = 'EXPOSURE'           /   TFORM5  = 'D       '           /
-    #TTYPE6  = 'TSYS    '           /   TFORM6  = 'D       '           /
+    for key in ['OBJECT', 'RADESYS', 'DATE-OBS']:
+        klen = len(h[key])
+        cols_append(h, "%s" % key, '%dA' % klen, cols)    # @todo   will this cut off long object names?
 
     coldefs = fits.ColDefs(cols)
     hdu2 = fits.BinTableHDU.from_columns(coldefs)
@@ -153,6 +264,8 @@ if __name__ == "__main__":
     for key in ['TELESCOP', 'OBJECT', 'DATE', 'DATE-OBS', 'ORIGIN', 'BUNIT']:
         if key in h:
             hdu2.header[key] = h[key]
+            if _debug:
+                print("Setting %s = %s" % (key,h[key]))
         else:
             print("Warning: %s not present in input header, skipped" % key)
 

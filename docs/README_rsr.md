@@ -7,7 +7,7 @@ In this directory you can find the following files, with the following name conv
        OBSNUM   observation number - either a single OBSNUM, or OBSNUM1_OBSNUM2
                 if a range was used in stacking. OBSNUM is a 5 or 6 digit number.
 
-Version:  4-feb-2023
+Version:  11-jun-2024
 
        lmtoy.rc                    LMTOY system info
        lmtoy_OBSNUM.rc             parameter setting for SLpipeline (cumulative)
@@ -41,13 +41,17 @@ Version:  4-feb-2023
        spec1.tab                   zoomed driver spectrum, only used for LineCheck (plus their .png version)
        spec2.tab                   zoomed blanking spectrum, only used for LineCheck (plus their  .png version)
 
-       first.*                     Record of first time run of some of these files
+       first.*                     (optional) Record of first time run of some of these files
+
+       OBSNUM_lmtmetadata.yaml     YAML file of meta data used for archiving
+       bash_vars.txt               list of all bash variable - useful for pipeline debugging
 
 
 ## Log files
 
 Other log files not mentioned before:
 
+       dreampy.log*                 Logfiles from the dreampy3 interface for RSR processing
        fit.blankingN.log            Fit of N=1..4 strongest lines in "blanking" spectrum
        fit.driverN.log              Fit of N=1..4 strongest lines in "driver" spectrum
        linecheck.log                Fit of line for "LineCheck"
@@ -125,7 +129,8 @@ If badcb= used, it pre-sets those BADCB'S in the (2) blanking files for later us
 
 5. [5] tsys plot
 
-6. badlags plot:   the badcb= list (if present) were C/B's with deemed bad behavior of those lags. Currently we have the following PI parameters:
+6. badlags plot:   the badcb= list (if present) were C/B's with deemed bad behavior of those lags.
+   Currently we have the following PI parameters:
 
      bc_threshold = 2.5
      bc_low = 0.01

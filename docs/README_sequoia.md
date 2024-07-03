@@ -1,20 +1,29 @@
 # SEQUOIA files
 
-In this directory you can find the following files, with the following name convention
+In this directory you can find the following files, with the following name conventions:
 
     PID      the project id
     SRC      source name, as provided by the PI.   (no spaces allowed)
     OBSNUM   observation number - either a single OBSNUM, or if OBSNUM1_OBSNUM2
-             if a range was used in stacking. OBSNUM is a 5 or 6 digit number.
+             if a range was used in stacking. OBSNUM is a 6 digit number.
+	     If the OBSNUM contains a dunder (double underscore) this file
+	     applies to a specific bank.
+             For example  __0 for data from bank 0, and __1 for data from bank 1.
+	     Pipeline version 1.0 (<2024) did not use the dunder notation!
         
-Version:  22-dec-2022
+Version:  13-jun-2024
 
 	lmtoy.rc                    LMTOY <version, git counter, reduction date, operating system>
-	lmtoy_OBSNUM.rc             parameter setting for SLpipeline
+	lmtoy_OBSNUM.rc             parameter setting for SLpipeline (for both banks)
+	lmtoy_OBSNUM__0.rc          parameter setting for SLpipeline specific for bank 0
+	lmtoy_OBSNUM__1.rc          parameter setting for SLpipeline specific for bank 1
 	lmtoy_OBSNUM.ifproc         ASCII listing of the ifproc header variables
 	lmtoy_PID.tar.gz            Record of the script generator used by pipeline
 
-	SRC_OBSNUM.nc               calibrated spectra (like an SDFITS file) before gridding
+	SRC_OBSNUM__0.nc            calibrated spectra (like an SDFITS file) before gridding; for bank 0
+	SRC_OBSNUM__1.nc            calibrated spectra (like an SDFITS file) before gridding; for bank 1
+	SRC_OBSNUM__0.sdfits        calibrated spectra in SDFITS format for bank 0 (future)
+	SRC_OBSNUM__1.sdfits        calibrated spectra in SDFITS format for bank 1 (future)
 
 	SRC_OBSNUM.wf.fits          waterfall cube (each plane is a beam)
 	SRC_OBSNUM.wf10.fits        waterfall cube - rebinned x10 in time

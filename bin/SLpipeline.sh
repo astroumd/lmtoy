@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 14-may-2024"
+_version="SLpipeline: 2-jul-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -28,10 +28,10 @@ restart=0       # 1=force single fresh restart  2=restart + autorun  (always del
 nese=0          # 0=work all on nese    1=raw on nese, work on /work    2=raw from /work, work on /work [placeholder]
 exist=0         # if set, and the obsnum exists, skip running pipeline 
 tap=0           # save the TAP in a tar/zip file? (used on malt)
-srdp=0          # save the SRDP in a tar/zip file in $PID/4dv
-sdfits=0        # save the calibrated spectra in SDFITS (or netCDF) in $PID/4dv
+srdp=1          # save the SRDP in a tar/zip file in $PID/dir4dv
+sdfits=1        # save the calibrated spectra in SDFITS (or netCDF) in $PID/dir4dv
 raw=0           # save the RAW data in a tar/zip file in the $PID
-chunk=10g       # chunksize for zippping up what used to be a tar file (use 0 to get back to tar)
+chunk=10g       # chunksize for zipping up what used to be a tar file (use 0 to get back to tar) [UNTESTED if > chunk]
 grun=1          # save the script generator?
 admit=0         # run ADMIT ?
 meta=1          # 1 or 2:  1=activate update for frontend db (for dataverse)
@@ -70,9 +70,10 @@ public=""       # if given, the public data for archiving. Default is 1 year aft
 time=/usr/bin/time
 
 #             set up LMTOY, parse command line so it's merged with the script parameters
+#             deal with brainwasted windows : in ldate
 source lmtoy_functions.sh
 lmtoy_args "$@"
-ldate=$(lmtoy_date)
+ldate=$(lmtoy_date | sed s/:/-/g)
 
 #             put in bash debug mode, and report some settings
 if [ $debug -gt 0 ]; then
@@ -328,19 +329,27 @@ else
 fi
 
 # record obsnum_list for the archiver
-echo "obsnum_list=$obsnum_list" >> $pdir/lmtoy_$obsnum.rc
+echo "obsnum_list=$obsnum_list"              >> $pdir/lmtoy_$obsnum.rc
 
 # record the processing time
-echo "date=\"$(lmtoy_date)\"     # end " >> $pdir/lmtoy_$obsnum.rc
+echo "date=\"$(lmtoy_date)\"     # end "     >> $pdir/lmtoy_$obsnum.rc
+
+# record the pipeline version
+echo "lmtoy_version=$(cat $LMTOY/VERSION)"   >> $pdir/lmtoy_$obsnum.rc
 
 # record the qagrade, if one was given
 if [ ! -z $qagrade ]; then
-    echo "qagrade=$qagrade" >> $pdir/lmtoy_$obsnum.rc
+    echo "qagrade=$qagrade"                  >> $pdir/lmtoy_$obsnum.rc
 fi
 
 # record the public date, if one was given
 if [ ! -z $public ]; then
-    echo "date_public=$public" >> $pdir/lmtoy_$obsnum.rc
+    echo "date_public=$public"               >> $pdir/lmtoy_$obsnum.rc
+fi
+
+# visually challenged folks 
+if [ ! -e $pdir/000README.html ]; then
+    (cd $pdir ; ln -sf README.html 000README.html)
 fi
 
 # directory for dvpipe products for archive ingestion, also for links for PI
@@ -362,10 +371,14 @@ if [ $meta -gt 0 ]; then
 	cp $pdir/lmtoy_${obsnum}*rc $dir4dv	
     fi
 fi
-# produce TAP, RSRP, RAW tar files, whichever are requested.
+# produce TAP, RSRP, SDFITS, RAW tar files, whichever are requested.
 
 #        ensure we are in $WORK_LMT ("cd $WORK_LMT" doesn't work if it's ".")
+#        re-read the rc file in case we need new variables
 cd $WORK_LMT
+for _rc in $pdir/lmtoy_${obsnum}*.rc; do
+    source $_rc
+done
 
 if [ $tap != 0 ]; then
     echo "Creating Timely Analysis Products (TAP) with admit=$admit in ${pdir}_TAP.tar"
@@ -398,35 +411,41 @@ if [ $srdp != 0 ]; then
     if [ $chunk = 0 ]; then
 	tar -cf $dir4dv/${obsnum}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/$obsnum
     else
-	rm -rf            $dir4dv/${obsnum}_SRDP.zip
-	zip -s $chunk -qr $dir4dv/${obsnum}_SRDP.zip $ProjectId/$obsnum	-x \*.nc
+	rm -rf             $dir4dv/${obsnum}_SRDP.zip
+	zip -s $chunk  -qr $dir4dv/${obsnum}_SRDP.zip $ProjectId/$obsnum   -x $ProjectId/$obsnum/$sdfits_file
     fi
 fi
 
 if [ $sdfits != 0 ]; then
     echo "Creating spectra (SDFITS) in $dir4dv/${obsnum}_SDFITS. (chunk=$chunk)"
-    count=$(ls -1 $ProjectId/$obsnum/*.nc 2>/dev/null | wc -l)
-    if [ $count -gt 0 ]; then
+    if [ ! -z $sdfits_file ]; then
+        echo "LMTOY>> SDFITS: $sdfits_file"
 	if [ $chunk = 0 ]; then
 	    tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
 	else
-	    rm -rf            $dir4dv/${obsnum}_SDFITS.zip
-	    zip -s $chunk -qr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
+	    rm -rf             $dir4dv/${obsnum}_SDFITS.zip
+	    zip -s $chunk  -qr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/$sdfits_file
 	fi
     else
+	echo "LMTOY>> SDFITS: should not get here, unless you intend to have no SDFITS file(s)"
 	if [ $chunk = 0 ]; then
 	    tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md
 	else
-	    rm -rf            $dir4dv/${obsnum}_SDFITS.zip
-	    zip -s $chunk -qr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md
+	    rm -rf             $dir4dv/${obsnum}_SDFITS.zip
+	    zip -s $chunk  -qr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md
 	fi
     fi
 fi
 
 if [ $raw != 0 ] && [ $obsnums = 0 ]; then
     # ensure only for obsnums = 0
-    echo "Creating raw (RAW) tar for $pdir for $obsnum $calobsnum in $pidir/${obsnum}_RAW.tar"
-    lmtar $ProjectId/${obsnum}_RAW.tar $calobsnum $obsnum
+    if [ $chunk = 0 ]; then
+	echo "Creating raw (RAW) tar for $pdir for $obsnum $calobsnum in $pidir/${obsnum}_RAW.tar"
+	lmtar $ProjectId/${obsnum}_RAW.tar $calobsnum $obsnum
+    else
+	echo "Creating raw (RAW) tar for $pdir for $obsnum $calobsnum in $pidir/${obsnum}_RAW.zip"
+	lmzip $ProjectId/${obsnum}_RAW.zip $calobsnum $obsnum
+    fi
 fi
 
 #  rsync TAP data to a remote?   e.g. rsync=teuben@lma.astro.umd.edu:/lma1/lmt/TAP_lmt

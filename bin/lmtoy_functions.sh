@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="6-apr-2024"
+lmtoy_version="3-jul-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -23,6 +23,8 @@ function lmtoy_repo {
 
 function lmtoy_date {
     # standard ISO date, by default in local time.   Use "-u" to switch to UT time
+    # note that if used in filename, brainwasted windows doesn't know how to deal
+    # with a :, so use $(lmtoy_date | sed s/:/-/g)
     date +%Y-%m-%dT%H:%M:%S $*
 }
 
@@ -406,6 +408,9 @@ function lmtoy_rsr1 {
     rsr_spectra.py -y rsr.spectra.png            --title "$src .$wpre" $spec1 $spec2
     rsr_spectra.py -y rsr.spectra.svg            --title "$src .$wpre" $spec1 $spec2
 
+    # convert ascii spectrum to sdfits (only handles the driver spectrum because of header)
+    sp2sdfits.py $spec1
+
     # update the rc file (badcb here is deprecated)
     if [[ 0 = 1 ]]; then
 	echo "BADCB deprecated here"
@@ -513,10 +518,14 @@ function lmtoy_rsr1 {
 	echo "LMTOY>> skipping ADMIT post-processing"
     fi
 
+    # record the "sdfits" file, currently nothing
+    sdfits_file="*.fits"
+    echo "sdfits_file=$sdfits_file"  >> $rc
+
     echo "LMTOY>> Parameter file used: $rc"
     echo "LMTOY>> obsnum=$obsnum"
     
-    rsr_readme $obsnum $src > README.html
+    rsr_readme $obsnum $src > README.html   # TheSummary
     
     cp $LMTOY/docs/README_rsr.md README_files.md
 
@@ -933,6 +942,10 @@ function lmtoy_seq1 {
     else
 	echo "LMTOY>> skipping maskmoment"	
     fi
+
+    # record the "sdfits" file, currently just the nc files, future might be real (sd)fits files
+    sdfits_file="*.nc"
+    echo "sdfits_file=$sdfits_file"  >> $rc
     
     echo "LMTOY>> Created $s_fits and $w_fits"
     echo "LMTOY>> Parameter file used: rc=$rc"
@@ -945,7 +958,7 @@ function lmtoy_seq1 {
     mk_index.sh
     # cheat and rename it for all files access
     mv index.html README.html
-
+    
     # record the processing time, since this is a bank specific rc file
     echo "date=\"$(lmtoy_date)\"     # end " >> $rc
     
@@ -1403,8 +1416,8 @@ function lmtoy_bs1 {
     echo "LMTOY>> process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -1 --stype $stype --bank $bank -o $spec"
                   process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -1 --stype $stype --bank $bank -o $spec
     title="Spectrum LMT $instrument/$obspgm"
-    seq_spectra.py -t "$title" -y seq.spectra_${oid}.png $spec
-    seq_spectra.py -t "$title" -y seq.spectra_${oid}.svg $spec    
+    seq_spectra.py -t "$title" -y seq.spectra__${oid}.png $spec
+    seq_spectra.py -t "$title" -y seq.spectra__${oid}.svg $spec    
 
     # QAC robust stats off the spectrum
     out4=$(tabmath $spec - %2*1000 all | tabstat -  qac=t robust=t label=$spec)
@@ -1412,8 +1425,8 @@ function lmtoy_bs1 {
     
     # tsys
     dev=$(yapp_query png vps)
-    tabplot $spec ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  yapp=tsys_${oid}.$dev/$dev
-    convert tsys_${oid}.$dev tsys_${oid}.jpg
+    tabplot $spec ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  yapp=tsys__${oid}.$dev/$dev
+    convert tsys__${oid}.$dev tsys__${oid}.jpg
     
     if [ -n "$NEMO" ]; then
 	echo "LMTOY>> Some NEMO post-processing"
@@ -1473,8 +1486,8 @@ function lmtoy_ps1 {
     echo "LMTOY>> process_ps.py --obs_list $obsnum --pix_list $pix_list --use_cal --stype $stype --bank $bank -o $spec $sargs"
                   process_ps.py --obs_list $obsnum --pix_list $pix_list --use_cal --stype $stype --bank $bank -o $spec $sargs
     title="Spectrum LMT $instrument/$obspgm"
-    seq_spectra.py -t "$title" -y seq.spectra_${oid}.png $spec
-    seq_spectra.py -t "$title" -y seq.spectra_${oid}.svg $spec
+    seq_spectra.py -t "$title" -y seq.spectra__${oid}.png $spec
+    seq_spectra.py -t "$title" -y seq.spectra__${oid}.svg $spec
 
     # QAC robust stats off the spectrum in mK
     out4=$(tabmath $spec - %2*1000 all | tabstat -  qac=t robust=t label=$spec)

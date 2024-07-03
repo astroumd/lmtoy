@@ -342,7 +342,7 @@ common: lmtoy_venv
 
 META  = 1
 ADMIT = 0
-bench:  bench1 bench2
+bench:  bench1 bench2 bench3
 
 ## bench1:   RSR benchmark: obsnum=33551
 bench1:
@@ -365,6 +365,18 @@ bench2:
 ## bench2a:  SEQ benchmark with identical combination
 bench2a:
 	$(TIME) SLpipeline.sh obsnums=79448,79448 restart=1 admit=$(ADMIT) meta=$(META)
+
+## bench3:   SEQ dual IF benchmark (about 1.5 min)
+bench3:
+	$(TIME) SLpipeline.sh obsnum=110399 restart=1 extent=120 maskmoment=$(ADMIT) admit=$(ADMIT) meta=$(META)
+	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench3.txt'
+	@echo "========================================================================================"
+	@echo xdg-open  $(WORK_LMT)/2024S1SEQUOIACommissioning/110399/README.html
+
+## bench4:   SEQ/Ps benchmark
+bench4:
+	@echo "2024-S1-UM-3 core_41: 112173  112185     core_42: 112187"
+	@echo "2024 Comm  MonR2: 110416"
 
 ## bench5:   pure CPU bench from NEMO (man 5 bench)
 bench5:
