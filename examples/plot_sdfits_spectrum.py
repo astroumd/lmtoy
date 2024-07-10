@@ -5,8 +5,11 @@ import sys
 from astropy.io import fits
 import matplotlib.pyplot as plt
 
+_version = "10-jul-2024"
+
 if len(sys.argv) == 1:
     print("Usage: %s sdfits_file [spectrum#]" % sys.argv[0])
+    print("Version: %s" % _version)
     sys.exit(0)
 
 sdfits = sys.argv[1]
