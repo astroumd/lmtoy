@@ -147,7 +147,7 @@ if __name__ == "__main__":
         h['CDELT1'] = cdelt1
         h['CUNIT1'] = 'Hz'
         h['CTYPE1'] = 'FREQ'
-        h['ORIGIN'] = 'LMTOY'
+        h['ORIGIN'] = 'LMTOY sp2sdfits.py %s' % _version
         h['BUNIT'] = 'K'
 
         # reading header portion of the table to fill more of the header
@@ -233,6 +233,10 @@ if __name__ == "__main__":
 
     if _debug:
         print("HEADER:::",h)
+
+    # extra variables to keep GBTFITSLoad() happy
+    # OBSMODE
+    h['OBSMODE'] = "None"
         
     
     cols.append(fits.Column(name='IFNUM',  format='I' , array=[ifnum]))
@@ -244,7 +248,7 @@ if __name__ == "__main__":
         for key in ['CRVAL', 'CDELT', 'CRPIX']:
             cols_append(h, "%s%d" % (key,i), 'D', cols)
 
-
+    # @todo   unit= writes a TUNITxx=, but SDFiTSLoad isn't looking at it
     cols.append(fits.Column(name='DATA',   format='%dE' % nchan , array=d, dim='(%d)' % nchan, unit=h['BUNIT']))
     idata = len(cols)
     if _debug:
@@ -254,9 +258,11 @@ if __name__ == "__main__":
     for key in ['ELEVATIO', 'AZIMUTH', 'EQUINOX', 'VELOCITY']:
         cols_append(h, "%s" % key, 'D', cols)
 
-    for key in ['OBJECT', 'RADESYS', 'DATE-OBS']:
+    for key in ['OBJECT', 'RADESYS', 'DATE-OBS']:    #  'OBSMODE']:
         klen = len(h[key])
-        cols_append(h, "%s" % key, '%dA' % klen, cols)    # @todo   will this cut off long object names?
+        cols_append(h, "%s" % key, '%dA' % klen, cols)
+
+
 
     coldefs = fits.ColDefs(cols)
     hdu2 = fits.BinTableHDU.from_columns(coldefs)
