@@ -38,7 +38,7 @@ from lmtoy import data_prod_id
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-_version = "10-jun-2024"
+_version = "9-jul-2024"
 
 def header(rc, key, debug=False):
     """
@@ -193,6 +193,11 @@ def guess_line(restfreq, debug=False):
     return ("Unknown","Unknown")
 
 def get_qagrade(rc, debug=False):
+    """
+    processingLevel = 1:     -1,0     are allowed (single obsnum)
+    processingLevel = 2:     -2,1,2,3 are allowed (single obsnum)
+    processingLevel = 3:     -2,1,2,3 are allowed (combinations)
+    """
     qagrade = header(rc,"qagrade",debug)
     if qagrade == None:
         qagrade = 0
@@ -247,10 +252,6 @@ if __name__ == "__main__":
     lmtdata.add_metadata("publicDate",   get_publicDate(rc,debug))
     lmtdata.add_metadata("isPolarimetry",      False)    # or True if HWP mode not ABSENT
     lmtdata.add_metadata("halfWavePlateMode", "ABSENT")  # or FIXED or ROTATING
-    # 0 = unprocessed, 1 = pipeline processed, 2 = DA improvement
-    # toltec has different definitions and includes level 3.
-    # Leave this set to 1 for SLR.
-    lmtdata.add_metadata("processingLevel", 1)     # @todo could be 1 or 2
 
     # isCombined - bool, True if more than one obsnum/combined data
     obsnum = header(rc,"obsnum")
@@ -317,13 +318,13 @@ if __name__ == "__main__":
     glon = cs.galactic.l.value
     glat = cs.galactic.b.value
     
-    lmtdata.add_metadata("targetName",      header(rc,"src",debug))
-    lmtdata.add_metadata("RA",              ra_deg)
-    lmtdata.add_metadata("DEC",             dec_deg)
-    lmtdata.add_metadata("calibrationLevel",1)
-    lmtdata.add_metadata('galLon',          glon)
-    lmtdata.add_metadata('galLat',          glat)
-    lmtdata.add_metadata('pipeVersion', header(rc,"lmtoy_version"), debug)
+    lmtdata.add_metadata("targetName",       header(rc,"src",debug))
+    lmtdata.add_metadata("RA",               ra_deg)
+    lmtdata.add_metadata("DEC",              dec_deg)
+    lmtdata.add_metadata("calibrationLevel", 1)       # @todo hardcoded now
+    lmtdata.add_metadata('galLon',           glon)
+    lmtdata.add_metadata('galLat',           glat)
+    lmtdata.add_metadata('pipeVersion',      header(rc,"lmtoy_version"), debug)
 
     
     if instrument == "SEQUOIA" or instrument == "MSIP1MM":     # @todo this is only for mapping so far
@@ -363,7 +364,7 @@ if __name__ == "__main__":
         band["bandwidth"] = bw*nchan/nchan0*u.Unit("GHz")
         band["beam"] = lmt_beam(skyfreq)
         band["winrms"] = rms*u.Unit("mK")
-        band["qaGrade"] = get_qagrade(rc, debug)   # -1 .. 5 (0 means not graded)
+        band["qaGrade"] = qagrade = get_qagrade(rc, debug)   # -2 .. 3 (-1,0 means not graded)
 
         band["nchan"] =  nchan
         band["bandName"] = "OTHER"    # we don't have special names for the spectral line bands
@@ -391,7 +392,7 @@ if __name__ == "__main__":
             band["bandwidth"] = bw*nchan/nchan0*u.Unit("GHz")
             band["beam"] = lmt_beam(skyfreq)
             band["winrms"] = rms*u.Unit("mK")
-            band["qaGrade"] = get_qagrade(rc, debug)   # -1 .. 5 (0 means not graded)
+            band["qaGrade"] = qagrade = get_qagrade(rc, debug)   # -2 .. 3 (-1,0 means not graded)
             band["nchan"] = nchan
             band["bandwidth"] = bw*u.Unit("GHz")
             
@@ -424,7 +425,7 @@ if __name__ == "__main__":
            band["winrms"] = -1.0
         else:
            band["winrms"] = float(header(rc,"rms",debug))*u.Unit("K")
-        band["qaGrade"] = get_qagrade(rc, debug)   # -1 .. 5 (0 means not graded)        <
+        band["qaGrade"] = qagrade = get_qagrade(rc, debug)   # -2 .. 3 (-1,0 means not graded)        <
         band["nchan"] = int(header(rc,"nchan",debug))
         band["formula"] = ""        # not applicable for RSR
         band["transition"] = ""     # not applicable for RSR
@@ -433,6 +434,17 @@ if __name__ == "__main__":
         
     else:
         print("instrument=%s not implemented yet" % instrument)
+
+    # 0 = unprocessed (never happens), 1 = pipeline processed, 2 = DA improvement
+    # toltec has different definitions and includes level 3.
+    # @todo   qagrade can differ per band for SEQ, currently last one survives
+    if qagrade==0 or qagrade==-1:
+        lmtdata.add_metadata("processingLevel", 1)
+    elif isCombined:
+        lmtdata.add_metadata("processingLevel", 3)
+    else:
+        lmtdata.add_metadata("processingLevel", 2)
+        
 
     lmtdata.add_metadata("totalIntTime", inttime)        
 

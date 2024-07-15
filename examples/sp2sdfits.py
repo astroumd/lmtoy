@@ -3,6 +3,17 @@
 #  Convert a FITS HDU spectrum to an SDFITS file, mostly for dysh
 #  SDFITS should match GBTIDL's "keep" format?
 #
+#  Some refs:
+#  Garwood (2000) - The definition of the sdfits format
+#    https://ui.adsabs.harvard.edu/abs/2000ASPC..216..243G/abstract
+#
+#   See also:
+#    https://fits.gsfc.nasa.gov/registry/sdfits.html
+#    https://safe.nrao.edu/wiki/bin/view/Main/SdfitsDetails
+#    https://casa.nrao.edu/aips2_docs/notes/236/node14.html
+
+
+
 #  tested with J17293-CO10.fits (a CLASS spectrum; not to be confused with their MATRIX sdfits dialect)
 #
 #   sp2sdfits.py J17293-CO10.fits
