@@ -3,7 +3,8 @@
 
 URL1 = https://www.astro.umd.edu/~teuben/LMT/data_lmt/rsr_bench.tar.gz
 URL2 = https://www.astro.umd.edu/~teuben/LMT/data_lmt/seq_bench.tar.gz
-URL3 = https://www.astro.umd.edu/~teuben/LMT/live/rsr4data_lmt.tar
+URL3 = https://www.astro.umd.edu/~teuben/LMT/data_lmt/seq_bench3.tar.gz
+URL9 = https://www.astro.umd.edu/~teuben/LMT/live/rsr4data_lmt.tar
 
 SLEEP = 5
 
@@ -37,17 +38,21 @@ new2:
 	tabcols data_lmt.log 2 | head -1 >> last.obsnum
 	@echo "Most recent obsnum: `tabcols data_lmt.log 2 | head -1`"
 
-data:   ifproc RedshiftChassis0
+data:   bench1 bench2 bench3
 
 # 33551 RSR data + calibration files
-RedshiftChassis0:
+bench1:
 	wget -O - $(URL1) | tar -zxf -
 
-# 79448 SEQ data
-ifproc:
+# 79448 SEQ data; old with 1 IF
+bench2:
 	wget -O - $(URL2) | tar -zxf -
+
+# 110399 SEQ data with 2 IFs
+bench3:
+	wget -O - $(URL3) | tar -zxf -
 
 #  in the real $DATA_LMT : for RSR data a small calibration directory 'rsr' is needed (about 35MB)
 #  it is also included in the rsr_bench dataset
 rsr:
-	wget -O - $(URL3) | tar -xf -
+	wget -O - $(URL9) | tar -xf -
