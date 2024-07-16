@@ -38,7 +38,7 @@ from lmtoy import data_prod_id
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-_version = "9-jul-2024"
+_version = "15-jul-2024"
 
 def header(rc, key, debug=False):
     """
@@ -52,7 +52,12 @@ def header(rc, key, debug=False):
     if key in rc:
         if debug:
             print("# PJT: header   ",key,rc[key])
-        return rc[key]
+        if rc[key].find(',') < 0:
+            return rc[key]
+        else:
+            print("# PJT: header %s not single valued: %s, using first" % (key,rc[key]))
+            # return first
+            return rc[key].split(',')[0]
     else:
         if debug:
             print("# PJT: unknown key ",key)
@@ -398,6 +403,8 @@ if __name__ == "__main__":
             
             band["bandName"] = "OTHER"    # we don't have special names for the spectral line bands
             lmtdata.add_metadata("band",band)
+
+            # @todo   should the qagrade be the min() or max() of the bands?
             
 
     elif instrument == "RSR":
