@@ -9,14 +9,14 @@ Useful tools for the LMTOY script generators (lmtoy_$PID)
    pix_list(pl, maxbeam=16)
    getpars(on)
    getargs(obsnum, pars4)
-   mk_runs(project, on, pars1, pars2, argv=None)
+   mk_runs(project, on, pars1, pars2, pars3, argv=None)
 
 """
 
 import os
 import sys
 
-_version = "8-may-2024"
+_version = "16-jul-2024"
 
 def pix_list(pl):
     """ convert a strong like "-0,-1" to proper pixlist by removing
@@ -45,10 +45,11 @@ def pix_list(pl):
 
 
 def getpars(on):
-    """ get SLpipeline parameters from obsnum.args (deprecated in nov-2022)
-        nor comments.txt after the '#' symbol
+    """ get SLpipeline parameters from comments.txt after the '#' symbol
+        [obsnum.args was deprecated in nov-2022]
     """
     pars4 = {}
+    pars5 = {}
     if os.path.exists("obsnum.args"):
         print("ERROR: obsnum.args is deprecated, please use comments.txt now")
         sys.exit(1)
@@ -59,62 +60,51 @@ def getpars(on):
             if line[0] == '#': continue
             idx = line.find('QAFAIL')
             if idx > 0:
-                extra='qagrade=-1'
+                extra='qagrade=-2'
             else:
                 extra=''
             idx = line.find('#')
             w = line.split()
             if len(w) == 0: continue
-            if w[0].find('__'):
-                print("# cannot deal with __ yet in comments.txt")
-                continue
-            pars4[int(w[0])] = []            
+            idx__bank = w[0].find('__')
+            if idx__bank > 0:
+                bank = int(w[0][idx__bank+2:])
+                o = int(w[0][:idx__bank])
+                #print("# __bank=", bank, "obsnum=", o)
+                if bank == 1:
+                    pars = pars5
+                else:
+                    pars = pars4
+            else:
+                o = int(w[0])
+                pars = pars4
+            pars[o] = []
             # loop over args,  and replace PI parameters
             if idx > 0:
                 for a in line[idx+1:].strip().split():
                     kv = a.split('=')
                     if kv[0] == 'pix_list':
                         a = 'pix_list=' + pix_list(kv[1])
-                    pars4[int(w[0])].append(a)
+                    pars[o].append(a)
             # append 'extra' (QAFAIL induced)
             if len(extra) > 0:
-                pars4[int(w[0])].append(extra)
+                pars[o].append(extra)
 
-    return pars4
+    #print("PARS4", pars4)
+    #print("PARS5", pars5)
+
+    return pars4,pars5
 
 
-def getargs(obsnum, pars4):
+def getargs(obsnum, pars):
     """ search for <obsnum> and return the args
     """
     args = ""
-    if obsnum in pars4.keys():
-        # print("PJT2:",obsnum,pars4[obsnum])
-        for a in pars4[obsnum]:
+    if obsnum in pars.keys():
+        for a in pars[obsnum]:
             args = args + " " + a
     return args
-
-#        helper function for populating obsnum dependant argument
-def getargs_old(obsnum, flags=True):
-    """ search for <obsnum>.args
-        and in lmtoy.flags
-        ** deprecated **
-    """
-    args = ""    
-    if flags:
-        f = 'lmtoy.flags'
-        if os.path.exists(f):
-            lines = open(f).readlines()
-            for line in lines:
-                if line[0] == '#': continue
-                args = args + line.strip() + " "
-        
-    f = "%d.args" % obsnum
-    if os.path.exists(f):
-        lines = open(f).readlines()
-        for line in lines:
-            if line[0] == '#': continue
-            args = args + line.strip() + " "
-    return args
+    
 
 def verify(runfile, debug=False):
     """ verify a runfile if the argument are good enough to be sent to the pipeline
@@ -217,8 +207,7 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     fp2[1] = open(run2b, "w")
     fp2[2] = open(run2c, "w")
 
-
-    pars4 = getpars(on)
+    pars4,pars5 = getpars(on)
 
     # single obsnums
     n1 = 0
@@ -233,7 +222,7 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
             if s in pars2:
                 cmd1[1] = "SLpipeline.sh obsnum=%d _s=%s %s %s" % (o,s,pars2[s], getargs(o,pars4))
             if pars3 != None and s in pars3:
-                cmd1[2]  = "SLpipeline.sh obsnum=%d _s=%s %s %s" % (o,s, pars3[s], getargs(o,pars4))
+                cmd1[2]  = "SLpipeline.sh obsnum=%d _s=%s %s %s" % (o,s, pars3[s], getargs(o,pars5))
             for i in range(3):
                 if len(cmd1[i]) > 0:  fp1[i].write("%s\n" % cmd1[i])
             n1 = n1 + 1
