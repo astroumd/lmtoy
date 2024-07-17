@@ -14,7 +14,7 @@
 #set -e
 #set -x
 
-_version="11-mar-2024"
+_version="17-jul-2024"
 
 if [ -z "$1" ]; then
     src0=""
@@ -70,6 +70,9 @@ echo "      RMS [mK]"
 echo "    </th>"
 echo "    <th>"
 echo "      RMS/RMS0 ratio"
+echo "    </th>"
+echo "    <th>"
+echo "      QA"
 echo "    </th>"
 echo "    <th>"
 echo "      aPlot"
@@ -197,6 +200,9 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
 	echo "    </td>"
 	echo "    <td>"
 	echo "      $rms0r"
+	echo "    </td>"
+	echo "    <td>"
+	echo "      $qagrade"	
 	echo "    </td>"
 	echo "    <td>"
 	if [ -e ${o}/${src}_${on}.nf.admit/x.csm.png ]; then

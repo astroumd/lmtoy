@@ -181,9 +181,9 @@ for ext in "" "__0" "__1"; do
 
     echo "<H1> SL Pipeline summary for $ProjectId/$obsnum for $src </H1>"      > $html
     if [ $bank -lt 0 ]; then
-	echo "<b>restfreq=$rf</b>"                                            >> $html
+	echo "<b>restfreq=$rf qagrade=$qagrade</b>"                           >> $html
     else
-	echo "<b>bank=$bank restfreq=$rf</b>"                                 >> $html
+	echo "<b>bank=$bank restfreq=$rf qagrade=$qagrade</b>"                >> $html
     fi
     echo "<br>"                                                               >> $html    
     echo "The figures in the right column are those generated from the first" >> $html
