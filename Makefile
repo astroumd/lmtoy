@@ -346,7 +346,7 @@ bench:  bench1 bench2 bench3
 
 ## bench1:   RSR benchmark: obsnum=33551
 bench1:
-	$(TIME) SLpipeline.sh obsnum=33551 restart=1 linecheck=1 public=2020-12-31 admit=$(ADMIT) meta=$(META)
+	$(TIME) SLpipeline.sh obsnum=33551 restart=1 linecheck=1 public=2020-12-31 qagrade=3 admit=$(ADMIT) meta=$(META)
 	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench1.txt'
 	@echo "================================================================================================================="
 	@echo xdg-open  $(WORK_LMT)/2014ARSRCommissioning/33551/README.html
@@ -357,7 +357,7 @@ bench1a:
 
 ## bench2:   SEQ benchmark: obsnum=79448
 bench2:
-	$(TIME) SLpipeline.sh obsnum=79448 restart=1 map_coord_use=1 public=2020-12-31 maskmoment=$(ADMIT) admit=$(ADMIT) meta=$(META)
+	$(TIME) SLpipeline.sh obsnum=79448 restart=1 map_coord_use=1 public=2020-12-31 qagrade=3 maskmoment=$(ADMIT) admit=$(ADMIT) meta=$(META)
 	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench2.txt'
 	@echo "========================================================================================"
 	@echo xdg-open  $(WORK_LMT)/2018S1SEQUOIACommissioning/79448/README.html
@@ -368,7 +368,7 @@ bench2a:
 
 ## bench3:   SEQ dual IF benchmark (about 1.5 min)
 bench3:
-	$(TIME) SLpipeline.sh obsnum=110399 restart=1 extent=120 maskmoment=$(ADMIT) public=2020-12-31 admit=$(ADMIT) meta=$(META)
+	$(TIME) SLpipeline.sh obsnum=110399 restart=1 extent=120 maskmoment=$(ADMIT) public=2020-12-31 qagrade=3 admit=$(ADMIT) meta=$(META)
 	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench3.txt'
 	@echo "========================================================================================"
 	@echo xdg-open  $(WORK_LMT)/2024S1SEQUOIACommissioning/110399/README.html
