@@ -16,7 +16,7 @@ Useful tools for the LMTOY script generators (lmtoy_$PID)
 import os
 import sys
 
-_version = "16-jul-2024"
+_version = "19-jul-2024"
 
 def pix_list(pl):
     """ convert a strong like "-0,-1" to proper pixlist by removing
@@ -69,14 +69,20 @@ def getpars(on):
             idx__bank = w[0].find('__')
             if idx__bank > 0:
                 bank = int(w[0][idx__bank+2:])
-                o = int(w[0][:idx__bank])
+                if w[0][0] == '-':    # only occurs in single obsnums, not combo
+                    o = w[0][1:idx__bank]
+                else:
+                    o = w[0][:idx__bank]
                 #print("# __bank=", bank, "obsnum=", o)
                 if bank == 1:
                     pars = pars5
                 else:
                     pars = pars4
             else:
-                o = int(w[0])
+                if w[0][0] == '-':
+                    o = w[0][1:]
+                else:
+                    o = w[0]
                 pars = pars4
             pars[o] = []
             # loop over args,  and replace PI parameters
@@ -90,14 +96,18 @@ def getpars(on):
             if len(extra) > 0:
                 pars[o].append(extra)
 
-    #print("PARS4", pars4)
-    #print("PARS5", pars5)
+    print("PARS4", pars4)
+    print("PARS5", pars5)
 
     return pars4,pars5
 
 
 def getargs(obsnum, pars):
     """ search for <obsnum> and return the args
+        obsnum   - must be a string, like "123456" or "123456_123467"
+        pars     - a dict of {obsnum:[arg1,arg2,...]}
+        returns the arguments in one string for that obsnum
+              "arg1 arg2 .."
     """
     args = ""
     if obsnum in pars.keys():
@@ -132,6 +142,7 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     """ top level
        project    - PID, e.g. "2024-S1-MX-2"
        on         - dictionary of sources and their assocciated obsnums
+                    obsnums are integers, negative one do not appear in combos
        pars1,2,3  - SLpipeline parameters for this tier-1,2,3 run (called a,b,c)
        argv       - optional for CLI
     """
@@ -217,39 +228,44 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
             cmd2 = ["" for i in range(3)]
 
             o = abs(o1)
+            os = repr(o)
             if s in pars1:
                 cmd1[0] = "SLpipeline.sh obsnum=%d _s=%s %s restart=1 " % (o,s,pars1[s])
             if s in pars2:
-                cmd1[1] = "SLpipeline.sh obsnum=%d _s=%s %s %s" % (o,s,pars2[s], getargs(o,pars4))
+                cmd1[1] = "SLpipeline.sh obsnum=%d _s=%s %s %s" % (o,s,pars2[s], getargs(os,pars4))
             if pars3 != None and s in pars3:
-                cmd1[2]  = "SLpipeline.sh obsnum=%d _s=%s %s %s" % (o,s, pars3[s], getargs(o,pars5))
+                cmd1[2]  = "SLpipeline.sh obsnum=%d _s=%s %s %s" % (o,s, pars3[s], getargs(os,pars5))
             for i in range(3):
                 if len(cmd1[i]) > 0:  fp1[i].write("%s\n" % cmd1[i])
             n1 = n1 + 1
 
     #                           combination obsnums
     n2 = 0        
-    for s in on.keys():
+    for s in on.keys():         # loop over sources
         obsnums = ""
         n3 = 0
-        for o1 in on[s]:
+        for o1 in on[s]:        # loop over positive obsnums
             o = abs(o1)
             if o1 < 0: continue
             n3 = n3 + 1
             if obsnums == "":
                 obsnums = "%d" % o
+                o_first = o_last = o
             else:
                 obsnums = obsnums + ",%d" % o
+                o_last = o
         print('%s[%d/%d] :' % (s,n3,len(on[s])), obsnums)
+        o_o = '%s_%s' % (o_first,o_last)
+        print("Combo: %s" % o_o)
         cmd1 = ["" for i in range(3)]
         cmd2 = ["" for i in range(3)]
         
         if s in pars1:
             cmd2[0] = "SLpipeline.sh _s=%s admit=0 restart=1 obsnums=%s" % (s, obsnums)
         if s in pars2:
-            cmd2[1] = "SLpipeline.sh _s=%s admit=1 srdp=1    obsnums=%s" % (s, obsnums)
+            cmd2[1] = "SLpipeline.sh _s=%s admit=1 srdp=1    obsnums=%s %s" % (s, obsnums, getargs(o_o,pars4))
         if pars3 != None and s in pars3:
-            cmd2[2] = "SLpipeline.sh _s=%s admit=1 srdp=1    obsnums=%s" % (s, obsnums)
+            cmd2[2] = "SLpipeline.sh _s=%s admit=1 srdp=1    obsnums=%s %s" % (s, obsnums, getargs(o_o,pars5))
         for i in range(3):
             if len(cmd2[i]) > 0:  fp2[i].write("%s\n" % cmd2[i])
         n2 = n2 + 1
