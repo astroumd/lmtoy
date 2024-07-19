@@ -14,7 +14,7 @@
 #set -e
 #set -x
 
-_version="17-jul-2024"
+_version="19-jul-2024"
 
 if [ -z "$1" ]; then
     src0=""
@@ -82,7 +82,7 @@ echo "      comments"
 echo "    </th>"
 echo "  </tr>"
 
-echo "obsnum,date,source,inttime,tau,rms,rms0"   > $csv
+echo "obsnum,date,source,inttime,tau,rms,rms0,qa"  > $csv
 
 
 n=0
@@ -165,7 +165,7 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
 	else
 	    comments=""
 	fi
-	echo "$o,$date_obs,$src,$inttime,$tau,$rms,$rms0" >> $csv
+	echo "$o,$date_obs,$src,$inttime,$tau,$rms,$rms0,$qagrade" >> $csv
   
 	echo '  <tr class="item">'
 	echo "    <td>"
