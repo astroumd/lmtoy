@@ -57,6 +57,7 @@ echo " <tr><th scope='row'>Input Observations</th><td>$inobs</td></tr>"
 echo " <tr><th scope='row'>Integration Time (s) [driver]</th><td>$itime</td></tr>"
 echo " <tr><th scope='row'>220 GHz Opacity</th><td>$tau</td></tr>"
 echo " <tr><th scope='row'>Date of Reduction</th><td>$reddate</td></tr>"
+echo " <tr><th scope='row'>QA grade</th><td>$qagrade</td></tr>"
 echo "</tbody></table>"
 
 echo "<div class='row'>"
