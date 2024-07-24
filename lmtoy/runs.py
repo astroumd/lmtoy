@@ -256,7 +256,7 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
                 o_last = o
         print('%s[%d/%d] :' % (s,n3,len(on[s])), obsnums)
         o_o = '%s_%s' % (o_first,o_last)
-        print("Combo: %s" % o_o)
+        # print("Combo: %s" % o_o)
         cmd1 = ["" for i in range(3)]
         cmd2 = ["" for i in range(3)]
         
