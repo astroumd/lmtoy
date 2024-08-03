@@ -12,3 +12,5 @@ I17208    xlines=110.50,0.20,108.8,0.3               _peak=110
 I23365    xlines=108.30,0.25                         _peak=16
 VIIZw31   xlines=109.34,0.25,107.5,0.3               _peak=110
 # 3c273
+#    QL database used different peak for I23365 !!!
+#I23365   xlines=108.282,0.25                        _peak=40
