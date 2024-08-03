@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 10-jul-2024"
+_version="SLpipeline: 3-aug-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -26,7 +26,8 @@ debug=0         # add bash debug (1)
 error=0         # add bash error (1)
 restart=0       # 1=force single fresh restart  2=restart + autorun  (always deletes old obsnum)
 nese=0          # 0=work all on nese    1=raw on nese, work on /work    2=raw from /work, work on /work [placeholder]
-exist=0         # if set, and the obsnum exists, skip running pipeline 
+exist=0         # if set, and the obsnum exists, skip running pipeline
+skip=0          # if set, skip running pipeline
 tap=0           # save the TAP in a tar/zip file? (used on malt)
 srdp=1          # save the SRDP in a tar/zip file in $PID/dir4dv
 sdfits=1        # save the calibrated spectra in SDFITS (or netCDF) in $PID/dir4dv
@@ -88,11 +89,16 @@ if [ $error -gt 0 ]; then
     set -e
     set -u
 fi
+#             skip pipeline?
+if [ $skip -gt 0 ]; then
+    echo "LMTOY>> skipping this pipeline"
+    exit 0
+fi
 
 #             get the obsnum= (or obsnums=); also sets obsnum_list for archive
 lmtoy_decipher_obsnums
 if [ $obsnum = 0 ]; then
-    echo No valid obsnum= or obsnums= given
+    echo "LMTOY>> No valid obsnum= or obsnums= given"
     exit 1
 fi
 
