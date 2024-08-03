@@ -36,8 +36,8 @@
 #
 #--HELP
 
-version="4-apr-2024"        # script version
-sleep=1                     # don't use 0, unity spawns too fast in a series
+version="3-aug-2024"        # script version
+sleep=5                     # don't use 0, unity spawns too fast in a series
 
 if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
     set +x
