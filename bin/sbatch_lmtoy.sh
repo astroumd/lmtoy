@@ -37,13 +37,16 @@
 #--HELP
 
 version="3-aug-2024"        # script version
-sleep=5                     # don't use 0, unity spawns too fast in a series
+sleep0=5                    # initial sleep, since I often re-submit
+sleep=1                     # don't use 0, unity spawns too fast in a series
 
 if [ -z "$1" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ];then
     set +x
     awk 'BEGIN{s=0} {if ($1=="#--HELP") s=1-s;  else if(s) print $0; }' $0
     exit 0
 fi
+
+sleep $sleep0
 
 
 # catch the single argument batch call first, but pass additional arguments to each pipeline call
