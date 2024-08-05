@@ -10,18 +10,19 @@ been working so far.   If these are up, we should be good to go.
 1. Do the benchmarks for the pipeline work?
 
 
-      srun -n 1 -c 4 --mem=8G -p toltec-cpu -t 4:00:00 --x11 --pty bash
-      cd $LMTOY
-      make bench1
-      make bench2
+       srun -n 1 -c 4 --mem=8G -p toltec-cpu -t 4:00:00 --x11 --pty bash
+       cd $LMTOY
+       make bench1
+       make bench2
+       make bench3
 
 2. Can we ssh to toltec3 (for archive ingestion)
 
-      ssh toltec3
+       ssh toltec3
 
 3. Can we recompile tools
 
-      mknemo tsf
+       mknemo tsf
 
 4. Advanced pipeline examples can be found in [cheatlist.md](cheatlist.md)
    and [cheatlist2.md](cheatlist2.md)
