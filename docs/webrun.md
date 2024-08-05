@@ -27,8 +27,12 @@ run files for this project and submit them to SLURM. Note that each
       git pull
       make runs
           [should find out which run files there are to run]
-      sbatch_lmtoy.sh $PID.run1
-      sbatch_lmtoy.sh $PID.run2
+      sbatch_lmtoy.sh $PID.run1a
+      sbatch_lmtoy.sh $PID.run1b
+      sbatch_lmtoy.sh $PID.run1c  [if need]
+      sbatch_lmtoy.sh $PID.run2a
+      sbatch_lmtoy.sh $PID.run2b  
+      sbatch_lmtoy.sh $PID.run2c  [if need]
       make summary
       xdg-open https://taps.lmtgtm.org/lmtslr/$PID
 
@@ -46,34 +50,34 @@ summarized below:
 Following this convention we arrive at the following proposed directory hierarchy
 
      ..../work_lmt/                                       top level WORK_LMT used by pipeline
-                   lmtoy_run/lmtoy_PID                    script generator used by pipeline
+                   lmtoy_run/lmtoy_PID/                   script generator used by pipeline
                    PID/                                   The PI has web-read-access to this tree via index.html
-                       O1                                 obsnum's
-                       O2
+                       O1/                                obsnum directories with results of pipeline
+                       O2/
                        ..
                        session.dat                        this file contains session entries "1" and "2"
                        session-1/                         PIS=session-1 is the new WORK_LMT for this webrun session
                                  lmtoy_run/lmtoy_PID/     
-                                 PID/O1                   only one PID in this session
-                                     O2
+                                 PID/O1/                  only one PID in this session
+                                     O2/
                                      ..
-                       session-2/lmtoy_run/lmtoy_PID      PIS=session-2 is the new WORK_LMT for this webrun session
-                                 PID/O1
-                                     O2
+                       session-2/lmtoy_run/lmtoy_PID/     PIS=session-2 is the new WORK_LMT for this webrun session
+                                 PID/O1/
+                                     O2/
                                      ..
 
 
       
 ## Overview of steps
 
-Command Line (CL) equivalent commands are given where this makes sense:
+Command Line (CLI) equivalent commands are given where this makes sense:
 
 1. User logs in and authenticates for a given PID.
 
    Examples of PIDs:    "2023-S1-MX-1"
                         "2022S1RSRCommissioning"
 
-   CL equivalent: (there is no authentication needed within the shell of the CL)
+   CLI equivalent: (there is no authentication needed within the shell of the CLI)
    
            PID=2023-S1-MX-1
 
@@ -83,7 +87,7 @@ Command Line (CL) equivalent commands are given where this makes sense:
    was prepared for the DA's for the PI. It cannot be modified though, only
    cloned.
 
-   CL equivalent (notice we only redefine the WORK_LMT):
+   CLI equivalent (notice we only redefine the WORK_LMT):
 
            PIS=1
      	   export WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt/$PID/Session-$PIS
@@ -97,7 +101,7 @@ Command Line (CL) equivalent commands are given where this makes sense:
 
 3. Interface returns a list of sources that can be worked on, user picks *one or more*.
 
-   CL equivalent for one SRC:
+   CLI equivalent for one SRC:
 
            lmtinfo.py grep $PID | tabcols - 6 | sort | uniq -c
            cd $WORK_LMT/lmtoy_run/lmtoy_$PID
@@ -121,11 +125,11 @@ Command Line (CL) equivalent commands are given where this makes sense:
    sources, can be run in parallel as well.
    For SEQ multiple banks need to be run serially.
    
-   In the command line version these are the "run1" and "run2" files:
+   In the command line version these are the "run1" and "run2" files, e.g.
 
-        sbatch_lmtoy.sh *.run1
+        sbatch_lmtoy.sh *.run1a
    and
-        sbatch_lmtoy.sh *.run2
+        sbatch_lmtoy.sh *.run2a
 
    **NOTE**:  this section needs a session managment where the status of the keywords belonging
    to an obsnum are recorded and picked up the next iteration. Valid keywords need to be provided
@@ -133,7 +137,7 @@ Command Line (CL) equivalent commands are given where this makes sense:
 
 5. After submission of jobs, relevant summary listings are updated, and can be viewed online
 
-   CL equivalent:
+   CLI equivalent:
 
         make summary
 
