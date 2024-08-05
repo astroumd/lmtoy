@@ -371,9 +371,9 @@ for ext in "" "__0" "__1"; do
 
 done
 
-c=("full SRDP tar"         "TAP data")
+c=("full SRDP zip"         "TAP data")
 #f="../${obsnum}_SRDP.tar   ../${obsnum}_TAP.tar"
-f="../dir4dv/$ProjectId/$obsnum/${obsnum}_SRDP.tar   ../dir4dv/$ProjectId/$obsnum/${obsnum}_TAP.tar"
+f="../dir4dv/$ProjectId/$obsnum/${obsnum}_SRDP.zip   ../dir4dv/$ProjectId/$obsnum/${obsnum}_TAP.zip"
 
 
 i=0
