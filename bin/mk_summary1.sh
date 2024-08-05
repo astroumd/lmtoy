@@ -14,7 +14,7 @@
 #set -e
 #set -x
 
-_version="19-jul-2024"
+_version="5-aug-2024"
 
 if [ -z "$1" ]; then
     src0=""
@@ -206,12 +206,13 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
 	echo "    </td>"
 	echo "    <td>"
 	if [ -e ${o}/${src}_${on}.nf.admit/x.csm.png ]; then
+	    # old style w/ ADMIT when no bank was used (bank=0)
 	    echo "      <A HREF=${o}/${src}_${on}.nf.admit/x.csm.png> <IMG SRC=${o}/${src}_${on}.nf.admit/x.csm.png height=100></A>"
 	    echo "      <A HREF=${o}/${src}_${on}.nfs.admit/x.csm.png> <IMG SRC=${o}/${src}_${on}.nfs.admit/x.csm.png height=100></A>"
-	elif [ -e ${o}/${src}_${on}__0.nf.admit/x.csm.png ]; then
-	    # @todo for now only show bank0 ?
-	    echo "      <A HREF=${o}/${src}_${on}__0.nf.admit/x.csm.png> <IMG SRC=${o}/${src}_${on}__0.nf.admit/x.csm.png height=100></A>"
-	    echo "      <A HREF=${o}/${src}_${on}__0.nfs.admit/x.csm.png> <IMG SRC=${o}/${src}_${on}__0.nfs.admit/x.csm.png height=100></A>"
+	elif [ -e ${o}/${src}_${on}__${bank}.nf.admit/x.csm.png ]; then
+	    # new style w/ ADMIT, bank is needed
+	    echo "      <A HREF=${o}/${src}_${on}__${bank}.nf.admit/x.csm.png> <IMG SRC=${o}/${src}_${on}__${bank}.nf.admit/x.csm.png height=100></A>"
+	    echo "      <A HREF=${o}/${src}_${on}__${bank}.nfs.admit/x.csm.png> <IMG SRC=${o}/${src}_${on}__${bank}.nfs.admit/x.csm.png height=100></A>"
 	elif [ -e ${o}/${src}_${on}.mom0.png ]; then
 	    echo "      <A HREF=${o}/${src}_${on}.mom0.png> <IMG SRC=${o}/${src}_${on}.mom0.png height=100></A>"
 	elif [ -e ${o}/${src}_${on}${ext}.mom0.png ]; then
