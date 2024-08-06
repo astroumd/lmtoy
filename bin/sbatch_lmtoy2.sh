@@ -9,14 +9,19 @@ for f in $*; do
     nj=1
     while [ $nj -gt 0 ]; do
 	nj=0
-	for j in $(cat $f.jid); do
+        echo -n "$f :"
+	for j in $(cat $f.jobid); do
 	    squeue --me | tail +2 | grep -q -w $j
 	    if [ $? == 0 ]; then
+                echo -n "-"
 		((nj++))
 		sleep 5
 		continue
+            else
+		echo -n "*"
 	    fi
 	done
+        echo ""
     done
     echo "DONE WITH $f"
 done
