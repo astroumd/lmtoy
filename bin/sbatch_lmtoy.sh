@@ -36,7 +36,7 @@
 #
 #--HELP
 
-version="3-aug-2024"        # script version
+version="6-aug-2024"        # script version
 sleep0=5                    # initial sleep, since I often re-submit
 sleep=1                     # don't use 0, unity spawns too fast in a series
 
@@ -63,6 +63,8 @@ if [ -e "$1" ]; then
 	sbatch_lmtoy.sh $line $*
     done < $runfile
     exit 1
+else
+    runfile=""
 fi
 
 # process it as pipeline script, either obsnum= or obsnums= (but not both) should be present on CLI
@@ -159,10 +161,11 @@ EOF
 
 chmod +x $run
 echo "$run      - use scancel JOBID to kill this one, JOBID is:"
-sbatch $run
+jobid=$(sbatch $run)
 #   report last few, if present
 sleep $sleep
 ls -ltr $WORK_LMT/sbatch/slurm*.out | tail -6
 squeue --me | nl -v 0
 echo "squeue --me | nl -v 0"
+echo "jobid=$jobid"
 
