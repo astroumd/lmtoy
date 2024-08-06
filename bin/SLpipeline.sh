@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 3-aug-2024"
+_version="SLpipeline: 6-aug-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -346,6 +346,8 @@ echo "lmtoy_version=$(cat $LMTOY/VERSION)"   >> $pdir/lmtoy_$obsnum.rc
 # record the qagrade, if one was given
 if [ ! -z $qagrade ]; then
     echo "qagrade=$qagrade"                  >> $pdir/lmtoy_$obsnum.rc
+else
+    echo "qagrade="                          >> $pdir/lmtoy_$obsnum.rc    
 fi
 
 # record the public date, if one was given
