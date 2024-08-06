@@ -4,6 +4,8 @@ At the moment this is a discussion document. The source code for the
 webrun environment is currently in
 development in: https://github.com/lmtmc/lmt_web
 
+A nicely formatted version of this document should be in:  https://github.com/astroumd/lmtoy/blob/master/docs/webrun.md
+
 
 ## Reminder of nomenclature in the LMTOY environment in this document
 
@@ -22,6 +24,8 @@ This is how the pipeline is normally run via a CLI from the main *lmtslr* accoun
 We start from the directory where the project script generator lives, generate
 run files for this project and submit them to SLURM. Note that each
 (sbatch_lmtoy.sh) command here can only be run when the previous command has finished!
+It would be nice to have a SLURM method that knows how to submit when the previous one
+finished.
 
       cd $WORK_LMT/lmtoy_run/lmtoy_$PID
       git pull
@@ -34,9 +38,10 @@ run files for this project and submit them to SLURM. Note that each
       sbatch_lmtoy.sh $PID.run2b  
       sbatch_lmtoy.sh $PID.run2c  [if need]
       make summary
+      make index
       xdg-open https://taps.lmtgtm.org/lmtslr/$PID
 
-This is the typical workflow for the pipeline operator, as well as the DA.
+This is the typical workflow for the pipeline operator, as well as for the DA.
 
 The work results for this PID will be in $WORK_LMT/$PID, but is available
 to the PI at https://taps.lmtgtm.org/lmtslr/$PID
@@ -153,6 +158,9 @@ Command Line (CLI) equivalent commands are given where this makes sense:
    expects a PID below a WORK_LMT
 
 
+6. See also challenged at the end of this document
+
+
 ## Example scenarios
 
 The current lmtoy/docs/ui slides suggest the following workflow, perhaps in a Previous/Next series?
@@ -173,7 +181,7 @@ This is the suggested workflow for SEQ/Map
 ###  Simple one-source project
 
 
-###  Multiple source
+###  Multiple sources
 
 The PI will want to experiment and compare an OTF map made from the standard pipeline
 and a modified one where beam 10 was also removed.  Inspecting the standard pipeline showed
@@ -235,3 +243,23 @@ where currently we have
       I-->J[display URL to view summary]
       
 ```
+
+## Challenges beyond the default spectral line pipeline (SLPL)
+
+Here are some more advanced features the pipeline could/should do, and that a PI might be interested in.
+
+1. Combining data from different projects. Already tricky in SLPL, but not impossible.  Has authentication issues.
+
+2. Set more complex baseline/line sections (e.g. MX-37). Needs to set b_regions, l_regions, slice, v_range
+
+3. Set multiple VLSR and extract multiple lines (e.g. MX-37). Easier to do in web_run because of sessions
+
+4. Combine fields into a mosaiced field (e.g. MX-2, US-20). Fairly simple in script generator, but not provided in default pipeline?
+
+5. Should we allow a raw extraction? Time
+
+### Things webrun must not do
+
+1. no meta data construction (meta=0) and archive ingestion
+
+
