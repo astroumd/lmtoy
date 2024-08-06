@@ -200,6 +200,11 @@ echo "<li class='list-group-item'> <a href='rsr_peaks.log'>rsr_peaks log file</a
 #echo "<li class='list-group-item'> <a href="../${obsnum}_SRDP.tar">${obsnum}_SRDP.tar</a></li>"  # deprecated
 echo "<li class='list-group-item'> <a href="../dir4dv/$ProjectId/$obsnum/${obsnum}_SRDP.zip">${obsnum}_SRDP.zip</a></li>"
 echo "<li class='list-group-item'> <a href="../dir4dv/$ProjectId/$obsnum/${obsnum}_SDFITS.zip">${obsnum}_SDFITS.zip</a></li>"
+if [ -e ../${obsnum}_RAW.zip ]; then
+    echo "<li class='list-group-item'> <a href="../${obsnum}_RAW.zip">${obsnum}_RAW.zip</a></li>"
+else
+    echo "<li class='list-group-item'> no RAW  `pwd`</li>"
+fi
 echo "<li class='list-group-item'> <a href="lmtoy_${obsnum}.rc">lmtoy_${obsnum}.rc</a></li>"
 echo "  </div> <!-- cardbody -->"
 echo "  </div><!-- card -->"
