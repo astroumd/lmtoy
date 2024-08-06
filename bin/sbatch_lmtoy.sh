@@ -61,11 +61,9 @@ if [ -e "$1" ]; then
     while IFS= read -r line; do
 	((ml++))
 	echo "LINE ($ml/$nl): $line $*"
-	sbatch_lmtoy.sh $line $*
+	sbatch_lmtoy.sh $line runfile=$runfile $*
     done < $runfile
     exit 1
-else
-    runfile=""
 fi
 
 # process it as pipeline script, either obsnum= or obsnums= (but not both) should be present on CLI
@@ -91,6 +89,7 @@ if [ $obsnums != 0 ]; then
 else
     runid=$obsnum
 fi
+
 if [ $obsnum = 1 ]; then
     shift
 fi
@@ -167,8 +166,11 @@ echo "$jobid"
 #   report last few jobs, if present
 sleep $sleep
 ls -ltr $WORK_LMT/sbatch/slurm*.out | tail -6
+
+if [ -e "$runfile" ]; then
+    echo "runfile: $jobid $runfile.jobid"
+    echo $jobid >> $runfile.jobid
+fi
+
 squeue --me | nl -v 0
 echo "squeue --me | nl -v 0"
-if [ -e "$runfile" ]; then
-    echo $jobid >> $runfile.$jobid
-fi
