@@ -202,8 +202,6 @@ echo "<li class='list-group-item'> <a href="../dir4dv/$ProjectId/$obsnum/${obsnu
 echo "<li class='list-group-item'> <a href="../dir4dv/$ProjectId/$obsnum/${obsnum}_SDFITS.zip">${obsnum}_SDFITS.zip</a></li>"
 if [ -e ../${obsnum}_RAW.zip ]; then
     echo "<li class='list-group-item'> <a href="../${obsnum}_RAW.zip">${obsnum}_RAW.zip</a></li>"
-else
-    echo "<li class='list-group-item'> no RAW  `pwd`</li>"
 fi
 echo "<li class='list-group-item'> <a href="lmtoy_${obsnum}.rc">lmtoy_${obsnum}.rc</a></li>"
 echo "  </div> <!-- cardbody -->"
