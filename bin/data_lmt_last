@@ -10,10 +10,14 @@ flags=${1:--tl}
 n=1
 
 if [ -e $DATA_LMT/last.obsnum ]; then
-    echo "# Last recorded obsnum: $(tail -1 $DATA_LMT/last.obsnum)" 
+    echo "# Last recorded obsnum:        $(tail -1 $DATA_LMT/last.obsnum)" 
 fi
-
+if [ -e $WORK_LMT/lmtoy_run/last100.log ]; then
+    echo "# Most recent of the last100:  $(head -1 $WORK_LMT/lmtoy_run/last100.log | tabcols - 2)"
+fi	
 echo "# $(date) : $n most recent DATA_LMT=$DATA_LMT"
+
+
 
 
 function my_head {
