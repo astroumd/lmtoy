@@ -51,7 +51,7 @@ sleep $sleep0
 
 # catch the single argument batch call first, but pass additional arguments to each pipeline call
 if [ -e "$1" ]; then
-    runfile=$1
+    runfile=$(realpath $1)
     rm -f $runfile.jobid
     shift
     echo "Processing lines from $runfile line by line"
