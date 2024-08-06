@@ -52,6 +52,7 @@ sleep $sleep0
 # catch the single argument batch call first, but pass additional arguments to each pipeline call
 if [ -e "$1" ]; then
     runfile=$1
+    rm -f $runfile.jobid
     shift
     echo "Processing lines from $runfile line by line"
     echo "$(date +%Y-%m-%dT%H:%M:%S) $*" >> $WORK_LMT/sbatch.log
@@ -162,10 +163,12 @@ EOF
 chmod +x $run
 echo "$run      - use scancel JOBID to kill this one, JOBID is:"
 jobid=$(sbatch $run)
-#   report last few, if present
+echo "$jobid"
+#   report last few jobs, if present
 sleep $sleep
 ls -ltr $WORK_LMT/sbatch/slurm*.out | tail -6
 squeue --me | nl -v 0
 echo "squeue --me | nl -v 0"
-echo "jobid=$jobid"
-
+if [ -e "$runfile" ]; then
+    echo $jobid >> $runfile.$jobid
+fi
