@@ -8,7 +8,6 @@
 #
 
 sleep=10
-source lmtoy_functions.sh
 
 if [ -z $1 ]; then
     echo "Usage: $0 runfile1 runfile2 ..."
@@ -39,12 +38,12 @@ for f in $*; do
 	done
         echo ""
     done
-    printf_green "DONE WITH $f"
+    echo "DONE WITH $f"
 done
 
 if [ -f Makefile ]; then
     make summary
-    printf_green "Summary made, all done."
+    echo "Summary made, all done."
 else
-    printf_green "All done."    
+    echo "All done."    
 fi
