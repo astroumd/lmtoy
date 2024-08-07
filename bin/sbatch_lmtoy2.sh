@@ -8,6 +8,15 @@
 #
 
 sleep=10
+source lmtoy_functions.sh
+
+if [ -z $1 ]; then
+    echo "Usage: $0 runfile1 runfile2 ..."
+    echo ""
+    echo "   submit runfiles that wait for each other"
+    echo "   probing for obsnums happens every $sleep seconds"
+    exit 0
+fi
 
 for f in $*; do
     # submit a file from the asrgument list, 
@@ -30,9 +39,12 @@ for f in $*; do
 	done
         echo ""
     done
-    echo "DONE WITH $f"
+    printf_green "DONE WITH $f"
 done
 
 if [ -f Makefile ]; then
     make summary
+    printf_green "Summary made, all done."
+else
+    printf_green "All done."    
 fi
