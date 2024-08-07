@@ -371,9 +371,9 @@ for ext in "" "__0" "__1"; do
 
 done
 
-c=("full SRDP zip"         "TAP data")
-#f="../${obsnum}_SRDP.tar   ../${obsnum}_TAP.tar"
-f="../dir4dv/$ProjectId/$obsnum/${obsnum}_SRDP.zip   ../dir4dv/$ProjectId/$obsnum/${obsnum}_TAP.zip"
+pdir=../dir4dv/$ProjectId/$obsnum/
+c=("full SRDP zip"           "SDFITS data"              "TAP data"              "RAW data")
+f="$pdir/${obsnum}_SRDP.zip  $pdir/${obsnum}_SDFITS.zip $pdir/${obsnum}_TAP.tar ../${obsnum}_RAW.zip"
 
 
 i=0
@@ -387,10 +387,10 @@ for ff in $f ; do
     ((i=i+1))
 done
 
-echo "</OL>"                                                                  >> $html
-echo "<br> These and all other files are also available via the SRDP.tar,"    >> $html
-echo "if available"                                                           >> $html
-echo "<br><br>Last updated $update"                                           >> $html
+echo "</OL>"                                                                     >> $html
+echo "<br> These and all other files also available via the SRDP/SDFITS.zip,"    >> $html
+echo "if available"                                                              >> $html
+echo "<br><br>Last updated $update"                                              >> $html
 echo "Wrote final $html"
 # ====================================================================================================
 
