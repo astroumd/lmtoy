@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="3-jul-2024"
+lmtoy_version="7-aug-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -571,6 +571,11 @@ function lmtoy_seq1 {
 	    use_restfreq=""	    
 	    echo "WARNING: resetting restfreq not supported yet"
 	fi
+	if [ $birdies_shift -ne 0 ]; then
+	    _birdies=$(nemoinp $birdies | tabmath - - %1+$birdies_shift all | tabtranspose - - | tabcsv -)
+	else
+	    _birdies=$birdies
+	fi
 	$time process_otf_map2.py \
 	    -p $DATA_LMT \
 	    -o $s_nc \
@@ -587,7 +592,7 @@ function lmtoy_seq1 {
 	    --b_regions $b_regions \
 	    --l_region $l_regions \
 	    --slice $slice \
-	    --eliminate_list $birdies
+	    --eliminate_list $_birdies
 	lmtinfo2.py $s_nc >> $rc
     fi
 
@@ -1005,6 +1010,7 @@ function lmtoy_seq2 {
 	    use_restfreq=""	    
 	    echo "WARNING: resetting restfreq not supported yet"
 	fi
+	# @todo apply birdie_shift here too ?
 	$time process_otf_map2.py \
 	    -p $DATA_LMT \
 	    -o $s_nc \

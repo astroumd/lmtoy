@@ -41,6 +41,7 @@ dv=100         # half the width around the VLSR where the spectral line is expec
 dw=250         # 
 #            - birdies (list of channels, e.g.   10,200,1021)   @todo 0 or 1 based
 birdies=0
+birdies_shift=0       # apply integer shift to all birdies
 #            - override numbands to read only 1 band if 2 is not correct. 0=auto-detect
 #numbands=0
 #            - override the default map_coord   (-1,0,1,2 = default, HOR, EQU, GAL)
@@ -70,7 +71,7 @@ debug=0           # add lots of verbosities
 
 
 #--HELP
-show_vars="extent dv dw birdies map_coord_use pix_list rms_cut location \
+show_vars="extent dv dw birdies birdies_shift map_coord_use pix_list rms_cut location \
            rmax otf_select otf_a otf_b otf_c noise_sigma b_order stype \
            sample otf_cal edge bank \
           "
@@ -170,7 +171,17 @@ echo "ARGS: $_lmtoy_args"
 
 # recompute derived parameters, and write them back to the rc file
 
-if [[ $first == 1 ]] || [[ "$_lmtoy_args"  == *"dv="* ]] || [[ "$_lmtoy_args"  == *"dw="* ]]; then
+if [ ! -z $b_regions ]; then
+    # @todo   this is still experimental, see MX-37 experiments
+    echo "LMTOY>> setting (base)line regions from  b_regions etc."
+    
+    echo "# based on b_regions etc." >> $rcxs
+    echo b_regions=$b_regions       >> $rc
+    echo l_regions=$l_regions       >> $rc
+    echo slice=$slice               >> $rc
+    echo v_range=$v_range           >> $rc
+
+elif [[ $first == 1 ]] || [[ "$_lmtoy_args"  == *"dv="* ]] || [[ "$_lmtoy_args"  == *"dw="* ]]; then
     echo "LMTOY>> setting (base)line regions from  dv=$dv dw=$dw"
 
     v0=$(nemoinp $vlsr-$dv)     # $(echo $vlsr - $dv | bc -l)
