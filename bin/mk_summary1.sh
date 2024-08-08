@@ -14,7 +14,7 @@
 #set -e
 #set -x
 
-_version="6-aug-2024"
+_version="7-aug-2024"
 
 if [ -z "$1" ]; then
     src0=""
@@ -238,6 +238,19 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
 done       # obsnum (o)
 
 echo "</table>"
+
+echo "Webrun sessions: "
+ns=0
+for f in Session-*; do
+    if [ -d $f ]; then
+	echo "<A HREF=$f>$f</A> "
+	((ns++))
+    fi
+done
+if [ $ns -eq 0 ]; then
+    echo "None"
+fi
+echo "<br>"
 if [ -e TAP ]; then
     echo "TAPs copied from LMT <A HREF=TAP>here</A><br>"
 fi
