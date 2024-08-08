@@ -1,0 +1,15 @@
+# list of obsnums with interesting benchmark data
+#
+# historic
+33551   RSR bench1
+79448   SEQ bench2 - single IF
+# 2023
+110399  SEQ bench3 - dual IF, 800 MHz 
+119941  SEQ dual IF, 400 MHz, with birdies in both IFs
+108766  SEQ/Bs
+108764  SEQ/Ps ?
+# 2024
+110362  SEQ/Ps
+110401  SEQ/Bs
+110407  SEQ 200 MHz
+110438  1MM
