@@ -14,7 +14,7 @@
 #set -e
 #set -x
 
-_version="7-aug-2024"
+_version="14-aug-2024"
 
 if [ -z "$1" ]; then
     src0=""
@@ -239,6 +239,7 @@ done       # obsnum (o)
 
 echo "</table>"
 
+#                                               webrun sessions (optional)
 echo "Webrun sessions: "
 ns=0
 for f in Session-*; do
@@ -251,10 +252,24 @@ if [ $ns -eq 0 ]; then
     echo "None"
 fi
 echo "<br>"
+
+#                                               script generator (optional)
+echo "Script generator: "
+if [ -e lmtoy_$pid ]; then
+    echo "<A HREF=lmtoy_$pid>lmtoy_$pid</A>"
+else
+    echo "lmtoy_$pid not found"
+fi
+echo "<br>"
+
+#                                               TAPs (optional)
 if [ -e TAP ]; then
     echo "TAPs copied from LMT <A HREF=TAP>here</A><br>"
 fi
-echo "Last written on:  $(date)"
-echo "<A HREF=$csv>$csv</A>"
+
+#                                               summary
+echo "Summary CSV Table: <A HREF=$csv>$csv</A>"
+echo "<br>"
+echo "Created:  $(date)"
 echo "<hr>"  
 
