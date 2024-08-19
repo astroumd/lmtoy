@@ -355,6 +355,10 @@ bench1:
 bench1a:
 	$(TIME) SLpipeline.sh obsnums=33551,33551 restart=1 admit=$(ADMIT) meta=$(META)
 
+## bench1b:  RSR dryrun archive submission using dvpipe (needs bench1)
+bench1b:
+	(cd $(WORK_LMT)/2014ARSRCommissioning/dir4dv; upload_project.sh in=. out=/tmp/dvout publish=0 verbose=1 overwrite=1)
+
 ## bench2:   SEQ benchmark: obsnum=79448
 bench2:
 	$(TIME) SLpipeline.sh obsnum=79448 restart=1 map_coord_use=1 public=2020-12-31 qagrade=3 maskmoment=$(ADMIT) admit=$(ADMIT) meta=$(META)
