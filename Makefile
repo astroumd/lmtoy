@@ -328,6 +328,13 @@ update_nemo:	nemo
 install_maskmoment: maskmoment
 	(cd maskmoment; pip install -e .)
 
+## fix_pdf:                on some systems ImageMagick won't convert PDF to PNG
+
+fix_pdf: $(HOME)/.config/ImageMagick/policy.xml
+
+$(HOME)/.config/ImageMagick/policy.xml:
+	mkdir -p $(HOME)/.config/ImageMagick && cp etc/policy.xml  $(HOME)/.config/ImageMagick/policy.xml
+
 # Optional hack:  once we agree on a common set of requirements, we can make a common step
 #                 note the current step2 and step3 mean you can only run one of the two
 common: lmtoy_venv
