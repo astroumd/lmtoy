@@ -3,8 +3,10 @@
 
 setenv LMTOY  @LMTOY@
 
-# do python first. this is important if a venv is used
+# do python first. this is important if a venv is used (deprecated)
 if (-e $LMTOY/python_start.csh) source $LMTOY/python_start.csh
+# do python first. this is important if a venv is used (new)
+if (-e $LMTOY/anaconda3/python_start.csh) source $LMTOY/anaconda3/python_start.csh
 
 if (-e $LMTOY/lmtoy_venv/bin/activate.csh) source $LMTOY/lmtoy_venv/bin/activate.csh
 

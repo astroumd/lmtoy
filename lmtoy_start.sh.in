@@ -5,9 +5,14 @@ export  LMTOY=@LMTOY@
 
 export PATH=$LMTOY/SpectralLineReduction/bin:$LMTOY/bin:$LMTOY/examples:$PATH
 
-# do python first. this is important if a venv is used
+# do python first. this is important if a venv is used  (deprecated)
 if [ -e $LMTOY/python_start.sh ]; then
     source $LMTOY/python_start.sh
+fi
+
+# do python first. this is important if a venv is used  (new)
+if [ -e $LMTOY/anaconda3/python_start.sh ]; then
+    source $LMTOY/anaconda3/python_start.sh
 fi
 
 if [ -e $LMTOY/lmtoy_venv/bin/activate ]; then
