@@ -1,8 +1,8 @@
 # list of obsnums with interesting benchmark data
 #
 # historic
-33551   RSR bench1
-79448   SEQ bench2 - single IF
+33551   RSR bench1 - good strong line (a linecheck) - I10565
+79448   SEQ bench2 - single IF - IRC+10216
 # 2023
 110399  SEQ bench3 - dual IF, 800 MHz 
 119941  SEQ dual IF, 400 MHz, with birdies in both IFs
@@ -12,4 +12,4 @@
 110362  SEQ/Ps
 110401  SEQ/Bs
 110407  SEQ 200 MHz
-110438  1MM
+110438  1MM - dual IF - 12CO and 13CO - IRC+10216 
