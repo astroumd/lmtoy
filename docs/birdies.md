@@ -61,28 +61,7 @@ Here's a summary of the birdies
 
 
 
-redo 2018-S1-MU-65
-0-14
-i.e.  vlsr=6.9   dv=10  dw=20
-
-redo 2023-S1-UM-16
-
-
-
-for o in $(lmtinfo.py grep 2022S1SEQUOIACommissioning Pointing | tabcols - 2); do echo -n "$o ";lmtinfo.py $o | grep bandwidth; done
-
-for o in $(lmtinfo.py grep 2023S1SEQUOIACommissioning Pointing | tabcols - 2); do echo -n "$o ";lmtinfo.py $o | grep bandwidth; done
-
-for o in $(lmtinfo.py grep 2024S1SEQUOIACommissioning Pointing | tabcols - 2); do echo -n "$o ";lmtinfo.py $o | grep bandwidth; done
-
-110045 bandwidth=0.8,0.8   # Ghz
-
-
 ## Slides
 
 https://docs.google.com/presentation/d/12sd4PuFrlq1LWGjqP2y1V_z4yu_PGax6UegOU2UIQgw/edit?usp=sharing
 
-
-
-http://taps.lmtgtm.org/lmtslr/2024-S1-MX-2/TAP/113029/index_pipeline__0.html
-http://taps.lmtgtm.org/lmtslr/2024-S1-MX-2/113029/index_pipeline__0.html
