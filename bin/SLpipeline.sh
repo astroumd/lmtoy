@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 6-aug-2024"
+_version="SLpipeline: 20-aug-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -374,8 +374,7 @@ if [ $meta -gt 0 ]; then
 	db=$WORK_LMT/example_lmt.db
 	flock --verbose $db.flock mk_metadata.py -y $pdir/${obsnum}_lmtmetadata.yaml -f $db $pdir 
     else
-        mk_metadata.py -y $pdir/${obsnum}_lmtmetadata.yaml $pdir
-	cp $pdir/${obsnum}_lmtmetadata.yaml $dir4dv
+        mk_metadata.py -y ${dir4dv}/${obsnum}_lmtmetadata.yaml $pdir
 	cp $pdir/lmtoy_${obsnum}*rc $dir4dv	
     fi
 fi
