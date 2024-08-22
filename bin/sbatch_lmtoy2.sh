@@ -18,12 +18,17 @@ if [ -z $1 ]; then
 fi
 
 for f in $*; do
+    if [ ! -e $f ]; then
+	echo "File $f does not exist, skipping"
+	continue
+    fi
     # submit a file from the asrgument list, 
     # this also stores the JOBID's in $f.jobid
     sbatch_lmtoy.sh $f
     nj=1
     while [ $nj -gt 0 ]; do
 	nj=0
+	echo "Progress bar for $(cat $f|wc -l) obsnums:"
         echo -n "$f :"
 	for j in $(cat $f.jobid); do
 	    squeue --me | tail +2 | grep -q -w $j
@@ -42,8 +47,8 @@ for f in $*; do
 done
 
 if [ -f Makefile ]; then
-    make summary
-    echo "Summary made, all done."
+    make summary index
+    echo "Summary and index made, all done."
 else
     echo "All done."    
 fi
