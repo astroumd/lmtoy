@@ -17,7 +17,10 @@ if [ -z $1 ]; then
     exit 0
 fi
 
+nf=0
+
 for f in $*; do
+    ((nf++))
     if [ ! -e $f ]; then
 	echo "File $f does not exist, skipping"
 	continue
@@ -28,7 +31,7 @@ for f in $*; do
     nj=1
     while [ $nj -gt 0 ]; do
 	nj=0
-	echo "Progress bar for $(cat $f|wc -l) obsnums:"
+	echo "Progress bar for $(cat $f|wc -l) obsnums: ${nf} @ ${sleep}:"
         echo -n "$f :"
 	for j in $(cat $f.jobid); do
 	    squeue --me | tail +2 | grep -q -w $j
