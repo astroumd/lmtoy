@@ -17,11 +17,13 @@ if [ -z $1 ]; then
     exit 0
 fi
 
+d0=$(date)
+
 nf=0
 
 for f in $*; do
     ((nf++))
-    if [ ! -e $f ]; then
+    if [ ! -e $f ]; thenpp
 	echo "File $f does not exist, skipping"
 	continue
     fi
@@ -55,3 +57,7 @@ if [ -f Makefile ]; then
 else
     echo "All done."    
 fi
+
+d1=$(date)
+echo "start: $d0"
+echo "stop:  $d1"
