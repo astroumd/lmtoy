@@ -36,7 +36,9 @@
 #
 #--HELP
 
-version="6-aug-2024"        # script version
+# @todo  don't submit a job with the same jobname ($runid here)
+
+version="27-aug-2024"        # script version
 sleep0=5                    # initial sleep, since I often re-submit
 sleep=1                     # don't use 0, unity spawns too fast in a series
 
@@ -102,8 +104,11 @@ if [ $obsnum0 != 0 ]; then
 fi
 
 if [ ! -z "$grep" ]; then
-    echo "GREP not supported yet"
-    exit 0
+    echo $* | grep -sq _s=$grep
+    if [ $? == 1 ]; then
+	echo "SKIP obsnum=$obsnum because no match with _s=$grep"
+	exit 0
+    fi
 fi
 
 #                                        sbatch run file
