@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 20-aug-2024"
+_version="SLpipeline: 27-aug-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -40,9 +40,9 @@ sleep=2         # add few seconds before running, allowing quick interrupt
 nproc=1         # number of processors to use (keep it at 1)
 rsync=""        # rsync address for the TAP file (used at LMT/malt)
 oid=""          # experimental parallel processing using __$oid  == currently not in use ==
-goal=Science    # Science, or override with: Pointing,Focus
+goal=Science    # Science (or override with: Pointing,Focus [not officially supported])
 webrun=""       # optional directive for webrun to do parameter checking (SEQ/map, SEQ/Bs, RSR, ....)
-qagrade=""      # if given, the final grade recorded for the archive (QAFAIL enforces -1)
+qagrade=0       # the final grade recorded for the archive (QAFAIL enforces -1; 0 by default; -2,1,2,3 when DA graded)
 public=""       # if given, the public data for archiving. Default is 1 year after today. Example:  2020-12-31
 
 #  Optional instrument specific pipeline can be added as well but are not known here
