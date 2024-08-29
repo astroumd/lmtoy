@@ -778,9 +778,11 @@ function lmtoy_seq1 {
 	    ccdsub $s_on.ccd - z=1:$nz1,$nz2:$nz | ccdmom -  - mom=-2 | ccdmath - $s_on.rms.ccd %1*1000
 	    # stats on the cube where there is no emission; inner 40% of map, excluding central channels (in mK)
 	    ccdsub $s_on.ccd - centerbox=0.4,0.4,1 | ccdsub - - z=1:$nz1,$nz2:$nz | ccdmath - $s_on.cube3.ccd %1*1000
-	    rms3=$(ccdstat $s_on.cube3.ccd bad=0 | txtpar - p0=Mean,1,6)
+	    _stats=($(ccdstat $s_on.cube3.ccd bad=0 qac=t | txtpar - p0=1,4 p1=1,8))
+	    rms3=${_stats[0]}
+	    srat=${_stats[1]}
             ccdhist $s_on.cube3.ccd -4*$rms3 4*$rms3 ylog=t blankval=0 residual=false \
-		    xlab="Intensity [mK]" headline="RMS: $rms3 mK" \
+		    xlab="Intensity [mK]" headline="RMS: $rms3 mK  Sratio: $srat" \
 		    yapp=$s_on.hist.$dev/$dev
 	    cp $s_on.cube3.ccd junk.pjt
 	    
