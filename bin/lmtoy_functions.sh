@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="7-aug-2024"
+lmtoy_version="28-aug-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -424,8 +424,8 @@ function lmtoy_rsr1 {
     if [[ -n "$NEMO" ]]; then
 	echo "LMTOY>> Some NEMO post-processing"
 	dev=$(yapp_query png ps)
-	tabplot  $spec1 line=1,1 color=2 ycoord=0        yapp=${spec1}.sp.$dev/$dev  debug=-1
-	tabplot  $spec2 line=1,1 color=2 ycoord=0        yapp=${spec2}.sp.$dev/$dev  debug=-1
+	tabplot  $spec1 line=1,1 color=2 ycoord=0        yapp=${spec1}.sp.$dev/$dev   debug=-1
+	tabplot  $spec2 line=1,1 color=2 ycoord=0        yapp=${spec2}.sp.$dev/$dev   debug=-1
 	tabhist $spec1 2              robust=t xcoord=0  yapp=${spec1}.rms0.$dev/$dev debug=-1
 	tabhist $spec2 2              robust=t xcoord=0  yapp=${spec2}.rms0.$dev/$dev debug=-1
 	tabtrend $spec1 2 | tabhist - robust=t xcoord=0  yapp=${spec1}.rms1.$dev/$dev debug=-1
@@ -737,10 +737,11 @@ function lmtoy_seq1 {
     if [ -n "$NEMO" ]; then
 	echo "LMTOY>> Some NEMO post-processing"
 	echo "        @todo rid the code of fits header stealing"
-
+	dev=$(yapp_query png ps)
+	
 	# cleanup from a previous run
 	rm -f $s_on.ccd $s_on.wt.ccd $s_on.wtn.ccd $s_on.n.ccd $s_on.rms.ccd $s_on.head1 \
-	   $s_on.data1 $s_on.n.fits $s_on.nfs.fits $s_on.mom0.ccd $s_on.mom1.ccd \
+	   $s_on.data1 $s_on.n.fits $s_on.nfs.fits $s_on.mom0.ccd $s_on.mom1.ccd $s_on.cube3.ccd \
 	   $s_on.wt2.fits $s_on.wt3.fits $s_on.wtn.fits $s_on.wtr.fits $s_on.wtr3.fits $s_on.wtr4.fits \
 	   $s_on.mom0.fits $s_on.mom1.fits $s_on.rms.fits \
 	   $s_on.peak.fits $s_on.ccd.fits $s_on.ns.fits
@@ -775,6 +776,14 @@ function lmtoy_seq1 {
 	    ccdmom $s_on.n.ccd - mom=8	        | ccdmath - $s_on.peak.ccd %1*1000	    
 	    #ccdsub $s_on.n.ccd - z=1:$nz1,$nz2:$nz | ccdmom -  $s_on.rms.ccd  mom=-2
 	    ccdsub $s_on.ccd - z=1:$nz1,$nz2:$nz | ccdmom -  - mom=-2 | ccdmath - $s_on.rms.ccd %1*1000
+	    # stats on the cube where there is no emission; inner 40% of map, excluding central channels
+	    ccdsub $s_on.ccd - centerbox=0.4,0.4,1 | ccdsub - $s_on.cube3.ccd z=1:$nz1,$nz2:$nz
+	    rms3=$(ccdstat $s_on.cube3.ccd bad=0 | txtpar - p0=Mean,1,6)
+            ccdhist $s_on.cube3.ccd -4*$rms3 4*$rms3 ylog=t blankval=0 residual=false \
+		    xlab="Intensity [mK]" headline="RMS: $rms3 K" \
+		    yapp=$s_on.hist.$dev/$dev
+	    cp $s_on.cube3.ccd junk.pjt
+	    
 	    # ccdmom $s_on.n.ccd - $s_on.rms.ccd  mom=-2 arange=0:$nz1,$nz2:$nz-1
 
 	    #ccdmom $s_on.ccd -  mom=-3 keep=t | ccdmom - - mom=-2 | ccdmath - $s_on.wt2.ccd "ifne(%1,0,2/(%1*%1),0)"
@@ -799,6 +808,7 @@ function lmtoy_seq1 {
 	    cat $s_on.head1 $s_on.data1 > $s_on.nf.fits
 
 	    # hack : a better smooth cube?
+	    #     !! new 2024 alternative:   ccdsmooth - - dir=z smooth=1/6::6 | ccdslice - - zrange=-6
 	    fitsccd $s_on.fits.fits - |\
 		ccdsub - - nzaver=4 |\
 		ccdslice - - zrange=1:$nz:4 |\
@@ -834,6 +844,7 @@ function lmtoy_seq1 {
 	    fitsccd $s_on.nfs.fits - | ccdspec -  > $s_on.cubespecs.tab
 	    echo -n "cubespec : ";  tail -1  $s_on.cubespec.tab
 	    echo -n "cubespecs: ";  tail -1  $s_on.cubespecs.tab
+
 
 	    source $rc
 	    echo "TAB_PLOT   ${s_on} bank=$bank vminmax=$vmin,$vmax"
