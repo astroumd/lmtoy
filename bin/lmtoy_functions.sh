@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="28-aug-2024"
+lmtoy_version="29-aug-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -776,11 +776,11 @@ function lmtoy_seq1 {
 	    ccdmom $s_on.n.ccd - mom=8	        | ccdmath - $s_on.peak.ccd %1*1000	    
 	    #ccdsub $s_on.n.ccd - z=1:$nz1,$nz2:$nz | ccdmom -  $s_on.rms.ccd  mom=-2
 	    ccdsub $s_on.ccd - z=1:$nz1,$nz2:$nz | ccdmom -  - mom=-2 | ccdmath - $s_on.rms.ccd %1*1000
-	    # stats on the cube where there is no emission; inner 40% of map, excluding central channels
-	    ccdsub $s_on.ccd - centerbox=0.4,0.4,1 | ccdsub - $s_on.cube3.ccd z=1:$nz1,$nz2:$nz
+	    # stats on the cube where there is no emission; inner 40% of map, excluding central channels (in mK)
+	    ccdsub $s_on.ccd - centerbox=0.4,0.4,1 | ccdsub - - z=1:$nz1,$nz2:$nz | ccdmath - $s_on.cube3.ccd %1*1000
 	    rms3=$(ccdstat $s_on.cube3.ccd bad=0 | txtpar - p0=Mean,1,6)
             ccdhist $s_on.cube3.ccd -4*$rms3 4*$rms3 ylog=t blankval=0 residual=false \
-		    xlab="Intensity [mK]" headline="RMS: $rms3 K" \
+		    xlab="Intensity [mK]" headline="RMS: $rms3 mK" \
 		    yapp=$s_on.hist.$dev/$dev
 	    cp $s_on.cube3.ccd junk.pjt
 	    
