@@ -23,7 +23,7 @@ nf=0
 
 for f in $*; do
     ((nf++))
-    if [ ! -e $f ]; thenpp
+    if [ ! -e $f ]; then
 	echo "File $f does not exist, skipping"
 	continue
     fi
