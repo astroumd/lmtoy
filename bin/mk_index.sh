@@ -170,7 +170,7 @@ for ext in "" "__0" "__1"; do
     
 
     # if "first" figures don't exist, copy them from existing
-    first="$base2.1.png $base2.6.png $base2.2.png $base2.3.png $base3.1.png $base3.2.png $base2.5.png $base1.wt.png $base1.mom0.png $base1.peak.png $base1.rms.png $base1.wf0.png $base1.wf1.png"
+    first="$base2.1.png $base2.6.png $base2.2.png $base2.3.png $base3.1.png $base3.2.png $base2.5.png $base1.wt.png $base1.mom0.png $base1.peak.png $base1.rms.png $base1.wf0.png $base1.wf1.png $base1.hist.png"
     for f in $first; do
 	if [ -e $f ]; then
 	    if [ ! -e first_$f ]; then
@@ -306,6 +306,11 @@ for ext in "" "__0" "__1"; do
     echo "         <IMG SRC=first_$base1.rms.png>"                            >> $html
 
     # 13.
+    echo "  <LI> Histogram of cube, counted logarithmically [mK] "            >> $html 
+    echo "           <br><IMG SRC=$base1.hist.png>"                           >> $html
+    echo "         <IMG SRC=first_$base1.hist.png>"                           >> $html
+   
+    # 14.
     echo "  <LI> Spectral coverage of raw and extracted cube,"                >> $html
     echo "       with 1-sigma baseline box drawn."                            >> $html
     echo "     Shown are full range (left) and extracted range (right)"       >> $html
