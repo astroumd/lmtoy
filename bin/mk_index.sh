@@ -213,7 +213,7 @@ for ext in "" "__0" "__1"; do
 	# 1.
 	echo "  <LI> Sky coverage for all 16 beams"                               >> $html
 	echo "       (sky coordinates in arcsec w.r.t. map center)"               >> $html
-	echo "       - first integration beam imprint in red"                     >> $html
+	echo "       - first integration beam imprint in red."                    >> $html
 	echo "       MapCoord 0,1,2 are AzEl, RaDec and LatLong resp."            >> $html
 	echo "           <br><IMG SRC=$base2.1.png>"                              >> $html
 	echo "         <IMG SRC=first_$base2.1.png>"                              >> $html
@@ -234,9 +234,9 @@ for ext in "" "__0" "__1"; do
 	# 4.
 	echo "  <LI> Waterfall RMS [K] as function of channel number"             >> $html
 	echo "       (RMS vs. CHANNEL)"                                           >> $html
-	echo "       - this is where birdies show up best, or check *bstats*"     >> $html
+	echo "    - this is where birdies show up best, or check *bstats* table." >> $html
 	echo "     <br> Note that when birdies were flagged, the RMS will now"    >> $html
-	echo "          show a dip due to interpolation"                          >> $html
+	echo "          show a dip due to the interpolation"                      >> $html
 	echo "           <br><IMG SRC=${base1}.wf0.png>"                          >> $html
 	echo "         <IMG SRC=first_${base1}.wf0.png>"                          >> $html
 	
@@ -306,7 +306,14 @@ for ext in "" "__0" "__1"; do
     echo "         <IMG SRC=first_$base1.rms.png>"                            >> $html
 
     # 13.
-    echo "  <LI> Histogram of cube, counted logarithmically [mK] "            >> $html 
+    echo "  <LI> Logarithmic Histogram of noise portion of cube [mK], the "   >> $html
+    echo "       horizontal axis is shown from -8*RMS to +8*RMS. "            >> $html
+    echo "       This noise cube is define from the central spatial portion " >> $html
+    echo "       and the non-central spectral portion of the full cube."      >> $html
+    echo "       The overplotted gauss is not a fit, but has the same"        >> $html
+    echo "       mean/rms as the data."
+    echo "       The source ratio (Sratio) can range from -1 to 1, and is"    >> $html
+    echo "       supposed to be near 0.0 for pure noise."                     >> $html
     echo "           <br><IMG SRC=$base1.hist.png>"                           >> $html
     echo "         <IMG SRC=first_$base1.hist.png>"                           >> $html
    
