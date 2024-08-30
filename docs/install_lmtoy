@@ -17,7 +17,7 @@
 #     8-aug-2023:     for Version 1.0 
 #
 
-version=8-aug-2023
+version=30-aug-2023
 
 #--HELP
 #   Keywords for installation
@@ -101,11 +101,8 @@ make git
 
 if [ $venv = 0 ]; then
   make install_python WGET=$wget
-  source python_start.sh
-  make pip
-  make install_lmtslr
-  make install_dreampy3
-  make install_dvpipe
+  source anaconda3/python_start.sh
+  make basic
 else
   make pip
   make install_lmtslr_venv
@@ -160,4 +157,5 @@ if [ $pipeline = 1 ]; then
     (cd $DATA_LMT; make -f $LMTOY/data_lmt/Makefile data)
     make bench1
     make bench2
+    make bench3
 fi
