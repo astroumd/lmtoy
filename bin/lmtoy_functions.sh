@@ -781,7 +781,7 @@ function lmtoy_seq1 {
 	    _stats=($(ccdstat $s_on.cube3.ccd bad=0 qac=t | txtpar - p0=1,4 p1=1,8))
 	    rms3=${_stats[0]}
 	    srat=${_stats[1]}
-            ccdhist $s_on.cube3.ccd -4*$rms3 4*$rms3 ylog=t blankval=0 residual=false \
+            ccdhist $s_on.cube3.ccd -8*$rms3 8*$rms3 ylog=t blankval=0 residual=false bins=32 \
 		    xlab="Intensity [mK]" headline="RMS: $rms3 mK  Sratio: $srat" \
 		    yapp=$s_on.hist.$dev/$dev
 	    cp $s_on.cube3.ccd junk.pjt
