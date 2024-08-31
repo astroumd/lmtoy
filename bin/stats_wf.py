@@ -5,14 +5,14 @@
 
 from docopt import docopt
 
-_version = "8-aug-2023"
+_version = "31-aug-2024"
 
 _help    = """Usage: stats_wf.py [options] FITSFILE
 
 Show some statistics of a waterfall cube.
 
 Options:
-  -y PLOTFILE          Save plotfile instead, else interactive. Optional.
+  -y PLOTFILE          Save as plotfile instead, else interactive. Optional.
   -t                   Plot along time instead of channel
   -b BIRDIEFILE        Output birdie file. Optional
   -d                   Add more debug
@@ -88,11 +88,16 @@ if birdiefile:
     
 print("# beam RMS <rms_chan> <rms_time>")
 
-import matplotlib.pyplot as plt
+import matplotlib
 
+if plotfile == None:
+    matplotlib.use('qt5agg')
+else:
+    matplotlib.use('agg')
 import matplotlib.pyplot as plt
+# print('mpl backend spectra',matplotlib.get_backend())
+
 plt.figure()
-
 
 
 npix = 0
