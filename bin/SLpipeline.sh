@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 27-aug-2024"
+_version="SLpipeline: 31-aug-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -359,6 +359,9 @@ fi
 if [ ! -e $pdir/000README.html ]; then
     (cd $pdir ; ln -sf README.html 000README.html)
 fi
+
+# count files?
+(cd $pdir; echo "Number of files: $(ls | wc -l)")
 
 # directory for dvpipe products for archive ingestion, also for links for PI
 dir4dv=$WORK_LMT/${ProjectId}/dir4dv/${ProjectId}/${obsnum}
