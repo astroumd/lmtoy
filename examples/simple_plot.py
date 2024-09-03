@@ -12,8 +12,6 @@ import os
 import sys
 
 import numpy as np
-import matplotlib.pyplot as plt
-
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
@@ -29,7 +27,11 @@ if __name__ == "__main__":
     else:
         matplotlib.use('agg')
     import matplotlib.pyplot as plt
-    print('mpl backend spectra',matplotlib.get_backend())
+    if 'MPLBACKEND' in os.environ:
+        print('$MPLBACKEND :',os.environ['MPLBACKEND'])
+    else:
+        print("no $MPLBACKEND used")
+    print('mpl backend :',matplotlib.get_backend())
         
     x = np.arange(0,2,0.1)
     y = np.sqrt(x)
@@ -41,4 +43,4 @@ if __name__ == "__main__":
         plt.show()
     else:
         plt.savefig(plotfile)
-        print("Wrote ",plotfile)
+        print("Wrote",plotfile)
