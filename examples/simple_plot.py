@@ -2,6 +2,9 @@
 #
 #   a simple matplotlib plot - testing for pipelines
 #
+#   parent shell can optionally do:
+#       export MPLBACKEND=agg
+#
 _version = "3-sep-2023"
 _mode = 0
 
@@ -19,6 +22,14 @@ if __name__ == "__main__":
     else:
         _mode = 0
         plotfile = None
+
+    import matplotlib
+    if _mode == 0:
+        matplotlib.use('qt5agg')
+    else:
+        matplotlib.use('agg')
+    import matplotlib.pyplot as plt
+    print('mpl backend spectra',matplotlib.get_backend())
         
     x = np.arange(0,2,0.1)
     y = np.sqrt(x)
