@@ -35,12 +35,12 @@ from astropy.coordinates import SkyCoord
 import dvpipe.utils as utils
 from dvpipe.pipelines.metadatagroup import LmtMetadataGroup, example
 from dvpipe.pipelines.metadatablock import MetadataBlock
-from dvpipe.pipelines.lmmetadatablock import LmtMetadataBlock
+from dvpipe.pipelines.lmtmetadatablock import LmtMetadataBlock
 from lmtoy import data_prod_id
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-_version = "30-aug-2024"
+_version = "3-sep-2024"
 
 
 def header(rc, key, debug=False):
@@ -245,7 +245,8 @@ if __name__ == "__main__":
     # OBSNUM can be an actual OBSNUM or the OBSNUM directory
     pdir = av["OBSNUM"]
     rcfile = rc_file(pdir)
-    rc = get_rc(rcfile, debug=debug)
+    if input_yamlfile is not None:
+        rc = get_rc(rcfile, debug=debug)
 
     # get version, as comment (or metadata?)
     print("# LMTOY version %s" % get_version())
@@ -485,7 +486,7 @@ if __name__ == "__main__":
         if yamlfile != None:
             lmtdata.write_to_yaml()
     else:
-        lmtdata = LmtMetadataBlock.from_output_yaml(input_yaml_file)
+        lmtdata = LmtMetadataBlock.from_output_yaml(input_yamlfile)
         lmtdata._dbfile = dbfile
         if dbfile is not None:
-            lmtdata.write_to_db()
+            lmtdata._write_to_db()    # @todo why not write_to_db()
