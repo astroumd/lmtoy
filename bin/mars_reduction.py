@@ -17,16 +17,19 @@ Formerly called continuum_reduction, this script ...
 The name mars_reduction does not imply only mars can be reduced. Any spherical object
 with finite size and brightness temperature can be reduced by this script.
 
+In the 80-115 GHz range the spectral slope is about +0.1K/GHz
+Variations are 205 +/- 8K (peak2peak 184 to 227) with a period of about 700 days.
+
 Here's an example of ephemeris diameters for mars:
    https://astropixels.com/ephemeris/planets/mars2018.html
    https://astropixels.com/ephemeris/planets/mars2024.html
 
-2018-05-17   13.0
-2018-05-20   13.4
-2018-06-08   16.5
-2018-06-11   17.0
+2018-05-17   13.0  13.04 x 12.96
+2018-05-20   13.4  13.45 x 13.37
+2018-06-08   16.5  16.51 x 16.41
+2018-06-11   17.0  17.05 x 16.95
 
-2024-08-31    6.5
+2024-08-31    6.5   6.52 x  6.48
 
 """
 
