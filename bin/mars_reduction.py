@@ -8,6 +8,7 @@ _help = """Usage: mars_reduction.py -O OBSNUM [options]
 -O OBSNUM --obsnum OBSNUM         The obsnum, something like 123456. No default.
 -T TEMP --temperature TEMP        Brightness temperature of the planet in K. [Default: 205]
 -D DIAMETER --diameter DIAMETER   Diameter of the planet in arcsec. [Default: 6.5]
+-N NUMBANKS --numbanks NUMBANKS   Number of banks to process [Default: 2]
 -v --version                      Version
 -h --help                         This help
 
@@ -15,6 +16,17 @@ Formerly called continuum_reduction, this script ...
 
 The name mars_reduction does not imply only mars can be reduced. Any spherical object
 with finite size and brightness temperature can be reduced by this script.
+
+Here's an example of ephemeris diameters for mars:
+   https://astropixels.com/ephemeris/planets/mars2018.html
+   https://astropixels.com/ephemeris/planets/mars2024.html
+
+2018-05-17   13.0
+2018-05-20   13.4
+2018-06-08   16.5
+2018-06-11   17.0
+
+2024-08-31    6.5
 
 """
 
@@ -72,10 +84,11 @@ def compute_the_residuals(v,xdata,ydata,data):
 av = docopt(_help, options_first=True, version=_version)
 print(av)   # debug
 
-obsnum = int(av['--obsnum'])             #  121356
-TMars  = float(av['--temperature'])      #  205
-DMars  = float(av['--diameter'])         #  RMars = 6.52/2 # August 31 2024
-RMars  = DMars / 2.0
+obsnum   = int(av['--obsnum'])             #  121356
+TMars    = float(av['--temperature'])      #  205
+DMars    = float(av['--diameter'])         #  RMars = 6.52/2 # August 31 2024
+RMars    = DMars / 2.0
+numbanks = int(av['--numbanks'])           #  2 (before 2023 use 1)
 
 print("mars_reduction:  %d  %g  %g" % (obsnum, TMars, DMars))
 
@@ -100,7 +113,12 @@ pix_list = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,
 pix0_list = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 bank_list = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 
-for icount in range(32):
+if numbanks == 2:
+    nbeams = 32
+else:
+    nbeams = 16
+
+for icount in range(nbeams):
     pixel = pix_list[icount]
     bank = bank_list[icount]
     pixel0 = pix0_list[icount]
