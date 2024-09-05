@@ -12,7 +12,7 @@ fi
 
 
 
-echo "<A HREF=mars.log> mars.log</A>"
+echo "<A HREF=mars.log> mars.log</A>" 
 echo "<hr>"
 
 for i in $(seq 0 1 31); do
@@ -22,6 +22,5 @@ for i in $(seq 0 1 31); do
 	fi
     done
 done
-
-exit 0
-
+echo "<hr>"
+echo "Created on $(date)"
