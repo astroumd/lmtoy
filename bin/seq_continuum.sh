@@ -15,7 +15,7 @@
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 # @todo   vlsr= only takes correct effect on the first run, not a re-run
 
-_version="seq_continuum: 4-sep-2024"
+_version="seq_continuum: 5-sep-2024"
 
 echo "LMTOY>> $_version"
 
@@ -192,5 +192,7 @@ else
     nb=0
     echo "LMTOY>> cannot process numbands/bank option"
 fi
+
+lmtoy_version >> lmtoy.rc
 
 echo "LMTOY>> Processed $nb bands"
