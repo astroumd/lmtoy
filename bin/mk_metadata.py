@@ -1,29 +1,34 @@
 #! /usr/bin/env python
 #
 
-"""Usage: mk_metadata.py [options] [OBSNUM]
+_version = "5-sep-2024"
+
+_doc = """Usage: mk_metadata.py [options] [OBSNUM]
 
 Options:
 
 -d          add more debugging
--y YAMLFILE Output yaml file. Optional.
--z YAMLFILE Input yaml file.  This is the file that is output by dvpipe after the data are uploaded to the dataverse.  It is read in my my_metadata to update the sqlite database
--f DBFILE   Output sqlite database filename. Optional.
+-y YAMLFILE   Output yaml file. Optional.
+-z YAMLFILE   Input yaml file.  This is the file that is output by dvpipe
+              after the data are uploaded to the dataverse.
+              It is read in my my_metadata to update the sqlite database
+-f DBFILE     Output sqlite database filename. Optional.
 
--o          Overwrite row for all possible rows with OBSNUM.
-            Only affects if a database was used.
-            (NOT IMPLEMENTED)
---delete N  delete row N (alma_id) from table
-            (NOT IMPLEMENTED)
+-o            Overwrite row for all possible rows with OBSNUM.
+              Only affects if a database was used.
+              (NOT IMPLEMENTED)
+--delete N    delete row N (alma_id) from table
+              (NOT IMPLEMENTED)
 
---version   Show version
--h --help   This help
+-v --version  Show version
+-h --help     This help
 
 For a given OBSNUM the script will create the metadata for DataVerse
 in either yaml and/or sqlite format. If no obsnum is given, a
 generic example is given.
 
-"""
+Version: %s
+""" % _version
 
 import os
 import sys
@@ -40,7 +45,6 @@ from lmtoy import data_prod_id
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-_version = "3-sep-2024"
 
 
 def header(rc, key, debug=False):
@@ -225,7 +229,7 @@ def get_qagrade(rc, debug=False):
 
 
 if __name__ == "__main__":
-    av = docopt(__doc__, options_first=True, version=_version)
+    av = docopt(_doc, options_first=True, version=_version)
     debug = av["-d"]
 
     if debug:
@@ -246,7 +250,9 @@ if __name__ == "__main__":
     pdir = av["OBSNUM"]
     rcfile = rc_file(pdir)
     if input_yamlfile is not None:
-        rc = get_rc(rcfile, debug=debug)
+        #  @todo even though we don't need the rc file, there are still dependencies on it below
+        print("@todo rc file")
+    rc = get_rc(rcfile, debug=debug)
 
     # get version, as comment (or metadata?)
     print("# LMTOY version %s" % get_version())
