@@ -35,7 +35,7 @@ Version:  13-jun-2024
 	SRC_OBSNUM.wt3.fits         weight map v3 - RMS in line free region
 
 	SRC_OBSNUM.wtn.fits         ...coverage map (normalized) *BAD BEAM*
-	SRC_OBSNUM.wtr.fits         ratio of wt3/wt3
+	SRC_OBSNUM.wtr.fits         ratio of wt3/wt2
 	SRC_OBSNUM.wtr3.fits        ...
 	SRC_OBSNUM.wtr4.fits        RMS expected from radiometer equation (weighted average of Tsys/sqrt(df.dt))
 	
