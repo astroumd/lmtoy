@@ -1,15 +1,14 @@
 #! /usr/bin/env python
 #
-#   a simple matplotlib plot - testing for capabilities
+#   a simple matplotlib plot:  testing for MPL capabilities
 #
-#   parent shell can optionally do:
-#       export MPLBACKEND=agg
 #
 _version = "7-sep-2023"
 
 _help = """Usage: simple_plot.py [options]
 
--p --plotfile PLOTFILE  Plotfile. Optional.
+-p --plotfile PLOTFILE  Plot filename, extension is important. Optional.
+                        It none given, output should appear on screen.
 -b --backend BACKEND    Optional MPLBACKEND to use
 -s --show               Show available backends
 -d --debug              More debugging output?
@@ -23,6 +22,13 @@ if the default is not sufficient.
 
 By default the script should bring up an interactive plot
 and report in the title what backend was used.
+
+One can also set a default backend via an environment variable
+      export MPLBACKEND=agg
+or your matplotlibrc file (location varies per platform).
+Use --debug to see which one you should use.
+
+
 """
 
 import os
@@ -31,6 +37,7 @@ import numpy as np
 from docopt import docopt
 
 
+# 1. Grab the command line arguments
 av = docopt(_help, options_first=True, version=_version)
 _debug = av['--debug']
 if _debug:
@@ -41,6 +48,7 @@ backend = av['--backend']
 _mode = -1
     
 
+# 2. MATPLOTLIB settings
 import matplotlib
 if av['--show']:
     gui_env = [i for i in matplotlib.rcsetup.interactive_bk]
@@ -49,16 +57,15 @@ if av['--show']:
     print ("Gui backends I will test for", gui_env)
     sys.exit(0)
 
-
 if plotfile is not None:
-    matplotlib.use('agg')
-    
+    matplotlib.use('agg')     # use common plotfile capable backend
 if backend is not None:
-    matplotlib.use(backend)
+    matplotlib.use(backend)   # unless forced otherwise with --backend
     
 import matplotlib.pyplot as plt
 
 if _debug:
+    print("Your matplotlibrc file:",matplotlib.matplotlib_fname())
     if 'MPLBACKEND' in os.environ:
         print('$MPLBACKEND :',os.environ['MPLBACKEND'])
     else:
@@ -67,7 +74,9 @@ if _debug:
 backend = matplotlib.get_backend()
 if _debug:
     print('mpl backend :',backend)
-        
+
+    
+# 3. Compute and plot        
 x = np.arange(0,2,0.1)
 y = np.sqrt(x)
 
