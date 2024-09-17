@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 4-sep-2024"
+_version="SLpipeline: 17-sep-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -36,6 +36,7 @@ chunk=10g       # chunksize for zipping up what used to be a tar file (use 0 to 
 grun=1          # save the script generator?
 admit=0         # run ADMIT ?
 meta=1          # 1 or 2:  1=activate update for frontend db (for dataverse)
+dataverse=0     # ingest an existing obsnum (assumes pipeline had been RUN)
 sleep=2         # add few seconds before running, allowing quick interrupt
 nproc=1         # number of processors to use (keep it at 1)
 rsync=""        # rsync address for the TAP file (used at LMT/malt)
@@ -44,6 +45,7 @@ goal=Science    # Science (or override with: Pointing,Focus,Cont [not officially
 webrun=""       # optional directive for webrun to do parameter checking (SEQ/map, SEQ/Bs, RSR, ....)
 qagrade=0       # the final grade recorded for the archive (QAFAIL enforces -1; 0 by default; -2,1,2,3 when DA graded)
 public=""       # if given, the public data for archiving. Default is 1 year after today. Example:  2020-12-31
+
 
 #  Optional instrument specific pipeline can be added as well but are not known here
 #  A few examples:
@@ -122,7 +124,7 @@ fi
 rc0=$WORK_LMT/tmp/lmtoy_${obsnum}.rc
 lmtinfo.py $obsnum > $rc0
 if [ $? != 0 ]; then
-    # some error (typically OBSNUM did not exist)
+    # some error (typically OBSNUM did not exist) - @todo give better error
     cat $rc0
     rm -f $rc0    
     exit 1
@@ -149,6 +151,17 @@ if [ $obsnums = 0 ]; then
     pdir=$pidir/${obsnum}
 else
     pdir=$pidir/${on0}_${on1}
+    obsnum=${on0}_${on1}
+fi
+if [ $dataverse == 1 ]; then
+    if [ ! -d  ${pdir} ]; then
+	echo "LMTOY>> $pdir does not exist yet"
+	exit 1
+    fi
+    echo "LMTOY>>  dataverse ingestion $obsnum from $pidir"
+    lmtoy_dataverse $obsnum $pidir
+    echo "LMTOY>>  dataverse ingestion $obsnum from $pidir done."
+    exit 0
 fi
 if [ $exist == 1 ] && [ -d $pidir/$obsnum ]; then
     echo "LMTOY>> Skipping work for $pidir/$obsnum, it already exists"

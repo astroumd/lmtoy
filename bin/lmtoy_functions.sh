@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="29-aug-2024"
+lmtoy_version="17-sep-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -174,6 +174,33 @@ function qac_select {
 	printf_green $msg
     fi
     
+}
+
+function lmtoy_dataverse {
+    # input:  obsnum pidir
+    #         123456 $WORK_LMT/$PID
+    echo "lmtoy_dataverse: $1 $2"
+    obsnum=$1
+    pidir=$2
+    db=$WORK_LMT/example_lmt.db
+    pid=$(basename $pidir)
+    dir4dv=${pidir}/dir4dv/${pid}/${obsnum}
+    if [ ! -d $dir4dv ]; then
+	echo "LMTOY>>  no $dir4dv, return"
+	return
+    fi
+    # @todo make it less verbose
+    pushd $WORK_LMT/$pid/dir4dv
+    mk_metadata.py -y ${dir4dv}/${obsnum}_lmtmetadata.yaml $dir4dv
+    upload_project.sh in=. out=/tmp/dvout publish=1 verbose=0 overwrite=1
+    mk_metadata.py -z /tmp/dvout/${pid}_${obsnum}_output.yaml -f $db $dir4dv
+    # we don't need flock anymore, since we run it serially and it's on NFS
+    # flock --verbose $db.flock mk_metadata.py ...
+    #
+    scp $db toltec3:lmtsearch_web
+    #   cleanup $pid ???
+    echo "$(lmtoy_date -u) $pid $obsnum" >> $WORK_LMT/dataverse.log
+    popd
 }
 
 function lmtoy_rsr1 {
@@ -1540,3 +1567,5 @@ function lmtoy_ps1 {
     # mv index.html README.html
     
 } # lmtoy_ps1
+
+
