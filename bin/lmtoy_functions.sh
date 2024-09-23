@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="17-sep-2024"
+lmtoy_version="23-sep-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -193,6 +193,7 @@ function lmtoy_dataverse {
     pushd $WORK_LMT/$pid/dir4dv
     mk_metadata.py -y ${dir4dv}/${obsnum}_lmtmetadata.yaml $dir4dv
     upload_project.sh in=. out=/tmp/dvout publish=1 verbose=0 overwrite=1
+    # @todo if failed
     mk_metadata.py -z /tmp/dvout/${pid}_${obsnum}_output.yaml -f $db $dir4dv
     # we don't need flock anymore, since we run it serially and it's on NFS
     # flock --verbose $db.flock mk_metadata.py ...
@@ -689,6 +690,17 @@ function lmtoy_seq1 {
 	if [ ! -e pix_list__${bank}.txt ]; then
 	    echo $bb | sed 's/ /,/g' > pix_list__${bank}.txt
 	fi
+
+	# another whole-plane style stats
+	if [ ! -e stats__${bank}_wf.tab ]; then
+	    echo "first stats"
+	    fitsccd ${s_on}.wf.fits - | ccdstat - planes=0 > stats__${bank}_wf.tab
+	    cp stats__${bank}_wf0.tab first_stats__${bank}_wf0.tab
+	    cp stats__${bank}_wf1.tab first_stats__${bank}_wf1.tab
+	else
+	    echo "skipping first stats"
+	fi
+	
     fi
     
 
@@ -1137,6 +1149,7 @@ function lmtoy_seq2 {
 	if [ ! -e pix_list__${bank}.txt ]; then
 	    echo $bb | sed 's/ /,/g' > pix_list__${bank}.txt
 	fi
+
     fi
     
 
