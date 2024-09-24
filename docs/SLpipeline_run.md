@@ -13,7 +13,7 @@ this gives me different levels of speed and debugging. Since everything goes via
 it can become tedious to keep everything in sync. Here's my own recipe, once a machine
 gets an update, the others are done "on demand" as follows:
 
-     lmtoy pull
+      lmtoy pull
 
 this is typically sufficient, but if there were changes to the SpectralLineReductioin gridder or to NEMO, 
 those need a re-compilation, e.g.
@@ -61,7 +61,7 @@ parameter to  SLpipeline_run.sh. The default is set at 60 seconds.
 commands in window 3:
 
       ssh malt
-      SLpipeline.sh admit=0 restart=1 obsnum=99438 extent=120 pix_list=$(pix_list.py -14,-15)
+      SLpipeline.sh admit=0 restart=1 obsnum=99438 extent=120 pix_list=$(pix_list.py -14,15)
 
 I often run manually a Pointing map (they are not automagially included in the Science run), but
 these need a larger mapsize value, e.g. **extent=120**.  This is useful to see which beams are 
