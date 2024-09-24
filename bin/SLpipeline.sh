@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 17-sep-2024"
+_version="SLpipeline: 23-sep-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -36,7 +36,7 @@ chunk=10g       # chunksize for zipping up what used to be a tar file (use 0 to 
 grun=1          # save the script generator?
 admit=0         # run ADMIT ?
 meta=1          # 1 or 2:  1=activate update for frontend db (for dataverse)
-dataverse=0     # ingest an existing obsnum (assumes pipeline had been RUN)
+archive=0       # ingest an existing obsnum into the (dataverse) archive (assumes pipeline had been RUN) 
 sleep=2         # add few seconds before running, allowing quick interrupt
 nproc=1         # number of processors to use (keep it at 1)
 rsync=""        # rsync address for the TAP file (used at LMT/malt)
@@ -153,13 +153,13 @@ else
     pdir=$pidir/${on0}_${on1}
     obsnum=${on0}_${on1}
 fi
-if [ $dataverse == 1 ]; then
+if [ $archive == 1 ]; then
     if [ ! -d  ${pdir} ]; then
 	echo "LMTOY>> $pdir does not exist yet"
 	exit 1
     fi
     echo "LMTOY>>  dataverse ingestion $obsnum from $pidir"
-    lmtoy_dataverse $obsnum $pidir
+    lmtoy_archive $obsnum $pidir
     echo "LMTOY>>  dataverse ingestion $obsnum from $pidir done."
     exit 0
 fi
@@ -380,26 +380,21 @@ if [ ! -e $pdir/000README.html ]; then
     (cd $pdir ; ln -sf README.html 000README.html)
 fi
 
-# count files?
+# count files
 (cd $pdir; echo "Number of files: $(ls | wc -l)")
 
 # directory for dvpipe products for archive ingestion, also for links for PI
 dir4dv=$WORK_LMT/${ProjectId}/dir4dv/${ProjectId}/${obsnum}
-mkdir -p $dir4dv
+dirzip=$WORK_LMT/${ProjectId}/dirzip
+mkdir -p $dir4dv $dirzip
 echo "LMTOY>> using dir4dv=$dir4dv"
 
 # make a metadata yaml file for later ingestion into DataVerse
-if [ $meta -gt 0 ]; then
+if [ $meta -ne 0 ]; then
     cd $pdir
     echo "LMTOY>> make metadata ($meta) for DataVerse in $pdir"
-    if [ $meta -gt 1 ]; then
-	# @todo will this work reliably on NFS mounted media?
-	db=$WORK_LMT/example_lmt.db
-	flock --verbose $db.flock mk_metadata.py -y $pdir/${obsnum}_lmtmetadata.yaml -f $db $pdir 
-    else
-        mk_metadata.py -y ${dir4dv}/${obsnum}_lmtmetadata.yaml $pdir
-	cp $pdir/lmtoy_${obsnum}*rc $dir4dv	
-    fi
+    mk_metadata.py -y ${dir4dv}/${obsnum}_lmtmetadata.yaml $pdir
+    cp $pdir/lmtoy_${obsnum}*rc $dir4dv	
 fi
 # produce TAP, RSRP, SDFITS, RAW tar files, whichever are requested.
 
@@ -441,8 +436,10 @@ if [ $srdp != 0 ]; then
     if [ $chunk = 0 ]; then
 	tar -cf $dir4dv/${obsnum}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/$obsnum
     else
-	rm -rf             $dir4dv/${obsnum}_SRDP.zip
+	rm -f              $dir4dv/${obsnum}_SRDP.zip
 	zip -s $chunk  -qr $dir4dv/${obsnum}_SRDP.zip $ProjectId/$obsnum   -x $ProjectId/$obsnum/$sdfits_file
+	rm -f              $dirzip/${obsnum}_SRDP.zip 
+	ln                 $dir4dv/${obsnum}_SRDP.zip $dirzip/${obsnum}_SRDP.zip
     fi
 fi
 
@@ -453,17 +450,13 @@ if [ $sdfits != 0 ]; then
 	if [ $chunk = 0 ]; then
 	    tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
 	else
-	    rm -rf             $dir4dv/${obsnum}_SDFITS.zip
+	    rm -f              $dir4dv/${obsnum}_SDFITS.zip
 	    zip -s $chunk  -qr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/$sdfits_file
+	    rm -f              $dirzip/${obsnum}_SDFITS.zip
+	    ln                 $dir4dv/${obsnum}_SDFITS.zip $dirzip/${obsnum}_SDFITS.zip
 	fi
     else
 	echo "LMTOY>> SDFITS: should not get here, unless you intend to have no SDFITS file(s)"
-	if [ $chunk = 0 ]; then
-	    tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md
-	else
-	    rm -rf             $dir4dv/${obsnum}_SDFITS.zip
-	    zip -s $chunk  -qr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md
-	fi
     fi
 fi
 

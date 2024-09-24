@@ -198,8 +198,8 @@ echo "<li class='list-group-item'><a href='rsr.spectra.svg.html'>Experimental SV
 echo "<li class='list-group-item'> <a href='rsr_peaks.log'>rsr_peaks log file</a></li>"
 # create the link, even though it may not exist yet
 #echo "<li class='list-group-item'> <a href="../${obsnum}_SRDP.tar">${obsnum}_SRDP.tar</a></li>"  # deprecated
-echo "<li class='list-group-item'> <a href="../dir4dv/$ProjectId/$obsnum/${obsnum}_SRDP.zip">${obsnum}_SRDP.zip</a></li>"
-echo "<li class='list-group-item'> <a href="../dir4dv/$ProjectId/$obsnum/${obsnum}_SDFITS.zip">${obsnum}_SDFITS.zip</a></li>"
+echo "<li class='list-group-item'> <a href="../dirzip/${obsnum}_SRDP.zip">${obsnum}_SRDP.zip</a></li>"
+echo "<li class='list-group-item'> <a href="../dirzip/${obsnum}_SDFITS.zip">${obsnum}_SDFITS.zip</a></li>"
 if [ -e ../${obsnum}_RAW.zip ]; then
     echo "<li class='list-group-item'> <a href="../${obsnum}_RAW.zip">${obsnum}_RAW.zip</a></li>"
 fi

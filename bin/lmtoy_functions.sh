@@ -176,10 +176,10 @@ function qac_select {
     
 }
 
-function lmtoy_dataverse {
+function lmtoy_archive {
     # input:  obsnum pidir
     #         123456 $WORK_LMT/$PID
-    echo "lmtoy_dataverse: $1 $2"
+    echo "lmtoy_archive: $1 $2"
     obsnum=$1
     pidir=$2
     db=$WORK_LMT/example_lmt.db
@@ -199,8 +199,10 @@ function lmtoy_dataverse {
     # flock --verbose $db.flock mk_metadata.py ...
     #
     scp $db toltec3:lmtsearch_web
-    #   cleanup $pid ???
+    #   logging
     echo "$(lmtoy_date -u) $pid $obsnum" >> $WORK_LMT/dataverse.log
+    #   cleanup $pid
+    rm -rf $dir4dv
     popd
 }
 
