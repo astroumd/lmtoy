@@ -1,19 +1,8 @@
 #! /bin/bash
 #
-#  A simple LMT OTF pipeline in bash.
-#  Really should be written in python, but hey, here we go.
+#  Specialized continuum processing with a finite size object
 #
-#  Note:   this will only reduce one OBSNUM.   If you place a file "lmtoy_$obsnum.rc"
-#          in the current directory, parameters will be read from it.
-#          If it does not exist, it will be created on the first run and you can edit it
-#          for subsequent runs
-#          If projectid is set, this is the subdirectory, within which obsnum is set
 #
-# There is no good mechanism here to make a new variable depend on re-running a certain task
-# on which it depends that's perhaps for a more advanced pipeline
-#
-# @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
-# @todo   vlsr= only takes correct effect on the first run, not a re-run
 
 _version="seq_continuum: 5-sep-2024"
 
@@ -23,7 +12,6 @@ echo "LMTOY>> $_version"
 # input parameters (only obsnum is required)
 #            - start or restart  ($first is now used here)
 obsnum=0                              # required
-oid=""                                # optional (usually same as the bank)
 pdir=""                               # usually given (otherwise current directory used)
 #            - procedural
 clean=1
@@ -137,12 +125,10 @@ fi
 if [ $numbands = 2 ]; then
     if [ $rf1 = 0.0 ]; then
 	echo "numbands=1  # only RF2 used"               >> $rc
-	echo "oid=1    # not used yet"                   >> $rc
 	echo "bank=1"                                    >> $rc
     fi
     if [ $rf2 = 0.0 ]; then
 	echo "numbands=1  # only RF1 used"               >> $rc
-	echo "oid=0     # not used yet"                  >> $rc
 	echo "bank=0"                                    >> $rc
     fi
 fi
@@ -168,7 +154,6 @@ elif [ $numbands == 2 ]; then
     echo "LMTOY>> looping over numbands=$numbands"
     # "expr 1 - 1" returns an error state 1 to the shell (it's a feature)
     for bank in $(seq 0 $(expr $numbands - 1)); do
-	oid=$bank    # oid not used yet
 	echo "LMTOY>> Preparing for bank=$bank"
 	rc1=lmtoy_${obsnum}__${bank}.rc
 	if [ ! -e $rc1 ]; then
