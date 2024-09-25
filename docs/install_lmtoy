@@ -110,7 +110,7 @@ make git
 if [ $venv = 0 ]; then
   make install_python WGET=$wget
   source anaconda3/python_start.sh
-  make basic
+  make pip basic
 else
   make pip
   make install_lmtslr_venv
