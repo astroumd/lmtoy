@@ -12,7 +12,7 @@
 # dryrun    - If non-zero, just echo commands, don't execute them
 # dvname    - Name of the dataverse to upload to. Default: lmtdata
 # envfile   - file with API credentials  [$HOME/.ssh/su_prod.env]
-# in        - input directory with project/obsnum/*.tar
+# in        - input directory with project/obsnum/*.zip
 # out       - output dir, default: 'ready_for_upload'
 # overwrite - overwrite the output dir.  
 #             If 1, existing directory will be removed. 
