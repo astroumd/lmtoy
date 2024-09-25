@@ -48,7 +48,10 @@ to the PI at https://taps.lmtgtm.org/lmtslr/$PID
  
 The PI webrun will essentially do the same thing, but in a new hierarchy
 for just that PID, and underneath a new $WORK_LMT/$PID/session/ tree, as
-summarized below:
+summarized below.
+
+Important and still missing is a mechanism that will have each tier (run1a, run1b, run2a etc.) wait
+until all jobs are done before the next runfile can be submitted.
 
 ## Directory hierarchy:
 
@@ -99,6 +102,16 @@ Command Line (CLI) equivalent commands are given where this makes sense:
            mkdir -p $WORK_LMT
            cd $WORK_LMT
            lmtoy_run $PID
+	   cd lmtoy_run
+	   make git GIT_DIRS=lmtoy_$PID
+	   cd lmtoy_$PID
+	   edit mk_runs.py 
+	   make runs
+	   sbatch_lmtoy.sh *run1a
+	   ...
+
+
+
 
    this will create (or re-use) the $WORK_LMT/$PID directory and the pipeline is now
    set up with the script generator and a default run can be submitted.
@@ -256,7 +269,9 @@ Here are some more advanced features the pipeline could/should do, and that a PI
 
 4. Combine fields into a mosaiced field (e.g. MX-2, US-20). Fairly simple in script generator, but not provided in default pipeline?
 
-5. Should we allow a raw extraction? Time
+5. Should we allow a raw extraction? Time-out grace period - rsource magmt - how many jobs
+
+6. Run a single bank pipeline from start. Normally it's both, then new tiers on each bank.
 
 ### Things webrun must not do
 
