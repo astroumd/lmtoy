@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 23-sep-2024"
+_version="SLpipeline: 24-sep-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -157,6 +157,10 @@ if [ $archive == 1 ]; then
     if [ ! -d  ${pdir} ]; then
 	echo "LMTOY>> $pdir does not exist yet"
 	exit 1
+    fi
+    if [ $(whoami) != "lmtslr_umass_edu" ]; then
+       echo "LMTOY>> Only lmtslr_umass_edu can archive"
+       exit 1
     fi
     echo "LMTOY>>  dataverse ingestion $obsnum from $pidir"
     lmtoy_archive $obsnum $pidir
@@ -461,13 +465,13 @@ if [ $sdfits != 0 ]; then
 fi
 
 if [ $raw != 0 ] && [ $obsnums = 0 ]; then
-    # ensure only for obsnums = 0
+    # ensure only for obsnums = 0; no raw data for combinations
     if [ $chunk = 0 ]; then
-	echo "Creating raw (RAW) tar for $pdir for $obsnum $calobsnum in $pidir/${obsnum}_RAW.tar"
-	lmtar $ProjectId/${obsnum}_RAW.tar $calobsnum $obsnum
+	echo "Creating raw (RAW) tar for $pdir for $obsnum $calobsnum in $dirzip/${obsnum}_RAW.tar"
+	lmtar $dirzip/${obsnum}_RAW.tar $calobsnum $obsnum
     else
-	echo "Creating raw (RAW) tar for $pdir for $obsnum $calobsnum in $pidir/${obsnum}_RAW.zip"
-	lmzip $ProjectId/${obsnum}_RAW.zip $calobsnum $obsnum
+	echo "Creating raw (RAW) tar for $pdir for $obsnum $calobsnum in $dirzip/${obsnum}_RAW.zip"
+	lmzip $dirzip/${obsnum}_RAW.zip $calobsnum $obsnum
     fi
 fi
 
