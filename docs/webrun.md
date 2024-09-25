@@ -4,7 +4,8 @@ At the moment this is a discussion document. The source code for the
 webrun environment is currently in
 development in: https://github.com/lmtmc/lmt_web
 
-A nicely formatted version of this document should be in:  https://github.com/astroumd/lmtoy/blob/master/docs/webrun.md
+A nicely formatted version of this document should be in:
+https://github.com/astroumd/lmtoy/blob/master/docs/webrun.md
 
 
 ## Reminder of nomenclature in the LMTOY environment in this document
@@ -14,18 +15,20 @@ Some of these are environment variables, others so noted for convenience
       $DATA_LMT   - root directory of the read-only raw data
       $WORK_LMT   - root directory of the session's working area
       $PID        - LMT's *ProjectId*  (e.g.  2023-S1-UM-10)
+      $OBSNUM     - observation number (e.g.  123456)
       $PIS        - PI session name  (a new concept in *webrun*)
       $SRC        - Source Name
 
 ## Overview for the lmtslr user:
 
 This is how the pipeline is normally run via a CLI from the main *lmtslr* account
+(this can be lmtslr_umass_edu or lmthelpdesk_umass_edu)
 
-We start from the directory where the project script generator lives, generate
-run files for this project and submit them to SLURM. Note that each
-(sbatch_lmtoy.sh) command here can only be run when the previous command has finished!
-It would be nice to have a SLURM method that knows how to submit when the previous one
-finished.
+First a description: we start from the directory where the project
+script generator lives, we generate run files for this project and submit
+them to SLURM. Note that each (sbatch_lmtoy.sh) command here can only
+be run when the previous command has finished! We have an experimental
+sbatch_lmtoy2.sh command that can  wait between runfiels.
 
       cd $WORK_LMT/lmtoy_run/lmtoy_$PID
       git pull
@@ -41,10 +44,18 @@ finished.
       make index
       xdg-open https://taps.lmtgtm.org/lmtslr/$PID
 
+If a user doesn't care that  the terminal is blocked (e.g. in a VNC session) one can use
+something like this example
+ 
+      sbatch_lmtoy2.sh $PID.run1a $PID.run1b $PID.run2a $PID.run2b
+
+and as a bonus it will also run the summary and index at the end!
+
 This is the typical workflow for the pipeline operator, as well as for the DA.
 
 The work results for this PID will be in $WORK_LMT/$PID, but is available
-to the PI at https://taps.lmtgtm.org/lmtslr/$PID
+to the PI at https://taps.lmtgtm.org/lmtslr/$PID (a PI password is needed
+until tge data is public).
  
 The PI webrun will essentially do the same thing, but in a new hierarchy
 for just that PID, and underneath a new $WORK_LMT/$PID/session/ tree, as
@@ -60,19 +71,23 @@ Following this convention we arrive at the following proposed directory hierarch
      ..../work_lmt/                                       top level WORK_LMT used by pipeline
                    lmtoy_run/lmtoy_PID/                   script generator used by pipeline
                    PID/                                   The PI has web-read-access to this tree via index.html
-                       O1/                                obsnum directories with results of pipeline
+		       dir4dv/                            temporary files for archive submission
+		       dirzip/                            ZIP files of the SRDP and SDFITS data
+                       O1/                                obsnum directories with full results of pipeline
                        O2/
                        ..
                        session.dat                        this file contains session entries "1" and "2"
                        session-1/                         PIS=session-1 is the new WORK_LMT for this webrun session
-                                 lmtoy_run/lmtoy_PID/     
+                                 lmtoy_run/lmtoy_PID/
                                  PID/O1/                  only one PID in this session
                                      O2/
                                      ..
+				     dirzip/              ZIP files
                        session-2/lmtoy_run/lmtoy_PID/     PIS=session-2 is the new WORK_LMT for this webrun session
                                  PID/O1/
                                      O2/
                                      ..
+				     dirzip/
 
 
       
