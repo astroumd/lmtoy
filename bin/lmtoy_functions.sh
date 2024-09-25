@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="23-sep-2024"
+lmtoy_version="24-sep-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -1016,7 +1016,7 @@ function lmtoy_seq1 {
     echo "LMTOY>> Making summary index.html for oid=$oid"
     mk_index.sh
     # cheat and rename it for all files access
-    mv index.html README.html
+    cp index.html README.html
     
     # record the processing time, since this is a bank specific rc file
     echo "date=\"$(lmtoy_date)\"     # end " >> $rc
@@ -1446,7 +1446,7 @@ function lmtoy_seq2 {
     echo "LMTOY>> Making summary index.html for oid=$oid"
     mk_index.sh
     # cheat and rename it for all files access
-    mv index.html README.html
+    cp index.html README.html
 
     # record the processing time, since this is a bank specific rc file
     echo "date=\"$(lmtoy_date)\"     # end " >> $rc
