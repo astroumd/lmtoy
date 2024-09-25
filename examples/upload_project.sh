@@ -106,10 +106,10 @@ done;
 if [ "$publish" -eq 1 ]; then
     for index in ${out}/*.yaml; do
         if [ "$verbose" -ne 0 ] || [ $dryrun -ne 0 ] ; then
-            echo "dvpipe -c $yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p $dvname"
+            echo "dvpipe -c $yaml -e ${envfile} -g dataset upload -a update -b major -i $index -p $dvname"
         fi
         if [ "$dryrun" -eq 0 ];then
-            dvpipe -c $yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p $dvname
+            dvpipe -c $yaml -e ${envfile} -g dataset upload -a update -b major -i $index -p $dvname
         fi
     done
 fi
