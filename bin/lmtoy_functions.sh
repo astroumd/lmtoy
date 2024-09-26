@@ -536,7 +536,6 @@ function lmtoy_seq1 {
     time=/usr/bin/time
     # input: obsnum, ... (lots)
     # this will process a single bank in an $obsnum; $bank and $oid needs to be set
-    
 
     # log the version
     lmtoy_version >> lmtoy.rc
@@ -599,7 +598,6 @@ function lmtoy_seq1 {
     # bug:  --use_otf_cal does not work here?? (maybe it does now)
     # bug?   x_axis FLSR doesn't seem to go into freq mode
 
-
     # bug:   even if pix_list=10 figure 5 still shows all pixels
     #  pointings:  -240 .. 270    -259 .. 263      510x520
 
@@ -650,7 +648,8 @@ function lmtoy_seq1 {
 	    --binning 10,1
 
 	echo "LMTOY>> stats_wf.py -y ${s_on}.wf0.png  -b ${s_on}.bstats.tab    ${s_on}.wf.fits"
-	stats_wf.py -y ${s_on}.wf0.png  -b ${s_on}.bstats.tab    ${s_on}.wf.fits > stats__${bank}_wf0.tab
+	echo "LMTOY>> stats_wf.py -y ${s_on}.wf1.png  -t                       ${s_on}.wf.fits"
+        stats_wf.py -y ${s_on}.wf0.png  -b ${s_on}.bstats.tab    ${s_on}.wf.fits > stats__${bank}_wf0.tab
 	stats_wf.py -y ${s_on}.wf1.png  -t                       ${s_on}.wf.fits > stats__${bank}_wf1.tab
 	delta=$(tabtrend ${s_on}.bstats.tab 2 | tabstat - robust=t qac=t | txtpar - p0=QAC,1,4)
 	tabpeak ${s_on}.bstats.tab delta=5*$delta > ${s_on}.birdies.tab
@@ -663,7 +662,6 @@ function lmtoy_seq1 {
 	    echo $bb | sed 's/ /,/g' > pix_list__${bank}.txt
 	fi
     fi
-    
 
     #  convert SpecFile to FITScube
     if [ $makecube = 1 ]; then
