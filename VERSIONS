@@ -2,3 +2,4 @@
 1.1    may-2024 using zip files for archiving
 1.1.1  aug-2024 new python 3.10.4 and loading anaconda python
 1.1.2  sep-2024 SEQ mosaic enabled; SEQ goal=Cont for continuum [testing]
+1.2    sep-2024 new archive=1 mode with updated links to the data

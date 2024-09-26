@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="29-aug-2024"
+lmtoy_version="24-sep-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -174,6 +174,36 @@ function qac_select {
 	printf_green $msg
     fi
     
+}
+
+function lmtoy_archive {
+    # input:  obsnum pidir
+    #         123456 $WORK_LMT/$PID
+    echo "lmtoy_archive: $1 $2"
+    obsnum=$1
+    pidir=$2
+    db=$WORK_LMT/example_lmt.db
+    pid=$(basename $pidir)
+    dir4dv=${pidir}/dir4dv/${pid}/${obsnum}
+    if [ ! -d $dir4dv ]; then
+	echo "LMTOY>>  no $dir4dv, return"
+	return
+    fi
+    # @todo make it less verbose
+    pushd $WORK_LMT/$pid/dir4dv
+    mk_metadata.py -y ${dir4dv}/${obsnum}_lmtmetadata.yaml $dir4dv
+    upload_project.sh in=. out=/tmp/dvout publish=1 verbose=0 overwrite=1
+    # @todo if failed
+    mk_metadata.py -z /tmp/dvout/${pid}_${obsnum}_output.yaml -f $db $dir4dv
+    # we don't need flock anymore, since we run it serially and it's on NFS
+    # flock --verbose $db.flock mk_metadata.py ...
+    #
+    scp $db toltec3:lmtsearch_web
+    #   logging
+    echo "$(lmtoy_date -u) $pid $obsnum" >> $WORK_LMT/dataverse.log
+    #   cleanup $pid
+    rm -rf $dir4dv
+    popd
 }
 
 function lmtoy_rsr1 {
@@ -661,6 +691,17 @@ function lmtoy_seq1 {
 	if [ ! -e pix_list__${bank}.txt ]; then
 	    echo $bb | sed 's/ /,/g' > pix_list__${bank}.txt
 	fi
+
+	# another whole-plane style stats
+	if [ ! -e stats__${bank}_wf.tab ]; then
+	    echo "first stats"
+	    fitsccd ${s_on}.wf.fits - | ccdstat - planes=0 > stats__${bank}_wf.tab
+	    cp stats__${bank}_wf0.tab first_stats__${bank}_wf0.tab
+	    cp stats__${bank}_wf1.tab first_stats__${bank}_wf1.tab
+	else
+	    echo "skipping first stats"
+	fi
+	
     fi
 
     #  convert SpecFile to FITScube
@@ -973,7 +1014,7 @@ function lmtoy_seq1 {
     echo "LMTOY>> Making summary index.html for oid=$oid"
     mk_index.sh
     # cheat and rename it for all files access
-    mv index.html README.html
+    cp index.html README.html
     
     # record the processing time, since this is a bank specific rc file
     echo "date=\"$(lmtoy_date)\"     # end " >> $rc
@@ -1108,6 +1149,7 @@ function lmtoy_seq2 {
 	if [ ! -e pix_list__${bank}.txt ]; then
 	    echo $bb | sed 's/ /,/g' > pix_list__${bank}.txt
 	fi
+
     fi
     
 
@@ -1402,7 +1444,7 @@ function lmtoy_seq2 {
     echo "LMTOY>> Making summary index.html for oid=$oid"
     mk_index.sh
     # cheat and rename it for all files access
-    mv index.html README.html
+    cp index.html README.html
 
     # record the processing time, since this is a bank specific rc file
     echo "date=\"$(lmtoy_date)\"     # end " >> $rc
@@ -1538,3 +1580,5 @@ function lmtoy_ps1 {
     # mv index.html README.html
     
 } # lmtoy_ps1
+
+

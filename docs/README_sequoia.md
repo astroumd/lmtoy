@@ -1,17 +1,20 @@
 # SEQUOIA files
 
-In this directory you can find the following files, with the following name conventions:
+In this directory you can find the following files, with the following naming conventions:
 
-    PID      the project id
+    PID      the project id (e.g. 2023-S1-US-3)
     SRC      source name, as provided by the PI.   (no spaces allowed)
     OBSNUM   observation number - either a single OBSNUM, or if OBSNUM1_OBSNUM2
-             if a range was used in stacking. OBSNUM is a 6 digit number.
+             a range was used in stacking a series of OBSNUMS.
+	     OBSNUM is a 5 or 6 digit number, e.g. 123456
 	     If the OBSNUM contains a dunder (double underscore) this file
 	     applies to a specific bank.
              For example  __0 for data from bank 0, and __1 for data from bank 1.
 	     Pipeline version 1.0 (<2024) did not use the dunder notation!
+
+A single bank observation currently has 95 files, a dual bank 166 files.
         
-Version:  13-jun-2024
+Version:  24-sep-2024
 
 	lmtoy.rc                    LMTOY <version, git counter, reduction date, operating system>
 	lmtoy_OBSNUM.rc             parameter setting for SLpipeline (for both banks)
@@ -26,7 +29,7 @@ Version:  13-jun-2024
 	SRC_OBSNUM__1.sdfits        calibrated spectra in SDFITS format for bank 1 (future)
 
 	SRC_OBSNUM.wf.fits          waterfall cube (each plane is a beam)
-	SRC_OBSNUM.wf10.fits        waterfall cube - rebinned x10 in time
+	SRC_OBSNUM.wf10.fits        waterfall cube - rebinned x10 in time for easier viewing
 	
 
 	SRC_OBSNUM.fits             gridded science cube ("flux flat cube")
@@ -78,9 +81,11 @@ Version:  13-jun-2024
 
         stats_wf0.tab               RMS vs. SAMPLE - stats of watefall along channels
         stats_wf1.tab               RMS vs. CHAN  - stats of waterfall along sample
-	SRC_OBSNUM.bstats.tab       birdie stats (coluns: freq, rms)
+	stats_wf.tab                RMS vs. CHAN  - whole cube stats
+	SRC_OBSNUM.bstats__B.tab    birdie stats (coluns: freq, rms) for bank B
+        SRC_OBSNUM.birdies__B.tab   channels where birdies were found
 
-Some more advanced files produces by MaskMoment:
+Some more advanced files produces if MaskMoment was run (maskmoment=1):
 
 	SRC_OBSNUM.dilmsk.*         results from 'maskmoment' (dilated mask)
 	SRC_OBSNUM.dilmskpad.*      results from 'maskmoment' (dilated mask padded)
@@ -149,4 +154,4 @@ This OTF pipeline suggests the following procedure for quality assesment and fla
 # Updates
 
 Software is maintained in https://github.com/astroumd/lmtoy where this file will be in docs/README_sequoia.md
-
+a direct link is:  https://github.com/astroumd/lmtoy/blob/master/docs/README_sequoia.md

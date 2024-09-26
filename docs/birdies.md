@@ -49,7 +49,6 @@ Here's a summary of the birdies
      * 90139-90286 (jan 29/30) bad
      * 90381-90462 (feb 10/11)  are ok
 * 2021-S1-MX-3 800MHz [only in Arp143] - 97955 weak in spectra, strong in Tsys
-* 2023-S1-UM-15 200MHz HB114_13CO - 1 bank mistake -  200MHz - w/ birdies
 
 * 2024-S1-MX-2   400MHz G1/G358     115.271202,110.201354   112139/   0:0,1,4,5,10,11,12  1:2,3,8,9
      * For G358 the birdies are present
@@ -57,6 +56,7 @@ Here's a summary of the birdies
                                                             120409/   0:0,1,4,5,10,11,12  1:2,3,4,8,9
 * 2023-S1-UM-16  400MHz G1         115.271202,110.201354      - no birdies, as in MX-2
 * 2023-S1-UM-15  200MHz   105907   115.271202,115.271204
+* 2023-S1-UM-15 200MHz HB114_13CO - 1 bank mistake -  200MHz - w/ birdies
 
 
 

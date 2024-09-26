@@ -14,10 +14,11 @@
 #     2-dec-2021:     add admit, use embedded DATA_LMT and WORK_LMT if none else given
 #     9-nov-2022:     various overhaul for Unity to allow "mknemo builds for pgplot, cfitsio
 #     2-dec-2022:     keep a (dummy?) etc/ProjectId.tab
-#     8-aug-2023:     for Version 1.0 
+#     8-aug-2023:     for Version 1.0
+#    24-sep-2024      for Version 1.2
 #
 
-version=30-aug-2023
+version=24-sep-2024
 
 #--HELP
 #   Keywords for installation
@@ -25,6 +26,7 @@ version=30-aug-2023
 lmtoy=lmtoy                       # root directory name where to install (probably should not change it) [use . for itself]
 branch=master                     # branch
 wget=wget                         # use wgetc if you have PJT's caching version
+apt=0                             # also run apt install on the requirements.apt file
 venv=0                            # set to 1 if you want to bypass a new anaconda3 and use venv
 nemo=1                            # set to 0 if you don't need NEMO (not recommended) or use existing $NEMO
 pgplot=1                          # set to 1 if you want PGPLOT in NEMO, instead of simple PS driver, use 2 for self-built
@@ -91,6 +93,12 @@ cd $lmtoy
 git checkout $branch
 touch etc/ProjectId.tab
 
+#  on ubuntu like systems make sure requirements are met
+if [ $apt = 1 ]; then
+    echo "Here is your option to install the requirements.apt"
+    sudo apt install $(grep -v ^# requirements.apt)
+fi
+
 #  symlinks where we allow them; this checks if we want to inherit an existing NEMO
 if [ -e $nemo/nemo_start.sh ]; then
     ln -s $nemo nemo
@@ -102,7 +110,7 @@ make git
 if [ $venv = 0 ]; then
   make install_python WGET=$wget
   source anaconda3/python_start.sh
-  make basic
+  make pip basic
 else
   make pip
   make install_lmtslr_venv

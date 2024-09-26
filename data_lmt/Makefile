@@ -1,4 +1,4 @@
-#
+##
 
 
 URL1 = https://www.astro.umd.edu/~teuben/LMT/data_lmt/rsr_bench.tar.gz
@@ -56,3 +56,10 @@ bench3:
 #  it is also included in the rsr_bench dataset
 rsr:
 	wget -O - $(URL9) | tar -xf -
+
+size:
+	@du -s RedshiftChassis?/
+	@du -s ifproc/
+	@du -s spectrometer/roach?
+
+

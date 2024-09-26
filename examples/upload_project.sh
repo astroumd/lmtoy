@@ -12,7 +12,7 @@
 # dryrun    - If non-zero, just echo commands, don't execute them
 # dvname    - Name of the dataverse to upload to. Default: lmtdata
 # envfile   - file with API credentials  [$HOME/.ssh/su_prod.env]
-# in        - input directory with project/obsnum/*.tar
+# in        - input directory with project/obsnum/*.zip
 # out       - output dir, default: 'ready_for_upload'
 # overwrite - overwrite the output dir.  
 #             If 1, existing directory will be removed. 
@@ -106,10 +106,10 @@ done;
 if [ "$publish" -eq 1 ]; then
     for index in ${out}/*.yaml; do
         if [ "$verbose" -ne 0 ] || [ $dryrun -ne 0 ] ; then
-            echo "dvpipe -c $yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p $dvname"
+            echo "dvpipe -c $yaml -e ${envfile} -g dataset upload -a update -b major -i $index -p $dvname"
         fi
         if [ "$dryrun" -eq 0 ];then
-            dvpipe -c $yaml -e ${envfile} -g dataset upload -a none -b major -i $index -p $dvname
+            dvpipe -c $yaml -e ${envfile} -g dataset upload -a update -b major -i $index -p $dvname
         fi
     done
 fi

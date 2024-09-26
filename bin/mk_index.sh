@@ -376,23 +376,25 @@ for ext in "" "__0" "__1"; do
     i=0    
     for ff in $f; do
 	if [ -e $ff ]; then
-	    echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html	    
+	    echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                           >> $html	    
 	fi
 	((i=i+1))
     done
 
 done
 
-pdir=../dir4dv/$ProjectId/$obsnum/
+pdir="../dir4dv/$ProjectId/$obsnum/"
+pdir="../dirzip"
 c=("full SRDP zip"           "SDFITS data"              "TAP data"              "RAW data")
 f="$pdir/${obsnum}_SRDP.zip  $pdir/${obsnum}_SDFITS.zip $pdir/${obsnum}_TAP.tar ../${obsnum}_RAW.zip"
 
 
 i=0
 for ff in $f ; do
+    echo "Testing $ff"
     if [ -e $ff ]; then
 	echo "Found $ff"
-	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                        >> $html
+	echo "<LI><A HREF=$ff>$ff</A> - ${c[$i]}."                               >> $html
     else
 	echo "No $ff"
     fi

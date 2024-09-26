@@ -2,8 +2,12 @@
 #
 #   a simple matplotlib plot:  testing for MPL capabilities
 #
+#   setting the backend:
+#     1.  rcParams["backend"] parameter in your matplotlibrc file
+#     2.  The MPLBACKEND environment variable
+#     3.  The function matplotlib.use()
 #
-_version = "7-sep-2023"
+_version = "10-sep-2023"
 
 _help = """Usage: simple_plot.py [options]
 
@@ -35,7 +39,6 @@ import os
 import sys
 import numpy as np
 from docopt import docopt
-
 
 # 1. Grab the command line arguments
 av = docopt(_help, options_first=True, version=_version)
@@ -85,6 +88,7 @@ plt.plot(x,y, label="test");
 plt.legend()
 msg = f"plotfile={plotfile} mode={_mode} backend={backend}"
 plt.title(msg)
+
 if plotfile == None:
     plt.show()
 else:
