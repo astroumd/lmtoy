@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 24-sep-2024"
+_version="SLpipeline: 30-sep-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -431,12 +431,12 @@ if [ $grun != 0 ]; then
     if [ $gsaved == 0 ]; then
 	echo "LMTOY>> No script generator for lmtoy_${ProjectId} was found"
     else
-	echo "LMTOY>> Saved $ProjectId/$obsnum/lmtoy_${ProjectId}.tar.gz"
+	echo "LMTOY>> $ProjectId/$obsnum/lmtoy_${ProjectId}.tar.gz script generator"
     fi
 fi
 
 if [ $srdp != 0 ]; then
-    echo "Creating Scientific Ready Data Producs (SRDP) in $dir4dv/${obsnum}_SRDP. (chunk=$chunk)"
+    echo "LMTOY>> Creating SRDP in $dir4dv/${obsnum}_SRDP. (chunk=$chunk)"
     if [ $chunk = 0 ]; then
 	tar -cf $dir4dv/${obsnum}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/$obsnum
     else
@@ -448,7 +448,7 @@ if [ $srdp != 0 ]; then
 fi
 
 if [ $sdfits != 0 ]; then
-    echo "Creating spectra (SDFITS) in $dir4dv/${obsnum}_SDFITS. (chunk=$chunk)"
+    echo "LMTOY>> Creating SDFITS in $dir4dv/${obsnum}_SDFITS. (chunk=$chunk)"
     if [ ! -z $sdfits_file ]; then
         echo "LMTOY>> SDFITS: $sdfits_file"
 	if [ $chunk = 0 ]; then
@@ -467,10 +467,10 @@ fi
 if [ $raw != 0 ] && [ $obsnums = 0 ]; then
     # ensure only for obsnums = 0; no raw data for combinations
     if [ $chunk = 0 ]; then
-	echo "Creating raw (RAW) tar for $pdir for $obsnum $calobsnum in $dirzip/${obsnum}_RAW.tar"
+	echo "LMTOY>> Creating RAW tar for $pdir for $obsnum $calobsnum in $dirzip/${obsnum}_RAW.tar"
 	lmtar $dirzip/${obsnum}_RAW.tar $calobsnum $obsnum
     else
-	echo "Creating raw (RAW) tar for $pdir for $obsnum $calobsnum in $dirzip/${obsnum}_RAW.zip"
+	echo "LMTOY>> Creating RAW zip for $pdir for $obsnum $calobsnum in $dirzip/${obsnum}_RAW.zip"
 	lmzip $dirzip/${obsnum}_RAW.zip $calobsnum $obsnum
     fi
 fi
