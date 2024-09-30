@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="24-sep-2024"
+lmtoy_version="30-sep-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -1462,21 +1462,24 @@ function lmtoy_bs1 {
 	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
     fi
     # record
-    echo "LMTOY>> rc=$rc rc1=$rc1 bank=$bank oid=$oid"
+    echo "LMTOY>> rc=$rc rc1=$rc1 bank=$bank"
     
-    spec=${src}_${obsnum}__${oid}.txt
+    spec=${src}_${obsnum}__${bank}.txt
     echo "LMTOY>> spectrum will be in $spec"
 
     # waterfall -> bs-2.png
     echo "LMTOY>> process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -2 --stype $stype --bank $bank"
                   process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -2 --stype $stype --bank $bank
+    mv bs-2.png  bs-2__${bank}.png
 
     # full average -> bs-1.png   (final Bs spectrum)
     echo "LMTOY>> process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -1 --stype $stype --bank $bank -o $spec"
                   process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -1 --stype $stype --bank $bank -o $spec
-    title="Spectrum LMT $instrument/$obspgm"
-    seq_spectra.py -t "$title" -y seq.spectra__${oid}.png $spec
-    seq_spectra.py -t "$title" -y seq.spectra__${oid}.svg $spec    
+    mv bs-1.png  bs-1__${bank}.png
+    
+    title="LMT $instrument/$obspgm bank=${bank}"
+    seq_spectra.py -t "$title" -y seq.spectra__${bank}.png $spec
+    seq_spectra.py -t "$title" -y seq.spectra__${bank}.svg $spec    
 
     # QAC robust stats off the spectrum
     out4=$(tabmath $spec - %2*1000 all | tabstat -  qac=t robust=t label=$spec)
@@ -1484,12 +1487,11 @@ function lmtoy_bs1 {
     
     # tsys
     dev=$(yapp_query png vps)
-    tabplot $spec ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  yapp=tsys__${oid}.$dev/$dev
-    convert tsys__${oid}.$dev tsys__${oid}.jpg
+    tabplot $spec ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  yapp=tsys__${bank}.$dev/$dev
+    convert tsys__${bank}.$dev tsys__${bank}.jpg
     
     if [ -n "$NEMO" ]; then
-	echo "LMTOY>> Some NEMO post-processing"
-
+	echo "LMTOY>> Some NEMO post-processing (TBD)"
     fi
     
     if [ $admit == 1 ]; then
