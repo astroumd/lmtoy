@@ -1487,7 +1487,7 @@ function lmtoy_bs1 {
     
     # tsys
     dev=$(yapp_query png vps)
-    tabplot $spec ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  yapp=tsys__${bank}.$dev/$dev
+    tabplot $spec ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  color=2,3 yapp=tsys__${bank}.$dev/$dev
     convert tsys__${bank}.$dev tsys__${bank}.jpg
     
     if [ -n "$NEMO" ]; then
