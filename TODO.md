@@ -8,6 +8,7 @@
   - LineCheck sometimes fails for blanking, when driver is ok (eg. 113206)
   - Should oid= allow us to use ${obsnum}__${oid} - this would make it possible to make multiple (line) cubes
   - can we create a different cube for bank0 and bank1 ?  should be possible.
+  - "restart=1 bank=0" fails, but is ok with meta=0
 
 - active github issues:  https://github.com/astroumd/lmtoy/issues
   - 51: SEQ/Ps html now broken for dual IF
