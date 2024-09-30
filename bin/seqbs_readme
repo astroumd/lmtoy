@@ -22,6 +22,8 @@ source=${src}
 itime=${inttime}
 rms0=$(tabstat $spec0 2 qac=t robust=t |  txtpar - %1*1000 p0=1,4)    # in mK
 rms1=$(tabstat $spec1 2 qac=t robust=t |  txtpar - %1*1000 p0=1,4)
+rms0t=$(tabtrend  $spec0 2  | tabstat - qac=t robust=t |  txtpar - '%1*1000/sqrt(2)' p0=1,4)
+rms1t=$(tabtrend  $spec1 2  | tabstat - qac=t robust=t |  txtpar - '%1*1000/sqrt(2)' p0=1,4)
 tau=${tau}
 inobs=${date_obs}
 
@@ -67,7 +69,7 @@ echo "<hr>"
 echo "<div class='row'>"
 echo " <div class='col'>"
 echo "  <div class='card'><div class='card-body'>"
-echo "<h4 class='card-title'>System Temperature</h4>"
+echo "<h4 class='card-title'>System Temperature for both beams</h4>"
 if [ -e tsys.png ]; then
     echo "<img class='card-img-top' alt='System Temperature' src='tsys.png'>"
 else
@@ -113,8 +115,8 @@ echo "<div class='card'><div class='card-body'>"
 echo "<h4 class='card-title'>Final Spectrum </h4>"
 echo "<p class='card-text'>This version of the average spectrum has optional blanking and sections to avoid for baseline fitting."
 echo "<p class='card-text'>Statistics on individual spectra</p><table class='table table-borderless w-auto'><tbody>$qac_stats"
-echo "<tr><td>Noise: </td><td class='text-start'>rms=$rms0 mK (bank 0) </td></tr>"
-echo "<tr><td>Noise: </td><td class='text-start'>rms=$rms1 mK (bank 1) </td></tr>"
+echo "<tr><td>Noise Bank 0: </td><td class='text-start'>rms=$rms0 mK [trend: $rms0t]</td></tr>"
+echo "<tr><td>Noise Bank 1: </td><td class='text-start'>rms=$rms1 mK [trend: $rms1t]</td></tr>"
 
 echo "</tbody></table>"
 echo "<div class='row'>"
@@ -122,8 +124,9 @@ echo "<div class='col-sm'> <figure class='figure'><a href='seq.spectra__0.png'><
 echo "<div class='col-sm'> <figure class='figure'><a href='seq.spectra__1.png'><img src='seq.spectra__1.png' width='90%'></a><figcaption>The final bank 1 spectrum </figcaption></figure></div>"
 echo "</div><!-- row -->"
 echo "<ul class='list-group list-group-flush'> "
-echo "<li class='list-group-item'><a href='${spec0}'> ASCII table of final spectrum for bank 0</a></li></ul>"
-echo "<li class='list-group-item'><a href='${spec1}'> ASCII table of final spectrum for bank 1</a></li></ul>"
+echo "<li class='list-group-item'><a href='${spec0}'> ASCII table of final spectrum for bank 0</a></li>"
+echo "<li class='list-group-item'><a href='${spec1}'> ASCII table of final spectrum for bank 1</a></li>"
+echo "</ul>"
 echo "  </div> <!-- cardbody -->"
 echo "  </div><!-- card -->"
 echo "  </div><!-- col -->"
@@ -152,7 +155,9 @@ echo "<hr>"
 echo '<a name="seqnotes">'
 echo '<h5>Notes on the <a HREF="http://lmtgtm.org/telescope/instrumentation/instruments/sequoia/">SEQ Bs mode</a> </h5>'
 echo "<ol>"
-echo "<li> the two beams; they are normally averaged to increase S/N"
+echo "<li> Final spectrum is made by averaging the two Bs observations"
+echo "<li> Normally has two banks, each with its own Rest Frequency"
+echo "<li> Bandwidth can be 200, 400 or 800 MHz per bank"
 echo "</li><li> ..."
 echo "</li><li> ..."
 echo "</li></ol>"
