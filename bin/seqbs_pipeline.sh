@@ -9,7 +9,7 @@
 #          If projectid is set, this is the subdirectory, within which obsnum is set
 #
 
-version="seqbs_pipeline: 11-dec-2023"
+version="seqbs_pipeline: 30-sep-2024"
 
 echo "LMTOY>> $version"
 
@@ -19,8 +19,7 @@ echo "LMTOY>> $version"
 #  input parameters
 #            - start or restart
 path=${DATA_LMT:-data_lmt}
-obsnum=79448
-oid=""
+obsnum=-1
 newrc=0
 pdir=""
 admit=1
@@ -31,7 +30,7 @@ error=0
 dv=100
 dw=250
 #            - parameters that directly match the SLR scripts
-pix_list=10,8
+pix_list=10,8     # two selected beams for the nodding beams
 stype=2
 rms_cut=-4
 bank=-1           # -1 means all banks 0..numbands-1
@@ -163,17 +162,14 @@ lmtoy_args "$@"
 
 #             pick one bank, or loop over all allowed banks
 if [ $bank != -1 ]; then
-    oid=$bank
     lmtoy_bs1
 elif [ $numbands == 1 ]; then
     # old style, we should not use it anymore
     bank=0
-    oid=0
     lmtoy_bs1
 else
     for b in $(seq 1 $numbands); do
 	bank=$(expr $b - 1)
-	oid=$bank
 	echo "======================================"	
 	echo "Preparing for bank = $bank / $numbands"
 	lmtoy_bs1
