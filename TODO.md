@@ -1,6 +1,6 @@
 # TODO's and ISSUES
 
-## Planned for version 1.2 (June 25, 2024)
+## Planned for version 1.2 (September 26, 2024)
 
 - urgent unfiled issues:
   - combos of e.g. MX-2 sometimes fail (hardware issue)  [#46]
@@ -9,25 +9,26 @@
   - Should oid= allow us to use ${obsnum}__${oid} - this would make it possible to make multiple (line) cubes
   - can we create a different cube for bank0 and bank1 ?  should be possible.
   - "restart=1 bank=0" fails, but is ok with meta=0
+  - why is RMS/RMS0 not closer to 1 for SEQ (it.s often 1.5--2 or worse)
 
 - active github issues:  https://github.com/astroumd/lmtoy/issues
+  - 57: spectral vs. average Tsys
   - 51: SEQ/Ps html now broken for dual IF
   - 48: allow missing roach files  **Kamal**
   - 47: "wtn" has the wrong beam plotted
   - 46: SEQ low power can crash pipeline (MX-2 example mentioned before)
   - 45: RSR not commutative **+Min**
-  - 36: final DataVerse items **marc**
+  - 38: final DataVerse items **marc**
   - 35: inttime not correct - we need the ON time only,not ON+OFF+CAL
 
 - python versions via install_anaconda3:
-  version=2021.04    # 3.8.8     aplpy OK, some spyder complaints
-  version=2022.10    # 3.9.13
-  version=2023.03-1  # 3.10.9    aplpy fails
-  version=2023.09-0  # 3.11.5
+  we now use version=2023.03-1 # 3.10.14 
 
   Also note that numpy 2.0 is upcoming and could have some impact beyond 2026.
 
-- SLpipeline_run.sh :   should spawn reduction, not run in place. [done]
+- on malt we should also do a "last_obsnum" trick we do on unity. malt is becoming slow
+  again and for certain obsnums we will miss one in the last100
+  could also leave less data in DATA_LMT
 
 - final spectrum in SEQ (tab_plot.py) should honor location=; ccdspec needs the patch
 
@@ -48,10 +49,19 @@
 - SDFITS conversion of .nc file [#53]
   - rudimentary gridder exists
 
-- SEQ/Bs only one bank works now [depending if observations planned]
+- SEQ/Bs only one bank works now?
+  examples:  2023S1SEQUOIACommissioning/108766  VX-Sgr
+             2021-S1-UM-3/100558                UGCA281
+
 - SEQ/Ps not implemented [depending if observations planned]
+  examples:  2024-S1-UM-3/121219                Core_187 ...
+             2024S1SEQUOIACommissioning/110416  MonR2
+             2023S1SEQUOIACommissioning/108764  VX-Sgr
+	     2018-S1-MU-79/90692                GP_J1735 ...
+             2018-S1-MU-25/84891                Enceladus  Titan   
 
 - stage/unstage on unity in case we do the work in /work and rsync to /nese (or /scratch?)
+  this has MAJOR impact on how to run pipeline
 
 - add the repo counter into the fits header of final output [currently only in lmtoy_repo=]
 - revive maskmoment (has an import issue) [done?]
