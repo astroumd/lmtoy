@@ -4,6 +4,7 @@
 URL1 = https://www.astro.umd.edu/~teuben/LMT/data_lmt/rsr_bench.tar.gz
 URL2 = https://www.astro.umd.edu/~teuben/LMT/data_lmt/seq_bench.tar.gz
 URL3 = https://www.astro.umd.edu/~teuben/LMT/data_lmt/seq_bench3.tar.gz
+URL4 = https://www.astro.umd.edu/~teuben/LMT/data_lmt/seq_bench4.tar.gz
 URL9 = https://www.astro.umd.edu/~teuben/LMT/live/rsr4data_lmt.tar
 
 SLEEP = 5
@@ -51,6 +52,10 @@ bench2:
 # 110399 SEQ data with 2 IFs
 bench3:
 	wget -O - $(URL3) | tar -zxf -
+
+# 108764 108766 SEQ Ps/Bs data 
+bench4:
+	wget -O - $(URL4) | tar -zxf -
 
 #  in the real $DATA_LMT : for RSR data a small calibration directory 'rsr' is needed (about 35MB)
 #  it is also included in the rsr_bench dataset
