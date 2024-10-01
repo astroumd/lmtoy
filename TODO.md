@@ -43,17 +43,18 @@
   - etc/parameters.txt
   - lmt_web_lite
 
-- FITS export option for spectra [mostly done, but not checked with dysh
+- FITS export option for spectra [mostly done, but not checked with dysh]
   - should there be an SDFITS option?
+  - RSR works, but SEQ/Bs/Ps still in ascii [no rich header]
 
 - SDFITS conversion of .nc file [#53]
   - rudimentary gridder exists
 
-- SEQ/Bs only one bank works now?
-  examples:  2023S1SEQUOIACommissioning/108766  VX-Sgr
-             2021-S1-UM-3/100558                UGCA281
+- SEQ/Bs works with dual bank now (some fixes needed for single bank)
+  examples:  2023S1SEQUOIACommissioning  VX-Sgr    108756 108762 108766
+             2021-S1-UM-3/100558         UGCA281   99713 .. 100558
 
-- SEQ/Ps not implemented [depending if observations planned]
+- SEQ/Ps almost working
   examples:  2024-S1-UM-3/121219                Core_187 ...
              2024S1SEQUOIACommissioning/110416  MonR2
              2023S1SEQUOIACommissioning/108764  VX-Sgr
