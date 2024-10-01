@@ -1,0 +1,3 @@
+SLpipeline.sh obsnum=108764 restart=1 public=2020-12-31 qagrade=3 admit=0 meta=1
+SLpipeline.sh obsnum=108766 restart=1 public=2020-12-31 qagrade=3 admit=0 meta=1
+
