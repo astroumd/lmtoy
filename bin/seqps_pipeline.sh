@@ -9,19 +9,18 @@
 #          If projectid is set, this is the subdirectory, within which obsnum is set
 #
 
-version="seqps_pipeline: 11-dec-2023"
+_version="seqps_pipeline: 1-oct-2024"
 
-echo "LMTOY>> $version"
+echo "LMTOY>> $_version"
 
 #--HELP
-#  A simple LMT Sequoia Bs pipeline 
+#  A simple LMT Sequoia Ps pipeline 
 #
 #  input parameters
 #            - start or restart
 path=${DATA_LMT:-data_lmt}
-obsnum=79448
-obsid=""
-newrc=0
+obsnum=0
+oid=""
 pdir=""
 admit=1
 clean=1
@@ -30,14 +29,22 @@ debug=0
 dv=100
 dw=250
 #            - parameters that directly match the SLR scripts
-pix_list=10
+pix_list=10       # the on-source beam
 stype=2
 rms_cut=-4
 bank=-1           # -1 means all banks 0..numbands-1
 #--HELP
 
+# @todo
+show_vars="dv dw \
+          "
+# LMTOY 
 source lmtoy_functions.sh
 lmtoy_args "$@"
+
+# PI parameters, as merged from defaults and CLI
+rc0=$WORK_LMT/tmp/lmtoy_${obsnum}.rc
+show_vars $show_vars > $rc0
 
 # unset a view things, since setting them will give a new meaning
 unset vlsr
@@ -47,67 +54,70 @@ if [ $debug = 1 ]; then
     set -x
 fi
 
+#             see if pdir working directory needs to be used
+if [ ! -z $pdir ]; then
+    echo "LMTOY>> Working directory $pdir"
+    mkdir -p $pdir
+    cd $pdir
+else
+    echo "LMTOY>> No PDIR directory used, all work from the current directory $(pwd)"
+fi
+
 if [ -e lmtoy.rc ]; then
     first=0
 else
     first=1
 fi
 
-#             see if pdir working directory needs to be used
-if [ ! -z $pdir ]; then
-    echo Working directory $pdir
-    mkdir -p $pdir
-    cd $pdir
-else
-    echo No PDIR directory used, all work from the current directory
+
+
+#             process the parameter file (or force new one with first=1)
+rc=./lmtoy_${obsnum}.rc
+if [ -e $rc ]; then
+    echo "LMTOY>> creating bootstrap $rc"
+    echo "#! rc=$rc:"                             > $rc
+    echo "# $_version bootstrap version rc"      >> $rc
+    echo "lmtoy_repo=$(lmtoy_repo)"              >> $rc
+    lmtinfo.py $obsnum                           >> $rc   # <lmtinfo>
+    cat $rc0                                     >> $rc   # <show_vars>
+    show_args                                    >> $rc   # <show_args>
+    source $rc
+    # deal with old pre-2023 data
+    if [ $numbands = 1 ]; then
+	echo "bank=0   # old data"               >> $rc
+    fi
 fi
+source $rc
+show_args  > $rc0
+source $rc0
 
-
-#             process the parameter file (or force new one with newrc=1)
-rc=lmtoy_${obsnum}.rc
-if [ -e $rc ] && [ $newrc = 0 ]; then
-    echo "LMTOY>> reading $rc"
-    echo "# DATE: `date +%Y-%m-%dT%H:%M:%S.%N`" >> $rc
-    for arg in "$@"; do
-       export "$arg" >> $rc
-    done
-    source ./$rc
-    newrc=0
+if [ $bank -ge 0 ]; then
+    # 2nd time with numbands=2 or 1st time with numbands=1
+    rc1=lmtoy_${obsnum}__${bank}.rc
+    if [ -e $rc1 ]; then
+	source $rc1
+	echo "LMTOY>> Found rc1=$rc1"
+	echo "#! rc=$rc1"                        >> $rc1
+	echo "date=\"$date\"     # begin"        >> $rc1    
+    else
+	cp $rc $rc1
+    fi
+    show_args                                    >> $rc1   # <show_args>	
+    rc=$rc1
 else
-    newrc=1
+    # only first time with numbands=2
+    echo "date=\"$date\"     # begin2"           >> $rc
+    show_args                                    >> $rc    # <show_args>
 fi
+source $rc
 
 
-if [ $newrc = 1 ]; then
+if [ $first = 1 ]; then
     echo "LMTOY>> Hang on, creating a bootstrap $rc from path=$path"
-    echo "# $version"                            > $rc
+    echo "# $_version"                           > $rc
     echo "# DATE: `date +%Y-%m-%dT%H:%M:%S.%N`" >> $rc
     echo "# obsnum=$obsnum" >> $rc
 
-    if [ ! -d ${path}/ifproc ]; then
-	echo There is no ifproc directory in ${path}
-	rm $rc
-	exit 1
-    fi
-    if [ ! -d ${path}/spectrometer ]; then
-	echo There is no spectrometer directory in ${path}
-	rm $rc	
-	exit 1
-    fi
-    if [ ! -d ${path}/spectrometer/roach0 ]; then
-	echo There is no spectrometer/roach0 directory in ${path}
-	rm $rc	
-	exit 1
-    fi
-    
-    ifproc=$(ls ${path}/ifproc/*${obsnum}*.nc)
-    if [ -z $ifproc ]; then
-	rm -f $rc
-	echo No matching obsnum=$obsnum and path=$path
-	echo The following rc files are present here:
-	ls lmtoy_*.rc | sed s/lmtoy_// | sed s/.rc//
-	exit 0
-    fi
     echo "# Using ifproc=$ifproc" >> $rc
     echo "# path=$path"           >> $rc
 
@@ -164,6 +174,31 @@ lmtoy_args "$@"
 if [ $bank != -1 ]; then
     oid=$bank
     lmtoy_ps1
+elif [ $numbands == 2 ]; then
+    # new style, April 2023 and beyond
+    echo "LMTOY>> looping over numbands=$numbands restfreq=$restfreq"
+    IFS="," read -a skyfreqs <<< $skyfreq
+    IFS="," read -a restfreqs <<< $restfreq
+    IFS="," read -a bandwidths <<< $bandwidth
+    # "expr 1 - 1" returns an error state 1 to the shell (it's a feature)
+    for bank in $(seq 0 $(expr $numbands - 1)); do
+	oid=$bank    # oid not used yet
+	echo "LMTOY>> Preparing for bank=$bank"
+	rc1=lmtoy_${obsnum}__${bank}.rc
+	if [ ! -e $rc1 ]; then
+	   cp $rc $rc1
+	   rc=$rc1
+	   echo "skyfreq=${skyfreqs[$bank]}      # special for bank=$bank " >> $rc
+	   echo "restfreq=${restfreqs[$bank]}    # special for bank=$bank " >> $rc
+	   echo "bandwidth=${bandwidths[$bank]}  # special for bank=$bank " >> $rc	   
+	fi
+	s_on=${src}_${obsnum}__${bank}
+	s_nc=${s_on}.nc
+	s_fits=${s_on}.fits
+	w_fits=${s_on}.wt.fits
+	lmtoy_ps1	
+    done
+    nb=$numbands
 elif [ $numbands == 1 ]; then
     # old style, we should not use it anymore
     bank=0
@@ -179,3 +214,5 @@ else
     done
     # exit 0
 fi
+
+echo "LMTOY>> Processed $nb bands"
