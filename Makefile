@@ -386,8 +386,11 @@ bench3:
 
 ## bench4:   SEQ/Ps benchmark
 bench4:
-	@echo "2024-S1-UM-3 core_41: 112173  112185     core_42: 112187"
-	@echo "2024 Comm  MonR2: 110416"
+	$(TIME) SLpipeline.sh obsnum=108764 restart=1 public=2020-12-31 qagrade=3 admit=$(ADMIT) meta=$(META)
+	$(TIME) SLpipeline.sh obsnum=108766 restart=1 public=2020-12-31 qagrade=3 admit=$(ADMIT) meta=$(META)
+	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench4.txt'
+	@echo xdg-open  $(WORK_LMT)/2023S1SEQUOIACommissioning/108764/README.html
+	@echo xdg-open  $(WORK_LMT)/2023S1SEQUOIACommissioning/108766/README.html
 
 ## bench5:   pure CPU bench from NEMO (man 5 bench)
 bench5:
