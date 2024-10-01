@@ -1537,18 +1537,18 @@ function lmtoy_ps1 {
 	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
     fi
     # record
-    echo "LMTOY>> rc=$rc rc1=$rc1 bank=$bank oid=$oid"
+    echo "LMTOY>> rc=$rc rc1=$rc1 bank=$bank"
 
-    spec=${src}_${obsnum}__${oid}.txt
+    spec=${src}_${obsnum}__${bank}.txt
     echo "LMTOY>> spectrum will be in $spec"
     
     # full average final Ps spectrum
     sargs="--slice [-40,40]"
     echo "LMTOY>> process_ps.py --obs_list $obsnum --pix_list $pix_list --use_cal --stype $stype --bank $bank -o $spec $sargs"
                   process_ps.py --obs_list $obsnum --pix_list $pix_list --use_cal --stype $stype --bank $bank -o $spec $sargs
-    title="Spectrum LMT $instrument/$obspgm"
-    seq_spectra.py -t "$title" -y seq.spectra__${oid}.png $spec
-    seq_spectra.py -t "$title" -y seq.spectra__${oid}.svg $spec
+    title="LMT $instrument/$obspgm"
+    seq_spectra.py -t "$title" -y seq.spectra__${bank}.png $spec
+    seq_spectra.py -t "$title" -y seq.spectra__${bank}.svg $spec
 
     # QAC robust stats off the spectrum in mK
     out4=$(tabmath $spec - %2*1000 all | tabstat -  qac=t robust=t label=$spec)
