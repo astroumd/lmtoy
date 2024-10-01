@@ -1,8 +1,7 @@
 #! /usr/bin/env bash
 #
-#    creates the README.html file for a standard SEQ Ps "TAP"
+#    creates the README.html file for a standard SEQ Ps observation
 #    
-#
 
 if [ "x$1" == "x" ]; then
     echo "Creates the README.html file for standard SEQ/Ps TAP"
@@ -17,15 +16,16 @@ obsnum=$1
 source ./lmtoy_${obsnum}.rc
 
 # get data for the header section
-file="${src}_${obsnum}.txt"
+spec0="${src}_${obsnum}__0.txt"
+spec1="${src}_${obsnum}__1.txt"
 source=${src}
-RA=Unknown
-DEC=Unknown
 itime=${inttime}
-rms=$(tabstat $file 2 qac=t robust=t |  txtpar - %1*1000 p0=1,4)
+rms0=$(tabstat $spec0 2 qac=t robust=t |  txtpar - %1*1000 p0=1,4)    # in mK
+rms1=$(tabstat $spec1 2 qac=t robust=t |  txtpar - %1*1000 p0=1,4)
+rms0t=$(tabtrend  $spec0 2  | tabstat - qac=t robust=t |  txtpar - '%1*1000/sqrt(2)' p0=1,4)
+rms1t=$(tabtrend  $spec1 2  | tabstat - qac=t robust=t |  txtpar - '%1*1000/sqrt(2)' p0=1,4)
 tau=${tau}
 inobs=${date_obs}
-reddate=Unknown
 
 # get QAC stats for the spectral section
 #qac_stats=`grep QAC_STATS lmtoy_${obsnum}.log | awk '{printf("%-40s rms=%.3f mK<br>",$2,$4*1000)}'`
@@ -46,12 +46,15 @@ echo "</center>"
 
 echo " <table class='table'><thead></thead><tbody>"
 echo " <tr><th scope='row'>Source</th><td>$source</td></tr>"
-echo " <tr><th scope='row'>RA</th><td>$RA</td></tr>"
-echo " <tr><th scope='row'>DEC</th><td>$DEC</td></tr>"
+echo " <tr><th scope='row'>RA</th><td>$ra</td></tr>"
+echo " <tr><th scope='row'>DEC</th><td>$dec</td></tr>"
 echo " <tr><th scope='row'>Input Observations</th><td>$inobs</td></tr>"
-echo " <tr><th scope='row'>Integration Time (s)</th><td>$itime</td></tr>"
+echo " <tr><th scope='row'>Integration Time (sec)</th><td>$itime</td></tr>"
+echo " <tr><th scope='row'>Rest Frequencies (GHz)</th><td>$restfreq</td></tr>"
+echo " <tr><th scope='row'>VLSR (km/s)</th><td>$vlsr</td></tr>"
+echo " <tr><th scope='row'>Beam (0..15)</th><td>$pix_list</td></tr>"
 echo " <tr><th scope='row'>220 GHz Opacity</th><td>$tau</td></tr>"
-echo " <tr><th scope='row'>Date of Reduction</th><td>$reddate</td></tr>"
+echo " <tr><th scope='row'>Date of Reduction</th><td>$date</td></tr>"
 echo "</tbody></table>"
 
 echo "<div class='row'>"
@@ -67,11 +70,12 @@ echo "<hr>"
 echo "<div class='row'>"
 echo " <div class='col'>"
 echo "  <div class='card'><div class='card-body'>"
-echo "<h4 class='card-title'>System Temperature</h4>"
+echo "<h4 class='card-title'>System Temperature for both beams</h4>"
 if [ -e tsys.png ]; then
     echo "<img class='card-img-top' alt='System Temperature' src='tsys.png'>"
 else
-    echo "<img class='card-img-top' alt='System Temperature' src='tsys.jpg'>"
+    echo "<img class='card-img-top' alt='System Temperature Bank 0' src='tsys__0.jpg'>"
+    echo "<img class='card-img-top' alt='System Temperature Bank 1' src='tsys__1.jpg'>"
 fi
 echo "  </div> <!-- cardbody -->"
 echo "  </div> <!-- card-->"
@@ -83,14 +87,15 @@ echo " <div class='col'>"
 echo "  <div class='card'><div class='card-body'>"
 echo "<h4 class='card-title'>Waterfall Plot</h4>"
 echo "<p class='card-text'> The Waterfall Plot is a spectrum for each block of time-samples and each beam."
-echo "We keep two versions: <a href='bs-1.png'> each beam averages </a> and <a href='bs-2.png'>showing all integration blocks</a> "
+echo "In the left column of each plot Beam 1 is on source, in the right column Beam 1 is on source"
+
 
 echo "<div class='row'>"
-echo "<div class='col-md'> <a href='bs-2.png'><img src='bs-2.png'></a></div>"
-echo "<div class='col-md'> <a href='bs-1.png'><img src='bs-1.png'></a></div>"
+echo "<div class='col-md'> <a href='bs-2__0.png'><img src='bs-2__0.png'></a></div>"
+echo "<div class='col-md'> <a href='bs-1__0.png'><img src='bs-1__0.png'></a></div>"
 echo "</div><div class='row'>"
-echo "<div class='col-md'> <a href='bs-2.png'><img src='bs-2.png'></div></a></div>"
-echo "<div class='col-md'> <a href='bs-1.png'><img src='bs-1.png'></a></div>"
+echo "<div class='col-md'> <a href='bs-2__1.png'><img src='bs-2__1.png'></div></a></div>"
+echo "<div class='col-md'> <a href='bs-1__1.png'><img src='bs-1__1.png'></a></div>"
 echo "</div><!-- row -->"
 echo "<ul class='list-group list-group-flush'> "
 echo "  </div> <!-- cardbody -->"
@@ -111,24 +116,20 @@ echo "<div class='row'><div class='col'>"
 echo "<div class='card'><div class='card-body'>"
 echo "<h4 class='card-title'>Final Spectrum </h4>"
 echo "<p class='card-text'>This version of the average spectrum has optional blanking and sections to avoid for baseline fitting."
-echo "<p class='card-text'>Statistics on individual spectra</p><table class='table table-borderless w-auto'><tbody>$qac_stats"
-echo "<tr><td>Noise: </td><td class='text-start'>rms=$rms </td></tr>"
-if [ -e linecheck.log ]; then
-    ls1=$(txtpar linecheck.log %5*1000,%1*1000,%2*1000,%3,%4 p0=a=,1,2 p1=b=,1,2 p2=c=,1,2 p3=d=,1,2 p4=rms=,1,2)
-    ls2=$(txtpar linecheck.log %5*1000,%1*1000,%2*1000,%3,%4 p0=a=,2,2 p1=b=,2,2 p2=c=,2,2 p3=d=,2,2 p4=rms=,2,2)
-    fmt1=$(printf "rms=%.3f mK  base=%.3f mK peak=%.3f mK line=%s GHz sigma=%s GHz" $ls1)
-    fmt2=$(printf "rms=%.3f mK  base=%.3f mK peak=%.3f mK line=%s GHz sigma=%s GHz" $ls2)
-    echo "<tr><td>LineCheck driver</td>   <td> $fmt1 </td></tr>"
-    echo "<tr><td>LineCheck blanking</td> <td> $fmt2 </td></tr>"
-fi
+echo "<p class='card-text'>Statistics on individual spectra:</p><table class='table table-borderless w-auto'><tbody>$qac_stats"
+echo "<tr><td>Noise Bank 0: </td><td class='text-start'>rms=$rms0 mK [trend: $rms0t]</td></tr>"
+echo "<tr><td>Noise Bank 1: </td><td class='text-start'>rms=$rms1 mK [trend: $rms1t]</td></tr>"
 
 echo "</tbody></table>"
+
 echo "<div class='row'>"
-echo "<div class='col-sm'> <figure class='figure'><a href='seq.spectra.png'><img src='seq.spectra.png' width='90%'></a><figcaption>The final spectrum </figcaption></figure></div>"
+echo "<div class='col-sm'> <figure class='figure'><a href='seq.spectra__0.png'><img src='seq.spectra__0.png' width='90%'></a><figcaption>The final bank 0 spectrum </figcaption></figure></div>"
+echo "<div class='col-sm'> <figure class='figure'><a href='seq.spectra__1.png'><img src='seq.spectra__1.png' width='90%'></a><figcaption>The final bank 1 spectrum </figcaption></figure></div>"
 echo "</div><!-- row -->"
 echo "<ul class='list-group list-group-flush'> "
-echo "<li class='list-group-item'><a href='${file}'> ASCII table of final spectrum</a></li></ul>"
-echo "<li class='list-group-item'><a href='seq.spectra.svg.html'>Experimental SVG version of figure.</a> </li></ul>"
+echo "<li class='list-group-item'><a href='${spec0}'> ASCII table of final spectrum for bank 0</a></li>"
+echo "<li class='list-group-item'><a href='${spec1}'> ASCII table of final spectrum for bank 1</a></li>"
+echo "</ul>"
 echo "  </div> <!-- cardbody -->"
 echo "  </div><!-- card -->"
 echo "  </div><!-- col -->"
@@ -157,7 +158,9 @@ echo "<hr>"
 echo '<a name="seqnotes">'
 echo '<h5>Notes on the <a HREF="http://lmtgtm.org/telescope/instrumentation/instruments/sequoia/">SEQ Ps mode</a> </h5>'
 echo "<ol>"
-echo "<li> the two beams; they are normally averaged to increase S/N"
+echo "<li> This is a classic Ps style observation"
+echo "<li> Normally has two banks, each with its own Rest Frequency"
+echo "<li> Bandwidth can be 200, 400 or 800 MHz per bank"
 echo "</li><li> ..."
 echo "</li><li> ..."
 echo "</li></ol>"
