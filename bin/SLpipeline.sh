@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 30-sep-2024"
+_version="SLpipeline: 1-oct-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -307,11 +307,11 @@ if [ $goal == "Science" ]; then
     elif [ $instrument = "SEQ" ] && [ $obspgm = "Ps" ]; then
 	
 	if [ -d $pdir ]; then
-	    echo "Re-Processing SEQ $obspgm data in $pdir for $src (use restart=1 if you need a fresh start)"
+	    echo "LMTOY>> Re-Processing SEQ $obspgm data in $pdir for $src (use restart=1 if you need a fresh start)"
 	    first=0
 	    lmtoy_date                             >> $pdir/date.log
 	else
-	    echo "Processing new SEQ $obspgm data in $pdir for $src"
+	    echo "LMTOY>> Processing new SEQ $obspgm data in $pdir for $src"
 	    first=1
 	    mkdir -p $pdir	
 	fi
