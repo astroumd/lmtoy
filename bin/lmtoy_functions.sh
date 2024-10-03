@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="30-sep-2024"
+lmtoy_version="3-oct-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -1487,7 +1487,8 @@ function lmtoy_bs1 {
     
     # tsys
     dev=$(yapp_query png vps)
-    tabplot $spec ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  color=2,3 yapp=tsys__${bank}.$dev/$dev
+    #tabplot $spec ycol=3,4 ymin=0 ymax=400 xlab="VLSR (km/s)" ylab="Tsys (K)"  color=2,3 yapp=tsys__${bank}.$dev/$dev
+    tabplot $spec ycol=3,4 xlab="VLSR (km/s)" ylab="Tsys (K)"  color=2,4 line=1,1 yapp=tsys__${bank}.$dev/$dev
     convert tsys__${bank}.$dev tsys__${bank}.jpg
     
     if [ -n "$NEMO" ]; then
