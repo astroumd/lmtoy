@@ -386,8 +386,8 @@ bench3:
 
 ## bench4:   SEQ/Ps benchmark
 bench4:
-	$(TIME) SLpipeline.sh obsnum=108764 restart=1 public=2020-12-31 qagrade=3 admit=$(ADMIT) meta=$(META)
-	$(TIME) SLpipeline.sh obsnum=108766 restart=1 public=2020-12-31 qagrade=3 admit=$(ADMIT) meta=$(META)
+	$(TIME) SLpipeline.sh _s=VX-Sgr/PS obsnum=108764 restart=1 public=2020-12-31 qagrade=3 admit=$(ADMIT) meta=$(META)
+	$(TIME) SLpipeline.sh _s=VX-Sgr/BS obsnum=108766 restart=1 public=2020-12-31 qagrade=3 admit=$(ADMIT) meta=$(META)
 	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench4.txt'
 	@echo xdg-open  $(WORK_LMT)/2023S1SEQUOIACommissioning/108764/README.html
 	@echo xdg-open  $(WORK_LMT)/2023S1SEQUOIACommissioning/108766/README.html
