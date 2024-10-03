@@ -27,10 +27,16 @@ and assuming your ssh public and private key has been set up (unity_id), the com
 
 will then log you into unity without the need for a password.
 
+If you need any X windows, make sure your **~/.ssh/config** file has this option set:
+
+     ForwardAgent yes
+     ForwardX11 yes
+     ForwardX11Trusted yes
+
 ##  LMTOY on unity
 
 Your **~lmthelpdesk_umass_edu/.bashrc** has been modified to handle multiple users, each using their own
-$WORK_LMT. But immediately after a login, this variable is unset.  You can see this by issuing the **lmtoy**
+$WORK_LMT. But immediately after a login, this variable is still unset.  You can see this by issuing the **lmtoy**
 command, where you will see that WORK_LMT is still blank:
 
       $ lmtoy
@@ -62,10 +68,9 @@ The *slurm* environment is used
 to submit scripts and coordinate when and where the script can run. However, to find data using
 **lmtinfo.py** is probably ok, e.g.
 
-     $ lmtinfo.py grep RSR 2014 I10565 LineCheck
-	 
-(note in this historic data the observing data was not properly encoded in the header and it will claim 1970)
-
+     $ lmtinfo.py grep RSR 2022  I10565 Bs LineCheck
+     
+which should return 21 obsnums.
 
 ## RSR Benchmark
 
@@ -98,7 +103,7 @@ would run it as follows (here the example is just the one case we just showed ab
      echo "SLpipeline.sh restart=1 obsnum=33551 xlines=110.51,0.15" > bench1
      sbatch_lmtoy.sh  bench1
 
-## SEQ benchmark
+## SEQ Benchmark
 
 In the same vein, the Sequoia benchmark is the following:
 
@@ -110,13 +115,18 @@ Although Unity is not meant to be used in interactive mode, there is a *blessed*
 an interactive shell, e.g.
 
      srun -n 1 -c 4 --mem=16G -p toltec-cpu --x11 --pty bash
+
+or even better, use
+
+     unity-compute
 	
 in this shell you are using a real unity CPU (4 in fact), and should get much faster response and able to run
 a pipeline instance interactively. You can also use **sbatch_lmtoy.sh** from here, as discussed before.
 
 ## Viewing pipeline results
 
-The pipeline output is again in your $WORK_LMT/2014ARSRCommissioning/33551	
+Using the quick RSR benchmark we just mentioned, its
+pipeline output is in your $WORK_LMT/2014ARSRCommissioning/33551	
 and should be viewable online via the following URL
 
      http://taps.lmtgtm.org/lmthelpdesk/teuben/2014ARSRCommissioning/33551
@@ -127,6 +137,7 @@ Note the official *lmtslr* results of this obsnum would be on
 
      http://taps.lmtgtm.org/lmtslr/2014ARSRCommissioning/33551/README.html
 
+The **lmtoy help** command has a number of these reminders listed in its output.
 
 ## Script Generator
 
@@ -164,17 +175,17 @@ the current workflow suggestions.
 Working and debugging with Unity/Slurm is a different beast from doing it on a desktop or laptop.
 Some notes on this.   First some workflow items:
 
-1. Unity runs Ubuntu 20.04 LTS, but login and compute notes have different packages installed
+1. Unity runs Ubuntu 20.04.6 LTS, as of this writing,
+   but login and compute nodes have different packages installed.
 
 2. The login node cannot do much, mostly for submitting SLURM jobs.  Do not build LMTOY on it,
    it needs to be done on a compute node.
 
-3. The **srun** command shuold be used to grab a compute node, e.g. for interactive pipeline use,
-   or rebuilding the pipeline
+3. The **srun** command should be used to grab a compute node, e.g. for interactive pipeline use,
+   or rebuilding the pipeline. Or use the suggested **unity-compute** command
 
-4. If you activate another LMTOY in your shell, you need to logout of unity and come back.
+4. If you activate another LMTOY helpdesk user in your shell, you need to logout of unity and come back.
    (should clarify this)
 
-
-4. MX-55 is 192 obsnums. Submitting them took about 5 minutes. Each takes about 1 minute, but if
+5. MX-55 is 192 obsnums. Submitting them took about 5 minutes. Each takes about 1 minute, but if
    unity gives me 10 slots, this project would take about 20 mins to complete
