@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 1-oct-2024"
+_version="SLpipeline: 10-oct-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -45,6 +45,7 @@ goal=Science    # Science (or override with: Pointing,Focus,Cont [not officially
 webrun=""       # optional directive for webrun to do parameter checking (SEQ/map, SEQ/Bs, RSR, ....)
 qagrade=0       # the final grade recorded for the archive (QAFAIL enforces -1; 0 by default; -2,1,2,3 when DA graded)
 public=""       # if given, the public data for archiving. Default is 1 year after today. Example:  2020-12-31
+work_lmt=""     # if given, this will set a new $WORK_LMT    [KNOW WHAT YOU ARE DOING]
 
 
 #  Optional instrument specific pipeline can be added as well but are not known here
@@ -96,6 +97,13 @@ if [ $skip -gt 0 ]; then
     echo "LMTOY>> skipping this pipeline"
     exit 0
 fi
+
+#             cheat and set a new $WORK_LMT for this run
+if [ ! -x $work_lmt ]; then
+    export WORK_LMT=$work_lmt
+    mkdir -p $WORK_LMT
+fi
+echo "LMTOY>> Using WORK_LMT=$WORK_LMT"
 
 #             get the obsnum= (or obsnums=); also sets obsnum_list for archive
 lmtoy_decipher_obsnums
