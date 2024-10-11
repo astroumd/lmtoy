@@ -99,7 +99,7 @@ if [ $skip -gt 0 ]; then
 fi
 
 #             cheat and set a new $WORK_LMT for this run
-if [ ! -x $work_lmt ]; then
+if [ ! -z "$work_lmt" ]; then
     export WORK_LMT=$work_lmt
     mkdir -p $WORK_LMT
 fi
