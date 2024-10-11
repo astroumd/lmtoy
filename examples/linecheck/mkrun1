@@ -1,12 +1,22 @@
 #! /usr/bin/env bash
 #
-#  series of RSR linechecks blocking out each chassis, for given source
+#  Create a series of RSR linechecks runs, where we blocking out each chassis,
+#  and do this for a given source.
+#
+#  For I10565 there are in total nearly 4 * 323 pipeline runs, and took 3 hours on unity.
+#
+#  On my laptop each take about 40s, so that would be 14 hours in total.
+#  On LMA, if you can run 32 in gnu_parallel, that would be 1/2 hour.
+#  Even 1 hour is still fast.
 #
 src=I10565
+run=linecheck.run
 
-for c in 0 1 2 3; do
-  for o in $(tabcols linecheck1a.tab  3,4 | grep $src | tabcols - 1); do
-      echo SLpipeline.sh obsnum=$o restart=1 linecheck=1 badcb=$c/0,$c/1,$c/2,$c/3,$c/4,$c/5 speczoom=96,2 work_lmt=$WORK_LMT/linecheck__$c >> linecheck_$c.run
-  done
+rm -f $run
+for o in $(tabcols linecheck1a.tab  3,4 | grep $src | tabcols - 1); do
+    for c in 0 1 2 3; do
+	echo SLpipeline.sh obsnum=$o restart=1 linecheck=1 badcb=$c/0,$c/1,$c/2,$c/3,$c/4,$c/5 speczoom=96,2 work_lmt=$WORK_LMT/linecheck__$c >> $run
+    done
 done
 
+echo "Written $(cat $run | wc -l) pipeline runs to $run"
