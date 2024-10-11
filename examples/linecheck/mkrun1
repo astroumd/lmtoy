@@ -1,0 +1,12 @@
+#! /usr/bin/env bash
+#
+#  series of RSR linechecks blocking out each chassis, for given source
+#
+src=I10565
+
+for c in 0 1 2 3; do
+  for o in $(tabcols linecheck1a.tab  3,4 | grep $src | tabcols - 1); do
+      echo SLpipeline.sh obsnum=$o restart=1 linecheck=1 badcb=$c/0,$c/1,$c/2,$c/3,$c/4,$c/5 work_lmt=$WORK_LMT/linecheck__$c >> linecheck_$c.run
+  done
+done
+
