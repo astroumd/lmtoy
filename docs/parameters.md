@@ -114,7 +114,7 @@ should be recomputed!
     sample=-1         # not used until the gridding stage
 	              # @todo deal with vlsr=, restfreq= and different lines
 
-      #              3. BASELINE
+      #              2. BASELINE
 
     b_order=0        baseline order
     dv=100           line cube is +/- dv around VLSR
@@ -123,6 +123,7 @@ should be recomputed!
     b_regions=       even number of channels (in km/s) where baseline is defined (dw= can do this symmetrically)
     l_regions=       line fit region(s)
     slice=           the cube to be cut (defaults from the extreme b_regions)
+    vrange=          <derived>
 
       #              3. CALIBRATION
     birdies=0        birdie channels need to be in original (1based?) channel space
@@ -146,7 +147,7 @@ should be recomputed!
     edge=0            # how to handle the edge (interpolate etc.) [check:0,1]
     location=0,0      # viewing spectrum of this position w.r.t. center of map (arcsec)
 
-      #              5. OUTPUT
+      #              5. OUTPUT/CONTROL
     admit=0           # run admit?
     maskmoment=0      # run maskmoment?
     dataverse=0       # ingest in dataverse (don't use for webrun)
@@ -166,24 +167,29 @@ should be recomputed!
 
 ## 3. RSR
 
-The **rsr_pipeline.sh** script uses two scripts to get the same spectrum in two different
-ways (they really should be merged).
+The **rsr_pipeline.sh** script still uses two scripts to get the same spectrum in two different
+ways.
 
     badcb=2/3,2/2          preset Chassis/Board detectors that are bad C=[0..3]  B=[0..5]
+    jitter=1
     xlines=110.51,0.15     sections of spectrum not to be used for baseline fit (freq-dfreq..freq+dfreq)
                            normally because there is a (strong) line. Used by linecheck, but adviced for
 			   strong line sources
     linecheck=0            if set to 1, use the source name to grab the correct xlines=
+    badlags=0              set to a badlags file if to use this instead of dynamically generated
+                           (use 0 to force not to use it) - not used yet
     shortlags=32,15.0      set a short_min and short_hi to avoid flagging strong continuum sources
     sgf=51                 If given, set Savitzky-Golay high pass filter ; odd number > 21
                            Can be useful for strong continuum sources
+    notch=0                sigma cut for notch filter to eliminate large frecuency oscillations. Needs sgf > 21.
     spike=3                spikyness of localized peaks
     bandzoom=5             default band to supply a zoomed view of the final spectrum
     speczoom=85,3          if given, override the bandzoom with a window 85 +/- 3
     rthr=0.01              Threshold sigma value when averaging single observations repeats (-r)
     cthr=0.01              Threshold sigma value when coadding all observations (-t)
     blo=1                  order of polynomial baseline subtraction
-    
+    bandstats=0            also compute stats of each of the 6 RSR bands
+
 
 Below we describe a few common scripts used in the pipeline. Some parameters are promoted to
 a pipeline parameter, others are hardcoded.
