@@ -59,6 +59,13 @@ echo "overwrite: $overwrite"
 echo "publish:   $publish"
 echo "verbose:   $verbose"
 
+if [ $verbose = 0 ]; then
+    gflag=""
+else
+    gflag="-g"
+fi
+    
+
 # hardcoded
 yaml=$LMTOY/etc/config_prod.yaml
 
@@ -92,12 +99,12 @@ mkdir $out
 #-------------------------------------------------------------
 # create the YAMLs needed by dataverse in $out
 for directory in ${in}/*; do
-    cmd="dvpipe -c $yaml -e ${envfile} -g lmtslr create_index -d $directory -o ${out}"
+    cmd="dvpipe -c $yaml -e ${envfile} $gflag lmtslr create_index -d $directory -o ${out}"
     if [ "$verbose" -ne 0 ] || [ $dryrun -ne 0 ] ; then
         echo "$cmd"
     fi
     if [ "$dryrun" -eq 0 ];then
-        #dvpipe -c $yaml -e ${envfile} -g lmtslr create_index -d $directory -o ${out}
+        #dvpipe -c $yaml -e ${envfile} $gflag lmtslr create_index -d $directory -o ${out}
 	eval $cmd
     fi
 done;
@@ -106,10 +113,10 @@ done;
 if [ "$publish" -eq 1 ]; then
     for index in ${out}/*.yaml; do
         if [ "$verbose" -ne 0 ] || [ $dryrun -ne 0 ] ; then
-            echo "dvpipe -c $yaml -e ${envfile} -g dataset upload -a update -b major -i $index -p $dvname"
+            echo "dvpipe -c $yaml -e ${envfile} $gflag dataset upload -a update -b major -i $index -p $dvname"
         fi
         if [ "$dryrun" -eq 0 ];then
-            dvpipe -c $yaml -e ${envfile} -g dataset upload -a update -b major -i $index -p $dvname
+            dvpipe -c $yaml -e ${envfile} $gflag dataset upload -a update -b major -i $index -p $dvname
         fi
     done
 fi
