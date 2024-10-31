@@ -58,7 +58,7 @@ trap 'lmtoy_error $? $LINENO' ERR
 
 function lmtoy_report {
     echo "LMTOY>> xdg-open $WORK_LMT/$ProjectId/$obsnum/README.html"
-    printf_red "LMTOY>> ProjectId=$ProjectId  obsnum=$obsnum oid=$oid obspgm=$obspgm  obsgoal=$obsgoal date_obs=$date_obs"
+    printf_red "LMTOY>> ProjectId=$ProjectId  obsnum=$obsnum bank=$bank obspgm=$obspgm  obsgoal=$obsgoal date_obs=$date_obs"
 }
 
 function lmtoy_args {
@@ -565,7 +565,7 @@ function lmtoy_rsr1 {
 function lmtoy_seq1 {
     time=/usr/bin/time
     # input: obsnum, ... (lots)
-    # this will process a single bank in an $obsnum; $bank and $oid needs to be set
+    # this will process a single bank in an $obsnum; $bank needs to be set
 
     # log the version
     lmtoy_version >> lmtoy.rc
@@ -574,7 +574,7 @@ function lmtoy_seq1 {
 	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
     fi
     # record
-    echo "LMTOY>> rc=$rc rc1=$rc1 bank=$bank oid=$oid"
+    echo "LMTOY>> rc=$rc rc1=$rc1 bank=$bank"
     if [ ! -e "$rc1" ]; then
 	echo "PJT_WARNING: we should not need to do this $rc -> $rc1 copy here"
 	#cp $rc $rc1
@@ -632,7 +632,7 @@ function lmtoy_seq1 {
     #  pointings:  -240 .. 270    -259 .. 263      510x520
 
     if [ $viewspec = 1 ]; then
-	# waterfall plot
+	# waterfall plot etc. (several plots are made)
 	echo "LMTOY>> view_spec_file"
 	view_spec_file.py \
 	    -i $s_nc \
@@ -805,8 +805,8 @@ function lmtoy_seq1 {
 	    ccdsub  $s_on.wt.ccd - centerbox=0.5,0.5 | ccdstat - bad=0 robust=t qac=t label=wt
 	    
 	    # convert flux flat to noise flat
-	    wmax=$(ccdstat $s_on.wt.ccd  | grep ^Min | awk '{print $6}')
-	    #wmax=$(ccdstat $s_on.wt.ccd  | txtpar - p0=Min,1,6)
+	    #wmax=$(ccdstat $s_on.wt.ccd  | grep ^Min | awk '{print $6}')
+	    wmax=$(ccdstat $s_on.wt.ccd  | txtpar - p0=Min,1,6)
 	    
 	    ccdmath $s_on.wt.ccd $s_on.wtn.ccd "sqrt(%1/$wmax)"
 	    ccdmath $s_on.ccd,$s_on.wtn.ccd $s_on.n.ccd '%1*%2' replicate=t
@@ -1011,7 +1011,7 @@ function lmtoy_seq1 {
     cp $LMTOY/docs/README_sequoia.md README_files.md
     echo "LMTOY>> Making summary index.html for bank=$bank rc=$rc"
     grep bank= $rc
-    echo "LMTOY>> Making summary index.html for oid=$oid"
+    echo "LMTOY>> Making summary index.html for bank=$bank"
     mk_index.sh
     # cheat and rename it for all files access
     cp index.html README.html
@@ -1036,7 +1036,7 @@ function lmtoy_seq2 {
 	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
     fi
     # record
-    echo "LMTOY>> rc=$rc rc1=$rc1 bank=$bank oid=$oid"
+    echo "LMTOY>> rc=$rc rc1=$rc1 bank=$bank"
     if [ ! -e "$rc1" ]; then
 	echo "PJT_WARNING: we should not need to do this $rc -> $rc1 copy here"
 	#cp $rc $rc1
@@ -1441,7 +1441,7 @@ function lmtoy_seq2 {
     cp $LMTOY/docs/README_sequoia.md README_files.md
     echo "LMTOY>> Making summary index.html for bank=$bank rc=$rc"
     grep bank= $rc
-    echo "LMTOY>> Making summary index.html for oid=$oid"
+    echo "LMTOY>> Making summary index.html for bank=$bank"
     mk_index.sh
     # cheat and rename it for all files access
     cp index.html README.html
@@ -1493,6 +1493,10 @@ function lmtoy_bs1 {
     
     if [ -n "$NEMO" ]; then
 	echo "LMTOY>> Some NEMO post-processing (TBD)"
+	bw="$(nemoinp 800*1e6/2048)"
+	tsys=115
+	rms0=$(nemoinp "1000*$tsys/sqrt($bw*$inttime)")
+	echo "NEMO: inttime=$inttime s  bw=$bw Hz  tsys=$tsys K  rms0=$rms0 K"
     fi
     
     if [ $admit == 1 ]; then
@@ -1523,9 +1527,9 @@ function lmtoy_ps1 {
     # we thus hardcode the bank itself to be 0,so it looks at the right roach
     if [ $instrument = "1MM" ]; then
 	bank=0
-	if [ $oid == 0 ]; then
+	if [ $bank == 0 ]; then
 	    pix_list=0,2
-	elif [ $oid == 1 ]; then
+	elif [ $bank == 1 ]; then
 	    pix_list=1,3
 	fi
 	echo "LMTOY>> 1MM overriding pix_list=$pix_list bank=$bank"
