@@ -22,7 +22,7 @@ update="$(date) on $(hostname)"
 
 # there better be only one.... 
 source $(ls ./lmtoy_*.rc | grep -v __)
-echo "Making index.html for obsnum=$obsnum bank=$bank oid=$oid"
+echo "Making index.html for obsnum=$obsnum bank=$bank"
 # @todo first time around bank is not properly set
 
 function base {
