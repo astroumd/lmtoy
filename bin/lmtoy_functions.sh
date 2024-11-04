@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="3-oct-2024"
+lmtoy_version="4-nov-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -184,7 +184,8 @@ function lmtoy_archive {
     pidir=$2
     db=$WORK_LMT/example_lmt.db
     pid=$(basename $pidir)
-    dir4dv=${pidir}/dir4dv/${pid}/${obsnum}
+    #  need a new hierachy per obsnum, to deal with the DV ingestion workflow in upload_project.sh
+    dir4dv=${pidir}/dir4dv/${obsnum}/${pid}/${obsnum}
     if [ ! -d $dir4dv ]; then
 	echo "LMTOY>>  no $dir4dv, return"
 	return
