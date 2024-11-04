@@ -7,7 +7,7 @@ _doc = """Usage: mk_metadata.py [options] [OBSNUM]
 
 Options:
 
--d          add more debugging
+-d            add more debugging
 -y YAMLFILE   Output yaml file. Optional.
 -z YAMLFILE   Input yaml file.  This is the file that is output by dvpipe
               after the data are uploaded to the dataverse.
@@ -301,7 +301,9 @@ if __name__ == "__main__":
             # assemble all obsinfo's for all obsnum's in the combo
             p = header(rc, "ProjectId")
             for o in obsnums.split(","):
-                fn = "../dirzip/%s_lmtmetadata.yaml" % (o) 
+                # see lmtoy_archive funtion for this odd hierarchy 
+                fn = "../../../../dirzip/%s_lmtmetadata.yaml" % (o)
+                # @todo   if not found, exit with -1
                 print("YAML Reading", fn)
                 fp = open(fn)
                 if True:
