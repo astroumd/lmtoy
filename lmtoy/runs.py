@@ -16,7 +16,7 @@ Useful tools for the LMTOY script generators (lmtoy_$PID)
 import os
 import sys
 
-_version = "19-jul-2024"
+_version = "3-nov-2024"
 
 def pix_list(pl):
     """ convert a strong like "-0,-1" to proper pixlist by removing
@@ -202,21 +202,25 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     run1a = '%s.run1a' % project
     run1b = '%s.run1b' % project
     run1c = '%s.run1c' % project
+    run1x = '%s.run1x.sh' % project
 
     run2a = '%s.run2a' % project
     run2b = '%s.run2b' % project
     run2c = '%s.run2c' % project
+    run2x = '%s.run2x.sh' % project
 
-    fp1 = list(range(3))
-    fp2 = list(range(3))
+    fp1 = list(range(4))
+    fp2 = list(range(4))
 
     fp1[0] = open(run1a, "w")
     fp1[1] = open(run1b, "w")
     fp1[2] = open(run1c, "w")
+    fp1[3] = open(run1x, "w")
     
     fp2[0] = open(run2a, "w")
     fp2[1] = open(run2b, "w")
     fp2[2] = open(run2c, "w")
+    fp2[3] = open(run2x, "w")    
 
     pars4,pars5 = getpars(on)
 
@@ -224,8 +228,8 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     n1 = 0
     for s in on.keys():     # loop over sources
         for o1 in on[s]:    # loop over obsnums
-            cmd1 = ["" for i in range(3)]
-            cmd2 = ["" for i in range(3)]
+            cmd1 = ["" for i in range(4)]
+            cmd2 = ["" for i in range(4)]
 
             o = abs(o1)
             os = repr(o)
@@ -235,7 +239,8 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
                 cmd1[1] = "SLpipeline.sh obsnum=%d _s=%s %s %s" % (o,s,pars2[s], getargs(os,pars4))
             if pars3 != None and s in pars3:
                 cmd1[2]  = "SLpipeline.sh obsnum=%d _s=%s %s %s" % (o,s, pars3[s], getargs(os,pars5))
-            for i in range(3):
+            cmd1[3] = "SLpipeline.sh obsnum=%d _s=%s archive=1" % (o,s)
+            for i in range(4):
                 if len(cmd1[i]) > 0:  fp1[i].write("%s\n" % cmd1[i])
             n1 = n1 + 1
 
@@ -257,8 +262,8 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
         print('%s[%d/%d] :' % (s,n3,len(on[s])), obsnums)
         o_o = '%s_%s' % (o_first,o_last)
         # print("Combo: %s" % o_o)
-        cmd1 = ["" for i in range(3)]
-        cmd2 = ["" for i in range(3)]
+        cmd1 = ["" for i in range(4)]
+        cmd2 = ["" for i in range(4)]
         
         if s in pars1:
             cmd2[0] = "SLpipeline.sh _s=%s admit=0 restart=1 obsnums=%s" % (s, obsnums)
@@ -266,7 +271,8 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
             cmd2[1] = "SLpipeline.sh _s=%s admit=1 srdp=1    obsnums=%s %s" % (s, obsnums, getargs(o_o,pars4))
         if pars3 != None and s in pars3:
             cmd2[2] = "SLpipeline.sh _s=%s admit=1 srdp=1    obsnums=%s %s" % (s, obsnums, getargs(o_o,pars5))
-        for i in range(3):
+        cmd2[3] = "SLpipeline.sh obsnums=%s _s=%s archive=1" % (obsnums,s)    
+        for i in range(4):
             if len(cmd2[i]) > 0:  fp2[i].write("%s\n" % cmd2[i])
         n2 = n2 + 1
 
@@ -278,3 +284,4 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     print(run1c)
     print(run2c)
     print("Where there are %d single obsnum runs, and %d combination obsnums" % (n1,n2))
+    print("Also note the archiving runs (run1x and run2x) when QA is done")
