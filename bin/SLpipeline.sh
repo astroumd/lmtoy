@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 10-oct-2024"
+_version="SLpipeline: 4-nov-2024"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -395,18 +395,19 @@ fi
 # count files
 (cd $pdir; echo "Number of files: $(ls | wc -l)")
 
-# directory for dvpipe products for archive ingestion, also for links for PI
-dir4dv=$WORK_LMT/${ProjectId}/dir4dv/${ProjectId}/${obsnum}
+# directory for dvpipe products for archive ingestion, dirzip is for keeping data links for PI after ingestion
+dir4dv=$WORK_LMT/${ProjectId}/dir4dv/${obsnum}/${ProjectId}/${obsnum}
 dirzip=$WORK_LMT/${ProjectId}/dirzip
 mkdir -p $dir4dv $dirzip
-echo "LMTOY>> using dir4dv=$dir4dv"
+echo "LMTOY>> using dir4dv=$dir4dv dirzip=$dirzip"
 
-# make a metadata yaml file for later ingestion into DataVerse
+# make a metadata yaml file for later ingestion into DataVerse;  keep copied for combinations
 if [ $meta -ne 0 ]; then
     cd $pdir
     echo "LMTOY>> make metadata ($meta) for DataVerse in $pdir"
     mk_metadata.py -y ${dir4dv}/${obsnum}_lmtmetadata.yaml $pdir
-    cp $pdir/lmtoy_${obsnum}*rc $dir4dv	
+    cp $pdir/lmtoy_${obsnum}*rc $dir4dv
+    cp ${dir4dv}/${obsnum}_lmtmetadata.yaml ${dirzip}
 fi
 # produce TAP, RSRP, SDFITS, RAW tar files, whichever are requested.
 
