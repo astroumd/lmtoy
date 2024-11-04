@@ -10,7 +10,7 @@
 #set -e
 #set -x
 
-_version="23-sep-2024"
+_version="4-nov-2024"
 
 if [ -z "$1" ]; then
     echo "Typical usage:  $0 lmtinfo.txt > README.html"    
@@ -28,7 +28,7 @@ fi
 pid=$(pwd | awk -F/ '{print $NF}')
 
 echo "<html>"
-echo '<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>'
+echo '<script src="sorttable.js"></script>'
 
 echo "<B>$pid</B>: <A HREF=$csv>Summary of all obsnum's and combinations:</A> (click on column name to sort by that column) Created: $(date)"
 echo '<table border=1 class="sortable">'
