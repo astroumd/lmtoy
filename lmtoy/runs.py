@@ -202,12 +202,12 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     run1a = '%s.run1a' % project
     run1b = '%s.run1b' % project
     run1c = '%s.run1c' % project
-    run1x = '%s.run1x.sh' % project
+    run1x = '%s.run1x' % project
 
     run2a = '%s.run2a' % project
     run2b = '%s.run2b' % project
     run2c = '%s.run2c' % project
-    run2x = '%s.run2x.sh' % project
+    run2x = '%s.run2x' % project
 
     fp1 = list(range(4))
     fp2 = list(range(4))
