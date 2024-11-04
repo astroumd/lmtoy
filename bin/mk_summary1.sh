@@ -14,7 +14,7 @@
 #set -e
 #set -x
 
-_version="14-aug-2024"
+_version="3-nov-2024"
 
 if [ -z "$1" ]; then
     src0=""
@@ -33,7 +33,7 @@ fi
 pid=$(pwd | awk -F/ '{print $NF}')
 
 echo "<html>"
-echo '<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>'
+echo '<script src="sorttable.js"></script>'
 
 echo "<B>$pid</B>: <A HREF=$csv>Summary of all obsnum's and combinations:</A> (click on column name to sort by that column) Created: $(date)"
 echo '<table border=1 class="sortable">'
@@ -141,7 +141,12 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
 	    rms0r="$(nemoinp $rms/$rms0) /100K"
 	    ext=""
 	elif [ "$instrument" == "SEQ" ] && [ $obspgm == "Bs" ]; then
-	    rms=$(grep QAC_STATS $log | txtpar - "%1" p0=1,4)
+	    rms=$(grep QAC_STATS $log | txtpar - "%1" p0=$b,4)
+	    rms0=10.0
+	    rms0r=$(nemoinp $rms/$rms0)
+	    ext=""
+	elif [ "$instrument" == "SEQ" ] && [ $obspgm == "Ps" ]; then
+	    rms=$(grep QAC_STATS $log | txtpar - "%1" p0=$b,4)
 	    rms0=TBD
 	    rms0r=TBD
 	    ext=""
