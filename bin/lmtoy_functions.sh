@@ -179,7 +179,7 @@ function qac_select {
 function lmtoy_archive {
     # input:  obsnum pidir
     #         123456 $WORK_LMT/$PID
-    echo "lmtoy_archive: $1 $2"
+    # echo "lmtoy_archive: $1 $2"
     obsnum=$1
     pidir=$2
     db=$WORK_LMT/example_lmt.db
@@ -191,7 +191,7 @@ function lmtoy_archive {
 	return
     fi
     # @todo make it less verbose
-    pushd $WORK_LMT/$pid/dir4dv
+    pushd $WORK_LMT/$pid/dir4dv/$obsnum
     mk_metadata.py -y ${dir4dv}/${obsnum}_lmtmetadata.yaml $dir4dv
     upload_project.sh in=. out=/tmp/dvout publish=1 verbose=0 overwrite=1
     # @todo if failed
@@ -202,7 +202,7 @@ function lmtoy_archive {
     scp $db toltec3:lmtsearch_web
     #   logging
     echo "$(lmtoy_date -u) $pid $obsnum" >> $WORK_LMT/dataverse.log
-    #   cleanup $pid
+    #   cleanup $pid   @todo should  clean ${pidir}/dir4dv/${obsnum}/
     rm -rf $dir4dv
     popd
 }
