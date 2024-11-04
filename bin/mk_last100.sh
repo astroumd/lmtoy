@@ -1,7 +1,7 @@
 #! /bin/bash
 #
 
-_version="5-may-2024"
+_version="4-nov-2024"
 
 log=$1
 url1="http://taps.lmtgtm.org/lmtslr/%s/TAP/"
@@ -11,7 +11,7 @@ url4="http://taps.lmtgtm.org/lmtslr/%s/%s/README.html"
 
 
 echo "<html>"
-echo '<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>'
+echo '<script src="sorttable.js"></script>'
 
 echo "Last 100 observations SLpipeline'd on <B>malt</B> should be available as lightweight TAPS on Unity."
 echo "Plus links to future final full processing on Unity (if available)."
