@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 #
 
-_version = "30-oct-2024"
+_version = "4-nov-2024"
 
 _doc = """Usage: mk_metadata.py [options] [OBSNUM]
 
@@ -301,7 +301,7 @@ if __name__ == "__main__":
             # assemble all obsinfo's for all obsnum's in the combo
             p = header(rc, "ProjectId")
             for o in obsnums.split(","):
-                fn = "../dir4dv/%s/%s/%s_lmtmetadata.yaml" % (p, o, o) 
+                fn = "../dirzip/%s_lmtmetadata.yaml" % (o) 
                 print("YAML Reading", fn)
                 fp = open(fn)
                 if True:
