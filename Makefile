@@ -364,7 +364,7 @@ bench1a:
 
 ## bench1b:  RSR dryrun archive submission using dvpipe (needs bench1)
 bench1b:
-	(cd $(WORK_LMT)/2014ARSRCommissioning/dir4dv; upload_project.sh in=. out=/tmp/dvout publish=0 verbose=1 overwrite=1)
+	(cd $(WORK_LMT)/2014ARSRCommissioning/dir4dv/33551; upload_project.sh in=. out=/tmp/dvout publish=0 verbose=1 overwrite=1)
 
 ## bench2:   SEQ benchmark: obsnum=79448
 bench2:
