@@ -305,7 +305,11 @@ if __name__ == "__main__":
                 fn = "../../../../dirzip/%s_lmtmetadata.yaml" % (o)
                 # @todo   if not found, exit with -1
                 print("YAML Reading", fn)
-                fp = open(fn)
+                try:
+                    fp = open(fn)
+                except:
+                    os.system("pwd")
+                    sys.exit(1)
                 if True:
                     # native yaml
                     y = yaml.safe_load(fp)
