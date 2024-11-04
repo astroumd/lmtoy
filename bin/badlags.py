@@ -19,10 +19,11 @@
 #          2022-05-18: also flag when rms < bc_lo
 #          2023-02-02: implemented proper flags using docopt
 #          2023-02-22: --plotmax 
+#          2024-11-04: fix plotting (and missing the badlags file in pipeline)
 #
 #
 
-_version = "1-aug-2023"
+_version = "4-nov-2024"
 
 _help = """Usage: badlags.py [options] OBSNUM
 
@@ -59,7 +60,7 @@ import sys
 import glob
 import numpy as np
 from docopt import docopt
-from matplotlib import pyplot as pl
+# from matplotlib import pyplot as pl
 # dreampy3 is loaded below after commandline parser did its job
 
 def rmsdiff(data, robust=True):
@@ -229,8 +230,21 @@ obsnum = o_list[0]
 
 # make plot and report results
 #pl.ion()
-pl.figure(num=1,figsize=(12,8))
+#pl.figure(num=1,figsize=(12,8))
 #pl.clf()
+
+import matplotlib
+if plotfile == None:
+    matplotlib.use('qt5agg')
+else:
+    # if the next statement was not used on unity, occasionally it would fine Qt5Agg, and thus fail
+    # this else clause is NOT used in rsr_tsys.py, which has the same patters as this routine, and
+    # never failed making a Tsys plot, go figure unity!
+    matplotlib.use('agg')
+import matplotlib.pyplot as pl
+print('mpl backend spectra',matplotlib.get_backend())
+
+pl.figure(num=1,figsize=(12,8))
 
 
 print(' ')
