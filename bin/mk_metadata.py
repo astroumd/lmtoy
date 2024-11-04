@@ -302,7 +302,7 @@ if __name__ == "__main__":
             p = header(rc, "ProjectId")
             for o in obsnums.split(","):
                 # see lmtoy_archive funtion for this odd hierarchy 
-                fn = "../../../../dirzip/%s_lmtmetadata.yaml" % (o)
+                fn = "../dirzip/%s_lmtmetadata.yaml" % (o)
                 # @todo   if not found, exit with -1
                 print("YAML Reading", fn)
                 try:
