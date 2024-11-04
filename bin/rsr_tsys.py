@@ -2,7 +2,7 @@
 #
 #    inspect and plot the chassis and band (C/B) based Tsys (or with -t the Spectrum)
 
-_version = "1-aug-2023"
+_version = "4-nov-2024"
 
 _help = """Usage: rsr_tsys.py [options] OBSNUM
 
@@ -12,9 +12,9 @@ Options:
   -t                      Show spectrum instead of tsys
   -r --rms RMS            Use this RMS (in K) for Tsys jitter to determine a BADCB [Default: 25.0]
   -h --help               This help
-  -v --version               The script version
+  -v --version            The script version (%s)
 
-"""
+""" % _version
 
 import sys
 import numpy as np
@@ -59,6 +59,8 @@ if badlags != None:
 import matplotlib
 if plotfile == None:
     matplotlib.use('qt5agg')
+else:
+    matplotlib.use('agg')
 import matplotlib.pyplot as plt
 print('mpl backend tsys',matplotlib.get_backend())
 
