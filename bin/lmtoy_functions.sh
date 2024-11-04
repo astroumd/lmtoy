@@ -185,12 +185,14 @@ function lmtoy_archive {
     db=$WORK_LMT/example_lmt.db
     pid=$(basename $pidir)
     #  need a new hierachy per obsnum, to deal with the DV ingestion workflow in upload_project.sh
-    dir4dv=${pidir}/dir4dv/${obsnum}/${pid}/${obsnum}
+    dir4dv_root=${pidir}/dir4dv/${obsnum}
+    dir4dv=${dir4dv_root}/${pid}/${obsnum}
     if [ ! -d $dir4dv ]; then
 	echo "LMTOY>>  no $dir4dv, return"
 	return
     fi
     # @todo make it less verbose
+    echo -n "pushd: "
     pushd $WORK_LMT/$pid/dir4dv/$obsnum
     mk_metadata.py -y ${dir4dv}/${obsnum}_lmtmetadata.yaml $dir4dv
     upload_project.sh in=. out=/tmp/dvout publish=1 verbose=0 overwrite=1
@@ -203,8 +205,10 @@ function lmtoy_archive {
     #   logging
     echo "$(lmtoy_date -u) $pid $obsnum" >> $WORK_LMT/dataverse.log
     #   cleanup $pid   @todo should  clean ${pidir}/dir4dv/${obsnum}/
-    rm -rf $dir4dv
     popd
+    echo "Removing ${dir4dv_root}"
+    rm -rf ${dir4dv_root}
+
 }
 
 function lmtoy_rsr1 {
