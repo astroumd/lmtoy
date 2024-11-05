@@ -3,3 +3,4 @@
 1.1.1  aug-2024 new python 3.10.4 and loading anaconda python
 1.1.2  sep-2024 SEQ mosaic enabled; SEQ goal=Cont for continuum [testing]
 1.2    sep-2024 new archive=1 mode with updated links to the data
+1.2.1  nov-2024 RSR fixes for ubuntu24 on unity
