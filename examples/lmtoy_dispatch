@@ -1,0 +1,34 @@
+#! /bin/bash --login
+#
+#   special dispather for the helpdesk account at unity
+#   this allows one to run commands like
+#
+#   ssh unity WORK_LMT_USER=2024-S1-MX-26        lmtoy_dispatch        sbatch_lmtoy.sh SLpipeline.sh obsnum=123456 ....
+#
+
+# on unity
+root_dir=/nese/toltec/dataprod_lmtslr/work_lmt_helpdesk
+lmtoy=/work/lmtslr/lmtoy
+
+# testing
+root_dir=/tmp
+lmtoy=/home/teuben/LMT/lmtoy
+
+if [ -z $WORK_LMT_USER ]; then
+    echo "WORK_LMT_USER not set. It needs to be a valid LMT ProjectID, e.g. 2024-S1-MX-26"
+    exit 1
+fi
+
+wdir=$root_dir/$WORK_LMT_USER
+
+if [ ! -d $wdir ]; then
+    echo "$wdir does not exist yet, you are not logged into the unity helpdesk account?"
+    # we should probably not allow arbitrary project creation???
+    exit 1
+fi
+
+source $lmtoy/lmtoy_start.sh
+export WORK_LMT=$wdir
+
+# now we are set up, do the work
+echo $0 $*
