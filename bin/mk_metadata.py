@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 #
 
-_version = "4-nov-2024"
+_version = "6-nov-2024"
 
 _doc = """Usage: mk_metadata.py [options] [OBSNUM]
 
@@ -47,7 +47,7 @@ from dateutil.relativedelta import relativedelta
 
 
 
-def header(rc, key, debug=False):
+def header(rc, key, multi=False, debug=False):
     """
     input:
     rc     dictionary from the rc file
@@ -62,11 +62,14 @@ def header(rc, key, debug=False):
         if rc[key].find(",") < 0:
             return rc[key]
         else:
-            print(
-                "# PJT: header %s not single valued: %s, using first" % (key, rc[key])
-            )
-            # return first
-            return rc[key].split(",")[0]
+            if multi:
+                return rc[key]
+            else:
+                print(
+                    "# PJT: header %s not single valued: %s, using first" % (key, rc[key])
+                )
+                # return first
+                return rc[key].split(",")[0]
     else:
         if debug:
             print("# PJT: unknown key ", key)
@@ -282,7 +285,7 @@ if __name__ == "__main__":
         obsnum = header(rc, "obsnum")
         if obsnum.find("_") > 0:
             isCombined = True
-            obsnums = header(rc, "obsnum_list")
+            obsnums = header(rc, "obsnum_list", multi=True)
         else:
             isCombined = False
             obsnums = ""
@@ -298,6 +301,7 @@ if __name__ == "__main__":
         #     opacity225 - opacity at 225 GHz (can be 0)
 
         if isCombined:
+            # print("PJT combined",obsnums)
             # assemble all obsinfo's for all obsnum's in the combo
             p = header(rc, "ProjectId")
             for o in obsnums.split(","):
@@ -313,12 +317,12 @@ if __name__ == "__main__":
                 if True:
                     # native yaml
                     y = yaml.safe_load(fp)
-                    o = y["obsInfo"][0]
+                    o1 = y["obsInfo"][0]
                 else:
                     # directly using out dvpipe  @todo  this doesn't work
                     y = MetadataBlock(yamlfile=fn, load_data=True)
-                    o = y.metadata["obsInfo"][0]
-                lmtdata.add_metadata("obsInfo", o)
+                    o1 = y.metadata["obsInfo"][0]
+                lmtdata.add_metadata("obsInfo", o1)
             ref_id = data_prod_id.make_lmtoy_data_prod_id(obsnums.split(","))
         else:
             obsinfo = dict()
