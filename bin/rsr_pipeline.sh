@@ -10,7 +10,7 @@
 #
 #
 
-_version="rsr_pipeline: 9-aug-2023"
+_version="rsr_pipeline: 7-nov-2024"
 
 echo "LMTOY>> $_version"
 
@@ -18,7 +18,6 @@ echo "LMTOY>> $_version"
 # input parameters (only obsnum is required)
 #            - start or restart
 obsnum=0      # this is a single obsnum pipeline (obsnums=0)
-obsid=""      # not used yet
 pdir=""       # where to do the work
 
 #             - PI parameters
@@ -30,7 +29,7 @@ badlags=""    # set to a badlags file if to use this instead of dynamically gene
 shortlags=""  # set to a short_min and short_hi to avoid flagged strong continuum source lags, e.g. shortlags=32,10.0
 spike=3       # spikyness of bad lags that need to be flagged
 
-linecheck=0   # set to 1, to use the source name to grab the correct xlines=
+linecheck=0   # set to 1, to use the source name to grab the correct xlines=  (or a freq to check for a nearby peak)
 bandzoom=5    # the band for the zoomed window (0..5)
 speczoom=""   # override bandzoom with a manual speczoom=CENTER,HALF_WIDTH pair
 rthr=0.01     # -r option for rsr_driver Threshold sigma value when averaging single observations repeats
