@@ -260,9 +260,10 @@ function lmtoy_rsr1 {
     # as well as process old data. Thus we want all 'bad_lagsC' in dreampyrc to be ""
     if [[ $first == 1 ]]; then
 	# 1.
-	echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o $do -w rsr.wf0.pdf -p -b $blo $t1 $t2"
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o $do -w rsr.wf0.pdf -p -b $blo $t1 $t2   > rsr_driver0.log 2>&1
+	echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o $do $w -p -b $blo $t1 $t2"
+       	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o $do $w -p -b $blo $t1 $t2   > rsr_driver0.log 2>&1
 	mv rsr.driver.png rsr.driver0.png
+        mv rsr.wf.pdf     rsr.wf0.pdf
 	# 2.
 	echo "LMTOY>> rsr_tsys.py -y rsr.tsys0.png $obsnum"
 	rsr_tsys.py -y rsr.tsys0.png $obsnum  > rsr_tsys0.log   2>&1
@@ -297,10 +298,9 @@ function lmtoy_rsr1 {
 	badlags=rsr.$obsnum.badlags
 	# this gives 'BADCB1'
 	
-	# 4.
-	echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o $do -w rsr.wf.pdf -p -b $blo $t1 $t2 --badlags $badlags"
-	python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o $do -w rsr.wf.pdf -p -b $blo $t1 $t2 --badlags $badlags > rsr_driver1.log 2>&1	
-
+	# 4. redo rsr_driver but now with badlags applied
+	echo "LMTOY>> python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o $do $w -p -b $blo $t1 $t2 --badlags $badlags"
+        python $LMTOY/RSR_driver/rsr_driver.py rsr.obsnum $o $do $w -p -b $blo $t1 $t2 --badlags $badlags > rsr_driver1.log 2>&1	
 
 	# Tsys plot:  rsr.tsys.png  - only done for single obsnum - also lists BADCB's
 	#             rsr.spectra.png - another way to view each chassis spectrum
