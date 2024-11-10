@@ -3,9 +3,13 @@
 #  find which source/obsnum combinations are in an LMT project
 #
 
+_version="10-nov-2024"
+
 usage() {
-    echo "Usage: $0 [options] ProjectId"
+    echo "Usage: $0 [options] [ProjectId]"
+    echo "Version: $_version"
     echo "   Makes a list of obsnums, sorted per source, for a given ProjectId, ready for the script generator"
+    echo "   If no ProjectId given and inside an lmtoy_run directory with the PID file, it will use that PID"
     echo "   Options:"
     echo "   -l    report LineCheck instead of Science intent. Useful for RSR only"
     echo "   -p    report Pointing instead of Science intent."
@@ -27,8 +31,13 @@ mk_trailer() {
 }
 
 if [ -z "$1" ]; then
-    usage
-    exit 0
+    if [ -e PID ]; then
+	source PID
+	pid=$PID
+    else
+	usage
+	exit 0
+    fi
 fi
 
 intent="Science"
@@ -46,6 +55,17 @@ if [ "$1" == "-h" ]; then
 fi
 
 pid=$1
+
+if [ -z $pid]; then
+    if [ -e PID ]; then
+	source PID
+	pid=$PID
+    else
+	usage
+	exit 0
+    fi
+fi
+
 
 dat=$DATA_LMT/data_lmt.log 
 log=$WORK_LMT/tmp/$pid.obsnums.log
