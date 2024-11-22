@@ -9,7 +9,7 @@ usage() {
     echo "Usage: $0 [options] [ProjectId]"
     echo "Version: $_version"
     echo "   Makes a list of obsnums, sorted per source, for a given ProjectId, ready for the script generator"
-    echo "   If no ProjectId given and inside an lmtoy_run directory with the PID file, it will use that PID"
+    echo "   If no ProjectId given and inside an lmtoy_PID directory with the PID file, it will use that PID"
     echo "   Options:"
     echo "   -l    report LineCheck instead of Science intent. Useful for RSR only"
     echo "   -p    report Pointing instead of Science intent."
