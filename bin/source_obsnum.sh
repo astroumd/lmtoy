@@ -3,7 +3,7 @@
 #  find which source/obsnum combinations are in an LMT project
 #
 
-_version="10-nov-2024"
+_version="22-nov-2024"
 
 usage() {
     echo "Usage: $0 [options] [ProjectId]"
@@ -56,7 +56,7 @@ fi
 
 pid=$1
 
-if [ -z $pid]; then
+if [ -z $pid ]; then
     if [ -e PID ]; then
 	source PID
 	pid=$PID
