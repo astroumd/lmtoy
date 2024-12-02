@@ -116,6 +116,7 @@ while [ $sleep -ne 0 ]; do
     if [ $on1 != $on2 ]; then
 	pid=$(egrep $key $run/data_lmt.lag | tail -1 | awk '{print $7}')
 	goal=$(egrep $key $run/data_lmt.lag | tail -1 | awk '{print $4}')
+	pgm=$(egrep $key $run/data_lmt.lag | tail -1 | awk '{print $5}')
 	tail -1 $run/data_lmt.lag
 	printf_red Found new obsnum=$on2 pid=$pid
 	if [ -e SLpipeline.in ]; then
@@ -125,6 +126,9 @@ while [ $sleep -ne 0 ]; do
 	fi
 	if [ $goal == "LineCheck" ]; then
 	    extra="$extra linecheck=1"
+	    if [ $pgm != "Bs" ]; then
+		extra="skip=1"
+	    fi
 	fi
 	echo "Found extra args:   $extra"
 	if [ $dryrun = 0 ]; then
