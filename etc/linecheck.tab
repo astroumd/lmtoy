@@ -5,7 +5,7 @@
 #    See also RedshiftPointing/RSRRunLineCheck.py for the source_line_strength{} that contains
 #
 # source       fcen,df2,...                          peak(mK)
-I05189    xlines=110.53,0.25                         _peak=55
+I05189    xlines=110.53,0.25                         _peak=30       # old value was 55 mK, but 30 mK is the better value (Sanchez, 2024)
 I10565    xlines=110.51,0.15,108.65,0.3,85.2,0.4     _peak=110
 I12112    xlines=107.40,0.25                         _peak=40
 I17208    xlines=110.50,0.20,108.8,0.3               _peak=110
