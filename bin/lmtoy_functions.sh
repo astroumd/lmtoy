@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="7-nov-2024"
+lmtoy_version="17-dec-2024"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -200,8 +200,8 @@ function lmtoy_archive {
     mk_metadata.py -z /tmp/dvout/${pid}_${obsnum}_output.yaml -f $db $dir4dv
     # we don't need flock anymore, since we run it serially and it's on NFS
     # flock --verbose $db.flock mk_metadata.py ...
-    #
-    scp $db toltec3:lmtsearch_web
+    # we don't need an scp anymore,  toltec5 can see it as /nese/toltec/dataprod_lmtslr/work_lmt/example_lmt.db
+    #scp $db toltec5:lmtsearch_web
     #   logging
     echo "$(lmtoy_date -u) $pid $obsnum" >> $WORK_LMT/dataverse.log
     #   cleanup $pid   @todo should  clean ${pidir}/dir4dv/${obsnum}/
