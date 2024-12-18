@@ -33,12 +33,17 @@ class IO(object):
     The slow alternative is to read the full $DATA_LMT/data_lmt.log
     """
     def __init__(self):
-        fp = open("IO")
-        lines = fp.readlines()
-        for line in lines:
-            if line[0] == '#': continue
-            # hack: first line
-            self.io = line.strip()
+        try:
+            fp = open("IO")
+            lines = fp.readlines()
+            for line in lines:
+                if line[0] == '#': continue
+                # hack: first line
+                self.io = line.strip()
+        except:
+            # failing.... make it "TBD"
+            print("Warning:  no IO file present with the Instrument/Obsgoal")
+            self.io = "TBD"
     def getio(self, obsnum):
         # hack: all the same
         return self.io
@@ -176,7 +181,8 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     o_max = -1
 
     # @todo if more than one I/O is present, this code won't work
-    io = IO()    
+    io = IO()
+    print("Note _io=%s assumed for all obsnums" % io.getio(0))
 
     if argv != None:
         if len(argv) > 1:
