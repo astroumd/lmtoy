@@ -16,7 +16,32 @@ Useful tools for the LMTOY script generators (lmtoy_$PID)
 import os
 import sys
 
-_version = "19-nov-2024"
+_version = "18-dec-2024"
+
+class IO(object):
+    """
+    class managing what Instrument/Obsmode a particular obsnum has
+    Although the lmtinfo.py could be used, it is too slow, and it
+    is better (?) to use a caching version in the script generator.
+    It uses a file IO, which either has a single line with the IO,
+    or many lines with  "IO obsnum" on a line
+
+    An alternative is to read the local lmtinfo.txt where columns 2,3,5
+    contain the info, e.g.
+    2024-07-26T11:11:12   120096  SEQ        Science      Map(Az/C)   A262_2
+
+    The slow alternative is to read the full $DATA_LMT/data_lmt.log
+    """
+    def __init__(self):
+        fp = open("IO")
+        lines = fp.readlines()
+        for line in lines:
+            if line[0] == '#': continue
+            # hack: first line
+            self.io = line.strip()
+    def getio(self, obsnum):
+        # hack: all the same
+        return self.io
 
 def pix_list(pl):
     """ convert a strong like "-0,-1" to proper pixlist by removing
@@ -96,8 +121,8 @@ def getpars(on):
             if len(extra) > 0:
                 pars[o].append(extra)
 
-    print("PARS4", pars4)
-    print("PARS5", pars5)
+    #print("PARS4", pars4)
+    #print("PARS5", pars5)
 
     return pars4,pars5
 
@@ -150,6 +175,9 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     o_min = -1
     o_max = -1
 
+    # @todo if more than one I/O is present, this code won't work
+    io = IO()    
+
     if argv != None:
         if len(argv) > 1:
             obsnums=[]
@@ -160,7 +188,6 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
                 print("  -c    produce a config/obsnum list [takes time]")
                 print("  -b    show all failed obsnums")
                 print("  -B    show all failed obsnums and add the word QAFAIL for comments.txt")
-                print("  -io   TBD")
                 sys.exit(0)
             elif argv[1] == '-o':
                 for s in on.keys():
@@ -237,13 +264,14 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
 
             o = abs(o1)
             os = repr(o)
+            _io = io.getio(o)
             if s in pars1:
-                cmd1[0] = "SLpipeline.sh obsnum=%d _io=%s _s=%s %s restart=1 " % (o,io,s,pars1[s])
+                cmd1[0] = "SLpipeline.sh obsnum=%d _io=%s _s=%s %s restart=1 " % (o,_io,s,pars1[s])
             if s in pars2:
-                cmd1[1] = "SLpipeline.sh obsnum=%d _io=%s _s=%s %s %s" % (o,io,s,pars2[s], getargs(os,pars4))
+                cmd1[1] = "SLpipeline.sh obsnum=%d _io=%s _s=%s %s %s" % (o,_io,s,pars2[s], getargs(os,pars4))
             if pars3 != None and s in pars3:
-                cmd1[2]  = "SLpipeline.sh obsnum=%d _io=%s _s=%s %s %s" % (o,io,s, pars3[s], getargs(os,pars5))
-            cmd1[3] = "SLpipeline.sh obsnum=%d _io=%s _s=%s archive=1" % (o,io,s)
+                cmd1[2]  = "SLpipeline.sh obsnum=%d _io=%s _s=%s %s %s" % (o,_io,s, pars3[s], getargs(os,pars5))
+            cmd1[3] = "SLpipeline.sh obsnum=%d _io=%s _s=%s archive=1" % (o,_io,s)
             for i in range(4):
                 if len(cmd1[i]) > 0:  fp1[i].write("%s\n" % cmd1[i])
             n1 = n1 + 1
@@ -265,17 +293,18 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
                 o_last = o
         print('%s[%d/%d] :' % (s,n3,len(on[s])), obsnums)
         o_o = '%s_%s' % (o_first,o_last)
+        _io = io.getio(o_first)
         # print("Combo: %s" % o_o)
         cmd1 = ["" for i in range(4)]
         cmd2 = ["" for i in range(4)]
         
         if s in pars1:
-            cmd2[0] = "SLpipeline.sh _io=%s _s=%s admit=0 restart=1 obsnums=%s" % (io, s, obsnums)
+            cmd2[0] = "SLpipeline.sh _io=%s _s=%s admit=0 restart=1 obsnums=%s" % (_io, s, obsnums)
         if s in pars2:
-            cmd2[1] = "SLpipeline.sh _io=%s _s=%s admit=1 srdp=1    obsnums=%s %s" % (io, s, obsnums, getargs(o_o,pars4))
+            cmd2[1] = "SLpipeline.sh _io=%s _s=%s admit=1 srdp=1    obsnums=%s %s" % (_io, s, obsnums, getargs(o_o,pars4))
         if pars3 != None and s in pars3:
-            cmd2[2] = "SLpipeline.sh _io=%s _s=%s admit=1 srdp=1    obsnums=%s %s" % (io, s, obsnums, getargs(o_o,pars5))
-        cmd2[3] = "SLpipeline.sh obsnums=%s _io=%s _s=%s archive=1" % (obsnums,io,s)    
+            cmd2[2] = "SLpipeline.sh _io=%s _s=%s admit=1 srdp=1    obsnums=%s %s" % (_io, s, obsnums, getargs(o_o,pars5))
+        cmd2[3] = "SLpipeline.sh obsnums=%s _io=%s _s=%s archive=1" % (obsnums,_io,s)    
         for i in range(4):
             if len(cmd2[i]) > 0:  fp2[i].write("%s\n" % cmd2[i])
         n2 = n2 + 1
