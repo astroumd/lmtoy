@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 #
 # install anaconda3, plus a sourceable python_start.$SHELL script
-# 18-mar-2024 NEMO/PJT original
+# 18-mar-2024 NEMO/PJT original - see $NEMO/src/scripts/install_anaconda3
 # 20-aug-2023 annotated for LMTOY
 
 #--HELP
@@ -20,6 +20,7 @@ version=2023.03-1  # 3.10.14 OK
 #version=2023.09-0  # 3.11.5  BROKEN for m2r
 #version=2024.02-1  # 3.11.7  BROKEN for m2r
 #version=2024.06-1  # 3.12.4  BROKEN for m2r (installs very fast)
+#version=2024.10-1  # 3.12.7
 
 
   dir=$(pwd)/anaconda3       # where anaconda will be located
