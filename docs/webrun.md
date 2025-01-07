@@ -2,7 +2,8 @@
 
 At the moment this is a discussion document. The source code for the
 webrun environment is currently in
-development in: https://github.com/lmtmc/lmt_web
+development in: https://github.com/lmtmc/pipeline_web
+
 
 A nicely formatted version of this document should be in:
 https://github.com/astroumd/lmtoy/blob/master/docs/webrun.md
@@ -16,8 +17,8 @@ Some of these are environment variables, others so noted for convenience
       $WORK_LMT   - root directory of the session's working area
       $PID        - LMT's *ProjectId*  (e.g.  2023-S1-UM-10)
       $OBSNUM     - observation number (e.g.  123456)
-      $PIS        - PI session name  (a new concept in *webrun*)
       $SRC        - Source Name
+      $PIS        - PI session name  (a new concept in *webrun*)
 
 ## Overview for the lmtslr user:
 
@@ -28,9 +29,9 @@ First a description: we start from the directory where the project
 script generator lives, we generate run files for this project and submit
 them to SLURM. Note that each (sbatch_lmtoy.sh) command here can only
 be run when the previous command has finished! We have an experimental
-sbatch_lmtoy2.sh command that can  wait between runfiels.
+sbatch_lmtoy2.sh command that can  wait between runfiles.
 
-      cd $WORK_LMT/lmtoy_run/lmtoy_$PID
+      cd $WORK_LMT/lmtoy_run/lmtoy_$PID     (alternative command:  cdrun $PID)
       git pull
       make runs
           [should find out which run files there are to run]
@@ -55,10 +56,10 @@ This is the typical workflow for the pipeline operator, as well as for the DA.
 
 The work results for this PID will be in $WORK_LMT/$PID, but is available
 to the PI at https://taps.lmtgtm.org/lmtslr/$PID (a PI password is needed
-until tge data is public).
+until the data is public).
  
 The PI webrun will essentially do the same thing, but in a new hierarchy
-for just that PID, and underneath a new $WORK_LMT/$PID/session/ tree, as
+for just that single PID, and underneath a new $WORK_LMT/$PID/session/ tree, as
 summarized below.
 
 Important and still missing is a mechanism that will have each tier (run1a, run1b, run2a etc.) wait
@@ -71,19 +72,19 @@ Following this convention we arrive at the following proposed directory hierarch
      ..../work_lmt/                                       top level WORK_LMT used by pipeline
                    lmtoy_run/lmtoy_PID/                   script generator used by pipeline
                    PID/                                   The PI has web-read-access to this tree via index.html
-		       dir4dv/                            temporary files for archive submission
-		       dirzip/                            ZIP files of the SRDP and SDFITS data
+		       dir4dv/                            temporary files for archive submission (not needed for webrun)
+		       dirzip/                            ZIP files of the SRDP and SDFITS data (links to these will be provided)
                        O1/                                obsnum directories with full results of pipeline
                        O2/
                        ..
                        session.dat                        this file contains session entries "1" and "2"
-                       session-1/                         PIS=session-1 is the new WORK_LMT for this webrun session
+                       Session-1/                         PIS=session-1 is the new WORK_LMT for this webrun session
                                  lmtoy_run/lmtoy_PID/
                                  PID/O1/                  only one PID in this session
                                      O2/
                                      ..
 				     dirzip/              ZIP files
-                       session-2/lmtoy_run/lmtoy_PID/     PIS=session-2 is the new WORK_LMT for this webrun session
+                       Session-2/lmtoy_run/lmtoy_PID/     PIS=session-2 is the new WORK_LMT for this webrun session
                                  PID/O1/
                                      O2/
                                      ..
@@ -250,6 +251,7 @@ where currently we have
  malt:      /home/lmtslr/data_lmt3                  /home/lmtslr/work_lmt
  unity:     /nese/toltec/dataprod_lmtslr/data_lmt   /nese/toltec/dataprod_lmtslr/work_lmt
                                                     /nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/peter
+                                                    /nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/pipeline_web
  lma:       /lma1/lmt/data_lmt/                     /lma1/teuben/LMT/work_lmt
 ```
 
@@ -284,12 +286,12 @@ Here are some more advanced features the pipeline could/should do, and that a PI
 
 4. Combine fields into a mosaiced field (e.g. MX-2, US-20). Fairly simple in script generator, but not provided in default pipeline?
 
-5. Should we allow a raw extraction? Time-out grace period - rsource magmt - how many jobs
+5. Should we allow a raw extraction? Time-out grace period - resource management - how many jobs
 
 6. Run a single bank pipeline from start. Normally it's both, then new tiers on each bank.
 
 ### Things webrun must not do
 
-1. no meta data construction (meta=0) and archive ingestion
+1. no meta data construction (meta=0) and archive ingestion (no need for a dir4dv directory)
 
 
