@@ -74,26 +74,21 @@ Following this convention we arrive at the following proposed directory hierarch
                    sbatch/
                    tmp/
                    PID/                                   The PI has web-read-access to this tree via index.html
-                       dir4dv/                            temporary files for archive submission (not needed for webrun)
-                       dirzip/                            ZIP files of the SRDP and SDFITS data (links to these will be provided)
                        O1/                                obsnum directories with full results of pipeline
                        O2/
-                       ..
+                       .. 
+                       dirzip/                            ZIP files of the SRDP and SDFITS data (links to these will be provided)
                        Session-1/                         PIS=session-1 is the new WORK_LMT for this webrun session
+                                 lmtoy_run/lmtoy_PID/     git clone + session lmtoy_PID copy
                                  sbatch/
                                  tmp/
-                                 lmtoy_run/lmtoy_PID/     git clone + session lmtoy_PID copy
-				     
-                                 PID/O1/                  only one PID in this session
+                                 PID/
+                                     O1/                  only one PID in this session
                                      O2/
                                      ..
 				     dirzip/              ZIP files
-                       Session-2/lmtoy_run/lmtoy_PID/     PIS=session-2 is the new WORK_LMT for this webrun session
-                                 PID/O1/
-                                     O2/
-                                     ..
-				     dirzip/
-
+                       Session-2/
+                                 ...
 
       
 ## Overview of steps
@@ -115,23 +110,20 @@ Command Line (CLI) equivalent commands are given where this makes sense:
    was prepared for the DA's for the PI. It cannot be modified though, only
    cloned.
 
-   CLI equivalent (notice we only redefine the WORK_LMT):
+   CLI equivalent (notice we only redefine the WORK_LMT from the original $WORK_LMT),
+   e.g. on Unity the original WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt/
 
            PIS=1
-     	   export WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt/$PID/Session-$PIS
+     	   export WORK_LMT=$WORK_LMT/$PID/Session-$PIS
            mkdir -p $WORK_LMT
            cd $WORK_LMT
            lmtoy_run $PID
-	   cd lmtoy_run
-	   make git GIT_DIRS=lmtoy_$PID
-	   cd lmtoy_$PID
+	   cd lmtoy_run/lmtoy_$PID
+	   #                          now the work can start
 	   edit mk_runs.py 
 	   make runs
 	   sbatch_lmtoy.sh *run1a
 	   ...
-
-
-
 
    this will create (or re-use) the $WORK_LMT/$PID directory and the pipeline is now
    set up with the script generator and a default run can be submitted.
