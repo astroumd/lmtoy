@@ -1,0 +1,27 @@
+#  PI parameters used in SLpipeline.sh that we are exposing to the GUI
+#  this file is read by the pipeline_web code
+#
+#  @todo    parameter checking
+
+=RSR/BS
+xlines:    Set to a comma-separated list of freq, dfreq pairs where strong lines are to avoid baseline fitting.
+badcb:     Set to a comma-separated list of (chassis/board) combinations, e.g., badcb=2/3,3/5. See also 'jitter'.
+jitter:    Jittering Tsys and BadLags. Use badcb's based on jitter. Default is 1.
+badlags:   Set to a badlags file if to use this instead of dynamically generated. Use 0 to force not to use it (not used yet).
+shortlags: Set to a short_min and short_hi to avoid flagged strong continuum source lags, e.g., shortlags=32,10.0.
+spike:     Spikiness of bad lags that need to be flagged. Default is 3.
+linecheck: Set to 1 to use the source name to grab the correct xlines. Default is 0.
+bandzoom:  The band for the zoomed window (0..5). Default is 5.
+speczoom:  Override bandzoom with a manual speczoom=CENTER,HALF_WIDTH pair.
+rthr:      Threshold sigma value when averaging single observation repeats (-r option for rsr_driver). Default is 0.01.
+cthr:      Threshold sigma value when coadding all observations (-t option for rsr_driver and rsr_sum). Default is 0.01.
+sgf:       Savitzky-Golay high pass filter; odd number > 21. Default is 0.
+notch:     Sigma cut for notch filter to eliminate large frequency oscillations. Needs sgf > 21. Default is 0.
+blo:       Order of polynomial baseline subtraction. Default is 1.
+bandstats: Also compute stats of each of the 6 RSR bands. Default is 0."
+
+
+=SEQ/MAP
+vlsr:      If given, override the VLSR from the header
+dv:        half-width (in km/s) of where we expect signal, centered on the VLSR
+dw:        width (in km/s) of the baseline section on either end of the 2*dv center signal
