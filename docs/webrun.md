@@ -71,15 +71,19 @@ Following this convention we arrive at the following proposed directory hierarch
 
      ..../work_lmt/                                       top level WORK_LMT used by pipeline
                    lmtoy_run/lmtoy_PID/                   script generator used by pipeline
+                   sbatch/
+                   tmp/
                    PID/                                   The PI has web-read-access to this tree via index.html
-		       dir4dv/                            temporary files for archive submission (not needed for webrun)
-		       dirzip/                            ZIP files of the SRDP and SDFITS data (links to these will be provided)
+                       dir4dv/                            temporary files for archive submission (not needed for webrun)
+                       dirzip/                            ZIP files of the SRDP and SDFITS data (links to these will be provided)
                        O1/                                obsnum directories with full results of pipeline
                        O2/
                        ..
-                       session.dat                        this file contains session entries "1" and "2"
                        Session-1/                         PIS=session-1 is the new WORK_LMT for this webrun session
-                                 lmtoy_run/lmtoy_PID/
+                                 sbatch/
+                                 tmp/
+                                 lmtoy_run/lmtoy_PID/     git clone + session lmtoy_PID copy
+				     
                                  PID/O1/                  only one PID in this session
                                      O2/
                                      ..
