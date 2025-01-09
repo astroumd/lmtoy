@@ -26,6 +26,9 @@ fi
 
 cd $WORK_LMT
 
+mkdir -p sbatch
+mkdir -p tmp
+
 if [ ! -d lmtoy_run ]; then
     git clone https://github.com/lmtoy/lmtoy_run
 else
@@ -48,15 +51,7 @@ fi
 cd lmtoy_$PID
 git pull
 
-# convenience link
-ln -sf $WORK_LMT/$PID
-ls
-
-# ensure symlinks to script generator and helper files
-cd $WORK_LMT/$PID
-ln -sf $WORK_LMT/lmtoy_run/lmtoy_$PID
-ln -s lmtoy_$PID/comments.txt
-ln -s README.html index.html
+make links
 
 # report the two directories the user may want to cd to:
 echo ""
