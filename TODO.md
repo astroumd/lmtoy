@@ -26,6 +26,8 @@
 
   Also note that numpy 2.0 is upcoming and could have some impact beyond 2026.
 
+- SEQ BS mode with a linecheck on ULIRGS
+
 - on malt we should also do a "last_obsnum" trick we do on unity. malt is becoming slow
   again and for certain obsnums we will miss one in the last100
   could also leave less data in DATA_LMT
