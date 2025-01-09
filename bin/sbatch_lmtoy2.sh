@@ -33,7 +33,7 @@ for f in $*; do
     nj=1
     while [ $nj -gt 0 ]; do
 	nj=0
-	echo "Progress bar for $(cat $f|wc -l) obsnums: ${nf} @ ${sleep}:"
+	echo "Progress bar for $(cat $f|wc -l) obsnums: #${nf} @ ${sleep}s:"
         echo -n "$f :"
 	for j in $(cat $f.jobid); do
 	    squeue --me | tail +2 | grep -q -w $j
