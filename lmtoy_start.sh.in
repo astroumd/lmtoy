@@ -40,6 +40,7 @@ fi
 # or for personal settings, use ~/.lmtoy_start.sh
 export DATA_LMT=@DATA_LMT@
 export WORK_LMT=@WORK_LMT@
+export WORK_LMT_BASE=@WORK_LMT@
 export CORR_CAL_DIR=$DATA_LMT/rsr/cal
 
 for f in $LMTOY/lmtoy_local.sh $HOME/.lmtoy_start.sh; do
