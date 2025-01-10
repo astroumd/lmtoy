@@ -32,7 +32,7 @@ mkdir -p tmp
 if [ ! -d lmtoy_run ]; then
     git clone https://github.com/lmtoy/lmtoy_run
 else
-    echo "great, lmtoy_run exists"
+    echo "Great, lmtoy_run exists. Will still pull potentially new things."
 fi
 
 PID=$1
@@ -43,6 +43,8 @@ fi
 
 
 cd lmtoy_run
+git pull
+
 
 if [ ! -d lmtoy_$PID ]; then
     git clone https://github.com/lmtoy/lmtoy_$PID
