@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="17-dec-2024"
+lmtoy_version="14-jan-2025"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -1567,6 +1567,14 @@ function lmtoy_ps1 {
     # QAC robust stats off the spectrum in mK
     out4=$(tabmath $spec - %2*1000 all | tabstat -  qac=t robust=t label=$spec)
     printf_red $out4
+
+    # for rc and archive yaml
+    nchan=$(tabrows $spec|wc -l)    
+    rms=$(tabstat  $spec 2 bad=0 robust=t qac=t | txtpar - p0=1,4)
+    echo "nchan=$nchan" >> $rc    
+    echo "rms=$rms"     >> $rc
+    echo "nchan0=8192"  >> $rc
+    echo "bank=$bank"   >> $rc
     
     # tsys
     #dev=$(yapp_query png vps)
