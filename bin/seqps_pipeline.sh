@@ -9,7 +9,7 @@
 #          If projectid is set, this is the subdirectory, within which obsnum is set
 #
 
-_version="seqps_pipeline: 1-oct-2024"
+_version="seqps_pipeline: 3-oct-2024"
 
 echo "LMTOY>> $_version"
 
@@ -20,7 +20,6 @@ echo "LMTOY>> $_version"
 #            - start or restart
 path=${DATA_LMT:-data_lmt}
 obsnum=0
-oid=""
 pdir=""
 admit=1
 clean=1
@@ -172,7 +171,6 @@ lmtoy_args "$@"
 
 #             pick one bank, or loop over all allowed banks
 if [ $bank != -1 ]; then
-    oid=$bank
     lmtoy_ps1
 elif [ $numbands == 2 ]; then
     # new style, April 2023 and beyond
@@ -182,7 +180,6 @@ elif [ $numbands == 2 ]; then
     IFS="," read -a bandwidths <<< $bandwidth
     # "expr 1 - 1" returns an error state 1 to the shell (it's a feature)
     for bank in $(seq 0 $(expr $numbands - 1)); do
-	oid=$bank    # oid not used yet
 	echo "LMTOY>> Preparing for bank=$bank"
 	rc1=lmtoy_${obsnum}__${bank}.rc
 	if [ ! -e $rc1 ]; then
@@ -202,12 +199,10 @@ elif [ $numbands == 2 ]; then
 elif [ $numbands == 1 ]; then
     # old style, we should not use it anymore
     bank=0
-    oid=0
     lmtoy_ps1
 else
     for b in $(seq 1 $numbands); do
 	bank=$(expr $b - 1)
-	oid=$bank
 	echo "======================================"
 	echo "Preparing for bank = $bank / $numbands"
 	lmtoy_ps1
