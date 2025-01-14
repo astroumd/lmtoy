@@ -194,7 +194,7 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
 	echo "      <A HREF=$o/README.html> ${o}</A>"
 	echo "    </td>"
 	echo "    <td>"
-	echo "      $bank
+	echo "      $bank"
 	echo "    </td>"
 	echo "    <td>"
 	echo "      $src"
