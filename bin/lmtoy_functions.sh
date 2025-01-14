@@ -1591,6 +1591,8 @@ function lmtoy_ps1 {
     else
 	echo "LMTOY>> skipping ADMIT post-processing"
     fi
+
+    echo "date=\"$(lmtoy_date)\"     # end " >> $rc    
     
     
     echo "LMTOY>> Parameter file used: $rc"
