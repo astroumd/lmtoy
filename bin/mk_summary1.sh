@@ -14,7 +14,7 @@
 #set -e
 #set -x
 
-_version="3-nov-2024"
+_version="14-jan-2025"
 
 if [ -z "$1" ]; then
     src0=""
@@ -134,11 +134,19 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
 	    # RSR - use average of driver and blanking RMS
 	    #rms=$(grep QAC_STATS $log | txtpar - '1000*0.5*(%1+%2)/sqrt(2)' p0=1,4 p1=2,4)  # trend spectrum
 	    #rms=$(grep QAC_STATS $log | txtpar - '1000*0.5*(%1+%2)'          p0=3,4 p1=4,4)  # straight spectrum
-	    rms=$(grep QAC_STATS $log | txtpar - '1000*0.5*(%1+%2)' p0=driver.sum.txt,1,4 p1=blanking.sum.txt,1,4)
-	
-	    #rms0=$(nemoinp "1.291*1000*100/sqrt(4*31250000*$inttime)")
-	    rms0=$(nemoinp "1000*100/sqrt(31250000*$inttime)")
+	    if [ 1 = 1 ]; then
+		# new:   rms in K, reported in mK
+		rms=$(nemoinp 1000*$rms)
+		tsys=100
+		rms0=$(nemoinp "1000*$tsys/sqrt(31250000*$inttime)")
+	    else
+		rms=$(grep QAC_STATS $log | txtpar - '1000*0.5*(%1+%2)' p0=driver.sum.txt,1,4 p1=blanking.sum.txt,1,4)
+		#rms0=$(nemoinp "1.291*1000*100/sqrt(4*31250000*$inttime)")
+		rms0=$(nemoinp "1000*100/sqrt(31250000*$inttime)")
+	    fi
 	    rms0r="$(nemoinp $rms/$rms0) /100K"
+
+	    
 	    ext=""
 	elif [ "$instrument" == "SEQ" ] && [ $obspgm == "Bs" ]; then
 	    rms=$(grep QAC_STATS $log | txtpar - "%1" p0=$b,4)
@@ -229,7 +237,9 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
 	elif [ -e ${o}/seq.spectra.png ]; then
 	    echo "      <A HREF=${o}/seq.spectra.png> <IMG SRC=${o}/seq.spectra.png height=100></A>"
 	elif [ -e ${o}/mars_9_0.png ]; then
-	    echo "      <A HREF=${o}/mars_9_0.png> <IMG SRC=${o}/mars_9_0.png height=100></A>"	    
+	    echo "      <A HREF=${o}/mars_9_0.png> <IMG SRC=${o}/mars_9_0.png height=100></A>"
+	elif [ -e ${o}/seq.spectra__${bank}.png ]; then
+	    echo "      <A HREF=${o}/seq.spectra__${bank}.png> <IMG SRC=${o}/seq.spectra__${bank}.png height=100></A>"
 	else
 	    echo "      N/A"
 	fi  
