@@ -1,13 +1,14 @@
 #! /usr/bin/env python
 #
 
-_version = "11-dec-2023"
+_version = "28-jan-2025"
 
 _help = """Usage: seq_spectra.py [options] TABLE [TABLE ...]
 
 Options:
   -y PLOTFILE             Save plotfile instead of interactive. Optional
   -t TITLE                Plot title. Optional
+  -c COLUMN               Column to use for spectrum. [Default: 2]
   -h --help               This help
   -d --debug              Add debugging
   -v --version            The script version
@@ -28,6 +29,7 @@ if av['--debug']:
 
 plotfile = av['-y']
 title = av['-t']
+col = int(av['-c'])
 tables = av['TABLE']
 n = 0
 
@@ -40,7 +42,7 @@ plt.figure()
 for f in tables:
     n = n + 1
     data1 = np.loadtxt(f).T
-    plt.step(data1[0],data1[1],label=f, where='mid')
+    plt.step(data1[0],data1[col-1],label=f, where='mid')
 
 if n==0:
     sys.exit(0)
