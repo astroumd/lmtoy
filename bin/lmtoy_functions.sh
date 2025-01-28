@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="14-jan-2025"
+lmtoy_version="28-jan-2025"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -1535,11 +1535,13 @@ function lmtoy_ps1 {
     # for 1MM only roach0 is used, so bank=0 is needed, and oid= is used to identify the "bank" being 0 or 1
     # we thus hardcode the bank itself to be 0,so it looks at the right roach
     if [ $instrument = "1MM" ]; then
-	bank=0
 	if [ $bank == 0 ]; then
 	    pix_list=0,2
 	elif [ $bank == 1 ]; then
 	    pix_list=1,3
+	else
+	    echo "LMTOY>> Illegal bank $bank"
+            exit 0
 	fi
 	echo "LMTOY>> 1MM overriding pix_list=$pix_list bank=$bank"
     fi
@@ -1560,9 +1562,13 @@ function lmtoy_ps1 {
     sargs="--slice [-40,40]"
     echo "LMTOY>> process_ps.py --obs_list $obsnum --pix_list $pix_list --use_cal --stype $stype --bank $bank -o $spec $sargs"
                   process_ps.py --obs_list $obsnum --pix_list $pix_list --use_cal --stype $stype --bank $bank -o $spec $sargs
-    title="LMT $instrument/$obspgm"
-    seq_spectra.py -t "$title" -y seq.spectra__${bank}.png $spec
-    seq_spectra.py -t "$title" -y seq.spectra__${bank}.svg $spec
+    title="LMT Spectrum $instrument/$obspgm"
+    seq_spectra.py -t "$title $bank" -y seq.spectra__${bank}.png $spec
+    seq_spectra.py -t "$title $bank" -y seq.spectra__${bank}.svg $spec
+
+    title="LMT Tsys $instrument/$obspgm"    
+    seq_spectra.py -t "$title $bank" -y seq.tsys__${bank}.png -c 3 $spec
+    seq_spectra.py -t "$title $bank" -y seq.tsys__${bank}.svg -c 3 $spec
 
     # QAC robust stats off the spectrum in mK
     out4=$(tabmath $spec - %2*1000 all | tabstat -  qac=t robust=t label=$spec)
@@ -1573,7 +1579,7 @@ function lmtoy_ps1 {
     rms=$(tabstat  $spec 2 bad=0 robust=t qac=t | txtpar - p0=1,4)
     echo "nchan=$nchan" >> $rc    
     echo "rms=$rms"     >> $rc
-    echo "nchan0=8192"  >> $rc
+    echo "nchan0=8192"  >> $rc    # @todo fix
     echo "bank=$bank"   >> $rc
     
     # tsys
