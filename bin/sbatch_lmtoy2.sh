@@ -31,6 +31,10 @@ for f in $*; do
     # this also stores the JOBID's in $f.jobid
     sbatch_lmtoy.sh $f
     nj=1
+    # top template progress bar
+    fmt1="%${nf}s\n"
+    fmt2=$(printf $fmt1 | tr ' ' '-')
+    echo "$f [$fmt2]"
     while [ $nj -gt 0 ]; do
 	nj=0
 	echo "Progress bar for $(cat $f|wc -l) obsnums: #${nf} @ ${sleep}s:"
