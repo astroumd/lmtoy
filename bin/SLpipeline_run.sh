@@ -16,7 +16,7 @@ function error1 {
 
 trap 'error1'  SIGINT
 
-version="SLpipeline: 18-mar-2024"
+version="SLpipeline: 9-feb-2025"
 
 #--HELP
 
@@ -86,7 +86,7 @@ fi
 #  
 if [ ! -e $run/data_lmt.log ]; then
     echo Creating $run/data_lmt.log, be patient, this could be some time
-    lmtinfo.py $data | grep ^2 | grep -v failed | sort > $run/data_lmt.log
+    lmtinfo.py $data | grep -a ^2 | grep -av failed | sort > $run/data_lmt.log
 fi
 
 nobs=$(cat $run/data_lmt.log | egrep $key | wc -l)
@@ -105,7 +105,7 @@ while [ $sleep -ne 0 ]; do
     ls -ltr $DATA_LMT/ifproc/           | tail -3
     ls -ltr $DATA_LMT/RedshiftChassis1/ | tail -3 
     echo -n "checking at $(lmtoy_date)"
-    lmtinfo.py $data | grep ^2 | grep -v failed | sort > $run/data_lmt.lag
+    lmtinfo.py $data | grep -a ^2 | grep -av failed | sort > $run/data_lmt.lag
     echo ""
     if [ $lmtinfo == 1 ]; then
 	cp $run/data_lmt.lag $data/data_lmt.log
