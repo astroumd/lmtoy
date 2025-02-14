@@ -199,10 +199,15 @@ dvpipe:
 	git clone $(URL18)
 
 
-lmtoy_run:	work_lmt/lmtoy_run
+lmtoy_run:	$(WORK_LMT)/lmtoy_run  lmtoy_run_git
 
-work_lmt/lmtoy_run:
-	(cd work_lmt; git clone $(URL19))
+$(WORK_LMT)/lmtoy_run:
+	(cd $(WORK_LMT); git clone $(URL19); cd lmtoy_run; make git pull)
+
+
+lmtoy_run_git:
+	(cd $(WORK_LMT)/lmtoy_run; make git pull)
+	@echo "Make sure you regularly 'make lmtoy_run' to update the script generators"
 
 webrun:	lmt_web
 
