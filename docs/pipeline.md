@@ -12,10 +12,10 @@ obsnum the instrument can be discovered, and the pipeline has sensible
 defaults for each instrument. Of course PI/PL parameters (PIPL's) can
 be passed on the bypass these default settings. An example:
 
-      $ SLpipeline.sh obsnum=79448 pix_list=-0,-5 extent=240
+      $ SLpipeline.sh obsnum=79448 pix_list=-0,5 extent=240
 
-would process Sequoia data, remove beams 0 and 5 from the default list, and
-produce a square map of 240 arcsec. The last two keyword are optional. Use
+would process Sequoia data, remove beams 0 and 5 from the default list (0..15),
+and produce a square map of 240 arcsec. The last two keyword are optional. Use
 --help to get more help:
 
       $ SLpipeline.sh --help
@@ -36,21 +36,27 @@ How do you know if an obsnum is present? One possible way is the lmtinfo.py scri
 would show some basic info in "rc" format, which both python and bash can read. It does
 not need a database, but you have to know the obsnum.
 
+Another option is
+
+       $ data_lmt_last
+
 The pipeline will reduce the data in $WORK_LMT and create a directory tree
 starting with **$ProjectId/$obsnum**.  If $WORK_LMT is not set, it will be interpreted
 as the current directory, but this is not recommended in LMTOY. Normally a web browser
 has been configured to look at the $WORK_LMT directory, with or without some authentication.
+(check this, currently unset $WORK_LMT probably fails)
 
 ## SLpipeline.sh
 
-Starting with the 2021-S1 season we have been using the **SLpipeline.sh** script.
-As mentioned before, the
+Starting in 2021 we have been using the **SLpipeline.sh** script to
+reduce all SLR data. As mentioned before, the
 intent is that the script only needs an **obsnum**, and will figure out which instrument
 is used, and run the reduction via the instrument specific reduction pipeline.
 
 There will also be optional *PI pipeline Parameters* (PIPLs), which
 are under discussion, but we will assume they are a series of
-*keyword=value* pairs. 
+*keyword=value* pairs.  Word of caution: it does not check for spelling,
+so **pix-list=-0,5** would not work, and will not return a warning.
 
 ### Sequoia  (SEQ)
 
@@ -79,7 +85,7 @@ currently be selected.  The full list of pixels would be:
 
 In some places (e.g. in comments.txt) one can shorten a list by removing bad beams, e.g.
 
-      pix_list=-0,-5
+      pix_list=-0,5
 
 is equivalent to
 
@@ -169,10 +175,22 @@ Here we sketch the user experience, as seen from both a POSIX shell
                 $ sbatch_lmtoy.sh test1
                 $ sbatch_lmtoy.sh test2
 		
-	 but making the summary table just for a source is now tricky:
+        but making the summary table just for a source is now tricky:
 	 
                 $ cd $WORK_LMT/$PID
                 $ mk_summary1.sh $SRC > README_$SRC.html
+
+   3. Any expression based.
+
+      Using the **lmtinfo.py grep ** filter command you can extract a list of rows that can be fed into mk_summary2.sh for
+      an arbitrary summary listing that crosses over projects, e.g.
+
+                 #   !! Ensure this example actually works !!
+                 $ cd $WORK_LMT/Example1
+                 $ lmtinfo.py grep LineCheck Bs I10565  > I10565.log
+		 $ mk_summary2.sh I10565.log > README.html
+		 
+
 
    If you want to use a python based submission (e.g. via the web workflow), there's a better way, though
    as described before, it assumed the script generator(s) have been set up. This workflow hasn't been
@@ -193,6 +211,8 @@ Here we sketch the user experience, as seen from both a POSIX shell
 
    The SLpipeline.sh incantation are in the run files, but there should be an API returning a python
    list of them.
+
+
 
 
 6. Valid PIPLs can also be found via the --help parameter to the corresponding instrument pipeline, e.g.
