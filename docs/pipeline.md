@@ -27,11 +27,12 @@ to get generic help, and instrument specific help.
 ## Where is the work done
 
 When observing concludes, raw data will show up in your $DATA_LMT. Depending on
-where your $DATA_LMT is, this could be seconds, minutes or days.
+where your $DATA_LMT is, this could be seconds, minutes or days. Or you can get
+it yourself :-)
 
 How do you know if an obsnum is present? One possible way is the lmtinfo.py script:
 
-      $ lmtinfo.py   12345
+      $ lmtinfo.py  123456
 
 would show some basic info in "rc" format, which both python and bash can read. It does
 not need a database, but you have to know the obsnum.
@@ -46,17 +47,30 @@ as the current directory, but this is not recommended in LMTOY. Normally a web b
 has been configured to look at the $WORK_LMT directory, with or without some authentication.
 (check this, currently unset $WORK_LMT probably fails)
 
+If you have write permission, and manage your own $DATA_LMT, you probably want to build
+that lmtinfo database such that grep works:
+
+      $ lmtinfo.py build
+
+most like now this command will return some (or a lot) of data
+
+      $ lmtinfo.py grep 20
+
 ## SLpipeline.sh
 
-Starting in 2021 we have been using the **SLpipeline.sh** script to
-reduce all SLR data. As mentioned before, the
-intent is that the script only needs an **obsnum**, and will figure out which instrument
-is used, and run the reduction via the instrument specific reduction pipeline.
+
+
+Starting with the 2021-S1 season we have been using the
+**SLpipeline.sh** script to reduce any type of spectral line data.  As
+mentioned before, the intent is that the script only needs an
+**obsnum**, and will figure out which instrument is used, and run the
+reduction via the instrument specific reduction pipeline.
 
 There will also be optional *PI pipeline Parameters* (PIPLs), which
 are under discussion, but we will assume they are a series of
 *keyword=value* pairs.  Word of caution: it does not check for spelling,
 so **pix-list=-0,5** would not work, and will not return a warning.
+
 
 ### Sequoia  (SEQ)
 
@@ -93,41 +107,40 @@ is equivalent to
 
 ## RSR
 
-The RSR receiver....
+The RSR receiver supports Bs observations, and Map for pointing.
 
 ## 1MM
 
-The 1MM receiver....
+The 1MM receiver support Ps observations, as well as Map.
 
 ## B4R
 
 This 2MM received is not covered here, they have their own pipeline.
 
-# User Processing (2023)
+# User Processing (2025)
 
-Here we sketch the user experience, as seen from both a POSIX shell
-(now working) and a hypothetical web interface (translation in progress):
+Here we sketch the user experience of running the pipeline.
 
 1. set up LMTOY (including $DATA_LMT, $WORK_LMT, as well as $WORK_LMT/lmtoy_run)
+   if the script generators change (they often do), make sure "make lmtoy_run" is
+   done regularly.
 
-2. user logs in and this reports back one or more PID's (project-ID)
-   that they are authenticated to work on
+        $ cd $LMTOY
+	$ make lmtoy_run
 
-         # ... WORK_LMT has been set up. At the start it will be empty
-         $ cd $WORK_LMT
-         $ ls
+2. Check which projects have been worked on
 
-3. User selects one PID and hits some "next" button [on the web interface
-   one could perhaps debate allowing more PID's]
+         $ ls $WORK_LMT
 
-         # ...
+3. Select a PID and see what obsnums are present. If you see a README.html, it's the summary
+
          $ PID=2021-S1-MX-3
-         $ cd $WORK_LMT/$PID
+         $ ls $WORK_LMT/$PID
+	 $ xdg-open $WORK_LMT/$PID/README.html
 
 4. A list of sources is shown that are in this PID. User selects one
    or more of those to work on. 
    
-         # ... current clumsy ascii database
          $ lmtinfo.py grepw $PID Science | awk '{print $6}' | sort | uniq -c
            12 Arp143
            10 Arp91
@@ -144,9 +157,10 @@ Here we sketch the user experience, as seen from both a POSIX shell
    index.html needs to point to the README.html and comments.txt needs to point to its namesake here):
 
         $ cd $WORK_LMT/lmtoy_run/lmtoy_$PID
+	$ make links
         $ make runs
 
-   this will have generated some run1 and run2 scripts. The first one for single obsnums, the second one for
+   this will have generated some run1* and run2* scripts. The first one for single obsnums, the second one for
    combinations.   \*.run1a for the first/single stage,
    and \*.run1b for the second/combo stage (which can sometimes be skipped)
 
@@ -165,6 +179,10 @@ Here we sketch the user experience, as seen from both a POSIX shell
                 $ make summary
 
         which can then be viewed, either via README.html or the symlinked index.html
+
+        If a whole series has to be done, and you don't want to wait for the results, do
+
+                $ sbatch_lmtoy2.sh *.run1a *.run1b *.run1c *.run2a
 		
    2.   Source based.
    

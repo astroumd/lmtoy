@@ -16,7 +16,7 @@ function error1 {
 
 trap 'error1'  SIGINT
 
-version="SLpipeline: 18-mar-2024"
+version="SLpipeline: 11-feb-2025"
 
 #--HELP
 
@@ -86,14 +86,14 @@ fi
 #  
 if [ ! -e $run/data_lmt.log ]; then
     echo Creating $run/data_lmt.log, be patient, this could be some time
-    lmtinfo.py $data | grep ^2 | grep -v failed | sort > $run/data_lmt.log
+    lmtinfo.py $data | grep -a ^2 | grep -av failed | sort > $run/data_lmt.log
 fi
 
-nobs=$(cat $run/data_lmt.log | egrep $key | wc -l)
- on0=$(egrep $key $run/data_lmt.log | head -1 | awk '{print $2}')
- on1=$(egrep $key $run/data_lmt.log | tail -1 | awk '{print $2}')
-  d0=$(egrep $key $run/data_lmt.log | head -1 | awk '{print $1}')
-  d1=$(egrep $key $run/data_lmt.log | tail -1 | awk '{print $1}')
+nobs=$(cat $run/data_lmt.log | egrep -a $key | wc -l)
+ on0=$(egrep -a $key $run/data_lmt.log | head -1 | awk '{print $2}')
+ on1=$(egrep -a $key $run/data_lmt.log | tail -1 | awk '{print $2}')
+  d0=$(egrep -a $key $run/data_lmt.log | head -1 | awk '{print $1}')
+  d1=$(egrep -a $key $run/data_lmt.log | tail -1 | awk '{print $1}')
     
 echo "OK, $run/data_lmt.log is ready: Found $nobs $key obsnums from $on0 to $on1"
 echo "DATE-OBS's from run $d0 to $d1"
@@ -105,18 +105,18 @@ while [ $sleep -ne 0 ]; do
     ls -ltr $DATA_LMT/ifproc/           | tail -3
     ls -ltr $DATA_LMT/RedshiftChassis1/ | tail -3 
     echo -n "checking at $(lmtoy_date)"
-    lmtinfo.py $data | grep ^2 | grep -v failed | sort > $run/data_lmt.lag
+    lmtinfo.py $data | grep -a ^2 | grep -av failed | sort > $run/data_lmt.lag
     echo ""
     if [ $lmtinfo == 1 ]; then
 	cp $run/data_lmt.lag $data/data_lmt.log
     fi
     tail -3 $run/data_lmt.lag
-    on2=$(egrep $key $run/data_lmt.lag | tail -1 | awk '{print $2}')
+    on2=$(egrep -a $key $run/data_lmt.lag | tail -1 | awk '{print $2}')
     echo "$on2"
     if [ $on1 != $on2 ]; then
-	pid=$(egrep $key $run/data_lmt.lag | tail -1 | awk '{print $7}')
-	goal=$(egrep $key $run/data_lmt.lag | tail -1 | awk '{print $4}')
-	pgm=$(egrep $key $run/data_lmt.lag | tail -1 | awk '{print $5}')
+	pid=$(egrep -a $key $run/data_lmt.lag | tail -1 | awk '{print $7}')
+	goal=$(egrep -a $key $run/data_lmt.lag | tail -1 | awk '{print $4}')
+	pgm=$(egrep -a $key $run/data_lmt.lag | tail -1 | awk '{print $5}')
 	tail -1 $run/data_lmt.lag
 	printf_red Found new obsnum=$on2 pid=$pid
 	if [ -e SLpipeline.in ]; then

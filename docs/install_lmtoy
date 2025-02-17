@@ -29,7 +29,7 @@ wget=wget                         # use wgetc if you have PJT's caching version
 apt=0                             # also run apt install on the requirements.apt file
 venv=0                            # set to 1 if you want to bypass a new anaconda3 and use venv
 nemo=1                            # set to 0 if you don't need NEMO (not recommended) or use existing $NEMO
-pgplot=1                          # set to 1 if you want PGPLOT in NEMO, instead of simple PS driver, use 2 for self-built
+pgplot=1                          # set to 1 if you want PGPLOT in NEMO, instead of simple PS driver, use 2 for self-built (mknemo=1)
 mknemo=0                          # use mknemo builds for pgplot, hdf5, netcdf4, cfitsio
 data_lmt=${DATA_LMT:-data_lmt}    # give sensible default for $DATA_LMT - use an existing one to speed up testing
 work_lmt=${WORK_LMT:-work_lmt}    # give sensible default for $WORK_LMT
