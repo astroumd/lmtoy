@@ -21,6 +21,10 @@
   - 38: final DataVerse items **marc**
   - 35: inttime not correct - we need the ON time only,not ON+OFF+CAL
 
+- Due to SB bugs with birdies, some data were taken with bank=1 in bank=0, e.g.
+  in 2024-S1-MX-20 wwe have SB0 and SB1 named sources.  How can old-style and
+  new SB-style named data be combined ?
+
 - python versions via install_anaconda3:
   we now use version=2023.03-1 # 3.10.14 
 
