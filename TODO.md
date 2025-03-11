@@ -9,13 +9,13 @@
   - Should oid= allow us to use ${obsnum}__${oid} - this would make it possible to make multiple (line) cubes
   - can we create a different cube for bank0 and bank1 ?  should be possible.
   - "restart=1 bank=0" fails, but is ok with meta=0
-  - why is RMS/RMS0 not closer to 1 for SEQ (it.s often 1.5--2 or worse)
+  - why is RMS/RMS0 not closer to 1 for SEQ (it.s often 1.5--2 or worse)   (1MM seems fine, RSR seems fine)
 
 - active github issues:  https://github.com/astroumd/lmtoy/issues
   - 57: spectral vs. average Tsys
-  - 51: SEQ/Ps html now broken for dual IF
+  - 51: SEQ/Ps html now broken for dual IF [fixed]
   - 48: allow missing roach files  **Kamal**
-  - 47: "wtn" has the wrong beam plotted
+  - 47: "wtn" map has the wrong beam plotted
   - 46: SEQ low power can crash pipeline (MX-2 example mentioned before)
   - 45: RSR not commutative **+Min**
   - 38: final DataVerse items **marc**
