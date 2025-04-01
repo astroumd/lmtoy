@@ -327,5 +327,5 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
         for o1 in on[s]:
             obsnums.append(abs(o1))
     obsnums.sort()
-    print("Obsnum range: %d - %d   with %d single obsnums and %d combinations" % (obsnums[0], obsnums[-1], n1, n2))
+    print("%s: obsnums %d - %d   with %d single obsnums and %d combinations" % (project, obsnums[0], obsnums[-1], n1, n2))
     print("Also note the archiving runs (run1.sh and run2.sh) when QA is done")
