@@ -322,11 +322,10 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     print(run2b)
     print(run1c)
     print(run2c)
-    print("Where there are %d single obsnum runs, and %d combination obsnums" % (n1,n2))
     obsnums=[]
     for s in on.keys():
         for o1 in on[s]:
             obsnums.append(abs(o1))
     obsnums.sort()
-    print("First and last obsnum are %d and %d" %  (obsnums[0], obsnums[-1]))
-    print("Also note the archiving runs (run1x and run2x) when QA is done")
+    print("Obsnum range: %d - %d   with %d single obsnums and %d combinations" % (obsnums[0], obsnums[-1], n1, n2))
+    print("Also note the archiving runs (run1.sh and run2.sh) when QA is done")
