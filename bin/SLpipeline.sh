@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 3-apr-2025"
+_version="SLpipeline: 13-may-2025"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -380,11 +380,14 @@ echo "date=\"$(lmtoy_date)\"     # end "     >> $pdir/lmtoy_$obsnum.rc
 # record the pipeline version
 echo "lmtoy_version=$(cat $LMTOY/VERSION)"   >> $pdir/lmtoy_$obsnum.rc
 
-# record the qagrade, if one was given
+# record the qagrade (it should always have something)
+# @todo   why we need to re-read rc file for the qagrade in a combo?
+source $pdir/lmtoy_$obsnum.rc
 if [ ! -z $qagrade ]; then
+    echo "PJT good qagrade=$qagrade"    
     echo "qagrade=$qagrade"                  >> $pdir/lmtoy_$obsnum.rc
 else
-    echo "qagrade="                          >> $pdir/lmtoy_$obsnum.rc    
+    echo "qagrade=    # should not happen"   >> $pdir/lmtoy_$obsnum.rc    
 fi
 
 # record the public date, if one was given
