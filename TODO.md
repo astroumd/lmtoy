@@ -25,6 +25,8 @@
   in 2024-S1-MX-20 wwe have SB0 and SB1 named sources.  How can old-style and
   new SB-style named data be combined ?
 
+- should we have a flag as on option to (in SEQ) keep all channels
+
 - python versions via install_anaconda3:
   we now use version=2023.03-1 # 3.10.14 
 
