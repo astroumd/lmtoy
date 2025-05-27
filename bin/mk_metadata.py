@@ -27,6 +27,8 @@ For a given OBSNUM the script will create the metadata for DataVerse
 in either yaml and/or sqlite format. If no obsnum is given, a
 generic example is given.
 
+Note that  OBSNUM is really the directory where dir4dv stores the OBSNUM
+
 Version: %s
 """ % _version
 
@@ -268,7 +270,7 @@ if __name__ == "__main__":
     if instrument == "1MM":
         instrument = "MSIP1MM"
 
-    if input_yamlfile is None:
+    if input_yamlfile is None:      # the -y option
         # open the LMG and write some common metadata
         # -- see also example() in lmtmetadatagroup.py
         lmtdata = LmtMetadataGroup("SLpipeline", dbfile=dbfile, yamlfile=yamlfile)
