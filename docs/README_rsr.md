@@ -6,17 +6,17 @@ In this directory you can find the following files, with the following name conv
        SRC      source name, as provided by the PI.   (no spaces allowed)
        OBSNUM   observation number - either a single OBSNUM, or OBSNUM1_OBSNUM2
                 if a range was used in stacking. OBSNUM is a 5 or 6 digit number.
-       OBSNUM   observation number - either a single OBSNUM, or if OBSNUM1_OBSNUM2
-                if a range was used in stacking. OBSNUM is a 6 digit number.
 
-Version:  30-jul-2024
+Version:  13-jan-2025
 
        lmtoy.rc                    LMTOY system info
+       lmtoy_args.log              LMTOY SLpipeline history
        lmtoy_OBSNUM.rc             parameter setting for SLpipeline (cumulative)
        lmtoy_OBSNUM.log            logfile of (latest) pipeline run
+       lmtoy_OBSNUM.ifproc         ASCII summary of the raw IFPROC header
        lmtoy_PID.tar.gz            Record of the script generator used by pipeline (if available)
        
-       OBSNUM_lmtmetadata.yaml     Meta-data for dataverse and its associated meta-data
+       OBSNUM_lmtmetadata.yaml     Meta-data for dataverse and its associated meta-data [deprecated here]
 	
        rsr.OBSNUM.badlags          badlags
        rsr.OBSNUM.blanking         Used by "blanking/sum" script
