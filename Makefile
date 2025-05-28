@@ -382,6 +382,7 @@ bench1:
 bench1a:
 	$(TIME) SLpipeline.sh obsnum=33552 restart=1 linecheck=1 public=2020-12-31 qagrade=3 admit=$(ADMIT) meta=$(META)
 	$(TIME) SLpipeline.sh obsnums=33551,33552 restart=1 admit=$(ADMIT) meta=$(META)
+	$(TIME) SLpipeline.sh obsnums=33552,33551 restart=1 admit=$(ADMIT) meta=$(META)
 	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench1a.txt'
 	@echo "================================================================================================================="
 	@echo xdg-open  $(WORK_LMT)/2014ARSRCommissioning/33551_33552/README.html

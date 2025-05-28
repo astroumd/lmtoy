@@ -14,7 +14,7 @@ In this directory you can find the following files, with the following naming co
 
 A single bank observation currently has 95 files, a dual bank 166 files.
         
-Version:  24-sep-2024
+Version:  24-oct-2024
 
 	lmtoy.rc                    LMTOY <version, git counter, reduction date, operating system>
 	lmtoy_OBSNUM.rc             parameter setting for SLpipeline (for both banks)
@@ -31,13 +31,12 @@ Version:  24-sep-2024
 	SRC_OBSNUM.wf.fits          waterfall cube (each plane is a beam)
 	SRC_OBSNUM.wf10.fits        waterfall cube - rebinned x10 in time for easier viewing
 	
-
 	SRC_OBSNUM.fits             gridded science cube ("flux flat cube")
 	SRC_OBSNUM.wt.fits          weight map    - time samples
 	SRC_OBSNUM.wt2.fits         weight map v2 - RMS of diffs
 	SRC_OBSNUM.wt3.fits         weight map v3 - RMS in line free region
 
-	SRC_OBSNUM.wtn.fits         ...coverage map (normalized) *BAD BEAM*
+	SRC_OBSNUM.wtn.fits         ...coverage map (normalized) *HAS A BAD BEAM*
 	SRC_OBSNUM.wtr.fits         ratio of wt3/wt2
 	SRC_OBSNUM.wtr3.fits        ...
 	SRC_OBSNUM.wtr4.fits        RMS expected from radiometer equation (weighted average of Tsys/sqrt(df.dt))

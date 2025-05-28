@@ -26,6 +26,11 @@ fi
 d0=$(date)
 
 nf=0
+if [ -e PID ]; then
+    source PID
+else
+    PID=""
+fi
 
 for f in $*; do
     ((nf++))
@@ -44,7 +49,7 @@ for f in $*; do
     while [ $nj -gt 0 ]; do
 	nj=0
 	echo "Progress bar for $(cat $f|wc -l) obsnums: #${nf} @ ${sleep}s:"
-        echo -n "$f :"
+        echo -n "${PID} $f :"
 	for j in $(cat $f.jobid); do
 	    squeue --me | tail +2 | grep -q -w $j
 	    if [ $? == 0 ]; then

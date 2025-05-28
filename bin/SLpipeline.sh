@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 4-nov-2024"
+_version="SLpipeline: 13-may-2025"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -24,10 +24,10 @@ obsnums=0                      #    obsnums= for combinations of existing obsnum
                                # the remainder are optional parameters
 debug=0         # add bash debug (1)
 error=0         # add bash error (1)
-restart=0       # 1=force single fresh restart  2=restart + autorun  (always deletes old obsnum)
+restart=0       # 1=force single fresh restart  2=restart + autorun  (always deletes old obsnum) [2 is TBD]
 nese=0          # 0=work all on nese    1=raw on nese, work on /work    2=raw from /work, work on /work [placeholder]
 exist=0         # if set, and the obsnum exists, skip running pipeline
-skip=0          # if set, skip running pipeline
+skip=0          # if set, skip running pipeline (some agents like to do this)
 tap=0           # save the TAP in a tar/zip file? (used on malt)
 srdp=1          # save the SRDP in a tar/zip file in $PID/dir4dv
 sdfits=1        # save the calibrated spectra in SDFITS (or netCDF) in $PID/dir4dv
@@ -140,6 +140,11 @@ fi
 source $rc0
 rm -f $rc0
 unset rc0
+
+if [ $valid = 0 ]; then
+    echo "LMTOY>> The valid flag is 0, cannot process this data"
+    exit 1
+fi
 
 #             ensure again....just in case
 if [ $obsnum = 0 ]; then
@@ -375,11 +380,14 @@ echo "date=\"$(lmtoy_date)\"     # end "     >> $pdir/lmtoy_$obsnum.rc
 # record the pipeline version
 echo "lmtoy_version=$(cat $LMTOY/VERSION)"   >> $pdir/lmtoy_$obsnum.rc
 
-# record the qagrade, if one was given
+# record the qagrade (it should always have something)
+# @todo   why we need to re-read rc file for the qagrade in a combo?
+source $pdir/lmtoy_$obsnum.rc
 if [ ! -z $qagrade ]; then
+    echo "PJT good qagrade=$qagrade"    
     echo "qagrade=$qagrade"                  >> $pdir/lmtoy_$obsnum.rc
 else
-    echo "qagrade="                          >> $pdir/lmtoy_$obsnum.rc    
+    echo "qagrade=    # should not happen"   >> $pdir/lmtoy_$obsnum.rc    
 fi
 
 # record the public date, if one was given
@@ -396,6 +404,7 @@ fi
 (cd $pdir; echo "Number of files: $(ls | wc -l)")
 
 # directory for dvpipe products for archive ingestion, dirzip is for keeping data links for PI after ingestion
+# @todo for webrun no need to create a dir4dv copy
 dir4dv=$WORK_LMT/${ProjectId}/dir4dv/${obsnum}/${ProjectId}/${obsnum}
 dirzip=$WORK_LMT/${ProjectId}/dirzip
 mkdir -p $dir4dv $dirzip

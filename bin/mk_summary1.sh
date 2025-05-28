@@ -14,7 +14,7 @@
 #set -e
 #set -x
 
-_version="14-jan-2025"
+_version="16-jan-2025"
 
 if [ -z "$1" ]; then
     src0=""
@@ -33,6 +33,7 @@ fi
 pid=$(pwd | awk -F/ '{print $NF}')
 
 echo "<html>"
+echo "<!--   generated with $0 -->"
 echo '<script src="sorttable.js"></script>'
 
 echo "<B>$pid</B>: <A HREF=$csv>Summary of all obsnum's and combinations:</A> (click on column name to sort by that column) Created: $(date)"
