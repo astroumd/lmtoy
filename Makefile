@@ -43,7 +43,8 @@ URL12c= https://github.com/b4r-dev/devtools
 URL12d= https://github.com/b4r-dev/b4rpipe
 URL13a= https://github.com/gopastro/cubevis
 URL13b= https://github.com/gopastro/sculpt
-URL14 = https://github.com/teuben/gbtgridder
+URL14 = https://github.com/GreenBankObservatory/gbtgridder 
+URL14a = https://github.com/teuben/gbtgridder
 URL15 = https://github.com/lmt-heterodyne/RedshiftPointing
 URL16 = https://github.com/lmt-heterodyne/LinePointing
 URL17 = https://github.com/teuben/aplpy
@@ -187,7 +188,10 @@ pyspeckit:
 	git clone $(URL10b)
 
 gbtgridder:
-	git clone -b python3 $(URL14)
+	git clone -b release_3.0 $(URL14)
+
+gbtgridder_pjt:
+	git clone -b python3 $(URL14a)
 
 RedshiftPointing:
 	git clone $(URL15)
