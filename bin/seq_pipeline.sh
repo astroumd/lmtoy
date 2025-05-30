@@ -17,7 +17,7 @@
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 # @todo   vlsr= only takes correct effect on the first run, not a re-run
 
-_version="seq_pipeline: 3-mar-2025"
+_version="seq_pipeline: 29-may-2025"
 
 echo "LMTOY>> $_version"
 
@@ -65,6 +65,8 @@ b_order=0
 stype=2
 sample=-1
 otf_cal=0
+offx=0            # pointing offset correction in X (arcsec)
+offy=0            # pointing offset correction in Y (arcsec)
 edge=0            #  1:  fuzzy edge  0: good sharp edge where M (mask) > 0 [should be default]
 bank=-1           # -1:  all banks 0..numbands-1; otherwise select that bank (0,1,...)
 
@@ -74,7 +76,7 @@ debug=0           # add lots of verbosities
 
 #--HELP
 show_vars="extent dv dw birdies birdies_shift map_coord_use pix_list rms_cut location \
-           rmax otf_select otf_a otf_b otf_c noise_sigma b_order stype \
+           rmax otf_select otf_a otf_b otf_c noise_sigma b_order stype offx offy \
            sample otf_cal edge bank \
           "
           #  resolution cell nppb \
