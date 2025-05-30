@@ -14,6 +14,12 @@ if [ -z $1 ]; then
     echo ""
     echo "   submit runfiles that wait for each other"
     echo "   probing for obsnums happens every $sleep seconds"
+    echo "   Will also run 'make summary index' at the end"
+    echo ""
+    echo "   One example how to run subsets is using sort/grep/tail on the runfiles"
+    echo "   e.g."
+    echo "       sort *run1a | tail -5 > test1a"
+    echo "       egrep '(NGC1|NGC2)' *run2a > test2a"
     exit 0
 fi
 
