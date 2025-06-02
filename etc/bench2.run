@@ -1,1 +1,1 @@
-SLpipeline.sh obsnum=79448 restart=1 map_coord_use=1 meta=0 maskmoment=0
+SLpipeline.sh obsnum=79448 restart=1 map_coord_use=1 maskmoment=0 public=2020-12-31 qagrade=3

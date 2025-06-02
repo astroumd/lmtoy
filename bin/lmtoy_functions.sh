@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="28-jan-2025"
+lmtoy_version="29-may-2025"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -13,6 +13,12 @@ function lmtoy_version {
     local g=$(cd $LMTOY; git rev-list --count HEAD)
     local h=$(uname -a)
     echo "$v  $g  $d  $h"
+}
+
+function lmtoy_qagrade {
+    # another way of setting grade (not used)
+    echo "lmtoy_qagrade: $qagrade -> $1"
+    qagrade=$1
 }
 
 function lmtoy_repo {
@@ -614,6 +620,8 @@ function lmtoy_seq1 {
 	else
 	    _birdies=$birdies
 	fi
+	use_tsys="--use_cal"
+	# use_tsys="--tsys 150"
 	$time process_otf_map2.py \
 	    -p $DATA_LMT \
 	    -o $s_nc \
@@ -621,7 +629,7 @@ function lmtoy_seq1 {
 	    --pix_list $pix_list \
 	    --bank $bank \
 	    --stype $stype \
-	    --use_cal \
+	    $use_tsys \
 	    $use_otf_cal \
 	    $use_restfreq \
 	    --map_coord $map_coord_use \
@@ -630,7 +638,9 @@ function lmtoy_seq1 {
 	    --b_regions $b_regions \
 	    --l_region $l_regions \
 	    --slice $slice \
-	    --eliminate_list $_birdies
+	    --eliminate_list $_birdies \
+	    --offx $offx \
+	    --offy $offy
 	lmtinfo2.py $s_nc >> $rc
     fi
 

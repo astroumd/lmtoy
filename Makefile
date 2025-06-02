@@ -43,7 +43,8 @@ URL12c= https://github.com/b4r-dev/devtools
 URL12d= https://github.com/b4r-dev/b4rpipe
 URL13a= https://github.com/gopastro/cubevis
 URL13b= https://github.com/gopastro/sculpt
-URL14 = https://github.com/teuben/gbtgridder
+URL14 = https://github.com/GreenBankObservatory/gbtgridder 
+URL14a = https://github.com/teuben/gbtgridder
 URL15 = https://github.com/lmt-heterodyne/RedshiftPointing
 URL16 = https://github.com/lmt-heterodyne/LinePointing
 URL17 = https://github.com/teuben/aplpy
@@ -187,7 +188,10 @@ pyspeckit:
 	git clone $(URL10b)
 
 gbtgridder:
-	git clone -b python3 $(URL14)
+	git clone -b release_3.0 $(URL14)
+
+gbtgridder_pjt:
+	git clone -b python3 $(URL14a)
 
 RedshiftPointing:
 	git clone $(URL15)
@@ -199,10 +203,15 @@ dvpipe:
 	git clone $(URL18)
 
 
-lmtoy_run:	work_lmt/lmtoy_run
+lmtoy_run:	$(WORK_LMT)/lmtoy_run  lmtoy_run_git
 
-work_lmt/lmtoy_run:
-	(cd work_lmt; git clone $(URL19))
+$(WORK_LMT)/lmtoy_run:
+	(cd $(WORK_LMT); git clone $(URL19); cd lmtoy_run; make git pull)
+
+
+lmtoy_run_git:
+	(cd $(WORK_LMT)/lmtoy_run; make git pull)
+	@echo "Make sure you regularly 'make lmtoy_run' to update the script generators"
 
 webrun:	lmt_web
 
@@ -373,6 +382,7 @@ bench1:
 bench1a:
 	$(TIME) SLpipeline.sh obsnum=33552 restart=1 linecheck=1 public=2020-12-31 qagrade=3 admit=$(ADMIT) meta=$(META)
 	$(TIME) SLpipeline.sh obsnums=33551,33552 restart=1 admit=$(ADMIT) meta=$(META)
+	$(TIME) SLpipeline.sh obsnums=33552,33551 restart=1 admit=$(ADMIT) meta=$(META)
 	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench1a.txt'
 	@echo "================================================================================================================="
 	@echo xdg-open  $(WORK_LMT)/2014ARSRCommissioning/33551_33552/README.html

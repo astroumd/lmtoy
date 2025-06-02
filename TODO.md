@@ -9,17 +9,23 @@
   - Should oid= allow us to use ${obsnum}__${oid} - this would make it possible to make multiple (line) cubes
   - can we create a different cube for bank0 and bank1 ?  should be possible.
   - "restart=1 bank=0" fails, but is ok with meta=0
-  - why is RMS/RMS0 not closer to 1 for SEQ (it.s often 1.5--2 or worse)
+  - why is RMS/RMS0 not closer to 1 for SEQ (it.s often 1.5--2 or worse)   (1MM seems fine, RSR seems fine)
 
 - active github issues:  https://github.com/astroumd/lmtoy/issues
   - 57: spectral vs. average Tsys
-  - 51: SEQ/Ps html now broken for dual IF
+  - 51: SEQ/Ps html now broken for dual IF [fixed]
   - 48: allow missing roach files  **Kamal**
-  - 47: "wtn" has the wrong beam plotted
+  - 47: "wtn" map has the wrong beam plotted
   - 46: SEQ low power can crash pipeline (MX-2 example mentioned before)
   - 45: RSR not commutative **+Min**
   - 38: final DataVerse items **marc**
   - 35: inttime not correct - we need the ON time only,not ON+OFF+CAL
+
+- Due to SB bugs with birdies, some data were taken with bank=1 in bank=0, e.g.
+  in 2024-S1-MX-20 wwe have SB0 and SB1 named sources.  How can old-style and
+  new SB-style named data be combined ?
+
+- should we have a flag as on option to (in SEQ) keep all channels
 
 - python versions via install_anaconda3:
   we now use version=2023.03-1 # 3.10.14 

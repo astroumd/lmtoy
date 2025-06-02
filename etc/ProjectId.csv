@@ -1,12 +1,15 @@
 #   Table of:   ProjectId, Title, PI
 #
 #   any projectId with the string "Commissioning" is recognized as such and not used here
+#   WARNING, make sure the number of quotes in the project title is even.   UTF-8 seem to be ok in here
 
 # 2024
 
+2024-S1-DX-1  , A DDT Proposal for LMT-RSR spectroscopy of the SUBWAYS sample, Anna Lia Longinotti
+
 2024-S1-MX-14 , Imaging M84 and Sombrero at < 50 gravitational radii: jets and accretion inflow , David H. Hughes
 2024-S1-MX-19 , TolTEC imaging of the progenitors of the Coma cluster at z~5 towards the FRESCO/GOODS-N field , David H. Hughes
-2024-S1-MX-2 , Molecular Clouds in the Fermi Bubble , Laurent Loinard   
+2024-S1-MX-2  , Molecular Clouds in the Fermi Bubble , Laurent Loinard   
 2024-S1-MX-11 , Unveiling a hidden gem: an extraordinarily bright strongly lensed galaxy behind Milky Way dust clouds , Eric Faustino Jiménez-Andrade
 2024-S1-MX-29 , MACS J0018.5 - A Bullet Cluster Aimed in Our Direction , Alfredo Montaña
 2024-S1-MX-13 , A sample of SMBH shadows , David H. Hughes
@@ -16,11 +19,11 @@
 2024-S1-MX-31 , Two belts or one? Toward a complete map of tau Ceti's planetary system , Miguel Chavez Dagostino
 2024-S1-MX-33 , A millimeter key to the multi-wavelength characterization of Fast Evolving Luminous Transients , Alberto Carramiñana
 2024-S1-MX-23 , TolTEC imaging of filamentary structures in SSA22 , David H. Hughes
-2024-S1-MX-1 , A New “Frontier” for the LMT: Dust Obscured Activity in Galaxies that Dominate the Cosmic Star Formation History , Alfredo Montaña
+2024-S1-MX-1  , A New “Frontier” for the LMT: Dust Obscured Activity in Galaxies that Dominate the Cosmic Star Formation History , Alfredo Montaña
 2024-S1-MX-34 , Mapping the emission of molecular gas in metal-poor nearby galaxies , Olga Vega
 2024-S1-MX-40 , Confirming and Characterizing Galaxy Proto-Clusters in the Early Universe , Alfredo Montaña
-2024-S1-MX-3 , LMT redshift identification of a dusty starburst candidate at z > 6 , Alfredo Montaña
-2024-S1-MX-5 , Mapping the physical conditions of star forming regions , Nadia Mariel Murillo Mejias
+2024-S1-MX-3  , LMT redshift identification of a dusty starburst candidate at z > 6 , Alfredo Montaña
+2024-S1-MX-5  , Mapping the physical conditions of star forming regions , Nadia Mariel Murillo Mejias
 2024-S1-MX-16 , LMT spectroscopy of strong outflows in star-forming galaxies at Cosmic Noon , David H. Hughes 
 2024-S1-MX-20 , Molecular Gas Reservoir in a Sample of Nearby Bulgeless Galaxies , Daniel Rosa Gonzalez
 2024-S1-MX-35 , The mass-loss history of Phoenix giants: toward restrictive constraints on merger models , Miguel Chavez Dagostino
@@ -28,47 +31,47 @@
 2024-S1-MX-26 , Molecular Emission Detection Program for Seyfert Galaxies , Castalia Alenka Negrete Peñaloza
 2024-S1-MX-18 , Observations of the 57Fe+23 Hyperfine Transition Towards the Virgo Cluster , Daniel Rosa Gonzalez
 2024-S1-MX-38 , Untangling the shocks in the luminous SZE galaxy cluster RXJ1347.5-1145 , David Omar Sánchez-Argüelles 
-2024-S1-MX-6 , TolTEC Mapping of the Lockman-SpReSO Field , Irene Cruz-Gonzalez
+2024-S1-MX-6  , TolTEC Mapping of the Lockman-SpReSO Field , Irene Cruz-Gonzalez
 2024-S1-MX-28 , Searching for circumstellar dust in our closest cold neighbor in the northern hemisphere: The Barnard’s Star , Miguel Chavez Dagostino
 2024-S1-MX-36 , Dust in the Whirlpool , Jacopo Fritz
 2024-S1-MX-30 , Search for a new Class II methanol maser to Constrain Maser Models , Stan Kurtz
-2024-S1-MX-9 , Molecular Gas in Compton Thick AGN , Irene Cruz-Gonzalez
+2024-S1-MX-9  , Molecular Gas in Compton Thick AGN , Irene Cruz-Gonzalez
 2024-S1-MX-10 , Dust properties of an SMG to AGN transitional galaxy , Itziar Aretxaga
 2024-S1-MX-15 , A search for recently formed dust and molecules in the circumstellar nebula of WR140 , Divakara Mayya
 2024-S1-MX-17 , Luminous-lensed galaxies in Herschel-ATLAS survey: completing high-redshift measurements , Ivan Rodriguez Montoya
 2024-S1-MX-39 , Imaging the Circumstellar Envelope and the Magnetic Field Around the IRAS 17028-1004 Nebula , Enrique Omar Serrano Bernal 
-2024-S1-MX-4 , Density wave triggering of star formation across spiral arms. , Eric E. Martinez-Garcia
+2024-S1-MX-4  , Density wave triggering of star formation across spiral arms. , Eric E. Martinez-Garcia
 2024-S1-MX-32 , The Strange Case of Masers in Empty Space , Stan Kurtz
-2024-S1-SP-2 , The nature of millimeter continuum emission in LBV stars , Ricardo Rizzo
-2024-S1-SP-6 , Dust in the bulgeless face-on galaxy NGC3938 , Javier Zaragoza Cardiel  
-2024-S1-SP-5 , Molecular Gas in the Antennae Tidal Dwarf Galaxy , Javier Zaragoza Cardiel  
-2024-S1-SP-7 , Molecular Gas of FIR Sources in the Lockman-SpReSO Field , Miguel Sánchez Portal 
-2024-S1-SP-1 , Thermodynamics of the ICM in the CATARSIS clusters , Patricia Sánchez-Blázquez
-2024-S1-UM-4 , TolTEC Observations of the Dwarf Galaxy NGC 4449 , Michael McCrackan
-2024-S1-UM-9 , "RSR Spectroscopy of Massive ,  Dust-Obscured
-2024-S1-UM-1 , Origin and evolution of molecular gas in the ram pressure stripped galactic tail of NGC4388 , Q. Daniel Wang
-2024-S1-UM-6 , Invisible Giants: Identifying the Power Source of Lyman-alpha Blobs , Roxana Popescu
-2024-S1-UM-7 , Probing the Interstellar Medium of Dusty Star-forming Galaxies in a Protocluster at Cosmic Noon , Q. Daniel Wang
+2024-S1-SP-2  , The nature of millimeter continuum emission in LBV stars , Ricardo Rizzo
+2024-S1-SP-6  , Dust in the bulgeless face-on galaxy NGC3938 , Javier Zaragoza Cardiel  
+2024-S1-SP-5  , Molecular Gas in the Antennae Tidal Dwarf Galaxy , Javier Zaragoza Cardiel  
+2024-S1-SP-7  , Molecular Gas of FIR Sources in the Lockman-SpReSO Field , Miguel Sánchez Portal 
+2024-S1-SP-1  , Thermodynamics of the ICM in the CATARSIS clusters , Patricia Sánchez-Blázquez
+2024-S1-UM-4  , TolTEC Observations of the Dwarf Galaxy NGC 4449 , Michael McCrackan
+2024-S1-UM-9  , RSR Spectroscopy of Massive ,  Dust-Obscured
+2024-S1-UM-1  , Origin and evolution of molecular gas in the ram pressure stripped galactic tail of NGC4388 , Q. Daniel Wang
+2024-S1-UM-6  , Invisible Giants: Identifying the Power Source of Lyman-alpha Blobs , Roxana Popescu
+2024-S1-UM-7  , Probing the Interstellar Medium of Dusty Star-forming Galaxies in a Protocluster at Cosmic Noon , Q. Daniel Wang
 2024-S1-UM-12 , High Resolution SZE Map of a Possibly Disturbed Galaxy Cluster , Carlos Alberto Garcia Diaz
 2024-S1-UM-11 , Testing [C II] Emission as a CGM Tracer around z>6 Galaxies , Min Yun
-2024-S1-UM-5 , 2024 Event Horizon Telescope Observations on the LMT , Gopal Narayanan
-2024-S1-UM-8 , "Mapping dust ,  free-free
-2024-S1-UM-3 , Investigating Core Formation Environments in MonR2 with SEQUOIA/LMT , Amanda M Lee
+2024-S1-UM-5  , 2024 Event Horizon Telescope Observations on the LMT , Gopal Narayanan
+2024-S1-UM-8  , Mapping dust ,  free-free
+2024-S1-UM-3  , Investigating Core Formation Environments in MonR2 with SEQUOIA/LMT , Amanda M Lee
 2024-S1-UM-10 , A novel observation of pressure fluctuations in the distant cluster RX J1226.9+3332 , Nat DeNigris
-2024-S1-UM-2 , TolTEC Mapping of the JWST NEP-TDF , Zhiyuan Ma
+2024-S1-UM-2  , TolTEC Mapping of the JWST NEP-TDF , Zhiyuan Ma
 2024-S1-US-18 , Filling the Spatial Gap: Dust Polarization in Rho Oph A , Erin Cox
-2024-S1-US-3 , CO in Molecular Cloud Boundary Regions with H2 Emission , Paul Goldsmith
+2024-S1-US-3  , CO in Molecular Cloud Boundary Regions with H2 Emission , Paul Goldsmith
 2024-S1-US-19 , Probing The Central Region of the Prestellar Core L183 , Yancy Shirley
-2024-S1-US-5 , Exploring the evolution of total gas contents with the observations of galaxies within z=0.11-0.17 , Hansung Gim
-2024-S1-US-4 , TolTEC Observations of the Extreme Star-forming Region Sgr B2 , Dylan Michelson Pare
+2024-S1-US-5  , Exploring the evolution of total gas contents with the observations of galaxies within z=0.11-0.17 , Hansung Gim
+2024-S1-US-4  , TolTEC Observations of the Extreme Star-forming Region Sgr B2 , Dylan Michelson Pare
 2024-S1-US-16 , Gas and Galaxy Transformation in Abell 262 , Marc Verheijen
 2024-S1-US-13 , Determining the Mass and Spectral Index of Peter Pan Disk J0501 , William Schap
-2024-S1-US-2 , Galaxy groups at mm-wavelengths: the key to AGN feedback , Gerrit Schellenberger
+2024-S1-US-2  , Galaxy groups at mm-wavelengths: the key to AGN feedback , Gerrit Schellenberger
 2024-S1-US-17 , LMT Spectroscopy of Hidden Monsters at z > 4 , Mark Dickinson
 2024-S1-US-20 , When the Wind Blows: hi-res mapping of outflow feedback from massive protostars , Jonathan C. Tan
 2024-S1-US-14 , Investigating The Unusual Spectral Index Seen In IC 348 , William Schap
 2024-S1-US-10 , TolTEC Mapping of the Spitzer IRAC Dark Field , Haojing Yan
-2024-S1-US-7 , Exploration of a Lensed z=2.66 Protocluster Discovered by Planck+LMT+ALMA , Nicholas Foo
+2024-S1-US-7  , Exploration of a Lensed z=2.66 Protocluster Discovered by Planck+LMT+ALMA , Nicholas Foo
 
 
 # 2023
@@ -200,9 +203,9 @@
 
 2018-S1-MU-1      , IRAS_*,            A.Gomez
 2018-S1-MU-8      , M51/NGC628,        D.Calzetti
-#2018S1-MU-8        <- typo for MU-8
+#2018S1-MU-8        <- typo for MU-8, resolved via hacking lmtinfo.py
 2018-S1-MU-25     , Titan,             M.Chavez
-2018-S1-MU-26     , Az_G12_26.         A.Montana
+2018-S1-MU-26     , Az_G12_26,         A.Montana
 2018-S1-MU-31     , OH2.6-0.4,         C.Zuniga
 2018-S1-MU-45     , L1157-B1,          A.Gomez
 2018-S1-MU-46     , Region_J-K,        L.Loinard          

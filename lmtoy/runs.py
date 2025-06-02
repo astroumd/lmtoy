@@ -239,12 +239,12 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     run1a = '%s.run1a' % project
     run1b = '%s.run1b' % project
     run1c = '%s.run1c' % project
-    run1x = '%s.run1x' % project
+    run1x = '%s.run1.sh' % project
 
     run2a = '%s.run2a' % project
     run2b = '%s.run2b' % project
     run2c = '%s.run2c' % project
-    run2x = '%s.run2x' % project
+    run2x = '%s.run2.sh' % project
 
     fp1 = list(range(4))
     fp2 = list(range(4))
@@ -322,11 +322,10 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     print(run2b)
     print(run1c)
     print(run2c)
-    print("Where there are %d single obsnum runs, and %d combination obsnums" % (n1,n2))
     obsnums=[]
     for s in on.keys():
         for o1 in on[s]:
             obsnums.append(abs(o1))
     obsnums.sort()
-    print("First and last obsnum are %d and %d" %  (obsnums[0], obsnums[-1]))
-    print("Also note the archiving runs (run1x and run2x) when QA is done")
+    print("%s: obsnums %d - %d   with %d single obsnums and %d combinations" % (project, obsnums[0], obsnums[-1], n1, n2))
+    print("Also note the archiving runs (run1.sh and run2.sh) when QA is done")

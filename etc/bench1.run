@@ -1,1 +1,1 @@
-SLpipeline.sh obsnum=33551 restart=1 linecheck=1 meta=0
+SLpipeline.sh obsnum=33551 restart=1 linecheck=1 public=2020-12-31 qagrade=3
