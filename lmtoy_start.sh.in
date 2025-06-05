@@ -21,8 +21,6 @@ fi
 
 # remainder of environment 
 
-
-
 if [ -d $LMTOY/Montage/bin ]; then
     export PATH=$LMTOY/Montage/bin:$PATH
 fi
@@ -31,6 +29,7 @@ if [ -e $LMTOY/nemo/nemo_start.sh ]; then
     source $LMTOY/nemo/nemo_start.sh
 fi
 
+source $LMTOY/bin/lmtoy_functions2.sh
 
 if [ ! -z $ADMIT ]; then
     echo "Warning:  ADMIT=$ADMIT present.  LMTOY will not behave nicely with ADMIT yet."
