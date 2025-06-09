@@ -10,7 +10,7 @@
 #
 
 
-version="seq_combine: 16-mar-2024"
+version="seq_combine: 8-jun-2025"
 
 echo "LMTOY>> $version"    
 
@@ -64,12 +64,15 @@ lmtoy_args "$@"
 if [ $debug = 1 ]; then
     set -x
 fi
+echo "LMTOY>> WORK_LMT: $WORK_LMT"
+
 
 if [ $obsnums = 0 ]; then
     echo obsnums= not given
     exit 0
 fi
 lmtoy_decipher_obsnums
+
 
 # WARNING:   the current workflow always does a restart=1 type computation
 
@@ -162,7 +165,7 @@ for bank in $banks; do
     sumtime=0     # accumulates the integration time
     for on in $obsnums1; do
 	fon=$(ls */$on/*_${on}__${bank}.nc)
-	# there better be just one
+	# there better be just one  @todo test !!!
 	if [ -e $fon ]; then
 	    ons="$ons ${fon}"
 	else

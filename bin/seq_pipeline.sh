@@ -17,7 +17,7 @@
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 # @todo   vlsr= only takes correct effect on the first run, not a re-run
 
-_version="seq_pipeline: 29-may-2025"
+_version="seq_pipeline: 8-jun-2025"
 
 echo "LMTOY>> $_version"
 
@@ -99,6 +99,7 @@ show_vars $show_vars > $rc0
 if [ $debug = 1 ]; then
     set -x
 fi
+echo "LMTOY>> WORK_LMT: $WORK_LMT"
 
 #lmtoy_pdir
 #             see if pdir working directory needs to be used
