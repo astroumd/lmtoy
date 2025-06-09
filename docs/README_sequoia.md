@@ -14,7 +14,7 @@ In this directory you can find the following files, with the following naming co
 
 A single bank observation currently has 95 files, a dual bank 166 files.
         
-Version:  24-oct-2024
+Version:  3-jun-2025
 
 	lmtoy.rc                    LMTOY <version, git counter, reduction date, operating system>
 	lmtoy_OBSNUM.rc             parameter setting for SLpipeline (for both banks)
@@ -50,7 +50,11 @@ Version:  24-oct-2024
 	SRC_OBSNUM.peak.fits        peak in cube (mK)
 	SRC_OBSNUM.rms.fits         rms in cube (mK)
 
-        radiometer.rms.fits         Predicted RMS based on radiometer equation (K)
+        SRC_OBSNUM.radiometer.fits  Predicted RMS based on radiometer equation (K)
+	
+	spectrum_B.png              Spectrum through reference pixel, all channels
+	spectrum_B_zoom.png         Spectrum through reference pixel, only selected channels
+
 	
 	SRC_OBSNUM_specpoint1.png   spectrum of central beam
 	SRC_OBSNUM_specpoint2.png   spectrum of full cube
@@ -74,13 +78,19 @@ Version:  24-oct-2024
 	SRC_OBSNUM.mom1.png         simple MOM1 of the cube (mean velocity, km/s)
 	SRC_OBSNUM.peak.png         peak map of the cube (mK)
 	SRC_OBSNUM.rms.png          rms map of the cube (mK)
+	SRC_OBSNUM.hist.png         histogram of fits cube
+
+
+	SRC_OBSNUM__B.wf0.png       Waterfall RMS as function of channel (shown in summary)
+	SRC_OBSNUM__B.wf1.png       Waterfall RMS as function of sample 
 
 	first_*                     Various files created upon a first pass through pipeline
 	README_files.md             This file
 
-        stats_wf0.tab               RMS vs. SAMPLE - stats of watefall along channels
-        stats_wf1.tab               RMS vs. CHAN  - stats of waterfall along sample
-	stats_wf.tab                RMS vs. CHAN  - whole cube stats
+        stats__B_wf0.tab            RMS vs. SAMPLE - stats of watefall along channels
+        stats__B_wf1.tab            RMS vs. CHAN  - stats of waterfall along sample
+	stats__B.wf.tab             RMS vs. CHAN  - whole cube stats
+
 	SRC_OBSNUM.bstats__B.tab    birdie stats (coluns: freq, rms) for bank B
         SRC_OBSNUM.birdies__B.tab   channels where birdies were found
 

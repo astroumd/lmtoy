@@ -860,6 +860,7 @@ function lmtoy_seq1 {
 	    ccdfits $s_on.wtr3.ccd              $s_on.wtr3.fits # fitshead=$w_fits  ndim=2
 	    fitsccd radiometer.rms.fits - | ccdmath -,$s_on.rms.ccd $s_on.wtr4.ccd %2/%1/1000
 	    ccdfits $s_on.wtr4.ccd              $s_on.wtr4.fits # fitshead=$w_fits  ndim=2
+	    mv radiometer.rms.fits $s_on.radiometer.fits
 
 	    scanfits $s_fits $s_on.head1 select=header
 	    ccdfits $s_on.n.ccd  $s_on.n.fits
@@ -1298,7 +1299,8 @@ function lmtoy_seq2 {
 	    ccdfits $s_on.wtr3.ccd              $s_on.wtr3.fits # fitshead=$w_fits  ndim=2
 	    fitsccd radiometer.rms.fits - | ccdmath -,$s_on.rms.ccd $s_on.wtr4.ccd %2/%1/1000
 	    ccdfits $s_on.wtr4.ccd              $s_on.wtr4.fits # fitshead=$w_fits  ndim=2
-
+	    mv radiometer.rms.fits $s_on.radiometer.fits
+	    
 	    scanfits $s_fits $s_on.head1 select=header
 	    ccdfits $s_on.n.ccd  $s_on.n.fits
 
