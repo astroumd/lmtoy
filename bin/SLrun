@@ -1,0 +1,24 @@
+#! /bin/bash
+#
+#   
+
+
+if [ $(hostname) != "malt" ]; then
+   echo "not on malt"
+   exit 1
+fi
+
+if [ ! -d ~/SLpipeline.d ]; then
+   echo "Error, no ~/SLpipeline.d "
+   exit 1
+fi
+
+cd ~/SLpipeline.d
+
+if [ -e SLpipeline.pid ]; then
+    echo "Warning, SLpipeline.pid exists, is SLpipeline_run.sh still running?"
+    echo "Remove or kill"
+    exit 0
+fi	
+
+SLpipeline_run.sh  > SLpipeline_run.log & 2>&1
