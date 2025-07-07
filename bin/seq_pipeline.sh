@@ -18,7 +18,6 @@
 # @todo   vlsr= only takes correct effect on the first run, not a re-run
 
 _version="seq_pipeline: 3-jul-2025"
-
 echo "LMTOY>> $_version"
 
 #--HELP   
@@ -100,6 +99,7 @@ show_vars $show_vars > $rc0
 if [ $debug = 1 ]; then
     set -x
 fi
+echo "LMTOY>> WORK_LMT: $WORK_LMT"
 
 #lmtoy_pdir
 #             see if pdir working directory needs to be used
