@@ -17,7 +17,7 @@
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 # @todo   vlsr= only takes correct effect on the first run, not a re-run
 
-_version="seq_pipeline: 29-may-2025"
+_version="seq_pipeline: 3-jul-2025"
 
 echo "LMTOY>> $_version"
 
@@ -73,6 +73,10 @@ bank=-1           # -1:  all banks 0..numbands-1; otherwise select that bank (0,
 #                 debug (set -x)
 debug=0           # add lots of verbosities
 
+# unsetting these, since setting them will give a new meaning, different from the lmtinfo based defaults
+unset vlsr         # -> seems to work
+unset restfreq     # -> does not seem to work
+
 
 #--HELP
 show_vars="extent dv dw birdies birdies_shift map_coord_use pix_list rms_cut location \
@@ -82,9 +86,6 @@ show_vars="extent dv dw birdies birdies_shift map_coord_use pix_list rms_cut loc
           #  resolution cell nppb \
 
 
-# unset these, since setting them will give a new meaning, different from the lmtinfo based defaults
-unset vlsr
-unset restfreq
 
 # LMTOY
 source lmtoy_functions.sh
