@@ -11,12 +11,12 @@ n=1
 
 if [ -e $DATA_LMT/last.obsnum ]; then
     o1=$(tail -1 $DATA_LMT/last.obsnum)
-    data_obs1=$(lmtinto.py $o1 | grep ^date_obs)
+    data_obs1=$(lmtinfo.py $o1 | grep ^date_obs)
     echo "# Last recorded obsnum:        $o1  $date_obs1"
 fi
 if [ -e $WORK_LMT/lmtoy_run/last100.log ]; then
     o2=$(head -1 $WORK_LMT/lmtoy_run/last100.log | tabcols - 2)
-    data_obs2=$(lmtinto.py $o2 | grep ^date_obs)
+    data_obs2=$(lmtinfo.py $o2 | grep ^date_obs)
     echo "# Most recent of the last100:  $o2  $date_obs2"
 fi	
 echo "# $(date) : $n most recent DATA_LMT=$DATA_LMT"
