@@ -10,10 +10,14 @@ flags=${1:--tl}
 n=1
 
 if [ -e $DATA_LMT/last.obsnum ]; then
-    echo "# Last recorded obsnum:        $(tail -1 $DATA_LMT/last.obsnum)" 
+    o1=$(tail -1 $DATA_LMT/last.obsnum)
+    data_obs1=$(lmtinto.py $o1 | grep ^date_obs)
+    echo "# Last recorded obsnum:        $o1  $date_obs1"
 fi
 if [ -e $WORK_LMT/lmtoy_run/last100.log ]; then
-    echo "# Most recent of the last100:  $(head -1 $WORK_LMT/lmtoy_run/last100.log | tabcols - 2)"
+    o2=$(head -1 $WORK_LMT/lmtoy_run/last100.log | tabcols - 2)
+    data_obs2=$(lmtinto.py $o2 | grep ^date_obs)
+    echo "# Most recent of the last100:  $o2  $date_obs2"
 fi	
 echo "# $(date) : $n most recent DATA_LMT=$DATA_LMT"
 
