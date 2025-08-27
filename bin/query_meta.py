@@ -11,7 +11,8 @@ selected_columns = 'proposal_id, obsnum, processing_level, is_combined, ref_id'
 
 try:
     database_file = os.environ['WORK_LMT'] + '/' + db_file
-    print("# ",selected_columns)
+    print("# columns:  ",selected_columns)
+    print("# database: ",database_file)
     with sqlite3.connect(database_file) as conn:
         cursor = conn.cursor()
 
