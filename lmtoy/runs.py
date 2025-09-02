@@ -52,8 +52,10 @@ def pix_list(pl):
     """ convert a strong like "-0,-1" to proper pixlist by removing
         0 and 1 from the 0..15 list.
         Note:   if the first character is a '-', all numbers are in removed list
-                if not, the list is passed "as is",   so e.g.     "0,1,-2" would be bad
+                if not, the list is passed "as is",   so e.g.     "0,1,-2" would be wrong
     """
+    if pl[1:].find('-') >= 0 or pl[1:].find('+') >= 0:
+        print(f"Warning: only first sign in pix_list={pl} counts")
     if pl[0] == '-':
         bl = list(range(1,17))
         # assume they're all < 0
