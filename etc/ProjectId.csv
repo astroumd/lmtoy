@@ -2,6 +2,7 @@
 #
 #   any projectId with the string "Commissioning" is recognized as such and not used here
 #   WARNING, make sure the number of quotes in the project title is even.   UTF-8 seem to be ok in here
+#   See also the list of projects in lmtoy_run/Makefile - they should match
 
 # 2024
 
