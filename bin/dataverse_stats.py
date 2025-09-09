@@ -5,6 +5,7 @@ import requests
 import sys
 import matplotlib.pyplot as plt
 import numpy as np
+from astropy.table import Table
 
 headers = { 'Accept': 'application/json'} 
 url = "https://dp.lmtgtm.org/api/info/metrics"
@@ -12,6 +13,7 @@ parser = argparse.ArgumentParser(prog=sys.argv[0])
 parser.add_argument("--plot",    "-p", action="store_true",  help="Plot the results")
 parser.add_argument("--debug",   "-d", action="store_true",  help="debug mode")
 parser.add_argument("--monthly",   "-m", action="store_true",  help="compute monthly (differential) stats.")
+parser.add_argument("--file",   "-f", action="store",  help="output file")
 args=parser.parse_args()
 
 # cumulative monthly downloads
@@ -42,6 +44,16 @@ for k in keys:
         print(f"{date[k]=}")
         print(f"{count[k]=}")
         print(f"{diff[k]=}")
+if args.file:
+    dv = [list(date.values()) for k in date]
+    cv = [list(count.values()) for k in count]
+    fv = [list(diff.values()) for k in diff]
+    cols = []
+    for i in range(len(dv)):
+        cols.extend([dv[i],cv[i],fv[i]])
+    if args.debug:
+       print(f"{cols=}")
+
 
 if args.plot:
     figure,ax=plt.subplots(figsize=(8,6))
