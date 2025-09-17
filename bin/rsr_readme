@@ -13,7 +13,7 @@ fi
 
 url1="http://lmtgtm.org/telescope/instrumentation/instruments/rsr/"
 url2="https://www.lmtobservatory.org/help/user/calculation_rsr"
-url3="http://lmtgtm.org/wp-content/uploads/2022/09/RSR_v2p0_reduced.pdf"
+url3="http://lmtgtm.org/rsr/"
 
 #            required:   2 arguments
 obsnum=$1
