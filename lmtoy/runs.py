@@ -306,9 +306,6 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
         else:
             admit = 1
 
-        print("PJT: pars1:",pars1)
-        print("PJT: pars2:",pars2)
-        
         if s in pars1:
             cmd2[0] = "SLpipeline.sh obsnums=%s _io=%s _s=%s restart=1 admit=%d" % (obsnums, _io, s, admit)
         cmd2[1] = "SLpipeline.sh obsnums=%s _io=%s _s=%s archive=1" % (obsnums, _io, s)
