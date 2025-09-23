@@ -368,15 +368,22 @@ common: lmtoy_venv
 
 META  = 1
 ADMIT = 0
-bench:  bench1 bench2 bench3
+bench:  bench1 bench5 bench2 bench3 
 
-## bench1:   RSR benchmark: obsnum=33551
+## bench1:   RSR 30m benchmark: obsnum=33551
 bench1:
 	@echo sbatch_lmtoy.sh etc/bench1.run
 	$(TIME) SLpipeline.sh obsnum=33551 restart=1 linecheck=1 public=2020-12-31 qagrade=3 admit=$(ADMIT) meta=$(META)
 	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench1.txt'
 	@echo "================================================================================================================="
 	@echo xdg-open  $(WORK_LMT)/2014ARSRCommissioning/33551/README.html
+
+## bench5:   RSR 50m benchmark: obsnum=110670
+bench5:
+	$(TIME) SLpipeline.sh obsnum=110670 restart=1 linecheck=1 public=2020-12-31 qagrade=3 admit=$(ADMIT) meta=$(META)
+	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench5.txt'
+	@echo "================================================================================================================="
+	@echo xdg-open  $(WORK_LMT)/2024ARSRCommissioning/110670/README.html
 
 ## bench1a:  RSR benchmark with a combination
 bench1a:
@@ -385,7 +392,7 @@ bench1a:
 	$(TIME) SLpipeline.sh obsnums=33552,33551 restart=1 admit=$(ADMIT) meta=$(META)
 	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench1a.txt'
 	@echo "================================================================================================================="
-	@echo xdg-open  $(WORK_LMT)/2014ARSRCommissioning/33551_33552/README.html
+	@echo xdg-open  $(WORK_LMT)/2014S1RSRCommissioning/33551_33552/README.html
 
 ## bench1b:  RSR dryrun archive submission using dvpipe (needs bench1)
 bench1b:
@@ -419,8 +426,8 @@ bench4:
 	@echo xdg-open  $(WORK_LMT)/2023S1SEQUOIACommissioning/108764/README.html
 	@echo xdg-open  $(WORK_LMT)/2023S1SEQUOIACommissioning/108766/README.html
 
-## bench5:   pure CPU bench from NEMO (man 5 bench)
-bench5:
+## nemo5:     NEMO bench5
+nemo5:
 	(cd $(NEMO); $(TIME) make bench5)
 
 ## bench99:  to be documented and regressed
