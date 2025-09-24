@@ -22,6 +22,12 @@ bandstats: Also compute stats of each of the 6 RSR bands. Default is 0."
 
 
 =SEQ/MAP
-vlsr:      If given, override the VLSR from the header
-dv:        half-width (in km/s) of where we expect signal, centered on the VLSR
-dw:        width (in km/s) of the baseline section on either end of the 2*dv center signal
+vlsr:       If given, override the VLSR from the header
+dv:         half-width (in km/s) of where we expect signal, centered on the VLSR
+dw:         width (in km/s) of the baseline section on either end of the 2*dv center signal
+b_order:    baseline order  (use -1 to skip)
+otf_cal:    use 1 if forcing to use cal during the OTF
+vlsr:       only set it if change from header (units: km/s)
+restfreq:   only set it if change from header (units: GHz)
+resolution: only set it if change from lambda/D (units: arcsec)
+nppb:       number of points per "resolution" lambda/D
