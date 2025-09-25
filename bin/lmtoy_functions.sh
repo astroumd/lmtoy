@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="29-may-2025"
+lmtoy_version="25-sep-2025"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -35,6 +35,7 @@ function lmtoy_date {
 }
 
 function lmtoy_timer {
+    # timer (unfinished)
     if [ -z "$1" ]; then
 	printf "$(expr $(date +%s) - $LMTOY_TIMER)s $$ $LMTOY_TIMER"
     else
@@ -220,7 +221,7 @@ function lmtoy_archive {
 function lmtoy_rsr1 {
     # input:  first, obsnum, badlags, blanking, rfile, ....
 
-    echo "LMTOY>> _rsr1: $(lmtoy_timer) $$"
+    echo "LMTOY>> _rsr1: $(lmtoy_timer $$)"
 
     # New order of reduction for single obsnum cases
     #  1. run rsr_driver to get a "first" spectrum, with whatever badlags are in dreampyrc
