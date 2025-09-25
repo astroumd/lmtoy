@@ -575,6 +575,8 @@ function lmtoy_rsr1 {
     
     cp $LMTOY/docs/README_rsr.md README_files.md
 
+    echo "LMTOY>> _rsr1: $(lmtoy_timer)"
+
 } # function rsr1
 
 
