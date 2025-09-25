@@ -187,6 +187,8 @@ function lmtoy_archive {
     # input:  obsnum pidir
     #         123456 $WORK_LMT/$PID
     # echo "lmtoy_archive: $1 $2"
+    # @todo   when the Session-PL1 does not exist yet, make it and also "cp -al" the obsnum there
+    #         ->  $PID/Session-PL1/$PID/$OBSNUM
     obsnum=$1
     pidir=$2
     db=$WORK_LMT/example_lmt.db
