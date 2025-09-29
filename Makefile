@@ -257,6 +257,11 @@ install_python:
 lmtoy_venv:
 	python3 -m venv lmtoy_venv
 
+## apt:       basic ubuntu requirements
+apt:
+	sudo apt install `grep -v ^# requirements.apt`
+	@echo Modern ubuntu also needs pgplot5-dev
+
 ## basic:     pip install all the basic but essential ones
 basic:
 	make pip install_lmtslr install_dreampy3 install_dvpipe install_maskmoment
