@@ -392,7 +392,7 @@ bench1a:
 	$(TIME) SLpipeline.sh obsnums=33552,33551 restart=1 admit=$(ADMIT) meta=$(META)
 	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench1a.txt'
 	@echo "================================================================================================================="
-	@echo xdg-open  $(WORK_LMT)/2014S1RSRCommissioning/33551_33552/README.html
+	@echo xdg-open  $(WORK_LMT)/2014ARSRCommissioning/33551_33552/README.html
 
 ## bench1b:  RSR dryrun archive submission using dvpipe (needs bench1)
 bench1b:
