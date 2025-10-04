@@ -169,11 +169,12 @@ for o in $(find . -maxdepth 1 -type d | sed s+./++ | sort -n); do
 	if [ -e comments.txt ]; then
 	    # nov2022:   we allow obsnum.args to go after the # symbol in comments.txt
 	    #comments=$(grep -w ^$obsnum comments.txt | cut -d' ' -f2-)
-	    comments=$(grep -w ^${obsnum}${ext} comments.txt | cut -d' ' -f2- | awk -F\# '{print $1}')
+	    #tr '\t' ' ' |
+	    comments=$(grep -w ^${obsnum}${ext} comments.txt | tr '\t' ' ' | cut -d' ' -f2- | awk -F\# '{print $1}')
 	    if [ -z "$comments" ]; then
-		comments=$(grep -w ^${obsnum}${dunder} comments.txt | cut -d' ' -f2- | awk -F\# '{print $1}')
+		comments=$(grep -w ^${obsnum}${dunder} comments.txt | tr '\t' ' ' | cut -d' ' -f2- | awk -F\# '{print $1}')
 		if [ -z "$comments" ]; then
-		    comments=$(grep -w ^${obsnum} comments.txt | cut -d' ' -f2- | awk -F\# '{print $1}')
+		    comments=$(grep -w ^${obsnum} comments.txt | tr '\t' ' ' | cut -d' ' -f2- | awk -F\# '{print $1}')
 		fi
 	    fi
 	else
