@@ -107,6 +107,46 @@ We list the keywords specific to Seqouia (SEQ) and their defaults. Some
 parameters cause a computation of derived paramers, and in a re-run
 should be recomputed! 
 
+#            - procedural
+makespec=1     # (re)make a specfile
+makecube=1     # (re)make a fits cube
+makewf=1
+viewspec=1
+viewcube=0
+nemo=1
+admit=0
+maskmoment=0
+clean=1
+#            - meta parameters that will compute other parameters for SLR scripts
+extent=0       # half the size of the (square) box on the sky for gridding (arcsec)
+dv=100         # half the width around the VLSR where the spectral line is expected
+dw=250         # 
+#            - birdies (list of channels, e.g.   10,200,1021)   @todo 0 or 1 based
+birdies=0
+birdies_shift=0       # apply integer shift to all birdies
+#            - override numbands to read only 1 band if 2 is not correct. 0=auto-detect
+#numbands=0
+#            - override the default map_coord   (-1,0,1,2 = default, HOR, EQU, GAL)
+map_coord_use=-1
+#            - parameters that directly match the SLR scripts
+pix_list=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+rms_cut=-4          # absolute or if negative, normalized to robust sigma cut
+location=0,0        # location (in arcsec) w.r.t. center where spectrum is shown
+# resolution=12.5   # will be computed from skyfreq
+# cell=6.25         # will be computed from resolution/2
+# nppb=-1           # number of points per beam (positive will override cell=)
+rmax=3              # number of pixels/resolutions to extend convolved signal
+otf_select=1
+otf_a=1.1
+otf_b=4.75
+otf_c=2
+noise_sigma=1
+b_order=0
+stype=2
+sample=-1
+otf_cal=0
+edge=0            #  1:  fuzzy edge  0: good sharp edge where M (mask) > 0 [should be default]
+bank=-1           # -1:  all banks 0..numbands-1; otherwise select that bank (0,1,...)
 
       #              1. BEAM/TIME filtering
     bank=-1           # -1 means all banks 0..numbands-1
