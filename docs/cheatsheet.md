@@ -352,3 +352,6 @@ Something needs to be written down how a remote PI webrun is impacted when new d
    work to be done here.   Also to check if the new column VALID is 1, since 0s should not
    appear in this list.
 
+7. It's incredibly useful to use a VNC (peter uses x2go), since the window is persistent. In
+   particular the sbatch_lmtoy2.sh and the archiving scripts block the terminal and can take
+   time.
