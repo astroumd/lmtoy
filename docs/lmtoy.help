@@ -27,13 +27,13 @@ lmtoy pull
 lmtinfo.py build
 
 #  raw data variables for a given obsnum (the "rc" file)
-lmtinfo.py 91112
+lmtinfo.py 79448
 
 #  raw data ifproc for SEQ (can take some time)
-ifproc.sh 91112
+ifproc.sh 79448
 
 #  finding raw data in your current $DATA_LMT
-lmtinfo.py grep 91112
+lmtinfo.py grep 79448 
 lmtinfo.py grep Arp143
 lmtinfo.py grep MX-3 Pointing
 lmtinfo.py grep 2023 LineCheck Bs
@@ -45,7 +45,7 @@ ws_list
 ws_allocate -x lmtoy 5
 
 #  running pipeline for SEQ/Map
-SLpipeline.sh admit=0 restart=1 obsnum=99481 pix_list=1,2,3,4,6,7,8,9,10,11,12,13,14,15 dv=300 dw=500
+SLpipeline.sh admit=0 restart=1 obsnum=99481 pix_list=-0,5 dv=300 dw=500
 SLpipeline.sh admit=1 restart=1 obsnums=99481,99480,99478,99477
 
 #  running pipeline for SEQ/Bs 
@@ -60,7 +60,7 @@ SLpipline.sh admit=0 restart=1 obsnums=99716,99718,99720
 lmtar 99481.tar 99479 99480 99481
 lmtar 99481.tar $(seq 99479 99481)
 
-#  show what sources exist in a project
+#  show what sources exist in a project (uses your $DATA_LMT)
 source_obsnum.sh 2021-S1-MX-3
 
 #  example URLs for viewing results (assuming you have permission)
