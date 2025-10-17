@@ -3,7 +3,7 @@
 #  find which source/obsnum combinations are in an LMT project
 #
 
-_version="22-nov-2024"
+_version="17-oct-2025"
 
 usage() {
     echo "Usage: $0 [options] [ProjectId]"
@@ -71,7 +71,7 @@ dat=$DATA_LMT/data_lmt.log
 log=$WORK_LMT/tmp/$pid.obsnums.log
 g=1
 
-grep -w $pid $dat | grep $intent | grep -v Cal | tabcols - 6,2,7  > $log
+grep -a -w $pid $dat | grep $intent | grep -v Cal | tabcols - 6,2,7  > $log
 
 echo "# Using $dat"
 for pid in $(tabcols $log 3 | sort | uniq); do
@@ -138,3 +138,6 @@ echo "# Found $ns source(s) for $pid"
 echo ""
 
 mk_trailer
+
+echo ""
+echo "# see also $log"
