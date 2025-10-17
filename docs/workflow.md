@@ -12,15 +12,20 @@ Stakeholders
 
 Here are the distinct steps, each with their own timeline
 
-1. Pipeline on malt (PO; during observing, runs automatically, but needs manual start after a reboot) - see last100.html
+1. Pipeline on malt (PO; during observing, runs automatically, but needs manual start after a reboot).
+   See http://taps.lmtgtm.org/lmtslr/lmtoy_run/last100.html.  In the **lmtslr** account.
 
-2. Pipeline on unity (PO; incrementally run usually the day after observing) - see lmtoy_run
+2. Pipeline on unity (PO; incrementally run usually the day after observing).
+   See http://taps.lmtgtm.org/lmtslr/lmtoy_run/.  In the **lmtslr_umass_edu** account.
 
-3. Pipeline on unity (DA; incrementally run in helpdesk account, can take few weeks)
+3. Pipeline on unity (DA; incrementally run, can take few days or weeks).
+   In the **lmthelpdesk_umass_edu** account.
 
 4. Pipeline on unity (PO, after merging in the DA suggestions, usually within a week after merging)
 
 5. Data can now be archived (PO; soon)
+
+6. Pipeline can be re-run via a web interface (PI; soon)
 
 ##  Detailed descriptions
 
@@ -73,3 +78,5 @@ When all data have arrived, the `lmtinfo` database should be updated (`make new2
 ###  5. Archiving
 
 1. Archive the project
+
+###  6. Webrun

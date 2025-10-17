@@ -6,7 +6,7 @@
 - OBSNUM:  Observation Number   e.g.  123456
 - BANK / band :                 SEQ:2   RSR:6    (merged to 1)
 - BOARD :                       SEQ:4   RSR:4
-- BEAM ("pixel"):               SEQ:16  RSR:2
+- BEAM ("pixel"):               SEQ:16  RSR:2 
 - CHANNEL:                      SEQ:2k.4k,8k  RSR:256*6, merged ~1300)
 
 ## The pipeline:  SLpipeline.sh
