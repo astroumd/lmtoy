@@ -239,3 +239,27 @@ Here we sketch the user experience of running the pipeline.
         $ seq_pipeline.sh --help
 
    but it would be better if there is a better (yaml?) self-describing interface
+
+
+## Pipeline Parameters
+
+A reminder how pipeline paramters are introduced.
+As an example, the dx= and dy= pointing offset corrections were later introduced. First, they go
+as defaults offx=0 and offy=0 in seq_pipeline.sh, in addition, they need to be recorded in the
+**show_vars** variable, so they are recorded in the rc file(s).
+
+In the bash scripts they are now available as $offx and $offy and can be used and abused. Even changed
+(though in the case of the pointing offsets probably not)
+
+We then decided to name them --offx and --offy in process_otf_map2.py , so they can be stored in the
+specfile.
+
+add to parser so it's in the Opts.
+
+pass on to the Specfile() constructor, so it's written.
+
+That's phase 1.
+
+Now phase 2, reading it back.  in two places an id_offx and S->offx needed. can be applied.
+
+
