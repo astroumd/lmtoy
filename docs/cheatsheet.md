@@ -268,6 +268,8 @@ Something needs to be written down how a remote PI webrun is impacted when new d
 
 ## 6. Noteworthy Tricks
 
+0. the command `lmtoy help` gives various brief reminders 
+
 1. It's possible to combine data across projects. An example is 2024-S1-UM-1, which is a followup from 2023-S1-UM-8
 
 2. Mosaic'd data of which the field names are different, need a trick in the mk_runs.py file. See 2024-S1-MX-2
@@ -304,3 +306,4 @@ Something needs to be written down how a remote PI webrun is impacted when new d
    now look in the obsnums listed in tmp_2025.fail and investigate.  Format is horrible,
    work to be done here.   Also to check if the new column VALID is 1, since 0s should not
    appear in this list.
+
