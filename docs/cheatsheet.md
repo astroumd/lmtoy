@@ -1,4 +1,4 @@
-# LMTOY cheat sheet (March 2024)
+# LMTOY cheat sheet (October 2024)
 
 A brief reminder on the commands various stakeholders use to operate the pipeline and archive ingestion.
 
@@ -19,6 +19,10 @@ The user **lmtslr** runs the commands here.
        cd $LMTOY
        make update
 
+   and sometimes a NEMO task, e.g.
+
+       mknemo ccdfits fitsccd
+
 2. Start the data catcher
 
        cd ~/SLpipeline.d
@@ -31,20 +35,26 @@ The user **lmtslr** runs the commands here.
        kill -9 $(cat SLpipeline.pid)
        rm SLpipeline.pid
 
+   There is an outstanding issue on speed. If the datasize on $DATA_LMT gets too big,
+   the loop recomputing the lmtinfo data is taking too long.
+
+   Example: 1-oct-2024 it took nearly 7 minutes for 1384 GB /scratch/data_lmt/ using 8000 obsnum.
+   With only 2300 RSR in 3.6 GB it took almost 1 minute.
+
 2. This data catcher will allow some "permanent" extra parameters (e.g. pix_list=-13) to
    the pipeline, if added to the file **SLpipeline.in**:
 
-       exit SLpipeline.in
+       edit SLpipeline.in
 
 3. Summary of what rsync has done is a nice way to remotely keep track of progress
 
        tail -f rsync.log
 
-4. Re-execute a pipeline with extra parameters (only for urgency)
+4. Re-execute a pipeline with extra parameters (only for urgency, since malt is slow)
 
        SLpipeline_run1.sh 113271 2024-S1-MX-24 dv=10 dw=10
 
-   this is a convenient way to fix really bad pipeline runs.
+   this is a convenient way to fix really bad pipeline runs if you want to see them in the "last100"
 
 5. After this the most recent 100 TAP's produced are on this list:
 
@@ -54,7 +64,7 @@ The user **lmtslr** runs the commands here.
    on **malt** itself, but this is for emergency only and is usually not available as the TAP
    copies to Unity seem pretty reliable now.
 
-## 2. Script Generator
+## 2. Script Generator (anybody, via git)
 
 This work can be done anywhere, since it's git controlled. But the initial bootstrapping
 depends on the user having
@@ -141,11 +151,23 @@ installed the **gh** (github CLI) command, otherwise it's annoying work in the b
 
 6. To re-run a whole project, find our which run files you need. Here's an example:
 
-        sbatch_lmtoy.sh *run1a 
+        sbatch_lmtoy.sh *run1a
+	make summary
+	make runs
         sbatch_lmtoy.sh *run1b
         sbatch_lmtoy.sh *run1c 
         sbatch_lmtoy.sh *run2a 
-        sbatch_lmtoy.sh *run2b 
+        sbatch_lmtoy.sh *run2b
+
+   Be careful if you have modified
+
+6. (aug 2024) we have a terminal-blocking but useful way to run through a whole project:
+
+        sbatch_lmtoy2.sh *run1a *run1b *run1c *run2a *run2b
+
+   On your screen it will show progress how far all the obsnums in each run are progressing. When they are
+   all done, it will automatically turn to the next run file from the commandline etc.   It will also
+   make the summary at the end, as well as update the master index.
 
 6. But if you want to be more efficient, you made a note of the
    first obsnum (and higher) that you need to run for this project,
@@ -162,7 +184,15 @@ installed the **gh** (github CLI) command, otherwise it's annoying work in the b
    The following URL's will then give access to the master list, and this PID project in particular
 
         xdg-open http://taps.lmtgtm.org/lmtslr/lmtoy_run
-        xdg-open http://taps.lmtgtm.org/lmtslr/$PID	
+        xdg-open http://taps.lmtgtm.org/lmtslr/$PID
+
+7. To submit a whole project,including the final summary, you can do
+
+        sbatch_lmtoy2.sh *.run??
+
+   which runs all the runfiles like a relay race (each waiting for the other to finish), and then
+   makes the summary as well.  Note this command currently blocks the terminal, but each 10 seconds
+   gives a brief textual update on the status of the obsnums.
 
 8. Ingest in the archive. Here we have to make sure that the final runs were done with "admit=1 sdfits=1 srdp=1"
 
@@ -246,6 +276,9 @@ Something needs to be written down how a remote PI webrun is impacted when new d
 1. It's possible to combine data across projects. An example is 2024-S1-UM-1, which is a followup from 2023-S1-UM-8
 
 2. Mosaic'd data of which the field names are different, need a trick in the mk_runs.py file. See 2024-S1-MX-2
+   and  2024-S1-US-20. Essentially a list of all obsnums is used, and **skip=1** is used to make sure the
+   pipeline doesn't run twice for the single obsnums.
+
 
 3. Using the "dunder" (double underscore) appendix to an obsnum, one can keep multiple versions (e.g. with different
    pipeline parameters).  Eventually the **oid=** might solve this too. But manual labor mean you need to rename
