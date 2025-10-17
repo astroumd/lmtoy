@@ -1,4 +1,4 @@
-# LMTOY cheat sheet (March 2024)
+# LMTOY cheat sheet (October 2025)
 
 A brief reminder on the commands various stakeholders use to operate the pipeline and archive ingestion.
 
@@ -31,31 +31,32 @@ The user **lmtslr** runs the commands here.
        kill -9 $(cat SLpipeline.pid)
        rm SLpipeline.pid
 
-2. This data catcher will allow some "permanent" extra parameters (e.g. pix_list=-13) to
+3. This data catcher will allow some "permanent" extra parameters (e.g. pix_list=-13) to
    the pipeline, if added to the file **SLpipeline.in**:
 
        exit SLpipeline.in
 
-3. Summary of what rsync has done is a nice way to remotely keep track of progress
+4. Summary of what rsync has done is a nice way to remotely keep track of progress
 
        tail -f rsync.log
 
-4. Re-execute a pipeline with extra parameters (only for urgency)
+5. Re-execute a pipeline with extra parameters (only for urgency)
 
        SLpipeline_run1.sh 113271 2024-S1-MX-24 dv=10 dw=10
 
    this is a convenient way to fix really bad pipeline runs.
 
-5. After this the most recent 100 TAP's produced are on this list:
+6. After this the most recent 100 TAP's produced are on this list:
 
        	xdg-open http://taps.lmtgtm.org/lmtslr/lmtoy_run/last100.html
 
-6. There is also a way to make these TAPs available via a tunnel on a browser that runs
+7. There is also a way to make these TAPs available via a tunnel on a browser that runs
    on **malt** itself, but this is for emergency only and is usually not available as the TAP
    copies to Unity seem pretty reliable now.
 
 ## 2. Script Generator
 
+This is the bootstrap proces when a new project has its first data arrive.
 This work can be done anywhere, since it's git controlled. But the initial bootstrapping
 depends on the user having
 installed the **gh** (github CLI) command, otherwise it's annoying work in the browser.
@@ -105,47 +106,63 @@ installed the **gh** (github CLI) command, otherwise it's annoying work in the b
 
    Pay attention to the "Last recorded obsnum" and the latest SEQ and RSR obsnums listed in the output.
 
-2. Update the "lmtinfo" database if new data should be added.
+   Notes:
 
-       cd $DATA_LMT
-       lmtinfo.py last
-       # note the last obsnum, and replace it in the next line
-       make new2 
+       1. Also watch the daily email (around noon) from `lmtsciop` with the Nightly Observations Report.
+          Links to a page on the wiki.lmtgtm.org. They also report what the last obsnum was.
+       2. watch the last100.html - but this depends if malt is running ok.
+       3. Even if these report the last data, the `data_lmt_last` has the final word.
 
-   This process can take a few mins. After this, make sure that last.obsnum is updated correctly.
+2. Update the "lmtinfo" database if new data should be added (see previous point)
 
-3. Update your script generators
+        cd $DATA_LMT
+        lmtinfo.py last
+        make new2 
+
+   This process can take a few mins. After this, make sure that last.obsnum is updated correctly with the
+   command
+
+        lmtinfo.py last
+
+3. Update your script generators and make sure they are consistent
 
         cd $WORK_LMT/lmtoy_run/
-	make git git pull
+	make git pull
 	#
 	make status
 
    Depending if you left unchecked portions, you may need to commit those.
 
+   Note that the DA may work in a branch, it is adviced the PO does not use branches (or at your own risk)
+
 4. Find out if there are new obsnums for a specific project
 
         source_obsnum.sh $PID
 
-4. Or do a more manual search (many options here)
+   or as long as you are in the $PID, a simpler
+
+        source_obsnum.sh
+
+   suffices
+
+5. Or do a more manual search (many options here)
 
         lmtinfo.py grep 2024-03-17 Science 
         lmtinfo.py grep 2024-03-17 LineCheck Bs
 
-5. Add obsnums and/or sources to the script generator
-
-        cd $WORK_LMT/lmtoy_run/lmtoy_$PID
+6. Add obsnums and/or sources to the script generator
+        
+	cdrun $PID    # same as: cd $WORK_LMT/lmtoy_run/lmtoy_$PID
         make pull
         edit mk_runs.py
         make runs
 
-6. To re-run a whole project, find our which run files you need. Here's an example:
+7. To re-run a whole project, find our which run files you need. Here's an example:
 
         sbatch_lmtoy.sh *run1a 
         sbatch_lmtoy.sh *run1b
         sbatch_lmtoy.sh *run1c 
-        sbatch_lmtoy.sh *run2a 
-        sbatch_lmtoy.sh *run2b 
+        sbatch_lmtoy.sh *run2
 
 6. But if you want to be more efficient, you made a note of the
    first obsnum (and higher) that you need to run for this project,
@@ -164,13 +181,21 @@ installed the **gh** (github CLI) command, otherwise it's annoying work in the b
         xdg-open http://taps.lmtgtm.org/lmtslr/lmtoy_run
         xdg-open http://taps.lmtgtm.org/lmtslr/$PID	
 
-8. Ingest in the archive. Here we have to make sure that the final runs were done with "admit=1 sdfits=1 srdp=1"
+8. Ingest in the archive.  When the pipeline runs is will store obsnums in $PID/dir4dv.
 
-        cd $WORK_LMT/lmtoy_run/lmtoy_$PID
-        find_obsnum_and_ingest.sh ?args?
+   Single obsnum results can be done with:
 
-   Details on the arguments to be determined. In theory, the script generator knows what to ingest, but perhaps
-   these need to be confirmed on the commandline. Once this button is pushed, there's no way back.
+        ./$PID.run1.sh
+
+   and once combinations are deemed safe again,
+
+        ./$PID.run2.sh
+
+   Note the obsnum directories in $PID/dir4dv will disappear after archives. This is safe, since they
+   are hard links into the actual zip files stored in $PID/dirzip
+
+9. If need be, update the large lmtoy_run/comments.txt file so that the dashboard is updated.
+
 
 ## 4. Helpdesk Pipeline: lmthelpdesk_umass_edu@unity 
 
@@ -261,11 +286,21 @@ Something needs to be written down how a remote PI webrun is impacted when new d
 
          scancel $(squeue --me | tail +2 | awk '{print $1}')
 
-5. If unity is too slow at the login node, set up your more personalized bash session as follows.  Example for 8GB and 4 hours,
-   adjust as needed.
+5. If unity is too slow at the login node, set up your more personalized bash session as follows.
+   Example here is for 8GB and 4 hours, adjust as needed.
    
          srun -n 1 -c 4 --mem=8G -p toltec-cpu -t 4:00:00 --x11 --pty bash
 	 
    Unity helpdesk also recommends this command
 
          unity-compute
+
+6. To check if we've missed obsnum in a particular year:
+
+
+         cd $WORK_LMT
+	 do_year 2025
+
+   now look in the obsnums listed in tmp_2025.fail and investigate.  Format is horrible,
+   work to be done here.   Also to check if the new column VALID is 1, since 0s should not
+   appear in this list.
