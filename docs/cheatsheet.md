@@ -164,6 +164,8 @@ installed the **gh** (github CLI) command, otherwise it's annoying work in the b
         sbatch_lmtoy.sh *run1c 
         sbatch_lmtoy.sh *run2
 
+   of course you'll need to wait for each sbatch to finish before the new one can start
+
 6. But if you want to be more efficient, you made a note of the
    first obsnum (and higher) that you need to run for this project,
    lets say this is 123456, then
@@ -179,7 +181,18 @@ installed the **gh** (github CLI) command, otherwise it's annoying work in the b
    The following URL's will then give access to the master list, and this PID project in particular
 
         xdg-open http://taps.lmtgtm.org/lmtslr/lmtoy_run
-        xdg-open http://taps.lmtgtm.org/lmtslr/$PID	
+        xdg-open http://taps.lmtgtm.org/lmtslr/$PID
+
+8. An even more efficient way to combine the previous 3 items is something like this (and assuming
+   we had 11 new obsnums)
+
+        sort *run1a | tail -11 > test1a
+        sort *run1b | tail -11 > test1b
+        sort *run1c | tail -11 > test1c
+	sbatch_lmtoy2.sh test1a test1b test1c *run2
+
+   after which you can go for lunch or dinner. No need to wait for the individual runs to finish
+   and monitor the queue.
 
 8. Ingest in the archive.  When the pipeline runs is will store obsnums in $PID/dir4dv.
 
@@ -187,7 +200,7 @@ installed the **gh** (github CLI) command, otherwise it's annoying work in the b
 
         ./$PID.run1.sh
 
-   and once combinations are deemed safe again,
+   and once combinations are deemed safe again, (they are not yet)
 
         ./$PID.run2.sh
 
