@@ -257,6 +257,11 @@ install_python:
 lmtoy_venv:
 	python3 -m venv lmtoy_venv
 
+## apt:       basic ubuntu requirements
+apt:
+	sudo apt install `grep -v ^# requirements.apt`
+	@echo Modern ubuntu also needs pgplot5-dev
+
 ## basic:     pip install all the basic but essential ones
 basic:
 	make pip install_lmtslr install_dreampy3 install_dvpipe install_maskmoment
@@ -392,7 +397,7 @@ bench1a:
 	$(TIME) SLpipeline.sh obsnums=33552,33551 restart=1 admit=$(ADMIT) meta=$(META)
 	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench1a.txt'
 	@echo "================================================================================================================="
-	@echo xdg-open  $(WORK_LMT)/2014S1RSRCommissioning/33551_33552/README.html
+	@echo xdg-open  $(WORK_LMT)/2014ARSRCommissioning/33551_33552/README.html
 
 ## bench1b:  RSR dryrun archive submission using dvpipe (needs bench1)
 bench1b:

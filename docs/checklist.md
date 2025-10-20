@@ -13,8 +13,10 @@ been working so far.   If these are up, we should be good to go.
        srun -n 1 -c 4 --mem=8G -p toltec-cpu -t 4:00:00 --x11 --pty bash
        cd $LMTOY
        make bench1
+       make bench1a
        make bench2
        make bench3
+       make bench4
 
 2. Can we ssh to toltec3 (for archive ingestion)
 
@@ -48,3 +50,4 @@ been working so far.   If these are up, we should be good to go.
     Common problems
     - dataverse server needs a restart
     - "mount -a" on the containers (toltec1-3)
+    - API key (login as Dataverse Admit)

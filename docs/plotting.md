@@ -4,9 +4,25 @@ Although many things in LMTOY can also be run interactively, the main purpose of
 running on a slurm controlled HPC system and produce plots for web based summaries. There are
 however some tricks needed to make these plotfiles, such as the **xvfb**.
 
+## Query
+
+We keep a **simple_plot.py** in the examples directory of LMTOY to try out if your plot will show or
+produce a plotfile under different circumstances on the unity system, as this has sometimes thrown us
+off balance.  There are the known methods that work:
+
+      # works fine on a login node, not on a CPU node, since the $DISPLAY is invalid even if --x11 is given to srun
+      simple_plot.py
+      simple_plot.py -b qt5agg
+
+      # works everywhere now (it selects the default backend "agg", but this can be changed)
+      simple_plot.py -p junk.png
+      simple_plot.py -p junk.png -b pdf
+
+      # show all the backends that exist
+      simple_plot.py -s      
+
 
 ## Plotting Methods
-
 
 1. NEMO programs (e.g. tabplot) use CLI like yapp=1/xs, yapp=junk.png/png
 
@@ -15,6 +31,7 @@ however some tricks needed to make these plotfiles, such as the **xvfb**.
    1. fitsplot.py --screen junk.fits
    2. tab_plot.py -y junk.png junk.tab
    3. some use --plots if a plotfile is needed. Used for programs that produce multiple plots (e.g. view_spec_file.py)
+   4. some use --show if the default plotfile is not used, and instead on screen wanted (e.g. process_bs.py)
 
 3. Non-converted programs are subject to the whims of unity
 

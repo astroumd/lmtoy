@@ -4,6 +4,10 @@ At the moment this is a discussion document. The source code for the
 webrun environment is currently in
 development in: https://github.com/lmtmc/pipeline_web
 
+During remote run we use
+WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt_helpdesk/pipeline_web 
+
+
 
 A nicely formatted version of this document should be in:
 https://github.com/astroumd/lmtoy/blob/master/docs/webrun.md
@@ -114,16 +118,16 @@ Command Line (CLI) equivalent commands are given where this makes sense:
    e.g. on Unity the original WORK_LMT=/nese/toltec/dataprod_lmtslr/work_lmt/
 
            PIS=1
-     	   export WORK_LMT=$WORK_LMT/$PID/Session-$PIS
+           export WORK_LMT=$WORK_LMT/$PID/Session-$PIS
            mkdir -p $WORK_LMT
            cd $WORK_LMT
            lmtoy_run $PID
-	   cd lmtoy_run/lmtoy_$PID
-	   #                          now the work can start
-	   edit mk_runs.py 
-	   make runs
-	   sbatch_lmtoy.sh *run1a
-	   ...
+           cd lmtoy_run/lmtoy_$PID
+           #                          now the work can start
+           edit mk_runs.py 
+           make runs
+           sbatch_lmtoy.sh *run1a
+           ...
 
    this will create (or re-use) the $WORK_LMT/$PID directory and the pipeline is now
    set up with the script generator and a default run can be submitted.

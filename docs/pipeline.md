@@ -2,35 +2,35 @@
 
 When an LMT observing script finishes, there is a unique **obsnum**,
 which records the instrument, observing mode, and possibly
-other obsnum's needed for calibration. The raw data is a set
+other obsnum(s) needed for calibration. The raw data is a set
 of netCDF files identified by one or more obsnum's, its organization
 differs on the instrument (currently RSR and WARES based are the two
 modes).
 
-The obsnum is the only identifier needed to run the pipeline. From the
+The obsnum is the only identifier required to run the pipeline. From the
 obsnum the instrument can be discovered, and the pipeline has sensible
 defaults for each instrument. Of course PI/PL parameters (PIPL's) can
-be passed on the bypass these default settings. An example:
+be passed on to bypass these default settings. An example:
 
       $ SLpipeline.sh obsnum=79448 pix_list=-0,5 extent=240
 
 would process Sequoia data, remove beams 0 and 5 from the default list (0..15),
 and produce a square map of 240 arcsec. The last two keyword are optional. Use
---help to get more help:
+--help (or -h) to get more help:
 
       $ SLpipeline.sh --help
       $ seq_pipeline.sh --help
       $ rsr_pipeline.sh --help
 
-to get generic help, and instrument specific help.
+to get generic help, and instrument specific help for the last two.  
 
 ## Where is the work done
 
-When observing concludes, raw data will show up in your $DATA_LMT. Depending on
-where your $DATA_LMT is, this could be seconds, minutes or days. Or you can get
+When observing concludes, raw data will (eventually) show up in your $DATA_LMT. Depending on
+where your $DATA_LMT is, this could be seconds, minutes or days. Or you will need to get
 it yourself :-)
 
-How do you know if an obsnum is present? One possible way is the lmtinfo.py script:
+How do you know if an obsnum is present? One possible way is the `lmtinfo.py` script:
 
       $ lmtinfo.py  123456
 
@@ -239,3 +239,27 @@ Here we sketch the user experience of running the pipeline.
         $ seq_pipeline.sh --help
 
    but it would be better if there is a better (yaml?) self-describing interface
+
+
+## Pipeline Parameters
+
+A reminder how pipeline paramters are introduced.
+As an example, the dx= and dy= pointing offset corrections were later introduced. First, they go
+as defaults offx=0 and offy=0 in seq_pipeline.sh, in addition, they need to be recorded in the
+**show_vars** variable, so they are recorded in the rc file(s).
+
+In the bash scripts they are now available as $offx and $offy and can be used and abused. Even changed
+(though in the case of the pointing offsets probably not)
+
+We then decided to name them --offx and --offy in process_otf_map2.py , so they can be stored in the
+specfile.
+
+add to parser so it's in the Opts.
+
+pass on to the Specfile() constructor, so it's written.
+
+That's phase 1.
+
+Now phase 2, reading it back.  in two places an id_offx and S->offx needed. can be applied.
+
+

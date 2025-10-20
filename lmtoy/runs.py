@@ -16,7 +16,7 @@ Useful tools for the LMTOY script generators (lmtoy_$PID)
 import os
 import sys
 
-_version = "18-dec-2024"
+_version = "23-sep-2025"
 
 class IO(object):
     """
@@ -182,7 +182,7 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     o_min = -1
     o_max = -1
 
-    # @todo if more than one I/O is present, this code won't work
+    # @todo if more than one I/O is present, this code won't work -- @todo fix multiple IO)
     io = IO()
     print("Note _io=%s assumed for all obsnums" % io.getio(0))
 
@@ -238,18 +238,16 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     print("Creating run files")
 
     # @todo   fix this, it's hardcoded for a 3-tier system (a,b,c)
-    run1a = '%s.run1a' % project
-    run1b = '%s.run1b' % project
-    run1c = '%s.run1c' % project
+    run1a = '%s.run1a'   % project
+    run1b = '%s.run1b'   % project
+    run1c = '%s.run1c'   % project
     run1x = '%s.run1.sh' % project
 
-    run2a = '%s.run2a' % project
-    run2b = '%s.run2b' % project
-    run2c = '%s.run2c' % project
+    run2a = '%s.run2'    % project
     run2x = '%s.run2.sh' % project
 
-    fp1 = list(range(4))
-    fp2 = list(range(4))
+    fp1 = list(range(4))  # run1a,b,c,sh
+    fp2 = list(range(2))  # run2,sh
 
     fp1[0] = open(run1a, "w")
     fp1[1] = open(run1b, "w")
@@ -257,9 +255,7 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     fp1[3] = open(run1x, "w")
     
     fp2[0] = open(run2a, "w")
-    fp2[1] = open(run2b, "w")
-    fp2[2] = open(run2c, "w")
-    fp2[3] = open(run2x, "w")    
+    fp2[1] = open(run2x, "w")    
 
     pars4,pars5 = getpars(on)
 
@@ -268,7 +264,6 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     for s in on.keys():     # loop over sources
         for o1 in on[s]:    # loop over obsnums
             cmd1 = ["" for i in range(4)]
-            cmd2 = ["" for i in range(4)]
 
             o = abs(o1)
             os = repr(o)
@@ -284,12 +279,12 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
                 if len(cmd1[i]) > 0:  fp1[i].write("%s\n" % cmd1[i])
             n1 = n1 + 1
 
-    #                           combination obsnums
+    # combination obsnums
     n2 = 0        
     for s in on.keys():         # loop over sources
         obsnums = ""
         n3 = 0
-        for o1 in on[s]:        # loop over positive obsnums
+        for o1 in on[s]:        # loop over positive obsnums only
             o = abs(o1)
             if o1 < 0: continue
             n3 = n3 + 1
@@ -303,27 +298,26 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
         o_o = '%s_%s' % (o_first,o_last)
         _io = io.getio(o_first)
         # print("Combo: %s" % o_o)
-        cmd1 = ["" for i in range(4)]
-        cmd2 = ["" for i in range(4)]
-        
+        cmd2 = ["" for i in range(2)]
+
+        # only do admit, if _io is not RSR or TBD
+        if _io.find('RSR') == 0 or _io.find('TBD') == 0:
+            admit = 0
+        else:
+            admit = 1
+
         if s in pars1:
-            cmd2[0] = "SLpipeline.sh _io=%s _s=%s admit=0 restart=1 obsnums=%s" % (_io, s, obsnums)
-        if s in pars2:
-            cmd2[1] = "SLpipeline.sh _io=%s _s=%s admit=1 srdp=1    obsnums=%s %s" % (_io, s, obsnums, getargs(o_o,pars4))
-        if pars3 != None and s in pars3:
-            cmd2[2] = "SLpipeline.sh _io=%s _s=%s admit=1 srdp=1    obsnums=%s %s" % (_io, s, obsnums, getargs(o_o,pars5))
-        cmd2[3] = "SLpipeline.sh obsnums=%s _io=%s _s=%s archive=1" % (obsnums,_io,s)    
-        for i in range(4):
+            cmd2[0] = "SLpipeline.sh obsnums=%s _io=%s _s=%s restart=1 admit=%d" % (obsnums, _io, s, admit)
+        cmd2[1] = "SLpipeline.sh obsnums=%s _io=%s _s=%s archive=1" % (obsnums, _io, s)
+        for i in range(2):
             if len(cmd2[i]) > 0:  fp2[i].write("%s\n" % cmd2[i])
         n2 = n2 + 1
 
     print("A proper re-run of %s should be in the following order: (note some of these may be empty)" % project)
     print(run1a)
-    print(run2a)
     print(run1b)
-    print(run2b)
     print(run1c)
-    print(run2c)
+    print(run2a)
     obsnums=[]
     for s in on.keys():
         for o1 in on[s]:
