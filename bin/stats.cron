@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+source /home/lmtslr_umass_edu/lmtoy/anaconda3/python_start.sh
+/home/lmtslr_umass_edu/lmtoy/bin/dataverse_stats.py -m -p -o /nese/toltec/dataprod_dv/web_stats/
