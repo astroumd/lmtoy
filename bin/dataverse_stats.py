@@ -13,7 +13,7 @@ url = "https://dp.lmtgtm.org/api/info/metrics"
 parser = argparse.ArgumentParser(prog=sys.argv[0])
 parser.add_argument("--plot",    "-p", action="store_true",  help="Plot the results")
 parser.add_argument("--debug",   "-d", action="store_true",  help="debug mode")
-parser.add_argument("--monthly",   "-m", action="store_true",  help="compute monthly (differential) stats.")
+parser.add_argument("--monthly",   "-m", action="store_true",  help="compute (and plot) monthly differential stats.")
 parser.add_argument("--output",   "-o", action="store",  help="output directory")
 args=parser.parse_args()
 
