@@ -3,7 +3,7 @@
 #   some functions to share for lmtoy pipeline operations
 #   beware, in bash shell variables are common variables between this and the caller
 
-lmtoy_version="25-sep-2025"
+lmtoy_version="24-oct-2025"
 
 echo "LMTOY>> lmtoy_functions $lmtoy_version via $0"
 
@@ -1496,12 +1496,12 @@ function lmtoy_bs1 {
     # waterfall -> bs-2.png
     echo "LMTOY>> process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -2 --stype $stype --bank $bank"
                   process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -2 --stype $stype --bank $bank
-    mv bs-2.png  bs-2__${bank}.png
+    # mv bs-2.png  bs-2__${bank}.png # now done inside
 
     # full average -> bs-1.png   (final Bs spectrum)
     echo "LMTOY>> process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -1 --stype $stype --bank $bank -o $spec"
                   process_bs.py --obs_list $obsnum --pix_list $pix_list --use_cal --block -1 --stype $stype --bank $bank -o $spec
-    mv bs-1.png  bs-1__${bank}.png
+    # mv bs-1.png  bs-1__${bank}.png # now done inside
     
     title="LMT $instrument/$obspgm bank=${bank}"
     seq_spectra.py -t "$title" -y seq.spectra__${bank}.png $spec
