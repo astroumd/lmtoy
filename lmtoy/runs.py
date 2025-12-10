@@ -16,7 +16,7 @@ Useful tools for the LMTOY script generators (lmtoy_$PID)
 import os
 import sys
 
-_version = "23-sep-2025"
+_version = "10-dec-2025"
 
 class IO(object):
     """
@@ -181,6 +181,7 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     io = "TBD"
     o_min = -1
     o_max = -1
+    check = ""
 
     # @todo if more than one I/O is present, this code won't work -- @todo fix multiple IO)
     io = IO()
@@ -191,12 +192,16 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
             obsnums=[]
             if argv[1] == '-h':
                 print("mk_runs.py: Create runfiles by default (version %s)" % _version)
-                print("  -h    this help")
-                print("  -o    show all obsnums, sorted")
-                print("  -c    produce a config/obsnum list [takes time]")
-                print("  -b    show all failed obsnums")
-                print("  -B    show all failed obsnums and add the word QAFAIL for comments.txt")
+                print("  -h       this help")
+                print("  -o       show all obsnums, sorted")
+                print("  -c       produce a config/obsnum list [takes time]")
+                print("  -b       show all failed obsnums")
+                print("  -B       show all failed obsnums and add the word QAFAIL for comments.txt")
+                print("  -p       change the names of run file to contain the word 'check'")
                 sys.exit(0)
+            elif argv[1] == '-p':
+                project = f"check_{project}"
+                check = "check_"
             elif argv[1] == '-o':
                 for s in on.keys():
                     for o1 in on[s]:
@@ -238,13 +243,13 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     print("Creating run files")
 
     # @todo   fix this, it's hardcoded for a 3-tier system (a,b,c)
-    run1a = '%s.run1a'   % project
-    run1b = '%s.run1b'   % project
-    run1c = '%s.run1c'   % project
-    run1x = '%s.run1.sh' % project
-
-    run2a = '%s.run2'    % project
-    run2x = '%s.run2.sh' % project
+    run1a = f"{project}.{check}run1a"
+    run1b = f"{project}.{check}run1b"
+    run1c = f"{project}.{check}run1c"
+    run1x = f"{project}.{check}run1.sh"
+    
+    run2a = f"{project}.{check}run2"
+    run2x = f"{project}.{check}run2.sh"
 
     fp1 = list(range(4))  # run1a,b,c,sh
     fp2 = list(range(2))  # run2,sh
