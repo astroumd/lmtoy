@@ -92,7 +92,7 @@ git:  $(GIT_DIRS)
 ## pull:      Update all git repos
 pull:
 	@echo -n "lmtoy: "; git pull
-	-@for dir in $(GIT_DIRS); do\
+	-@for dir in $(GIT_DIRS) $(WORK_LMT)/lmtoy_run; do\
 	(echo -n "$$dir: " ;cd $$dir; git pull); done
 	@echo Last pull: `date` >> git.log
 
