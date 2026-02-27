@@ -16,7 +16,7 @@ PYTHON = anaconda3
 
 GIT_DIRS = SpectralLineReduction dreampy3 maskmoment RSR_driver nemo b4r \
            RedshiftPointing LinePointing dvpipe \
-	   lmt_web lmtoy_dispatch pipeline_web
+	   lmt_web lmtoy_dispatch pipeline_web lmtsearch
 
 # URLs that we'll need
 
@@ -54,6 +54,7 @@ URL20 = https://github.com/lmtmc/lmt_web
 URL21 = https://github.com/lmtmc/lmtoy_dispatch
 URL22 = https://github.com/lmtmc/pipeline_web
 URL23 = https://github.com/GreenBankObservatory/dysh
+URL24 = https://github.com/toltec-astro/lmtsearch.git
 
 
 .PHONY:  help install build
@@ -226,6 +227,9 @@ pipeline_web:
 
 dysh:
 	git clone $(URL23)
+
+lmtsearch:
+	git clone $(URL24)
 
 # hack for Linux  (@todo Mac)
 admit:
