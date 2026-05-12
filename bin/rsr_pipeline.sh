@@ -10,7 +10,7 @@
 #
 #
 
-_version="rsr_pipeline: 7-nov-2024"
+_version="rsr_pipeline: 11-may-2026"
 
 echo "LMTOY>> $_version"
 
@@ -18,6 +18,7 @@ echo "LMTOY>> $_version"
 # input parameters (only obsnum is required)
 #            - start or restart
 obsnum=0      # this is a single obsnum pipeline (obsnums=0)
+oid=""        # optional ID for this obsnum
 pdir=""       # where to do the work
 
 #             - PI parameters
@@ -71,7 +72,7 @@ lmtoy_args "$@"
 # PI parameters, as merged from defaults and CLI
 rc0=$WORK_LMT/tmp/lmtoy_${obsnum}_$$.rc
 show_vars \
-          xlines badcb badlags jitter linecheck bandzoom speczoom rthr cthr sgf notch blo bandstats \
+          xlines badcb badlags jitter linecheck bandzoom speczoom rthr cthr sgf notch blo bandstats oid \
 	  > $rc0
 
 # enforce no combinations
