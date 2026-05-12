@@ -4,7 +4,8 @@
 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-    echo "Usage:  $0 OID directories"
+    echo "Usage:  $0 OID dir1 dir2 ..."
+    echo "Renames diorectories dir1 to dir1__OID"
     echo ""
     exit 0
 fi
