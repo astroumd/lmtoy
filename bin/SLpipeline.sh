@@ -10,7 +10,7 @@
 #  @todo   optional PI parameters
 #          option to have a data+time ID in the name, by default it will be blank?
 
-_version="SLpipeline: 13-may-2025"
+_version="SLpipeline: 12-may-2026"
 
 echo ""
 echo "LMTOY>> VERSION $(cat $LMTOY/VERSION)"
@@ -40,7 +40,7 @@ archive=0       # ingest an existing obsnum into the (dataverse) archive (assume
 sleep=2         # add few seconds before running, allowing quick interrupt
 nproc=1         # number of processors to use (keep it at 1)
 rsync=""        # rsync address for the TAP file (used at LMT/malt)
-oid=""          # experimental parallel processing using __$oid  == currently not in use ==
+oid=""          # additional ID to dunder-tag obsnums 
 goal=Science    # Science (or override with: Pointing,Focus,Cont [not officially supported])
 webrun=""       # optional directive for webrun to do parameter checking (SEQ/map, SEQ/Bs, RSR, ....)
 qagrade=0       # the final grade recorded for the archive (QAFAIL enforces -1; 0 by default; -2,1,2,3 when DA graded)
@@ -152,7 +152,7 @@ if [ $obsnum = 0 ]; then
     exit 1
 fi
 
-#             cannot handle Cal observations here (or Stay,VlbiSched, On, Idle, CrossScan)
+#             cannot handle Cal observations here (or Stay, VlbiSched, On, Idle, CrossScan)
 if [ "$obspgm" = "Cal" ]; then
     echo "LMTOY>> Cannot process a 'Cal' obsnum=$obsnum"
     exit 1
@@ -161,9 +161,9 @@ fi
 #             set pdir = root directory below which all obsnum directories will exist
 pidir=$WORK_LMT/$ProjectId     # temporary
 if [ $obsnums = 0 ]; then
-    pdir=$pidir/${obsnum}
+    pdir=$pidir/${obsnum}${oid}
 else
-    pdir=$pidir/${on0}_${on1}
+    pdir=$pidir/${on0}_${on1}${oid}
     obsnum=${on0}_${on1}
 fi
 if [ $archive == 1 ]; then
@@ -405,7 +405,7 @@ fi
 
 # directory for dvpipe products for archive ingestion, dirzip is for keeping data links for PI after ingestion
 # @todo for webrun no need to create a dir4dv copy
-dir4dv=$WORK_LMT/${ProjectId}/dir4dv/${obsnum}/${ProjectId}/${obsnum}
+dir4dv=$WORK_LMT/${ProjectId}/dir4dv/${obsnum}${oid}/${ProjectId}/${obsnum}${oid}
 dirzip=$WORK_LMT/${ProjectId}/dirzip
 mkdir -p $dir4dv $dirzip
 echo "LMTOY>> using dir4dv=$dir4dv dirzip=$dirzip"
@@ -414,9 +414,9 @@ echo "LMTOY>> using dir4dv=$dir4dv dirzip=$dirzip"
 if [ $meta -ne 0 ]; then
     cd $pdir
     echo "LMTOY>> make metadata ($meta) for DataVerse in $pdir"
-    mk_metadata.py -y ${dir4dv}/${obsnum}_lmtmetadata.yaml $pdir
+    mk_metadata.py -y ${dir4dv}/${obsnum}${oid}_lmtmetadata.yaml $pdir    
     cp $pdir/lmtoy_${obsnum}*rc $dir4dv
-    cp ${dir4dv}/${obsnum}_lmtmetadata.yaml ${dirzip}
+    cp ${dir4dv}/${obsnum}${oid}_lmtmetadata.yaml ${dirzip}
 fi
 # produce TAP, RSRP, SDFITS, RAW tar files, whichever are requested.
 
@@ -454,28 +454,28 @@ if [ $grun != 0 ]; then
 fi
 
 if [ $srdp != 0 ]; then
-    echo "LMTOY>> Creating SRDP in $dir4dv/${obsnum}_SRDP. (chunk=$chunk)"
+    echo "LMTOY>> Creating SRDP in $dir4dv/${obsnum}${oid}_SRDP. (chunk=$chunk)"
     if [ $chunk = 0 ]; then
-	tar -cf $dir4dv/${obsnum}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/$obsnum
+	tar -cf $dir4dv/${obsnum}${oid}_SRDP.tar --exclude="*.nc,*.tar" $ProjectId/${obsnum}${oid}
     else
-	rm -f              $dir4dv/${obsnum}_SRDP.zip
-	zip -s $chunk  -qr $dir4dv/${obsnum}_SRDP.zip $ProjectId/$obsnum   -x $ProjectId/$obsnum/$sdfits_file
-	rm -f              $dirzip/${obsnum}_SRDP.zip 
-	ln                 $dir4dv/${obsnum}_SRDP.zip $dirzip/${obsnum}_SRDP.zip
+	rm -f              $dir4dv/${obsnum}${oid}_SRDP.zip
+	zip -s $chunk  -qr $dir4dv/${obsnum}${oid}_SRDP.zip $ProjectId/${obsnum}${oid}   -x $ProjectId/${obsnum}${oid}/$sdfits_file
+	rm -f              $dirzip/${obsnum}${oid}_SRDP.zip 
+	ln                 $dir4dv/${obsnum}${oid}_SRDP.zip $dirzip/${obsnum}${oid}_SRDP.zip
     fi
 fi
 
 if [ $sdfits != 0 ]; then
-    echo "LMTOY>> Creating SDFITS in $dir4dv/${obsnum}_SDFITS. (chunk=$chunk)"
+    echo "LMTOY>> Creating SDFITS in $dir4dv/${obsnum}${oid}_SDFITS. (chunk=$chunk)"
     if [ ! -z $sdfits_file ]; then
         echo "LMTOY>> SDFITS: $sdfits_file"
 	if [ $chunk = 0 ]; then
-	    tar -cf $dir4dv/${obsnum}_SDFITS.tar $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/*.nc
+	    tar -cf $dir4dv/${obsnum}${oid}_SDFITS.tar $ProjectId/${obsnum}${oid}/README_files.md $ProjectId/${obsnum}${oid}/*.nc
 	else
-	    rm -f              $dir4dv/${obsnum}_SDFITS.zip
-	    zip -s $chunk  -qr $dir4dv/${obsnum}_SDFITS.zip $ProjectId/$obsnum/README_files.md $ProjectId/$obsnum/$sdfits_file
-	    rm -f              $dirzip/${obsnum}_SDFITS.zip
-	    ln                 $dir4dv/${obsnum}_SDFITS.zip $dirzip/${obsnum}_SDFITS.zip
+	    rm -f              $dir4dv/${obsnum}${oid}_SDFITS.zip
+	    zip -s $chunk  -qr $dir4dv/${obsnum}${oid}_SDFITS.zip $ProjectId/${obsnum}${oid}/README_files.md $ProjectId/${obsnum}${oid}/$sdfits_file
+	    rm -f              $dirzip/${obsnum}${oid}_SDFITS.zip
+	    ln                 $dir4dv/${obsnum}${oid}_SDFITS.zip $dirzip/${obsnum}${oid}_SDFITS.zip
 	fi
     else
 	echo "LMTOY>> SDFITS: should not get here, unless you intend to have no SDFITS file(s)"
