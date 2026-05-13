@@ -64,8 +64,8 @@ function lmtoy_error {
 trap 'lmtoy_error $? $LINENO' ERR
 
 function lmtoy_report {
-    echo "LMTOY>> xdg-open $WORK_LMT/$ProjectId/$obsnum/README.html"
-    printf_red "LMTOY>> ProjectId=$ProjectId  obsnum=$obsnum bank=$bank obspgm=$obspgm  obsgoal=$obsgoal date_obs=$date_obs"
+    echo "LMTOY>> xdg-open $WORK_LMT/$ProjectId/$obsnum$oid/README.html"
+    printf_red "LMTOY>> ProjectId=$ProjectId  obsnum=$obsnum oid=$oid bank=$bank obspgm=$obspgm  obsgoal=$obsgoal date_obs=$date_obs"
 }
 
 function lmtoy_args {
@@ -223,7 +223,7 @@ function lmtoy_archive {
 function lmtoy_rsr1 {
     # input:  first, obsnum, badlags, blanking, rfile, ....
 
-    echo "LMTOY>> _rsr1: $(lmtoy_timer $$)"
+    echo "LMTOY>> _rsr1: $(lmtoy_timer $$) oid=$oid"
 
     # New order of reduction for single obsnum cases
     #  1. run rsr_driver to get a "first" spectrum, with whatever badlags are in dreampyrc
@@ -594,7 +594,7 @@ function lmtoy_seq1 {
 	ifproc.sh $obsnum > lmtoy_$obsnum.ifproc
     fi
     # record
-    echo "LMTOY>> rc=$rc rc1=$rc1 bank=$bank"
+    echo "LMTOY>> rc=$rc rc1=$rc1 oid=$oid bank=$bank"
     if [ ! -e "$rc1" ]; then
 	echo "PJT_WARNING: we should not need to do this $rc -> $rc1 copy here"
 	#cp $rc $rc1
