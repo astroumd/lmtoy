@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 #
 
-_version = "6-nov-2024"
+_version = "12-may-2026"
 
 _doc = """Usage: mk_metadata.py [options] [OBSNUM]
 
@@ -81,10 +81,14 @@ def header(rc, key, multi=False, debug=False):
 def rc_file(pdir, bank=None):
     """find an rc file
     lmtoy_OBSNUM.rc or lmtoy_OBSNUM__BANK.rc
+    2026: pdir can be OBSNUM or OBSNUM__OID
     """
     if pdir.rfind("/") > 0:
         # print("PJT - dir")
         obsnum = pdir.split("/")[-1]
+        dunder = obsnum.find("__")
+        if dunder > 0:
+            obsnum = obsnum[:dunder]
         if bank == None:
             rcfile = pdir + "/lmtoy_%s.rc" % obsnum
         else:
