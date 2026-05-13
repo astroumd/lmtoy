@@ -17,7 +17,7 @@
 # @todo   if close to running out of memory, process_otf_map2.py will kill itself. This script does not gracefully exit
 # @todo   vlsr= only takes correct effect on the first run, not a re-run
 
-_version="seq_pipeline: 3-jul-2025"
+_version="seq_pipeline: 11-may-2026"
 echo "LMTOY>> $_version"
 
 #--HELP   
@@ -80,7 +80,7 @@ unset restfreq     # -> does not seem to work
 #--HELP
 show_vars="extent dv dw birdies birdies_shift map_coord_use pix_list rms_cut location \
            rmax otf_select otf_a otf_b otf_c noise_sigma b_order stype offx offy \
-           sample otf_cal edge bank \
+           sample otf_cal edge bank oid \
           "
           #  resolution cell nppb \
 
@@ -91,7 +91,7 @@ source lmtoy_functions.sh
 lmtoy_args "$@"
 
 # PI parameters, as merged from defaults and CLI
-rc0=$WORK_LMT/tmp/lmtoy_${obsnum}.rc
+rc0=$WORK_LMT/tmp/lmtoy_${obsnum}${oid}.rc
 show_vars $show_vars > $rc0
 
 #lmtoy_debug
@@ -181,10 +181,10 @@ if [ ! -z $b_regions ]; then
     echo "LMTOY>> setting (base)line regions from  b_regions etc."
     
     echo "# based on b_regions etc." >> $rc
-    echo b_regions=$b_regions       >> $rc
-    echo l_regions=$l_regions       >> $rc
-    echo slice=$slice               >> $rc
-    echo v_range=$v_range           >> $rc
+    echo b_regions=$b_regions        >> $rc
+    echo l_regions=$l_regions        >> $rc
+    echo slice=$slice                >> $rc
+    echo v_range=$v_range            >> $rc
 
 elif [[ $first == 1 ]] || [[ "$_lmtoy_args"  == *"dv="* ]] || [[ "$_lmtoy_args"  == *"dw="* ]]; then
     echo "LMTOY>> setting (base)line regions from  dv=$dv dw=$dw"
@@ -261,7 +261,7 @@ if [ $numbands = 2 ]; then
 	echo "skyfreq=$(echo $skyfreq | tabcols - 2)"    >> $rc
 	echo "restfreq=$(echo $restfreq | tabcols - 2)"  >> $rc
 	echo "bandwidth=$(echo $bandwidth | tabcols - 2)">> $rc	
-	echo "oid=1    # not used yet"                   >> $rc
+	echo "oid=$oid"                                  >> $rc
 	echo "bank=1"                                    >> $rc
     fi
     if [ $rf2 = 0.0 ]; then
@@ -269,13 +269,13 @@ if [ $numbands = 2 ]; then
 	echo "skyfreq=$(echo $skyfreq | tabcols - 1)"    >> $rc
 	echo "restfreq=$(echo $restfreq | tabcols - 1)"  >> $rc
 	echo "bandwidth=$(echo $bandwidth | tabcols - 1)">> $rc		
-	echo "oid=0     # not used yet"                  >> $rc
+	echo "oid=$oid"                                  >> $rc
 	echo "bank=0"                                    >> $rc
     fi
 fi
 
 #
-echo map_coord_use=$map_coord_use                      >> $rc
+echo map_coord_use=$map_coord_use                        >> $rc
     
 
 # source again - ensure we have the changed variables 
@@ -294,7 +294,7 @@ sleep 2
 if [ $bank != -1 ]; then
     # pick only this selected bank
     echo "LMTOY>> selecting only bank $bank with numbands=$numbands"
-    rc1=lmtoy_${obsnum}__${bank}.rc    
+    rc1=lmtoy_${obsnum}__${bank}.rc
     [ ! -e $rc1 ] && cp $rc $rc1 && rc=$rc1
     s_on=${src}_${obsnum}__${bank}
     s_nc=${s_on}.nc
@@ -310,7 +310,6 @@ elif [ $numbands == 2 ]; then
     IFS="," read -a bandwidths <<< $bandwidth
     # "expr 1 - 1" returns an error state 1 to the shell (it's a feature)
     for bank in $(seq 0 $(expr $numbands - 1)); do
-	oid=$bank    # oid not used yet
 	echo "LMTOY>> Preparing for bank=$bank"
 	rc1=lmtoy_${obsnum}__${bank}.rc
 	if [ ! -e $rc1 ]; then
