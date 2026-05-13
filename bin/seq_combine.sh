@@ -10,7 +10,7 @@
 #
 
 
-version="seq_combine: 8-jun-2025"
+version="seq_combine: 12-may-2026"
 
 echo "LMTOY>> $version"    
 
@@ -25,6 +25,7 @@ echo "LMTOY>> $version"
 obsnums=0                       # comma separated list of obsnums to combine
 bank=-1                         # process a specific bank, or loop over all banks
 output=""                       # override the OFIRST_OLAST name?   == don't use yet ==
+oid=""
 #            - procedural
 makecube=1
 viewcube=0
@@ -89,7 +90,7 @@ echo "bank=$bank"
 
 # @todo   always do boostrap,   read the $bank if $bank was given
 
-files=(*/$on0/lmtoy_${on0}.rc)
+files=(*/${on0}${oid}/lmtoy_${on0}.rc)
 echo "LMTOY>> For $on0 : ${#files[@]} ${files[@]}"
 if [ ${#files[@]} == 1 ]; then
     rc0=$files
@@ -101,7 +102,7 @@ else
     exit 0
 fi
 
-files=(*/$on0/lmtoy_${on0}${ext}.rc)
+files=(*/${on0}${oid}/lmtoy_${on0}${ext}.rc)
 echo "For $on0 : ${#files[@]} ${files[@]}"
 if [ ${#files[@]} == 1 ]; then
     rc1=$files    
@@ -131,7 +132,7 @@ echo "banks=$banks"
 
     
 obsnum=${on0}_${on1}
-wdir=$ProjectId/${obsnum}
+wdir=$ProjectId/${obsnum}${oid}
 echo "Using wdir=$wdir for src=$src"
 
 # loop over the banks that needs to be processed
@@ -152,7 +153,7 @@ for bank in $banks; do
 
     # ensure we inherited the RC file for this bank
     if [ ! -e $wdir/$rc ]; then
-	rc2=(*/$on0/lmtoy_${on0}__${bank}.rc)
+	rc2=(*/${on0}${oid}/lmtoy_${on0}__${bank}.rc)
 	echo rc2=$rc2
 	echo "LMTOY>> creating $wdir/$rc from $rc2"
 	cp $rc2 $wdir/$rc
@@ -164,7 +165,7 @@ for bank in $banks; do
     ons=""        # accumulates the .nc filenames
     sumtime=0     # accumulates the integration time
     for on in $obsnums1; do
-	fon=$(ls */$on/*_${on}__${bank}.nc)
+	fon=$(ls */${on}${oid}/*_${on}__${bank}.nc)
 	# there better be just one  @todo test !!!
 	if [ -e $fon ]; then
 	    ons="$ons ${fon}"
@@ -172,7 +173,7 @@ for bank in $banks; do
 	    echo "Warning $fon not found"
 	    exit 0
 	fi
-	frc=$(ls */$on/lmtoy_${on}__${bank}.rc)
+	frc=$(ls */${on}${oid}/lmtoy_${on}__${bank}.rc)
 	if [ -e $frc ]; then
 	    sumtime=$(nemopars inttime $frc | tabmath - - %1+$sumtime all)
 	else
