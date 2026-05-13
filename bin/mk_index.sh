@@ -22,12 +22,13 @@ update="$(date) on $(hostname)"
 
 # there better be only one.... 
 source $(ls ./lmtoy_*.rc | grep -v __)
-echo "Making index.html for obsnum=$obsnum bank=$bank"
+echo "Making index.html for obsnum=$obsnum oid=$oid bank=$bank"
 # @todo first time around bank is not properly set
 
 function base {
     ext1=$1
-    ext2=$2    
+    ext2=$2
+    #ext3=$3
     echo ${src}_${obsnum}${ext1}${ext2}
 }
 
@@ -149,7 +150,7 @@ for ext in "" "__0" "__1"; do
     echo "RC:  $rc"
     source $rc
     
-    html=index_pipeline$ext.html
+    html=index_pipeline${ext}.html
     echo "Writing $html $restfreq"
     if [ "$ext" == "" ]; then
 	rf=$restfreq
