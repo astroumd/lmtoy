@@ -375,6 +375,7 @@ common: lmtoy_venv
 
 # ---------------------------- benchmarks -------------------------------------------------------------------------------------------
 
+OID   = 
 META  = 1
 ADMIT = 0
 bench:  bench1 bench5 bench2 bench3 
@@ -382,7 +383,7 @@ bench:  bench1 bench5 bench2 bench3
 ## bench1:   RSR 30m benchmark: obsnum=33551
 bench1:
 	@echo sbatch_lmtoy.sh etc/bench1.run
-	$(TIME) SLpipeline.sh obsnum=33551 restart=1 linecheck=1 public=2020-12-31 qagrade=3 admit=$(ADMIT) meta=$(META)
+	$(TIME) SLpipeline.sh obsnum=33551 restart=1 linecheck=1 public=2020-12-31 qagrade=3 admit=$(ADMIT) meta=$(META) oid=$(OID)
 	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench1.txt'
 	@echo "================================================================================================================="
 	@echo xdg-open  $(WORK_LMT)/2014ARSRCommissioning/33551/README.html
@@ -410,14 +411,19 @@ bench1b:
 ## bench2:   SEQ benchmark: obsnum=79448
 bench2:
 	@echo sbatch_lmtoy.sh etc/bench2.run
-	$(TIME) SLpipeline.sh obsnum=79448 restart=1 map_coord_use=1 public=2020-12-31 qagrade=3 maskmoment=$(ADMIT) admit=$(ADMIT) meta=$(META)
+	$(TIME) SLpipeline.sh obsnum=79448 restart=1 map_coord_use=1 public=2020-12-31 qagrade=3 maskmoment=$(ADMIT) admit=$(ADMIT) meta=$(META) oid=$(OID)
 	@bash -c 'source lmtoy_functions.sh ; printf_green_file etc/bench2.txt'
 	@echo "========================================================================================"
 	@echo xdg-open  $(WORK_LMT)/2018S1SEQUOIACommissioning/79448/README.html
 
 ## bench2a:  SEQ benchmark with identical combination
 bench2a:
-	$(TIME) SLpipeline.sh obsnums=79448,79448 restart=1 admit=$(ADMIT) meta=$(META)
+	$(TIME) SLpipeline.sh obsnums=79448,79448 restart=1 admit=$(ADMIT) meta=$(META) oid=$(OID)
+
+## bench2b:  SEQ benchmark: obsnum=79448 2nd line using OID=test
+bench2b:
+	$(TIME) SLpipeline.sh obsnum=79448 restart=1 map_coord_use=1 meta=0 vlsr=-310 dv=50 dw=50 oid=__test
+
 
 ## bench3:   SEQ dual IF benchmark (about 1.5 min)
 bench3:
