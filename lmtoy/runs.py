@@ -16,7 +16,7 @@ Useful tools for the LMTOY script generators (lmtoy_$PID)
 import os
 import sys
 
-_version = "10-dec-2025"
+_version = "14-may-2026"
 
 class IO(object):
     """
@@ -173,7 +173,7 @@ def verify(runfile, debug=False):
 def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
     """ top level
        project    - PID, e.g. "2024-S1-MX-2"
-       on         - dictionary of sources and their assocciated obsnums
+       on         - dictionary of sources and their associated obsnums
                     obsnums are integers, negative one do not appear in combos
        pars1,2,3  - SLpipeline parameters for this tier-1,2,3 run (called a,b,c)
        argv       - optional for CLI
@@ -264,9 +264,20 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
 
     pars4,pars5 = getpars(on)
 
+    oid = {}
+    for s in on.keys():
+        oid[s] = ""
+
     # single obsnums
     n1 = 0
     for s in on.keys():     # loop over sources
+        # check OID
+        if s in pars1:
+            idx = pars1[s].find("oid=")
+            if idx > 0:
+                oid[s] = pars1[s][idx:].split()[0]
+                print(f"OID {s} : {oid[s]}")
+            
         for o1 in on[s]:    # loop over obsnums
             cmd1 = ["" for i in range(4)]
 
@@ -274,12 +285,12 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
             os = repr(o)
             _io = io.getio(o)
             if s in pars1:
-                cmd1[0] = "SLpipeline.sh obsnum=%d _io=%s _s=%s %s restart=1 " % (o,_io,s,pars1[s])
+                cmd1[0] = "SLpipeline.sh obsnum=%d _io=%s _s=%s %s restart=1 %s" % (o,_io,s,pars1[s],oid[s])
             if s in pars2:
-                cmd1[1] = "SLpipeline.sh obsnum=%d _io=%s _s=%s %s %s" % (o,_io,s,pars2[s], getargs(os,pars4))
+                cmd1[1] = "SLpipeline.sh obsnum=%d _io=%s _s=%s %s %s %s" % (o,_io,s,pars2[s], getargs(os,pars4), oid[s])
             if pars3 != None and s in pars3:
-                cmd1[2]  = "SLpipeline.sh obsnum=%d _io=%s _s=%s %s %s" % (o,_io,s, pars3[s], getargs(os,pars5))
-            cmd1[3] = "SLpipeline.sh obsnum=%d _io=%s _s=%s archive=1" % (o,_io,s)
+                cmd1[2]  = "SLpipeline.sh obsnum=%d _io=%s _s=%s %s %s %s" % (o,_io,s, pars3[s], getargs(os,pars5), oid[s])
+            cmd1[3] = "SLpipeline.sh obsnum=%d _io=%s _s=%s archive=1 %s" % (o,_io,s,oid[s])
             for i in range(4):
                 if len(cmd1[i]) > 0:  fp1[i].write("%s\n" % cmd1[i])
             n1 = n1 + 1
@@ -312,8 +323,8 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
             admit = 1
 
         if s in pars1:
-            cmd2[0] = "SLpipeline.sh obsnums=%s _io=%s _s=%s restart=1 admit=%d" % (obsnums, _io, s, admit)
-        cmd2[1] = "SLpipeline.sh obsnums=%s _io=%s _s=%s archive=1" % (obsnums, _io, s)
+            cmd2[0] = "SLpipeline.sh obsnums=%s _io=%s _s=%s restart=1 admit=%d %s" % (obsnums, _io, s, admit, oid[s])
+        cmd2[1] = "SLpipeline.sh obsnums=%s _io=%s _s=%s archive=1 %s" % (obsnums, _io, s, oid[s])
         for i in range(2):
             if len(cmd2[i]) > 0:  fp2[i].write("%s\n" % cmd2[i])
         n2 = n2 + 1
