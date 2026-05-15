@@ -240,7 +240,7 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
                 sys.exit(0)
 
 
-    print("Creating run files")
+    print(f"Creating run files [runs.py version {_version}")
 
     # @todo   fix this, it's hardcoded for a 3-tier system (a,b,c)
     run1a = f"{project}.{check}run1a"
@@ -285,7 +285,7 @@ def mk_runs(project, on, pars1, pars2, pars3=None, argv=None):
             os = repr(o)
             _io = io.getio(o)
             if s in pars1:
-                cmd1[0] = "SLpipeline.sh obsnum=%d _io=%s _s=%s %s restart=1 %s" % (o,_io,s,pars1[s],oid[s])
+                cmd1[0] = "SLpipeline.sh obsnum=%d _io=%s _s=%s %s restart=1" % (o,_io,s,pars1[s])
             if s in pars2:
                 cmd1[1] = "SLpipeline.sh obsnum=%d _io=%s _s=%s %s %s %s" % (o,_io,s,pars2[s], getargs(os,pars4), oid[s])
             if pars3 != None and s in pars3:
