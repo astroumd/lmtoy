@@ -34,6 +34,7 @@ LMT software is very instrument specific, but LMTOY only supports a few.
 * MUSCAT: 1mm camera (Mexico-UK) - no LMTOY support
   *  4' FOV with 5.5" resolution
   *  Will use TolTecA
+  *  https://arxiv.org/abs/2608.03790 - pipeline for SuMAC spectrometer
   
 * CHARM ( <1mm) RAL space (Mexico-UK ) - no LMTOY support
   * 345 GHz
